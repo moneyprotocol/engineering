@@ -7,20 +7,20 @@ interface IPool {
     
     // --- Events ---
     
-    event ETHBalanceUpdated(uint _newBalance);
-    event LUSDBalanceUpdated(uint _newBalance);
+    event RBTCBalanceUpdated(uint _newBalance);
+    event BPDBalanceUpdated(uint _newBalance);
     event ActivePoolAddressChanged(address _newActivePoolAddress);
     event DefaultPoolAddressChanged(address _newDefaultPoolAddress);
     event StabilityPoolAddressChanged(address _newStabilityPoolAddress);
-    event EtherSent(address _to, uint _amount);
+    event BitcoinSent(address _to, uint _amount);
 
     // --- Functions ---
     
-    function getETH() external view returns (uint);
+    function getRBTC() external view returns (uint);
 
-    function getLUSDDebt() external view returns (uint);
+    function getBPDDebt() external view returns (uint);
 
-    function increaseLUSDDebt(uint _amount) external;
+    function increaseBPDDebt(uint _amount) external;
 
-    function decreaseLUSDDebt(uint _amount) external;
+    function decreaseBPDDebt(uint _amount) external;
 }
