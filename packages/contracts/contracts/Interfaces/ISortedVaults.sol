@@ -2,19 +2,19 @@
 
 pragma solidity 0.6.11;
 
-// Common interface for the SortedTroves Doubly Linked List.
-interface ISortedTroves {
+// Common interface for the SortedVaults Doubly Linked List.
+interface ISortedVaults {
 
     // --- Events ---
     
-    event SortedTrovesAddressChanged(address _sortedDoublyLLAddress);
+    event SortedVaultsAddressChanged(address _sortedDoublyLLAddress);
     event BorrowerOperationsAddressChanged(address _borrowerOperationsAddress);
     event NodeAdded(address _id, uint _NICR);
     event NodeRemoved(address _id);
 
     // --- Functions ---
     
-    function setParams(uint256 _size, address _TroveManagerAddress, address _borrowerOperationsAddress) external;
+    function setParams(uint256 _size, address _VaultManagerAddress, address _borrowerOperationsAddress) external;
 
     function insert(address _id, uint256 _ICR, address _prevId, address _nextId) external;
 
