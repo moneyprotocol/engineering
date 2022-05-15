@@ -2,40 +2,40 @@
 
 pragma solidity 0.6.11;
 
-import "./Interfaces/ITroveManager.sol";
-import "./Interfaces/ISortedTroves.sol";
-import "./Dependencies/LiquityBase.sol";
+import "./Interfaces/IVaultManager.sol";
+import "./Interfaces/ISortedVaults.sol";
+import "./Dependencies/MoneypBase.sol";
 import "./Dependencies/Ownable.sol";
 import "./Dependencies/CheckContract.sol";
 
-contract HintHelpers is LiquityBase, Ownable, CheckContract {
+contract HintHelpers is MoneypBase, Ownable, CheckContract {
     string constant public NAME = "HintHelpers";
 
-    ISortedTroves public sortedTroves;
-    ITroveManager public troveManager;
+    ISortedVaults public sortedVaults;
+    IVaultManager public vaultManager;
 
     // --- Events ---
 
-    event SortedTrovesAddressChanged(address _sortedTrovesAddress);
-    event TroveManagerAddressChanged(address _troveManagerAddress);
+    event SortedVaultsAddressChanged(address _sortedVaultsAddress);
+    event VaultManagerAddressChanged(address _vaultManagerAddress);
 
     // --- Dependency setters ---
 
     function setAddresses(
-        address _sortedTrovesAddress,
-        address _troveManagerAddress
+        address _sortedVaultsAddress,
+        address _vaultManagerAddress
     )
         external
         onlyOwner
     {
-        checkContract(_sortedTrovesAddress);
-        checkContract(_troveManagerAddress);
+        checkContract(_sortedVaultsAddress);
+        checkContract(_vaultManagerAddress);
 
-        sortedTroves = ISortedTroves(_sortedTrovesAddress);
-        troveManager = ITroveManager(_troveManagerAddress);
+        sortedVaults = ISortedVaults(_sortedVaultsAddress);
+        vaultManager = IVaultManager(_vaultManagerAddress);
 
-        emit SortedTrovesAddressChanged(_sortedTrovesAddress);
-        emit TroveManagerAddressChanged(_troveManagerAddress);
+        emit SortedVaultsAddressChanged(_sortedVaultsAddress);
+        emit VaultManagerAddressChanged(_vaultManagerAddress);
 
         _renounceOwnership();
     }
@@ -44,23 +44,23 @@ contract HintHelpers is LiquityBase, Ownable, CheckContract {
 
     /* getRedemptionHints() - Helper function for finding the right hints to pass to redeemCollateral().
      *
-     * It simulates a redemption of `_LUSDamount` to figure out where the redemption sequence will start and what state the final Trove
+     * It simulates a redemption of `_BPDamount` to figure out where the redemption sequence will start and what state the final Vault
      * of the sequence will end up in.
      *
      * Returns three hints:
-     *  - `firstRedemptionHint` is the address of the first Trove with ICR >= MCR (i.e. the first Trove that will be redeemed).
-     *  - `partialRedemptionHintNICR` is the final nominal ICR of the last Trove of the sequence after being hit by partial redemption,
+     *  - `firstRedemptionHint` is the address of the first Vault with ICR >= MCR (i.e. the first Vault that will be redeemed).
+     *  - `partialRedemptionHintNICR` is the final nominal ICR of the last Vault of the sequence after being hit by partial redemption,
      *     or zero in case of no partial redemption.
-     *  - `truncatedLUSDamount` is the maximum amount that can be redeemed out of the the provided `_LUSDamount`. This can be lower than
-     *    `_LUSDamount` when redeeming the full amount would leave the last Trove of the redemption sequence with less net debt than the
+     *  - `truncatedBPDamount` is the maximum amount that can be redeemed out of the the provided `_BPDamount`. This can be lower than
+     *    `_BPDamount` when redeeming the full amount would leave the last Vault of the redemption sequence with less net debt than the
      *    minimum allowed value (i.e. MIN_NET_DEBT).
      *
-     * The number of Troves to consider for redemption can be capped by passing a non-zero value as `_maxIterations`, while passing zero
+     * The number of Vaults to consider for redemption can be capped by passing a non-zero value as `_maxIterations`, while passing zero
      * will leave it uncapped.
      */
 
     function getRedemptionHints(
-        uint _LUSDamount, 
+        uint _BPDamount, 
         uint _price,
         uint _maxIterations
     )
@@ -69,56 +69,56 @@ contract HintHelpers is LiquityBase, Ownable, CheckContract {
         returns (
             address firstRedemptionHint,
             uint partialRedemptionHintNICR,
-            uint truncatedLUSDamount
+            uint truncatedBPDamount
         )
     {
-        ISortedTroves sortedTrovesCached = sortedTroves;
+        ISortedVaults sortedVaultsCached = sortedVaults;
 
-        uint remainingLUSD = _LUSDamount;
-        address currentTroveuser = sortedTrovesCached.getLast();
+        uint remainingBPD = _BPDamount;
+        address currentVaultuser = sortedVaultsCached.getLast();
 
-        while (currentTroveuser != address(0) && troveManager.getCurrentICR(currentTroveuser, _price) < MCR) {
-            currentTroveuser = sortedTrovesCached.getPrev(currentTroveuser);
+        while (currentVaultuser != address(0) && vaultManager.getCurrentICR(currentVaultuser, _price) < MCR) {
+            currentVaultuser = sortedVaultsCached.getPrev(currentVaultuser);
         }
 
-        firstRedemptionHint = currentTroveuser;
+        firstRedemptionHint = currentVaultuser;
 
         if (_maxIterations == 0) {
             _maxIterations = uint(-1);
         }
 
-        while (currentTroveuser != address(0) && remainingLUSD > 0 && _maxIterations-- > 0) {
-            uint netLUSDDebt = _getNetDebt(troveManager.getTroveDebt(currentTroveuser))
-                .add(troveManager.getPendingLUSDDebtReward(currentTroveuser));
+        while (currentVaultuser != address(0) && remainingBPD > 0 && _maxIterations-- > 0) {
+            uint netBPDDebt = _getNetDebt(vaultManager.getVaultDebt(currentVaultuser))
+                .add(vaultManager.getPendingBPDDebtReward(currentVaultuser));
 
-            if (netLUSDDebt > remainingLUSD) {
-                if (netLUSDDebt > MIN_NET_DEBT) {
-                    uint maxRedeemableLUSD = LiquityMath._min(remainingLUSD, netLUSDDebt.sub(MIN_NET_DEBT));
+            if (netBPDDebt > remainingBPD) {
+                if (netBPDDebt > MIN_NET_DEBT) {
+                    uint maxRedeemableBPD = MoneypMath._min(remainingBPD, netBPDDebt.sub(MIN_NET_DEBT));
 
-                    uint ETH = troveManager.getTroveColl(currentTroveuser)
-                        .add(troveManager.getPendingETHReward(currentTroveuser));
+                    uint RBTC = vaultManager.getVaultColl(currentVaultuser)
+                        .add(vaultManager.getPendingRBTCReward(currentVaultuser));
 
-                    uint newColl = ETH.sub(maxRedeemableLUSD.mul(DECIMAL_PRECISION).div(_price));
-                    uint newDebt = netLUSDDebt.sub(maxRedeemableLUSD);
+                    uint newColl = RBTC.sub(maxRedeemableBPD.mul(DECIMAL_PRECISION).div(_price));
+                    uint newDebt = netBPDDebt.sub(maxRedeemableBPD);
 
                     uint compositeDebt = _getCompositeDebt(newDebt);
-                    partialRedemptionHintNICR = LiquityMath._computeNominalCR(newColl, compositeDebt);
+                    partialRedemptionHintNICR = MoneypMath._computeNominalCR(newColl, compositeDebt);
 
-                    remainingLUSD = remainingLUSD.sub(maxRedeemableLUSD);
+                    remainingBPD = remainingBPD.sub(maxRedeemableBPD);
                 }
                 break;
             } else {
-                remainingLUSD = remainingLUSD.sub(netLUSDDebt);
+                remainingBPD = remainingBPD.sub(netBPDDebt);
             }
 
-            currentTroveuser = sortedTrovesCached.getPrev(currentTroveuser);
+            currentVaultuser = sortedVaultsCached.getPrev(currentVaultuser);
         }
 
-        truncatedLUSDamount = _LUSDamount.sub(remainingLUSD);
+        truncatedBPDamount = _BPDamount.sub(remainingBPD);
     }
 
-    /* getApproxHint() - return address of a Trove that is, on average, (length / numTrials) positions away in the 
-    sortedTroves list from the correct insert position of the Trove to be inserted. 
+    /* getApproxHint() - return address of a Vault that is, on average, (length / numTrials) positions away in the 
+    sortedVaults list from the correct insert position of the Vault to be inserted. 
     
     Note: The output address is worst-case O(n) positions away from the correct insert position, however, the function 
     is probabilistic. Input can be tuned to guarantee results to a high degree of confidence, e.g:
@@ -131,14 +131,14 @@ contract HintHelpers is LiquityBase, Ownable, CheckContract {
         view
         returns (address hintAddress, uint diff, uint latestRandomSeed)
     {
-        uint arrayLength = troveManager.getTroveOwnersCount();
+        uint arrayLength = vaultManager.getVaultOwnersCount();
 
         if (arrayLength == 0) {
             return (address(0), 0, _inputRandomSeed);
         }
 
-        hintAddress = sortedTroves.getLast();
-        diff = LiquityMath._getAbsoluteDifference(_CR, troveManager.getNominalICR(hintAddress));
+        hintAddress = sortedVaults.getLast();
+        diff = MoneypMath._getAbsoluteDifference(_CR, vaultManager.getNominalICR(hintAddress));
         latestRandomSeed = _inputRandomSeed;
 
         uint i = 1;
@@ -147,11 +147,11 @@ contract HintHelpers is LiquityBase, Ownable, CheckContract {
             latestRandomSeed = uint(keccak256(abi.encodePacked(latestRandomSeed)));
 
             uint arrayIndex = latestRandomSeed % arrayLength;
-            address currentAddress = troveManager.getTroveFromTroveOwnersArray(arrayIndex);
-            uint currentNICR = troveManager.getNominalICR(currentAddress);
+            address currentAddress = vaultManager.getVaultFromVaultOwnersArray(arrayIndex);
+            uint currentNICR = vaultManager.getNominalICR(currentAddress);
 
             // check if abs(current - CR) > abs(closest - CR), and update closest if current is closer
-            uint currentDiff = LiquityMath._getAbsoluteDifference(currentNICR, _CR);
+            uint currentDiff = MoneypMath._getAbsoluteDifference(currentNICR, _CR);
 
             if (currentDiff < diff) {
                 diff = currentDiff;
@@ -162,10 +162,10 @@ contract HintHelpers is LiquityBase, Ownable, CheckContract {
     }
 
     function computeNominalCR(uint _coll, uint _debt) external pure returns (uint) {
-        return LiquityMath._computeNominalCR(_coll, _debt);
+        return MoneypMath._computeNominalCR(_coll, _debt);
     }
 
     function computeCR(uint _coll, uint _debt, uint _price) external pure returns (uint) {
-        return LiquityMath._computeCR(_coll, _debt, _price);
+        return MoneypMath._computeCR(_coll, _debt, _price);
     }
 }
