@@ -5,19 +5,23 @@ pragma solidity 0.6.11;
 import "../Dependencies/IERC20.sol";
 import "../Dependencies/IERC2612.sol";
 
-interface IMPToken is IERC20, IERC2612 { 
-   
-    // --- Events ---
+interface IBPDToken is IERC20, IERC2612 { 
     
-    event CommunityIssuanceAddressSet(address _communityIssuanceAddress);
-    event MPStakingAddressSet(address _MPStakingAddress);
-    event LockupContractFactoryAddressSet(address _lockupContractFactoryAddress);
+    // --- Events ---
+
+    event VaultManagerAddressChanged(address _vaultManagerAddress);
+    event StabilityPoolAddressChanged(address _newStabilityPoolAddress);
+    event BorrowerOperationsAddressChanged(address _newBorrowerOperationsAddress);
+
+    event BPDTokenBalanceUpdated(address _user, uint _amount);
 
     // --- Functions ---
-    
-    function sendToMPStaking(address _sender, uint256 _amount) external;
 
-    function getDeploymentStartTime() external view returns (uint256);
+    function mint(address _account, uint256 _amount) external;
 
-    function getLpRewardsEntitlement() external view returns (uint256);
+    function burn(address _account, uint256 _amount) external;
+
+    function sendToPool(address _sender,  address poolAddress, uint256 _amount) external;
+
+    function returnFromPool(address poolAddress, address user, uint256 _amount ) external;
 }
