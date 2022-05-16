@@ -9,10 +9,10 @@ import "./Dependencies/CheckContract.sol";
 import "./Dependencies/console.sol";
 
 /*
- * The Default Pool holds the ETH and LUSD debt (but not LUSD tokens) from liquidations that have been redistributed
- * to active troves but not yet "applied", i.e. not yet recorded on a recipient active trove's struct.
+ * The Default Pool holds the RBTC and BPD debt (but not BPD tokens) from liquidations that have been redistributed
+ * to active vaults but not yet "applied", i.e. not yet recorded on a recipient active vault's struct.
  *
- * When a trove makes an operation that applies its pending ETH and LUSD debt, its pending ETH and LUSD debt is moved
+ * When a vault makes an operation that applies its pending RBTC and BPD debt, its pending RBTC and BPD debt is moved
  * from the Default Pool to the Active Pool.
  */
 contract DefaultPool is Ownable, CheckContract, IDefaultPool {
@@ -20,31 +20,31 @@ contract DefaultPool is Ownable, CheckContract, IDefaultPool {
 
     string constant public NAME = "DefaultPool";
 
-    address public troveManagerAddress;
+    address public vaultManagerAddress;
     address public activePoolAddress;
-    uint256 internal ETH;  // deposited ETH tracker
-    uint256 internal LUSDDebt;  // debt
+    uint256 internal RBTC;  // deposited RBTC tracker
+    uint256 internal BPDDebt;  // debt
 
-    event TroveManagerAddressChanged(address _newTroveManagerAddress);
-    event DefaultPoolLUSDDebtUpdated(uint _LUSDDebt);
-    event DefaultPoolETHBalanceUpdated(uint _ETH);
+    event VaultManagerAddressChanged(address _newVaultManagerAddress);
+    event DefaultPoolBPDDebtUpdated(uint _BPDDebt);
+    event DefaultPoolRBTCBalanceUpdated(uint _RBTC);
 
     // --- Dependency setters ---
 
     function setAddresses(
-        address _troveManagerAddress,
+        address _vaultManagerAddress,
         address _activePoolAddress
     )
         external
         onlyOwner
     {
-        checkContract(_troveManagerAddress);
+        checkContract(_vaultManagerAddress);
         checkContract(_activePoolAddress);
 
-        troveManagerAddress = _troveManagerAddress;
+        vaultManagerAddress = _vaultManagerAddress;
         activePoolAddress = _activePoolAddress;
 
-        emit TroveManagerAddressChanged(_troveManagerAddress);
+        emit VaultManagerAddressChanged(_vaultManagerAddress);
         emit ActivePoolAddressChanged(_activePoolAddress);
 
         _renounceOwnership();
@@ -53,41 +53,41 @@ contract DefaultPool is Ownable, CheckContract, IDefaultPool {
     // --- Getters for public variables. Required by IPool interface ---
 
     /*
-    * Returns the ETH state variable.
+    * Returns the RBTC state variable.
     *
-    * Not necessarily equal to the the contract's raw ETH balance - ether can be forcibly sent to contracts.
+    * Not necessarily equal to the the contract's raw RBTC balance - bitcoin can be forcibly sent to contracts.
     */
-    function getETH() external view override returns (uint) {
-        return ETH;
+    function getRBTC() external view override returns (uint) {
+        return RBTC;
     }
 
-    function getLUSDDebt() external view override returns (uint) {
-        return LUSDDebt;
+    function getBPDDebt() external view override returns (uint) {
+        return BPDDebt;
     }
 
     // --- Pool functionality ---
 
-    function sendETHToActivePool(uint _amount) external override {
-        _requireCallerIsTroveManager();
+    function sendRBTCToActivePool(uint _amount) external override {
+        _requireCallerIsVaultManager();
         address activePool = activePoolAddress; // cache to save an SLOAD
-        ETH = ETH.sub(_amount);
-        emit DefaultPoolETHBalanceUpdated(ETH);
-        emit EtherSent(activePool, _amount);
+        RBTC = RBTC.sub(_amount);
+        emit DefaultPoolRBTCBalanceUpdated(RBTC);
+        emit BitcoinSent(activePool, _amount);
 
         (bool success, ) = activePool.call{ value: _amount }("");
-        require(success, "DefaultPool: sending ETH failed");
+        require(success, "DefaultPool: sending RBTC failed");
     }
 
-    function increaseLUSDDebt(uint _amount) external override {
-        _requireCallerIsTroveManager();
-        LUSDDebt = LUSDDebt.add(_amount);
-        emit DefaultPoolLUSDDebtUpdated(LUSDDebt);
+    function increaseBPDDebt(uint _amount) external override {
+        _requireCallerIsVaultManager();
+        BPDDebt = BPDDebt.add(_amount);
+        emit DefaultPoolBPDDebtUpdated(BPDDebt);
     }
 
-    function decreaseLUSDDebt(uint _amount) external override {
-        _requireCallerIsTroveManager();
-        LUSDDebt = LUSDDebt.sub(_amount);
-        emit DefaultPoolLUSDDebtUpdated(LUSDDebt);
+    function decreaseBPDDebt(uint _amount) external override {
+        _requireCallerIsVaultManager();
+        BPDDebt = BPDDebt.sub(_amount);
+        emit DefaultPoolBPDDebtUpdated(BPDDebt);
     }
 
     // --- 'require' functions ---
@@ -96,15 +96,15 @@ contract DefaultPool is Ownable, CheckContract, IDefaultPool {
         require(msg.sender == activePoolAddress, "DefaultPool: Caller is not the ActivePool");
     }
 
-    function _requireCallerIsTroveManager() internal view {
-        require(msg.sender == troveManagerAddress, "DefaultPool: Caller is not the TroveManager");
+    function _requireCallerIsVaultManager() internal view {
+        require(msg.sender == vaultManagerAddress, "DefaultPool: Caller is not the VaultManager");
     }
 
     // --- Fallback function ---
 
     receive() external payable {
         _requireCallerIsActivePool();
-        ETH = ETH.add(msg.value);
-        emit DefaultPoolETHBalanceUpdated(ETH);
+        RBTC = RBTC.add(msg.value);
+        emit DefaultPoolRBTCBalanceUpdated(RBTC);
     }
 }
