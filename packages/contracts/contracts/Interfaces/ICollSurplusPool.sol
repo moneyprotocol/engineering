@@ -8,21 +8,21 @@ interface ICollSurplusPool {
     // --- Events ---
     
     event BorrowerOperationsAddressChanged(address _newBorrowerOperationsAddress);
-    event TroveManagerAddressChanged(address _newTroveManagerAddress);
+    event VaultManagerAddressChanged(address _newVaultManagerAddress);
     event ActivePoolAddressChanged(address _newActivePoolAddress);
 
     event CollBalanceUpdated(address indexed _account, uint _newBalance);
-    event EtherSent(address _to, uint _amount);
+    event BitcoinSent(address _to, uint _amount);
 
     // --- Contract setters ---
 
     function setAddresses(
         address _borrowerOperationsAddress,
-        address _troveManagerAddress,
+        address _vaultManagerAddress,
         address _activePoolAddress
     ) external;
 
-    function getETH() external view returns (uint);
+    function getRBTC() external view returns (uint);
 
     function getCollateral(address _account) external view returns (uint);
 

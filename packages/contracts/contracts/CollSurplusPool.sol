@@ -15,18 +15,18 @@ contract CollSurplusPool is Ownable, CheckContract, ICollSurplusPool {
     string constant public NAME = "CollSurplusPool";
 
     address public borrowerOperationsAddress;
-    address public troveManagerAddress;
+    address public vaultManagerAddress;
     address public activePoolAddress;
 
-    // deposited ether tracker
-    uint256 internal ETH;
-    // Collateral surplus claimable by trove owners
+    // deposited bitcoin tracker
+    uint256 internal RBTC;
+    // Collateral surplus claimable by vault owners
     mapping (address => uint) internal balances;
 
     // --- Events ---
 
     event BorrowerOperationsAddressChanged(address _newBorrowerOperationsAddress);
-    event TroveManagerAddressChanged(address _newTroveManagerAddress);
+    event VaultManagerAddressChanged(address _newVaultManagerAddress);
     event ActivePoolAddressChanged(address _newActivePoolAddress);
 
     event CollBalanceUpdated(address indexed _account, uint _newBalance);
@@ -36,7 +36,7 @@ contract CollSurplusPool is Ownable, CheckContract, ICollSurplusPool {
 
     function setAddresses(
         address _borrowerOperationsAddress,
-        address _troveManagerAddress,
+        address _vaultManagerAddress,
         address _activePoolAddress
     )
         external
@@ -44,24 +44,24 @@ contract CollSurplusPool is Ownable, CheckContract, ICollSurplusPool {
         onlyOwner
     {
         checkContract(_borrowerOperationsAddress);
-        checkContract(_troveManagerAddress);
+        checkContract(_vaultManagerAddress);
         checkContract(_activePoolAddress);
 
         borrowerOperationsAddress = _borrowerOperationsAddress;
-        troveManagerAddress = _troveManagerAddress;
+        vaultManagerAddress = _vaultManagerAddress;
         activePoolAddress = _activePoolAddress;
 
         emit BorrowerOperationsAddressChanged(_borrowerOperationsAddress);
-        emit TroveManagerAddressChanged(_troveManagerAddress);
+        emit VaultManagerAddressChanged(_vaultManagerAddress);
         emit ActivePoolAddressChanged(_activePoolAddress);
 
         _renounceOwnership();
     }
 
-    /* Returns the ETH state variable at ActivePool address.
-       Not necessarily equal to the raw ether balance - ether can be forcibly sent to contracts. */
-    function getETH() external view override returns (uint) {
-        return ETH;
+    /* Returns the RBTC state variable at ActivePool address.
+       Not necessarily equal to the raw bitcoin balance - bitcoin can be forcibly sent to contracts. */
+    function getRBTC() external view override returns (uint) {
+        return RBTC;
     }
 
     function getCollateral(address _account) external view override returns (uint) {
@@ -71,7 +71,7 @@ contract CollSurplusPool is Ownable, CheckContract, ICollSurplusPool {
     // --- Pool functionality ---
 
     function accountSurplus(address _account, uint _amount) external override {
-        _requireCallerIsTroveManager();
+        _requireCallerIsVaultManager();
 
         uint newAmount = balances[_account].add(_amount);
         balances[_account] = newAmount;
@@ -87,11 +87,11 @@ contract CollSurplusPool is Ownable, CheckContract, ICollSurplusPool {
         balances[_account] = 0;
         emit CollBalanceUpdated(_account, 0);
 
-        ETH = ETH.sub(claimableColl);
+        RBTC = RBTC.sub(claimableColl);
         emit EtherSent(_account, claimableColl);
 
         (bool success, ) = _account.call{ value: claimableColl }("");
-        require(success, "CollSurplusPool: sending ETH failed");
+        require(success, "CollSurplusPool: sending RBTC failed");
     }
 
     // --- 'require' functions ---
@@ -102,10 +102,10 @@ contract CollSurplusPool is Ownable, CheckContract, ICollSurplusPool {
             "CollSurplusPool: Caller is not Borrower Operations");
     }
 
-    function _requireCallerIsTroveManager() internal view {
+    function _requireCallerIsVaultManager() internal view {
         require(
-            msg.sender == troveManagerAddress,
-            "CollSurplusPool: Caller is not TroveManager");
+            msg.sender == vaultManagerAddress,
+            "CollSurplusPool: Caller is not VaultManager");
     }
 
     function _requireCallerIsActivePool() internal view {
@@ -118,6 +118,6 @@ contract CollSurplusPool is Ownable, CheckContract, ICollSurplusPool {
 
     receive() external payable {
         _requireCallerIsActivePool();
-        ETH = ETH.add(msg.value);
+        RBTC = RBTC.add(msg.value);
     }
 }
