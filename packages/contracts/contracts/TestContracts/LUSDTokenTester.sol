@@ -2,17 +2,17 @@
 
 pragma solidity 0.6.11;
 
-import "../LUSDToken.sol";
+import "../BPDToken.sol";
 
-contract LUSDTokenTester is LUSDToken {
+contract BPDTokenTester is BPDToken {
     
     bytes32 private immutable _PERMIT_TYPEHASH = 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
     
     constructor( 
-        address _troveManagerAddress,
+        address _vaultManagerAddress,
         address _stabilityPoolAddress,
         address _borrowerOperationsAddress
-    ) public LUSDToken(_troveManagerAddress,
+    ) public BPDToken(_vaultManagerAddress,
                       _stabilityPoolAddress,
                       _borrowerOperationsAddress) {}
     

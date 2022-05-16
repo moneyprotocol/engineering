@@ -5,13 +5,13 @@ pragma solidity 0.6.11;
 import './Interfaces/IBorrowerOperations.sol';
 import './Interfaces/IStabilityPool.sol';
 import './Interfaces/IBorrowerOperations.sol';
-import './Interfaces/ITroveManager.sol';
+import './Interfaces/IVaultManager.sol';
 import './Interfaces/IBPDToken.sol';
-import './Interfaces/ISortedTroves.sol';
+import './Interfaces/ISortedVaults.sol';
 import "./Interfaces/ICommunityIssuance.sol";
-import "./Dependencies/LiquityBase.sol";
+import "./Dependencies/MoneypBase.sol";
 import "./Dependencies/SafeMath.sol";
-import "./Dependencies/LiquitySafeMath128.sol";
+import "./Dependencies/MoneypSafeMath128.sol";
 import "./Dependencies/Ownable.sol";
 import "./Dependencies/CheckContract.sol";
 import "./Dependencies/console.sol";
@@ -145,19 +145,19 @@ import "./Dependencies/console.sol";
  * The product P (and snapshot P_t) is re-used, as the ratio P/P_t tracks a deposit's depletion due to liquidations.
  *
  */
-contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
-    using LiquitySafeMath128 for uint128;
+contract StabilityPool is MoneypBase, Ownable, CheckContract, IStabilityPool {
+    using MoneypSafeMath128 for uint128;
 
     string constant public NAME = "StabilityPool";
 
     IBorrowerOperations public borrowerOperations;
 
-    ITroveManager public troveManager;
+    IVaultManager public vaultManager;
 
     IBPDToken public bpdToken;
 
     // Needed to check if there are pending liquidations
-    ISortedTroves public sortedTroves;
+    ISortedVaults public sortedVaults;
 
     ICommunityIssuance public communityIssuance;
 
@@ -240,11 +240,11 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
     event StabilityPoolBPDBalanceUpdated(uint _newBalance);
 
     event BorrowerOperationsAddressChanged(address _newBorrowerOperationsAddress);
-    event TroveManagerAddressChanged(address _newTroveManagerAddress);
+    event VaultManagerAddressChanged(address _newVaultManagerAddress);
     event ActivePoolAddressChanged(address _newActivePoolAddress);
     event DefaultPoolAddressChanged(address _newDefaultPoolAddress);
     event BPDTokenAddressChanged(address _newBPDTokenAddress);
-    event SortedTrovesAddressChanged(address _newSortedTrovesAddress);
+    event SortedVaultsAddressChanged(address _newSortedVaultsAddress);
     event PriceFeedAddressChanged(address _newPriceFeedAddress);
     event CommunityIssuanceAddressChanged(address _newCommunityIssuanceAddress);
 
@@ -265,16 +265,16 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
     event RBTCGainWithdrawn(address indexed _depositor, uint _RBTC, uint _BPDLoss);
     event MPPaidToDepositor(address indexed _depositor, uint _MP);
     event MPPaidToFrontEnd(address indexed _frontEnd, uint _MP);
-    event EtherSent(address _to, uint _amount);
+    event BitcoinSent(address _to, uint _amount);
 
     // --- Contract setters ---
 
     function setAddresses(
         address _borrowerOperationsAddress,
-        address _troveManagerAddress,
+        address _vaultManagerAddress,
         address _activePoolAddress,
         address _bpdTokenAddress,
-        address _sortedTrovesAddress,
+        address _sortedVaultsAddress,
         address _priceFeedAddress,
         address _communityIssuanceAddress
     )
@@ -283,26 +283,26 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
         onlyOwner
     {
         checkContract(_borrowerOperationsAddress);
-        checkContract(_troveManagerAddress);
+        checkContract(_vaultManagerAddress);
         checkContract(_activePoolAddress);
         checkContract(_bpdTokenAddress);
-        checkContract(_sortedTrovesAddress);
+        checkContract(_sortedVaultsAddress);
         checkContract(_priceFeedAddress);
         checkContract(_communityIssuanceAddress);
 
         borrowerOperations = IBorrowerOperations(_borrowerOperationsAddress);
-        troveManager = ITroveManager(_troveManagerAddress);
+        vaultManager = IVaultManager(_vaultManagerAddress);
         activePool = IActivePool(_activePoolAddress);
         bpdToken = IBPDToken(_bpdTokenAddress);
-        sortedTroves = ISortedTroves(_sortedTrovesAddress);
+        sortedVaults = ISortedVaults(_sortedVaultsAddress);
         priceFeed = IPriceFeed(_priceFeedAddress);
         communityIssuance = ICommunityIssuance(_communityIssuanceAddress);
 
         emit BorrowerOperationsAddressChanged(_borrowerOperationsAddress);
-        emit TroveManagerAddressChanged(_troveManagerAddress);
+        emit VaultManagerAddressChanged(_vaultManagerAddress);
         emit ActivePoolAddressChanged(_activePoolAddress);
         emit BPDTokenAddressChanged(_bpdTokenAddress);
-        emit SortedTrovesAddressChanged(_sortedTrovesAddress);
+        emit SortedVaultsAddressChanged(_sortedVaultsAddress);
         emit PriceFeedAddressChanged(_priceFeedAddress);
         emit CommunityIssuanceAddressChanged(_communityIssuanceAddress);
 
@@ -377,7 +377,7 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
     * If _amount > userDeposit, the user withdraws all of their compounded deposit.
     */
     function withdrawFromSP(uint _amount) external override {
-        if (_amount !=0) {_requireNoUnderCollateralizedTroves();}
+        if (_amount !=0) {_requireNoUnderCollateralizedVaults();}
         uint initialDeposit = deposits[msg.sender].initialValue;
         _requireUserHasDeposit(initialDeposit);
 
@@ -388,7 +388,7 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
         uint depositorRBTCGain = getDepositorRBTCGain(msg.sender);
 
         uint compoundedBPDDeposit = getCompoundedBPDDeposit(msg.sender);
-        uint BPDtoWithdraw = LiquityMath._min(_amount, compoundedBPDDeposit);
+        uint BPDtoWithdraw = MoneypMath._min(_amount, compoundedBPDDeposit);
         uint BPDLoss = initialDeposit.sub(compoundedBPDDeposit); // Needed only for event log
 
         // First pay out any MP gains
@@ -413,17 +413,17 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
         _sendRBTCGainToDepositor(depositorRBTCGain);
     }
 
-    /* withdrawRBTCGainToTrove:
+    /* withdrawRBTCGainToVault:
     * - Triggers a MP issuance, based on time passed since the last issuance. The MP issuance is shared between *all* depositors and front ends
     * - Sends all depositor's MP gain to  depositor
     * - Sends all tagged front end's MP gain to the tagged front end
     * - Transfers the depositor's entire RBTC gain from the Stability Pool to the caller's vault
     * - Leaves their compounded deposit in the Stability Pool
     * - Updates snapshots for deposit and tagged front end stake */
-    function withdrawRBTCGainToTrove(address _upperHint, address _lowerHint) external override {
+    function withdrawRBTCGainToVault(address _upperHint, address _lowerHint) external override {
         uint initialDeposit = deposits[msg.sender].initialValue;
         _requireUserHasDeposit(initialDeposit);
-        _requireUserHasTrove(msg.sender);
+        _requireUserHasVault(msg.sender);
         _requireUserHasRBTCGain(msg.sender);
 
         ICommunityIssuance communityIssuanceCached = communityIssuance;
@@ -455,9 +455,9 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
 
         RBTC = RBTC.sub(depositorRBTCGain);
         emit StabilityPoolRBTCBalanceUpdated(RBTC);
-        emit EtherSent(msg.sender, depositorRBTCGain);
+        emit BitcoinSent(msg.sender, depositorRBTCGain);
 
-        borrowerOperations.moveRBTCGainToTrove{ value: depositorRBTCGain }(msg.sender, _upperHint, _lowerHint);
+        borrowerOperations.moveRBTCGainToVault{ value: depositorRBTCGain }(msg.sender, _upperHint, _lowerHint);
     }
 
     // --- MP issuance functions ---
@@ -510,10 +510,10 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
     /*
     * Cancels out the specified debt against the BPD contained in the Stability Pool (as far as possible)
     * and transfers the Vault's RBTC collateral from ActivePool to StabilityPool.
-    * Only called by liquidation functions in the TroveManager.
+    * Only called by liquidation functions in the VaultManager.
     */
     function offset(uint _debtToOffset, uint _collToAdd) external override {
-        _requireCallerIsTroveManager();
+        _requireCallerIsVaultManager();
         uint totalBPD = totalBPDDeposits; // cached to save an SLOAD
         if (totalBPD == 0 || _debtToOffset == 0) { return; }
 
@@ -834,7 +834,7 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
         uint newRBTC = RBTC.sub(_amount);
         RBTC = newRBTC;
         emit StabilityPoolRBTCBalanceUpdated(newRBTC);
-        emit EtherSent(msg.sender, _amount);
+        emit BitcoinSent(msg.sender, _amount);
 
         (bool success, ) = msg.sender.call{ value: _amount }("");
         require(success, "StabilityPool: sending RBTC failed");
@@ -942,15 +942,15 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
         require( msg.sender == address(activePool), "StabilityPool: Caller is not ActivePool");
     }
 
-    function _requireCallerIsTroveManager() internal view {
-        require(msg.sender == address(troveManager), "StabilityPool: Caller is not TroveManager");
+    function _requireCallerIsVaultManager() internal view {
+        require(msg.sender == address(vaultManager), "StabilityPool: Caller is not VaultManager");
     }
 
-    function _requireNoUnderCollateralizedTroves() internal {
+    function _requireNoUnderCollateralizedVaults() internal {
         uint price = priceFeed.fetchPrice();
-        address lowestTrove = sortedTroves.getLast();
-        uint ICR = troveManager.getCurrentICR(lowestTrove, price);
-        require(ICR >= MCR, "StabilityPool: Cannot withdraw while there are troves with ICR < MCR");
+        address lowestVault = sortedVaults.getLast();
+        uint ICR = vaultManager.getCurrentICR(lowestVault, price);
+        require(ICR >= MCR, "StabilityPool: Cannot withdraw while there are vaults with ICR < MCR");
     }
 
     function _requireUserHasDeposit(uint _initialDeposit) internal pure {
@@ -966,8 +966,8 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
         require(_amount > 0, 'StabilityPool: Amount must be non-zero');
     }
 
-    function _requireUserHasTrove(address _depositor) internal view {
-        require(troveManager.getTroveStatus(_depositor) == 1, "StabilityPool: caller must have an active vault to withdraw RBTCGain to");
+    function _requireUserHasVault(address _depositor) internal view {
+        require(vaultManager.getVaultStatus(_depositor) == 1, "StabilityPool: caller must have an active vault to withdraw RBTCGain to");
     }
 
     function _requireUserHasRBTCGain(address _depositor) internal view {

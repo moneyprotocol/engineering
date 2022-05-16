@@ -3,31 +3,31 @@
 pragma solidity 0.6.11;
 
 import "./BaseMath.sol";
-import "./LiquityMath.sol";
+import "./MoneypMath.sol";
 import "../Interfaces/IActivePool.sol";
 import "../Interfaces/IDefaultPool.sol";
 import "../Interfaces/IPriceFeed.sol";
-import "../Interfaces/ILiquityBase.sol";
+import "../Interfaces/IMoneypBase.sol";
 
 /* 
-* Base contract for TroveManager, BorrowerOperations and StabilityPool. Contains global system constants and
+* Base contract for VaultManager, BorrowerOperations and StabilityPool. Contains global system constants and
 * common functions. 
 */
-contract LiquityBase is BaseMath, ILiquityBase {
+contract MoneypBase is BaseMath, IMoneypBase {
     using SafeMath for uint;
 
     uint constant public _100pct = 1000000000000000000; // 1e18 == 100%
 
-    // Minimum collateral ratio for individual troves
+    // Minimum collateral ratio for individual vaults
     uint constant public MCR = 1100000000000000000; // 110%
 
     // Critical system collateral ratio. If the system's total collateral ratio (TCR) falls below the CCR, Recovery Mode is triggered.
     uint constant public CCR = 1500000000000000000; // 150%
 
-    // Amount of LUSD to be locked in gas pool on opening troves
-    uint constant public LUSD_GAS_COMPENSATION = 200e18;
+    // Amount of BPD to be locked in gas pool on opening vaults
+    uint constant public BPD_GAS_COMPENSATION = 200e18;
 
-    // Minimum amount of net LUSD debt a trove must have
+    // Minimum amount of net BPD debt a vault must have
     uint constant public MIN_NET_DEBT = 1800e18;
     // uint constant public MIN_NET_DEBT = 0; 
 
@@ -43,30 +43,30 @@ contract LiquityBase is BaseMath, ILiquityBase {
 
     // --- Gas compensation functions ---
 
-    // Returns the composite debt (drawn debt + gas compensation) of a trove, for the purpose of ICR calculation
+    // Returns the composite debt (drawn debt + gas compensation) of a vault, for the purpose of ICR calculation
     function _getCompositeDebt(uint _debt) internal pure returns (uint) {
-        return _debt.add(LUSD_GAS_COMPENSATION);
+        return _debt.add(BPD_GAS_COMPENSATION);
     }
 
     function _getNetDebt(uint _debt) internal pure returns (uint) {
-        return _debt.sub(LUSD_GAS_COMPENSATION);
+        return _debt.sub(BPD_GAS_COMPENSATION);
     }
 
-    // Return the amount of ETH to be drawn from a trove's collateral and sent as gas compensation.
+    // Return the amount of RBTC to be drawn from a vault's collateral and sent as gas compensation.
     function _getCollGasCompensation(uint _entireColl) internal pure returns (uint) {
         return _entireColl / PERCENT_DIVISOR;
     }
 
     function getEntireSystemColl() public view returns (uint entireSystemColl) {
-        uint activeColl = activePool.getETH();
-        uint liquidatedColl = defaultPool.getETH();
+        uint activeColl = activePool.getRBTC();
+        uint liquidatedColl = defaultPool.getRBTC();
 
         return activeColl.add(liquidatedColl);
     }
 
     function getEntireSystemDebt() public view returns (uint entireSystemDebt) {
-        uint activeDebt = activePool.getLUSDDebt();
-        uint closedDebt = defaultPool.getLUSDDebt();
+        uint activeDebt = activePool.getBPDDebt();
+        uint closedDebt = defaultPool.getBPDDebt();
 
         return activeDebt.add(closedDebt);
     }
@@ -75,7 +75,7 @@ contract LiquityBase is BaseMath, ILiquityBase {
         uint entireSystemColl = getEntireSystemColl();
         uint entireSystemDebt = getEntireSystemDebt();
 
-        TCR = LiquityMath._computeCR(entireSystemColl, entireSystemDebt, _price);
+        TCR = MoneypMath._computeCR(entireSystemColl, entireSystemDebt, _price);
 
         return TCR;
     }

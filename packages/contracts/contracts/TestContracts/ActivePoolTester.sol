@@ -6,11 +6,11 @@ import "../ActivePool.sol";
 
 contract ActivePoolTester is ActivePool {
     
-    function unprotectedIncreaseLUSDDebt(uint _amount) external {
-        LUSDDebt  = LUSDDebt.add(_amount);
+    function unprotectedIncreaseBPDDebt(uint _amount) external {
+        BPDDebt  = BPDDebt.add(_amount);
     }
 
     function unprotectedPayable() external payable {
-        ETH = ETH.add(msg.value);
+        RBTC = RBTC.add(msg.value);
     }
 }

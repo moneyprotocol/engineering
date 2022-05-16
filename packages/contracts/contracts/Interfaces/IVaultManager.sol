@@ -34,8 +34,8 @@ interface IVaultManager is IMoneypBase {
     event LastFeeOpTimeUpdated(uint _lastFeeOpTime);
     event TotalStakesUpdated(uint _newTotalStakes);
     event SystemSnapshotsUpdated(uint _totalStakesSnapshot, uint _totalCollateralSnapshot);
-    event LTermsUpdated(uint _L_RBTC, uint _L_BPDDebt);
-    event VaultSnapshotsUpdated(uint _L_RBTC, uint _L_BPDDebt);
+    event LTermsUpdated(uint _B_RBTC, uint _B_BPDDebt);
+    event VaultSnapshotsUpdated(uint _B_RBTC, uint _B_BPDDebt);
     event VaultIndexUpdated(address _borrower, uint _newIndex);
 
     // --- Functions ---

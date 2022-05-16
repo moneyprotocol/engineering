@@ -6,7 +6,7 @@ import "./Interfaces/IBorrowerOperations.sol";
 import "./Interfaces/IVaultManager.sol";
 import "./Interfaces/IBPDToken.sol";
 import "./Interfaces/ICollSurplusPool.sol";
-import "./Interfaces/ISortedTroves.sol";
+import "./Interfaces/ISortedVaults.sol";
 import "./Interfaces/IMPStaking.sol";
 import "./Dependencies/MoneypBase.sol";
 import "./Dependencies/Ownable.sol";
@@ -31,15 +31,15 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
 
     IBPDToken public bpdToken;
 
-    // A doubly linked list of Troves, sorted by their collateral ratios
-    ISortedTroves public sortedTroves;
+    // A doubly linked list of Vaults, sorted by their collateral ratios
+    ISortedVaults public sortedVaults;
 
     /* --- Variable container structs  ---
 
     Used to hold, return and assign variables inside a function, in order to avoid the error:
     "CompilerError: Stack too deep". */
 
-     struct LocalVariables_adjustTrove {
+     struct LocalVariables_adjustVault {
         uint price;
         uint collChange;
         uint netDebtChange;
@@ -55,7 +55,7 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         uint stake;
     }
 
-    struct LocalVariables_openTrove {
+    struct LocalVariables_openVault {
         uint price;
         uint BPDFee;
         uint netDebt;
@@ -73,37 +73,37 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
     }
 
     enum BorrowerOperation {
-        openTrove,
-        closeTrove,
-        adjustTrove
+        openVault,
+        closeVault,
+        adjustVault
     }
 
-    event TroveManagerAddressChanged(address _newTroveManagerAddress);
+    event VaultManagerAddressChanged(address _newVaultManagerAddress);
     event ActivePoolAddressChanged(address _activePoolAddress);
     event DefaultPoolAddressChanged(address _defaultPoolAddress);
     event StabilityPoolAddressChanged(address _stabilityPoolAddress);
     event GasPoolAddressChanged(address _gasPoolAddress);
     event CollSurplusPoolAddressChanged(address _collSurplusPoolAddress);
     event PriceFeedAddressChanged(address  _newPriceFeedAddress);
-    event SortedTrovesAddressChanged(address _sortedTrovesAddress);
+    event SortedVaultsAddressChanged(address _sortedVaultsAddress);
     event BPDTokenAddressChanged(address _bpdTokenAddress);
     event MPStakingAddressChanged(address _mpStakingAddress);
 
-    event TroveCreated(address indexed _borrower, uint arrayIndex);
-    event TroveUpdated(address indexed _borrower, uint _debt, uint _coll, uint stake, BorrowerOperation operation);
+    event VaultCreated(address indexed _borrower, uint arrayIndex);
+    event VaultUpdated(address indexed _borrower, uint _debt, uint _coll, uint stake, BorrowerOperation operation);
     event BPDBorrowingFeePaid(address indexed _borrower, uint _BPDFee);
     
     // --- Dependency setters ---
 
     function setAddresses(
-        address _troveManagerAddress,
+        address _vaultManagerAddress,
         address _activePoolAddress,
         address _defaultPoolAddress,
         address _stabilityPoolAddress,
         address _gasPoolAddress,
         address _collSurplusPoolAddress,
         address _priceFeedAddress,
-        address _sortedTrovesAddress,
+        address _sortedVaultsAddress,
         address _bpdTokenAddress,
         address _mpStakingAddress
     )
@@ -111,57 +111,57 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         override
         onlyOwner
     {
-        // This makes impossible to open a trove with zero withdrawn BPD
+        // This makes impossible to open a vault with zero withdrawn BPD
         assert(MIN_NET_DEBT > 0);
 
-        checkContract(_troveManagerAddress);
+        checkContract(_vaultManagerAddress);
         checkContract(_activePoolAddress);
         checkContract(_defaultPoolAddress);
         checkContract(_stabilityPoolAddress);
         checkContract(_gasPoolAddress);
         checkContract(_collSurplusPoolAddress);
         checkContract(_priceFeedAddress);
-        checkContract(_sortedTrovesAddress);
+        checkContract(_sortedVaultsAddress);
         checkContract(_bpdTokenAddress);
         checkContract(_mpStakingAddress);
 
-        vaultManager = IVaultManager(_troveManagerAddress);
+        vaultManager = IVaultManager(_vaultManagerAddress);
         activePool = IActivePool(_activePoolAddress);
         defaultPool = IDefaultPool(_defaultPoolAddress);
         stabilityPoolAddress = _stabilityPoolAddress;
         gasPoolAddress = _gasPoolAddress;
         collSurplusPool = ICollSurplusPool(_collSurplusPoolAddress);
         priceFeed = IPriceFeed(_priceFeedAddress);
-        sortedTroves = ISortedTroves(_sortedTrovesAddress);
+        sortedVaults = ISortedVaults(_sortedVaultsAddress);
         bpdToken = IBPDToken(_bpdTokenAddress);
         mpStakingAddress = _mpStakingAddress;
         mpStaking = IMPStaking(_mpStakingAddress);
 
-        emit TroveManagerAddressChanged(_troveManagerAddress);
+        emit VaultManagerAddressChanged(_vaultManagerAddress);
         emit ActivePoolAddressChanged(_activePoolAddress);
         emit DefaultPoolAddressChanged(_defaultPoolAddress);
         emit StabilityPoolAddressChanged(_stabilityPoolAddress);
         emit GasPoolAddressChanged(_gasPoolAddress);
         emit CollSurplusPoolAddressChanged(_collSurplusPoolAddress);
         emit PriceFeedAddressChanged(_priceFeedAddress);
-        emit SortedTrovesAddressChanged(_sortedTrovesAddress);
+        emit SortedVaultsAddressChanged(_sortedVaultsAddress);
         emit BPDTokenAddressChanged(_bpdTokenAddress);
         emit MPStakingAddressChanged(_mpStakingAddress);
 
         _renounceOwnership();
     }
 
-    // --- Borrower Trove Operations ---
+    // --- Borrower Vault Operations ---
 
-    function openTrove(uint _maxFeePercentage, uint _BPDAmount, address _upperHint, address _lowerHint) external payable override {
+    function openVault(uint _maxFeePercentage, uint _BPDAmount, address _upperHint, address _lowerHint) external payable override {
         ContractsCache memory contractsCache = ContractsCache(vaultManager, activePool, bpdToken);
-        LocalVariables_openTrove memory vars;
+        LocalVariables_openVault memory vars;
 
         vars.price = priceFeed.fetchPrice();
         bool isRecoveryMode = _checkRecoveryMode(vars.price);
 
         _requireValidMaxFeePercentage(_maxFeePercentage, isRecoveryMode);
-        _requireTroveisNotActive(contractsCache.vaultManager, msg.sender);
+        _requireVaultisNotActive(contractsCache.vaultManager, msg.sender);
 
         vars.BPDFee;
         vars.netDebt = _BPDAmount;
@@ -183,21 +183,21 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
             _requireICRisAboveCCR(vars.ICR);
         } else {
             _requireICRisAboveMCR(vars.ICR);
-            uint newTCR = _getNewTCRFromTroveChange(msg.value, true, vars.compositeDebt, true, vars.price);  // bools: coll increase, debt increase
+            uint newTCR = _getNewTCRFromVaultChange(msg.value, true, vars.compositeDebt, true, vars.price);  // bools: coll increase, debt increase
             _requireNewTCRisAboveCCR(newTCR); 
         }
 
-        // Set the trove struct's properties
-        contractsCache.vaultManager.setTroveStatus(msg.sender, 1);
-        contractsCache.vaultManager.increaseTroveColl(msg.sender, msg.value);
-        contractsCache.vaultManager.increaseTroveDebt(msg.sender, vars.compositeDebt);
+        // Set the vault struct's properties
+        contractsCache.vaultManager.setVaultStatus(msg.sender, 1);
+        contractsCache.vaultManager.increaseVaultColl(msg.sender, msg.value);
+        contractsCache.vaultManager.increaseVaultDebt(msg.sender, vars.compositeDebt);
 
-        contractsCache.vaultManager.updateTroveRewardSnapshots(msg.sender);
+        contractsCache.vaultManager.updateVaultRewardSnapshots(msg.sender);
         vars.stake = contractsCache.vaultManager.updateStakeAndTotalStakes(msg.sender);
 
-        sortedTroves.insert(msg.sender, vars.NICR, _upperHint, _lowerHint);
-        vars.arrayIndex = contractsCache.vaultManager.addTroveOwnerToArray(msg.sender);
-        emit TroveCreated(msg.sender, vars.arrayIndex);
+        sortedVaults.insert(msg.sender, vars.NICR, _upperHint, _lowerHint);
+        vars.arrayIndex = contractsCache.vaultManager.addVaultOwnerToArray(msg.sender);
+        emit VaultCreated(msg.sender, vars.arrayIndex);
 
         // Move the bitcoin to the Active Pool, and mint the BPDAmount to the borrower
         _activePoolAddColl(contractsCache.activePool, msg.value);
@@ -205,50 +205,50 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         // Move the BPD gas compensation to the Gas Pool
         _withdrawBPD(contractsCache.activePool, contractsCache.bpdToken, gasPoolAddress, BPD_GAS_COMPENSATION, BPD_GAS_COMPENSATION);
 
-        emit TroveUpdated(msg.sender, vars.compositeDebt, msg.value, vars.stake, BorrowerOperation.openTrove);
+        emit VaultUpdated(msg.sender, vars.compositeDebt, msg.value, vars.stake, BorrowerOperation.openVault);
         emit BPDBorrowingFeePaid(msg.sender, vars.BPDFee);
     }
 
-    // Send ETH as collateral to a trove
+    // Send RBTC as collateral to a vault
     function addColl(address _upperHint, address _lowerHint) external payable override {
-        _adjustTrove(msg.sender, 0, 0, false, _upperHint, _lowerHint, 0);
+        _adjustVault(msg.sender, 0, 0, false, _upperHint, _lowerHint, 0);
     }
 
-    // Send ETH as collateral to a trove. Called by only the Stability Pool.
-    function moveETHGainToTrove(address _borrower, address _upperHint, address _lowerHint) external payable override {
+    // Send RBTC as collateral to a vault. Called by only the Stability Pool.
+    function moveRBTCGainToVault(address _borrower, address _upperHint, address _lowerHint) external payable override {
         _requireCallerIsStabilityPool();
-        _adjustTrove(_borrower, 0, 0, false, _upperHint, _lowerHint, 0);
+        _adjustVault(_borrower, 0, 0, false, _upperHint, _lowerHint, 0);
     }
 
-    // Withdraw ETH collateral from a trove
+    // Withdraw RBTC collateral from a vault
     function withdrawColl(uint _collWithdrawal, address _upperHint, address _lowerHint) external override {
-        _adjustTrove(msg.sender, _collWithdrawal, 0, false, _upperHint, _lowerHint, 0);
+        _adjustVault(msg.sender, _collWithdrawal, 0, false, _upperHint, _lowerHint, 0);
     }
 
-    // Withdraw BPD tokens from a trove: mint new BPD tokens to the owner, and increase the trove's debt accordingly
+    // Withdraw BPD tokens from a vault: mint new BPD tokens to the owner, and increase the vault's debt accordingly
     function withdrawBPD(uint _maxFeePercentage, uint _BPDAmount, address _upperHint, address _lowerHint) external override {
-        _adjustTrove(msg.sender, 0, _BPDAmount, true, _upperHint, _lowerHint, _maxFeePercentage);
+        _adjustVault(msg.sender, 0, _BPDAmount, true, _upperHint, _lowerHint, _maxFeePercentage);
     }
 
-    // Repay BPD tokens to a Trove: Burn the repaid BPD tokens, and reduce the trove's debt accordingly
+    // Repay BPD tokens to a Vault: Burn the repaid BPD tokens, and reduce the vault's debt accordingly
     function repayBPD(uint _BPDAmount, address _upperHint, address _lowerHint) external override {
-        _adjustTrove(msg.sender, 0, _BPDAmount, false, _upperHint, _lowerHint, 0);
+        _adjustVault(msg.sender, 0, _BPDAmount, false, _upperHint, _lowerHint, 0);
     }
 
-    function adjustTrove(uint _maxFeePercentage, uint _collWithdrawal, uint _BPDChange, bool _isDebtIncrease, address _upperHint, address _lowerHint) external payable override {
-        _adjustTrove(msg.sender, _collWithdrawal, _BPDChange, _isDebtIncrease, _upperHint, _lowerHint, _maxFeePercentage);
+    function adjustVault(uint _maxFeePercentage, uint _collWithdrawal, uint _BPDChange, bool _isDebtIncrease, address _upperHint, address _lowerHint) external payable override {
+        _adjustVault(msg.sender, _collWithdrawal, _BPDChange, _isDebtIncrease, _upperHint, _lowerHint, _maxFeePercentage);
     }
 
     /*
-    * _adjustTrove(): Alongside a debt change, this function can perform either a collateral top-up or a collateral withdrawal. 
+    * _adjustVault(): Alongside a debt change, this function can perform either a collateral top-up or a collateral withdrawal. 
     *
     * It therefore expects either a positive msg.value, or a positive _collWithdrawal argument.
     *
     * If both are positive, it will revert.
     */
-    function _adjustTrove(address _borrower, uint _collWithdrawal, uint _BPDChange, bool _isDebtIncrease, address _upperHint, address _lowerHint, uint _maxFeePercentage) internal {
+    function _adjustVault(address _borrower, uint _collWithdrawal, uint _BPDChange, bool _isDebtIncrease, address _upperHint, address _lowerHint, uint _maxFeePercentage) internal {
         ContractsCache memory contractsCache = ContractsCache(vaultManager, activePool, bpdToken);
-        LocalVariables_adjustTrove memory vars;
+        LocalVariables_adjustVault memory vars;
 
         vars.price = priceFeed.fetchPrice();
         bool isRecoveryMode = _checkRecoveryMode(vars.price);
@@ -259,14 +259,14 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         }
         _requireSingularCollChange(_collWithdrawal);
         _requireNonZeroAdjustment(_collWithdrawal, _BPDChange);
-        _requireTroveisActive(contractsCache.vaultManager, _borrower);
+        _requireVaultisActive(contractsCache.vaultManager, _borrower);
 
-        // Confirm the operation is either a borrower adjusting their own trove, or a pure ETH transfer from the Stability Pool to a trove
+        // Confirm the operation is either a borrower adjusting their own vault, or a pure RBTC transfer from the Stability Pool to a vault
         assert(msg.sender == _borrower || (msg.sender == stabilityPoolAddress && msg.value > 0 && _BPDChange == 0));
 
         contractsCache.vaultManager.applyPendingRewards(_borrower);
 
-        // Get the collChange based on whether or not ETH was sent in the transaction
+        // Get the collChange based on whether or not RBTC was sent in the transaction
         (vars.collChange, vars.isCollIncrease) = _getCollChange(msg.value, _collWithdrawal);
 
         vars.netDebtChange = _BPDChange;
@@ -277,12 +277,12 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
             vars.netDebtChange = vars.netDebtChange.add(vars.BPDFee); // The raw debt change includes the fee
         }
 
-        vars.debt = contractsCache.vaultManager.getTroveDebt(_borrower);
-        vars.coll = contractsCache.vaultManager.getTroveColl(_borrower);
+        vars.debt = contractsCache.vaultManager.getVaultDebt(_borrower);
+        vars.coll = contractsCache.vaultManager.getVaultColl(_borrower);
         
-        // Get the trove's old ICR before the adjustment, and what its new ICR will be after the adjustment
+        // Get the vault's old ICR before the adjustment, and what its new ICR will be after the adjustment
         vars.oldICR = MoneypMath._computeCR(vars.coll, vars.debt, vars.price);
-        vars.newICR = _getNewICRFromTroveChange(vars.coll, vars.debt, vars.collChange, vars.isCollIncrease, vars.netDebtChange, _isDebtIncrease, vars.price);
+        vars.newICR = _getNewICRFromVaultChange(vars.coll, vars.debt, vars.collChange, vars.isCollIncrease, vars.netDebtChange, _isDebtIncrease, vars.price);
         assert(_collWithdrawal <= vars.coll); 
 
         // Check the adjustment satisfies all conditions for the current system mode
@@ -295,18 +295,18 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
             _requireSufficientBPDBalance(contractsCache.bpdToken, _borrower, vars.netDebtChange);
         }
 
-        (vars.newColl, vars.newDebt) = _updateTroveFromAdjustment(contractsCache.vaultManager, _borrower, vars.collChange, vars.isCollIncrease, vars.netDebtChange, _isDebtIncrease);
+        (vars.newColl, vars.newDebt) = _updateVaultFromAdjustment(contractsCache.vaultManager, _borrower, vars.collChange, vars.isCollIncrease, vars.netDebtChange, _isDebtIncrease);
         vars.stake = contractsCache.vaultManager.updateStakeAndTotalStakes(_borrower);
 
-        // Re-insert trove in to the sorted list
-        uint newNICR = _getNewNominalICRFromTroveChange(vars.coll, vars.debt, vars.collChange, vars.isCollIncrease, vars.netDebtChange, _isDebtIncrease);
-        sortedTroves.reInsert(_borrower, newNICR, _upperHint, _lowerHint);
+        // Re-insert vault in to the sorted list
+        uint newNICR = _getNewNominalICRFromVaultChange(vars.coll, vars.debt, vars.collChange, vars.isCollIncrease, vars.netDebtChange, _isDebtIncrease);
+        sortedVaults.reInsert(_borrower, newNICR, _upperHint, _lowerHint);
 
-        emit TroveUpdated(_borrower, vars.newDebt, vars.newColl, vars.stake, BorrowerOperation.adjustTrove);
+        emit VaultUpdated(_borrower, vars.newDebt, vars.newColl, vars.stake, BorrowerOperation.adjustVault);
         emit BPDBorrowingFeePaid(msg.sender,  vars.BPDFee);
 
         // Use the unmodified _BPDChange here, as we don't send the fee to the user
-        _moveTokensAndETHfromAdjustment(
+        _moveTokensAndRBTCfromAdjustment(
             contractsCache.activePool,
             contractsCache.bpdToken,
             msg.sender,
@@ -318,51 +318,51 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         );
     }
 
-    function closeTrove() external override {
-        IVaultManager troveManagerCached = vaultManager;
+    function closeVault() external override {
+        IVaultManager vaultManagerCached = vaultManager;
         IActivePool activePoolCached = activePool;
         IBPDToken bpdTokenCached = bpdToken;
 
-        _requireTroveisActive(troveManagerCached, msg.sender);
+        _requireVaultisActive(vaultManagerCached, msg.sender);
         uint price = priceFeed.fetchPrice();
         _requireNotInRecoveryMode(price);
 
-        troveManagerCached.applyPendingRewards(msg.sender);
+        vaultManagerCached.applyPendingRewards(msg.sender);
 
-        uint coll = troveManagerCached.getTroveColl(msg.sender);
-        uint debt = troveManagerCached.getTroveDebt(msg.sender);
+        uint coll = vaultManagerCached.getVaultColl(msg.sender);
+        uint debt = vaultManagerCached.getVaultDebt(msg.sender);
 
         _requireSufficientBPDBalance(bpdTokenCached, msg.sender, debt.sub(BPD_GAS_COMPENSATION));
 
-        uint newTCR = _getNewTCRFromTroveChange(coll, false, debt, false, price);
+        uint newTCR = _getNewTCRFromVaultChange(coll, false, debt, false, price);
         _requireNewTCRisAboveCCR(newTCR);
 
-        troveManagerCached.removeStake(msg.sender);
-        troveManagerCached.closeTrove(msg.sender);
+        vaultManagerCached.removeStake(msg.sender);
+        vaultManagerCached.closeVault(msg.sender);
 
-        emit TroveUpdated(msg.sender, 0, 0, 0, BorrowerOperation.closeTrove);
+        emit VaultUpdated(msg.sender, 0, 0, 0, BorrowerOperation.closeVault);
 
         // Burn the repaid BPD from the user's balance and the gas compensation from the Gas Pool
         _repayBPD(activePoolCached, bpdTokenCached, msg.sender, debt.sub(BPD_GAS_COMPENSATION));
         _repayBPD(activePoolCached, bpdTokenCached, gasPoolAddress, BPD_GAS_COMPENSATION);
 
         // Send the collateral back to the user
-        activePoolCached.sendETH(msg.sender, coll);
+        activePoolCached.sendRBTC(msg.sender, coll);
     }
 
     /**
      * Claim remaining collateral from a redemption or from a liquidation with ICR > MCR in Recovery Mode
      */
     function claimCollateral() external override {
-        // send ETH from CollSurplus Pool to owner
+        // send RBTC from CollSurplus Pool to owner
         collSurplusPool.claimColl(msg.sender);
     }
 
     // --- Helper functions ---
 
-    function _triggerBorrowingFee(IVaultManager _troveManager, IBPDToken _bpdToken, uint _BPDAmount, uint _maxFeePercentage) internal returns (uint) {
-        _troveManager.decayBaseRateFromBorrowing(); // decay the baseRate state variable
-        uint BPDFee = _troveManager.getBorrowingFee(_BPDAmount);
+    function _triggerBorrowingFee(IVaultManager _vaultManager, IBPDToken _bpdToken, uint _BPDAmount, uint _maxFeePercentage) internal returns (uint) {
+        _vaultManager.decayBaseRateFromBorrowing(); // decay the baseRate state variable
+        uint BPDFee = _vaultManager.getBorrowingFee(_BPDAmount);
 
         _requireUserAcceptsFee(BPDFee, _BPDAmount, _maxFeePercentage);
         
@@ -395,10 +395,10 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         }
     }
 
-    // Update trove's coll and debt based on whether they increase or decrease
-    function _updateTroveFromAdjustment
+    // Update vault's coll and debt based on whether they increase or decrease
+    function _updateVaultFromAdjustment
     (
-        IVaultManager _troveManager,
+        IVaultManager _vaultManager,
         address _borrower,
         uint _collChange,
         bool _isCollIncrease,
@@ -408,15 +408,15 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         internal
         returns (uint, uint)
     {
-        uint newColl = (_isCollIncrease) ? _troveManager.increaseTroveColl(_borrower, _collChange)
-                                        : _troveManager.decreaseTroveColl(_borrower, _collChange);
-        uint newDebt = (_isDebtIncrease) ? _troveManager.increaseTroveDebt(_borrower, _debtChange)
-                                        : _troveManager.decreaseTroveDebt(_borrower, _debtChange);
+        uint newColl = (_isCollIncrease) ? _vaultManager.increaseVaultColl(_borrower, _collChange)
+                                        : _vaultManager.decreaseVaultColl(_borrower, _collChange);
+        uint newDebt = (_isDebtIncrease) ? _vaultManager.increaseVaultDebt(_borrower, _debtChange)
+                                        : _vaultManager.decreaseVaultDebt(_borrower, _debtChange);
 
         return (newColl, newDebt);
     }
 
-    function _moveTokensAndETHfromAdjustment
+    function _moveTokensAndRBTCfromAdjustment
     (
         IActivePool _activePool,
         IBPDToken _bpdToken,
@@ -438,14 +438,14 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         if (_isCollIncrease) {
             _activePoolAddColl(_activePool, _collChange);
         } else {
-            _activePool.sendETH(_borrower, _collChange);
+            _activePool.sendRBTC(_borrower, _collChange);
         }
     }
 
-    // Send ETH to Active Pool and increase its recorded ETH balance
+    // Send RBTC to Active Pool and increase its recorded RBTC balance
     function _activePoolAddColl(IActivePool _activePool, uint _amount) internal {
         (bool success, ) = address(_activePool).call{value: _amount}("");
-        require(success, "BorrowerOps: Sending ETH to ActivePool failed");
+        require(success, "BorrowerOps: Sending RBTC to ActivePool failed");
     }
 
     // Issue the specified amount of BPD to _account and increases the total active debt (_netDebtIncrease potentially includes a BPDFee)
@@ -474,14 +474,14 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         require(msg.value != 0 || _collWithdrawal != 0 || _BPDChange != 0, "BorrowerOps: There must be either a collateral change or a debt change");
     }
 
-    function _requireTroveisActive(IVaultManager _troveManager, address _borrower) internal view {
-        uint status = _troveManager.getTroveStatus(_borrower);
-        require(status == 1, "BorrowerOps: Trove does not exist or is closed");
+    function _requireVaultisActive(IVaultManager _vaultManager, address _borrower) internal view {
+        uint status = _vaultManager.getVaultStatus(_borrower);
+        require(status == 1, "BorrowerOps: Vault does not exist or is closed");
     }
 
-    function _requireTroveisNotActive(IVaultManager _troveManager, address _borrower) internal view {
-        uint status = _troveManager.getTroveStatus(_borrower);
-        require(status != 1, "BorrowerOps: Trove is active");
+    function _requireVaultisNotActive(IVaultManager _vaultManager, address _borrower) internal view {
+        uint status = _vaultManager.getVaultStatus(_borrower);
+        require(status != 1, "BorrowerOps: Vault is active");
     }
 
     function _requireNonZeroDebtChange(uint _BPDChange) internal pure {
@@ -501,7 +501,7 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         bool _isRecoveryMode,
         uint _collWithdrawal,
         bool _isDebtIncrease, 
-        LocalVariables_adjustTrove memory _vars
+        LocalVariables_adjustVault memory _vars
     ) 
         internal 
         view 
@@ -527,7 +527,7 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
             }       
         } else { // if Normal Mode
             _requireICRisAboveMCR(_vars.newICR);
-            _vars.newTCR = _getNewTCRFromTroveChange(_vars.collChange, _vars.isCollIncrease, _vars.netDebtChange, _isDebtIncrease, _vars.price);
+            _vars.newTCR = _getNewTCRFromVaultChange(_vars.collChange, _vars.isCollIncrease, _vars.netDebtChange, _isDebtIncrease, _vars.price);
             _requireNewTCRisAboveCCR(_vars.newTCR);  
         }
     }
@@ -537,11 +537,11 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
     }
 
     function _requireICRisAboveCCR(uint _newICR) internal pure {
-        require(_newICR >= CCR, "BorrowerOps: Operation must leave trove with ICR >= CCR");
+        require(_newICR >= CCR, "BorrowerOps: Operation must leave vault with ICR >= CCR");
     }
 
     function _requireNewICRisAboveOldICR(uint _newICR, uint _oldICR) internal pure {
-        require(_newICR >= _oldICR, "BorrowerOps: Cannot decrease your Trove's ICR in Recovery Mode");
+        require(_newICR >= _oldICR, "BorrowerOps: Cannot decrease your Vault's ICR in Recovery Mode");
     }
 
     function _requireNewTCRisAboveCCR(uint _newTCR) internal pure {
@@ -549,11 +549,11 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
     }
 
     function _requireAtLeastMinNetDebt(uint _netDebt) internal pure {
-        require (_netDebt >= MIN_NET_DEBT, "BorrowerOps: Trove's net debt must be greater than minimum");
+        require (_netDebt >= MIN_NET_DEBT, "BorrowerOps: Vault's net debt must be greater than minimum");
     }
 
     function _requireValidBPDRepayment(uint _currentDebt, uint _debtRepayment) internal pure {
-        require(_debtRepayment <= _currentDebt.sub(BPD_GAS_COMPENSATION), "BorrowerOps: Amount repaid must not be larger than the Trove's debt");
+        require(_debtRepayment <= _currentDebt.sub(BPD_GAS_COMPENSATION), "BorrowerOps: Amount repaid must not be larger than the Vault's debt");
     }
 
     function _requireCallerIsStabilityPool() internal view {
@@ -577,7 +577,7 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
     // --- ICR and TCR getters ---
 
     // Compute the new collateral ratio, considering the change in coll and debt. Assumes 0 pending rewards.
-    function _getNewNominalICRFromTroveChange
+    function _getNewNominalICRFromVaultChange
     (
         uint _coll,
         uint _debt,
@@ -590,14 +590,14 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         internal
         returns (uint)
     {
-        (uint newColl, uint newDebt) = _getNewTroveAmounts(_coll, _debt, _collChange, _isCollIncrease, _debtChange, _isDebtIncrease);
+        (uint newColl, uint newDebt) = _getNewVaultAmounts(_coll, _debt, _collChange, _isCollIncrease, _debtChange, _isDebtIncrease);
 
         uint newNICR = MoneypMath._computeNominalCR(newColl, newDebt);
         return newNICR;
     }
 
     // Compute the new collateral ratio, considering the change in coll and debt. Assumes 0 pending rewards.
-    function _getNewICRFromTroveChange
+    function _getNewICRFromVaultChange
     (
         uint _coll,
         uint _debt,
@@ -611,13 +611,13 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         internal
         returns (uint)
     {
-        (uint newColl, uint newDebt) = _getNewTroveAmounts(_coll, _debt, _collChange, _isCollIncrease, _debtChange, _isDebtIncrease);
+        (uint newColl, uint newDebt) = _getNewVaultAmounts(_coll, _debt, _collChange, _isCollIncrease, _debtChange, _isDebtIncrease);
 
         uint newICR = MoneypMath._computeCR(newColl, newDebt, _price);
         return newICR;
     }
 
-    function _getNewTroveAmounts(
+    function _getNewVaultAmounts(
         uint _coll,
         uint _debt,
         uint _collChange,
@@ -638,7 +638,7 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         return (newColl, newDebt);
     }
 
-    function _getNewTCRFromTroveChange
+    function _getNewTCRFromVaultChange
     (
         uint _collChange,
         bool _isCollIncrease,

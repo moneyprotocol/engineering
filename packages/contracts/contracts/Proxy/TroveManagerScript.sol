@@ -3,21 +3,21 @@
 pragma solidity 0.6.11;
 
 import "../Dependencies/CheckContract.sol";
-import "../Interfaces/ITroveManager.sol";
+import "../Interfaces/IVaultManager.sol";
 
 
-contract TroveManagerScript is CheckContract {
-    string constant public NAME = "TroveManagerScript";
+contract VaultManagerScript is CheckContract {
+    string constant public NAME = "VaultManagerScript";
 
-    ITroveManager immutable troveManager;
+    IVaultManager immutable vaultManager;
 
-    constructor(ITroveManager _troveManager) public {
-        checkContract(address(_troveManager));
-        troveManager = _troveManager;
+    constructor(IVaultManager _vaultManager) public {
+        checkContract(address(_vaultManager));
+        vaultManager = _vaultManager;
     }
 
     function redeemCollateral(
-        uint _LUSDAmount,
+        uint _BPDAmount,
         address _firstRedemptionHint,
         address _upperPartialRedemptionHint,
         address _lowerPartialRedemptionHint,
@@ -25,8 +25,8 @@ contract TroveManagerScript is CheckContract {
         uint _maxIterations,
         uint _maxFee
     ) external returns (uint) {
-        troveManager.redeemCollateral(
-            _LUSDAmount,
+        vaultManager.redeemCollateral(
+            _BPDAmount,
             _firstRedemptionHint,
             _upperPartialRedemptionHint,
             _lowerPartialRedemptionHint,

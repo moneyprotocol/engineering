@@ -66,7 +66,7 @@ interface IStabilityPool {
     event RBTCGainWithdrawn(address indexed _depositor, uint _RBTC, uint _BPDLoss);
     event MPPaidToDepositor(address indexed _depositor, uint _MP);
     event MPPaidToFrontEnd(address indexed _frontEnd, uint _MP);
-    event EtherSent(address _to, uint _amount);
+    event BitcoinSent(address _to, uint _amount);
 
     // --- Functions ---
 

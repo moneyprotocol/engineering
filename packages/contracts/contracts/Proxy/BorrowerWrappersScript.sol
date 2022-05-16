@@ -3,66 +3,66 @@
 pragma solidity 0.6.11;
 
 import "../Dependencies/SafeMath.sol";
-import "../Dependencies/LiquityMath.sol";
+import "../Dependencies/MoneypMath.sol";
 import "../Dependencies/IERC20.sol";
 import "../Interfaces/IBorrowerOperations.sol";
-import "../Interfaces/ITroveManager.sol";
+import "../Interfaces/IVaultManager.sol";
 import "../Interfaces/IStabilityPool.sol";
 import "../Interfaces/IPriceFeed.sol";
-import "../Interfaces/ILQTYStaking.sol";
+import "../Interfaces/IMPStaking.sol";
 import "./BorrowerOperationsScript.sol";
-import "./ETHTransferScript.sol";
-import "./LQTYStakingScript.sol";
+import "./RBTCTransferScript.sol";
+import "./MPStakingScript.sol";
 import "../Dependencies/console.sol";
 
 
-contract BorrowerWrappersScript is BorrowerOperationsScript, ETHTransferScript, LQTYStakingScript {
+contract BorrowerWrappersScript is BorrowerOperationsScript, RBTCTransferScript, MPStakingScript {
     using SafeMath for uint;
 
     string constant public NAME = "BorrowerWrappersScript";
 
-    ITroveManager immutable troveManager;
+    IVaultManager immutable vaultManager;
     IStabilityPool immutable stabilityPool;
     IPriceFeed immutable priceFeed;
-    IERC20 immutable lusdToken;
-    IERC20 immutable lqtyToken;
-    ILQTYStaking immutable lqtyStaking;
+    IERC20 immutable bpdToken;
+    IERC20 immutable mpToken;
+    IMPStaking immutable mpStaking;
 
     constructor(
         address _borrowerOperationsAddress,
-        address _troveManagerAddress,
-        address _lqtyStakingAddress
+        address _vaultManagerAddress,
+        address _mpStakingAddress
     )
         BorrowerOperationsScript(IBorrowerOperations(_borrowerOperationsAddress))
-        LQTYStakingScript(_lqtyStakingAddress)
+        MPStakingScript(_mpStakingAddress)
         public
     {
-        checkContract(_troveManagerAddress);
-        ITroveManager troveManagerCached = ITroveManager(_troveManagerAddress);
-        troveManager = troveManagerCached;
+        checkContract(_vaultManagerAddress);
+        IVaultManager vaultManagerCached = IVaultManager(_vaultManagerAddress);
+        vaultManager = vaultManagerCached;
 
-        IStabilityPool stabilityPoolCached = troveManagerCached.stabilityPool();
+        IStabilityPool stabilityPoolCached = vaultManagerCached.stabilityPool();
         checkContract(address(stabilityPoolCached));
         stabilityPool = stabilityPoolCached;
 
-        IPriceFeed priceFeedCached = troveManagerCached.priceFeed();
+        IPriceFeed priceFeedCached = vaultManagerCached.priceFeed();
         checkContract(address(priceFeedCached));
         priceFeed = priceFeedCached;
 
-        address lusdTokenCached = address(troveManagerCached.lusdToken());
-        checkContract(lusdTokenCached);
-        lusdToken = IERC20(lusdTokenCached);
+        address bpdTokenCached = address(vaultManagerCached.bpdToken());
+        checkContract(bpdTokenCached);
+        bpdToken = IERC20(bpdTokenCached);
 
-        address lqtyTokenCached = address(troveManagerCached.lqtyToken());
-        checkContract(lqtyTokenCached);
-        lqtyToken = IERC20(lqtyTokenCached);
+        address mpTokenCached = address(vaultManagerCached.mpToken());
+        checkContract(mpTokenCached);
+        mpToken = IERC20(mpTokenCached);
 
-        ILQTYStaking lqtyStakingCached = troveManagerCached.lqtyStaking();
-        require(_lqtyStakingAddress == address(lqtyStakingCached), "BorrowerWrappersScript: Wrong LQTYStaking address");
-        lqtyStaking = lqtyStakingCached;
+        IMPStaking mpStakingCached = vaultManagerCached.mpStaking();
+        require(_mpStakingAddress == address(mpStakingCached), "BorrowerWrappersScript: Wrong MPStaking address");
+        mpStaking = mpStakingCached;
     }
 
-    function claimCollateralAndOpenTrove(uint _maxFee, uint _LUSDAmount, address _upperHint, address _lowerHint) external payable {
+    function claimCollateralAndOpenVault(uint _maxFee, uint _BPDAmount, address _upperHint, address _lowerHint) external payable {
         uint balanceBefore = address(this).balance;
 
         // Claim collateral
@@ -75,84 +75,84 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, ETHTransferScript, 
 
         uint totalCollateral = balanceAfter.sub(balanceBefore).add(msg.value);
 
-        // Open trove with obtained collateral, plus collateral sent by user
-        borrowerOperations.openTrove{ value: totalCollateral }(_maxFee, _LUSDAmount, _upperHint, _lowerHint);
+        // Open vault with obtained collateral, plus collateral sent by user
+        borrowerOperations.openVault{ value: totalCollateral }(_maxFee, _BPDAmount, _upperHint, _lowerHint);
     }
 
     function claimSPRewardsAndRecycle(uint _maxFee, address _upperHint, address _lowerHint) external {
         uint collBalanceBefore = address(this).balance;
-        uint lqtyBalanceBefore = lqtyToken.balanceOf(address(this));
+        uint mpBalanceBefore = mpToken.balanceOf(address(this));
 
         // Claim rewards
         stabilityPool.withdrawFromSP(0);
 
         uint collBalanceAfter = address(this).balance;
-        uint lqtyBalanceAfter = lqtyToken.balanceOf(address(this));
+        uint mpBalanceAfter = mpToken.balanceOf(address(this));
         uint claimedCollateral = collBalanceAfter.sub(collBalanceBefore);
 
-        // Add claimed ETH to trove, get more LUSD and stake it into the Stability Pool
+        // Add claimed RBTC to vault, get more BPD and stake it into the Stability Pool
         if (claimedCollateral > 0) {
-            _requireUserHasTrove(address(this));
-            uint LUSDAmount = _getNetLUSDAmount(claimedCollateral);
-            borrowerOperations.adjustTrove{ value: claimedCollateral }(_maxFee, 0, LUSDAmount, true, _upperHint, _lowerHint);
-            // Provide withdrawn LUSD to Stability Pool
-            if (LUSDAmount > 0) {
-                stabilityPool.provideToSP(LUSDAmount, address(0));
+            _requireUserHasVault(address(this));
+            uint BPDAmount = _getNetBPDAmount(claimedCollateral);
+            borrowerOperations.adjustVault{ value: claimedCollateral }(_maxFee, 0, BPDAmount, true, _upperHint, _lowerHint);
+            // Provide withdrawn BPD to Stability Pool
+            if (BPDAmount > 0) {
+                stabilityPool.provideToSP(BPDAmount, address(0));
             }
         }
 
-        // Stake claimed LQTY
-        uint claimedLQTY = lqtyBalanceAfter.sub(lqtyBalanceBefore);
-        if (claimedLQTY > 0) {
-            lqtyStaking.stake(claimedLQTY);
+        // Stake claimed MP
+        uint claimedMP = mpBalanceAfter.sub(mpBalanceBefore);
+        if (claimedMP > 0) {
+            mpStaking.stake(claimedMP);
         }
     }
 
     function claimStakingGainsAndRecycle(uint _maxFee, address _upperHint, address _lowerHint) external {
         uint collBalanceBefore = address(this).balance;
-        uint lusdBalanceBefore = lusdToken.balanceOf(address(this));
-        uint lqtyBalanceBefore = lqtyToken.balanceOf(address(this));
+        uint bpdBalanceBefore = bpdToken.balanceOf(address(this));
+        uint mpBalanceBefore = mpToken.balanceOf(address(this));
 
         // Claim gains
-        lqtyStaking.unstake(0);
+        mpStaking.unstake(0);
 
         uint gainedCollateral = address(this).balance.sub(collBalanceBefore); // stack too deep issues :'(
-        uint gainedLUSD = lusdToken.balanceOf(address(this)).sub(lusdBalanceBefore);
+        uint gainedBPD = bpdToken.balanceOf(address(this)).sub(bpdBalanceBefore);
 
-        uint netLUSDAmount;
-        // Top up trove and get more LUSD, keeping ICR constant
+        uint netBPDAmount;
+        // Top up vault and get more BPD, keeping ICR constant
         if (gainedCollateral > 0) {
-            _requireUserHasTrove(address(this));
-            netLUSDAmount = _getNetLUSDAmount(gainedCollateral);
-            borrowerOperations.adjustTrove{ value: gainedCollateral }(_maxFee, 0, netLUSDAmount, true, _upperHint, _lowerHint);
+            _requireUserHasVault(address(this));
+            netBPDAmount = _getNetBPDAmount(gainedCollateral);
+            borrowerOperations.adjustVault{ value: gainedCollateral }(_maxFee, 0, netBPDAmount, true, _upperHint, _lowerHint);
         }
 
-        uint totalLUSD = gainedLUSD.add(netLUSDAmount);
-        if (totalLUSD > 0) {
-            stabilityPool.provideToSP(totalLUSD, address(0));
+        uint totalBPD = gainedBPD.add(netBPDAmount);
+        if (totalBPD > 0) {
+            stabilityPool.provideToSP(totalBPD, address(0));
 
-            // Providing to Stability Pool also triggers LQTY claim, so stake it if any
-            uint lqtyBalanceAfter = lqtyToken.balanceOf(address(this));
-            uint claimedLQTY = lqtyBalanceAfter.sub(lqtyBalanceBefore);
-            if (claimedLQTY > 0) {
-                lqtyStaking.stake(claimedLQTY);
+            // Providing to Stability Pool also triggers MP claim, so stake it if any
+            uint mpBalanceAfter = mpToken.balanceOf(address(this));
+            uint claimedMP = mpBalanceAfter.sub(mpBalanceBefore);
+            if (claimedMP > 0) {
+                mpStaking.stake(claimedMP);
             }
         }
 
     }
 
-    function _getNetLUSDAmount(uint _collateral) internal returns (uint) {
+    function _getNetBPDAmount(uint _collateral) internal returns (uint) {
         uint price = priceFeed.fetchPrice();
-        uint ICR = troveManager.getCurrentICR(address(this), price);
+        uint ICR = vaultManager.getCurrentICR(address(this), price);
 
-        uint LUSDAmount = _collateral.mul(price).div(ICR);
-        uint borrowingRate = troveManager.getBorrowingRateWithDecay();
-        uint netDebt = LUSDAmount.mul(LiquityMath.DECIMAL_PRECISION).div(LiquityMath.DECIMAL_PRECISION.add(borrowingRate));
+        uint BPDAmount = _collateral.mul(price).div(ICR);
+        uint borrowingRate = vaultManager.getBorrowingRateWithDecay();
+        uint netDebt = BPDAmount.mul(MoneypMath.DECIMAL_PRECISION).div(MoneypMath.DECIMAL_PRECISION.add(borrowingRate));
 
         return netDebt;
     }
 
-    function _requireUserHasTrove(address _depositor) internal view {
-        require(troveManager.getTroveStatus(_depositor) == 1, "BorrowerWrappersScript: caller must have an active trove");
+    function _requireUserHasVault(address _depositor) internal view {
+        require(vaultManager.getVaultStatus(_depositor) == 1, "BorrowerWrappersScript: caller must have an active vault");
     }
 }

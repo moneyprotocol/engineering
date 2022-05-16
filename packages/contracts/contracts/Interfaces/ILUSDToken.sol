@@ -5,15 +5,15 @@ pragma solidity 0.6.11;
 import "../Dependencies/IERC20.sol";
 import "../Dependencies/IERC2612.sol";
 
-interface ILUSDToken is IERC20, IERC2612 { 
+interface IBPDToken is IERC20, IERC2612 { 
     
     // --- Events ---
 
-    event TroveManagerAddressChanged(address _troveManagerAddress);
+    event VaultManagerAddressChanged(address _vaultManagerAddress);
     event StabilityPoolAddressChanged(address _newStabilityPoolAddress);
     event BorrowerOperationsAddressChanged(address _newBorrowerOperationsAddress);
 
-    event LUSDTokenBalanceUpdated(address _user, uint _amount);
+    event BPDTokenBalanceUpdated(address _user, uint _amount);
 
     // --- Functions ---
 

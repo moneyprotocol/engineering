@@ -14,8 +14,8 @@ contract BorrowerOperationsScript is CheckContract {
         borrowerOperations = _borrowerOperations;
     }
 
-    function openTrove(uint _maxFee, uint _LUSDAmount, address _upperHint, address _lowerHint) external payable {
-        borrowerOperations.openTrove{ value: msg.value }(_maxFee, _LUSDAmount, _upperHint, _lowerHint);
+    function openVault(uint _maxFee, uint _BPDAmount, address _upperHint, address _lowerHint) external payable {
+        borrowerOperations.openVault{ value: msg.value }(_maxFee, _BPDAmount, _upperHint, _lowerHint);
     }
 
     function addColl(address _upperHint, address _lowerHint) external payable {
@@ -26,20 +26,20 @@ contract BorrowerOperationsScript is CheckContract {
         borrowerOperations.withdrawColl(_amount, _upperHint, _lowerHint);
     }
 
-    function withdrawLUSD(uint _maxFee, uint _amount, address _upperHint, address _lowerHint) external {
-        borrowerOperations.withdrawLUSD(_maxFee, _amount, _upperHint, _lowerHint);
+    function withdrawBPD(uint _maxFee, uint _amount, address _upperHint, address _lowerHint) external {
+        borrowerOperations.withdrawBPD(_maxFee, _amount, _upperHint, _lowerHint);
     }
 
-    function repayLUSD(uint _amount, address _upperHint, address _lowerHint) external {
-        borrowerOperations.repayLUSD(_amount, _upperHint, _lowerHint);
+    function repayBPD(uint _amount, address _upperHint, address _lowerHint) external {
+        borrowerOperations.repayBPD(_amount, _upperHint, _lowerHint);
     }
 
-    function closeTrove() external {
-        borrowerOperations.closeTrove();
+    function closeVault() external {
+        borrowerOperations.closeVault();
     }
 
-    function adjustTrove(uint _maxFee, uint _collWithdrawal, uint _debtChange, bool isDebtIncrease, address _upperHint, address _lowerHint) external payable {
-        borrowerOperations.adjustTrove{ value: msg.value }(_maxFee, _collWithdrawal, _debtChange, isDebtIncrease, _upperHint, _lowerHint);
+    function adjustVault(uint _maxFee, uint _collWithdrawal, uint _debtChange, bool isDebtIncrease, address _upperHint, address _lowerHint) external payable {
+        borrowerOperations.adjustVault{ value: msg.value }(_maxFee, _collWithdrawal, _debtChange, isDebtIncrease, _upperHint, _lowerHint);
     }
 
     function claimCollateral() external {

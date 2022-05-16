@@ -2,34 +2,34 @@
 
 pragma solidity 0.6.11;
 
-import '../Interfaces/ITroveManager.sol';
-import '../Interfaces/ISortedTroves.sol';
+import '../Interfaces/IVaultManager.sol';
+import '../Interfaces/ISortedVaults.sol';
 import '../Interfaces/IPriceFeed.sol';
-import '../Dependencies/LiquityMath.sol';
+import '../Dependencies/MoneypMath.sol';
 
 /* Wrapper contract - used for calculating gas of read-only and internal functions. 
-Not part of the Liquity application. */
+Not part of the Moneyp application. */
 contract FunctionCaller {
 
-    ITroveManager troveManager;
-    address public troveManagerAddress;
+    IVaultManager vaultManager;
+    address public vaultManagerAddress;
 
-    ISortedTroves sortedTroves;
-    address public sortedTrovesAddress;
+    ISortedVaults sortedVaults;
+    address public sortedVaultsAddress;
 
     IPriceFeed priceFeed;
     address public priceFeedAddress;
 
     // --- Dependency setters ---
 
-    function setTroveManagerAddress(address _troveManagerAddress) external {
-        troveManagerAddress = _troveManagerAddress;
-        troveManager = ITroveManager(_troveManagerAddress);
+    function setVaultManagerAddress(address _vaultManagerAddress) external {
+        vaultManagerAddress = _vaultManagerAddress;
+        vaultManager = IVaultManager(_vaultManagerAddress);
     }
     
-    function setSortedTrovesAddress(address _sortedTrovesAddress) external {
-        troveManagerAddress = _sortedTrovesAddress;
-        sortedTroves = ISortedTroves(_sortedTrovesAddress);
+    function setSortedVaultsAddress(address _sortedVaultsAddress) external {
+        vaultManagerAddress = _sortedVaultsAddress;
+        sortedVaults = ISortedVaults(_sortedVaultsAddress);
     }
 
      function setPriceFeedAddress(address _priceFeedAddress) external {
@@ -39,11 +39,11 @@ contract FunctionCaller {
 
     // --- Non-view wrapper functions used for calculating gas ---
     
-    function troveManager_getCurrentICR(address _address, uint _price) external returns (uint) {
-        return troveManager.getCurrentICR(_address, _price);  
+    function vaultManager_getCurrentICR(address _address, uint _price) external returns (uint) {
+        return vaultManager.getCurrentICR(_address, _price);  
     }
 
-    function sortedTroves_findInsertPosition(uint _NICR, address _prevId, address _nextId) external returns (address, address) {
-        return sortedTroves.findInsertPosition(_NICR, _prevId, _nextId);
+    function sortedVaults_findInsertPosition(uint _NICR, address _prevId, address _nextId) external returns (address, address) {
+        return sortedVaults.findInsertPosition(_NICR, _prevId, _nextId);
     }
 }

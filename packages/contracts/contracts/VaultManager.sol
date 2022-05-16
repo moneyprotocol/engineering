@@ -89,15 +89,15 @@ contract VaultManager is MoneypBase, Ownable, CheckContract, IVaultManager {
     uint public totalCollateralSnapshot;
 
     /*
-    * L_RBTC and L_BPDDebt track the sums of accumulated liquidation rewards per unit staked. During its lifetime, each stake earns:
+    * B_RBTC and B_BPDDebt track the sums of accumulated liquidation rewards per unit staked. During its lifetime, each stake earns:
     *
-    * An RBTC gain of ( stake * [L_RBTC - L_RBTC(0)] )
-    * A BPDDebt increase  of ( stake * [L_BPDDebt - L_BPDDebt(0)] )
+    * An RBTC gain of ( stake * [B_RBTC - B_RBTC(0)] )
+    * A BPDDebt increase  of ( stake * [B_BPDDebt - B_BPDDebt(0)] )
     *
-    * Where L_RBTC(0) and L_BPDDebt(0) are snapshots of L_RBTC and L_BPDDebt for the active Vault taken at the instant the stake was made
+    * Where B_RBTC(0) and B_BPDDebt(0) are snapshots of B_RBTC and B_BPDDebt for the active Vault taken at the instant the stake was made
     */
-    uint public L_RBTC;
-    uint public L_BPDDebt;
+    uint public B_RBTC;
+    uint public B_BPDDebt;
 
     // Map addresses with active vaults to their RewardSnapshot
     mapping (address => RewardSnapshot) public rewardSnapshots;
@@ -217,8 +217,8 @@ contract VaultManager is MoneypBase, Ownable, CheckContract, IVaultManager {
     event LastFeeOpTimeUpdated(uint _lastFeeOpTime);
     event TotalStakesUpdated(uint _newTotalStakes);
     event SystemSnapshotsUpdated(uint _totalStakesSnapshot, uint _totalCollateralSnapshot);
-    event LTermsUpdated(uint _L_RBTC, uint _L_BPDDebt);
-    event VaultSnapshotsUpdated(uint _L_RBTC, uint _L_BPDDebt);
+    event LTermsUpdated(uint _B_RBTC, uint _B_BPDDebt);
+    event VaultSnapshotsUpdated(uint _B_RBTC, uint _B_BPDDebt);
     event VaultIndexUpdated(address _borrower, uint _newIndex);
 
      enum VaultManagerOperation {
@@ -1077,22 +1077,22 @@ contract VaultManager is MoneypBase, Ownable, CheckContract, IVaultManager {
         }
     }
 
-    // Update borrower's snapshots of L_RBTC and L_BPDDebt to reflect the current values
+    // Update borrower's snapshots of B_RBTC and B_BPDDebt to reflect the current values
     function updateVaultRewardSnapshots(address _borrower) external override {
         _requireCallerIsBorrowerOperations();
        return _updateVaultRewardSnapshots(_borrower);
     }
 
     function _updateVaultRewardSnapshots(address _borrower) internal {
-        rewardSnapshots[_borrower].RBTC = L_RBTC;
-        rewardSnapshots[_borrower].BPDDebt = L_BPDDebt;
-        emit VaultSnapshotsUpdated(L_RBTC, L_BPDDebt);
+        rewardSnapshots[_borrower].RBTC = B_RBTC;
+        rewardSnapshots[_borrower].BPDDebt = B_BPDDebt;
+        emit VaultSnapshotsUpdated(B_RBTC, B_BPDDebt);
     }
 
     // Get the borrower's pending accumulated RBTC reward, earned by their stake
     function getPendingRBTCReward(address _borrower) public view override returns (uint) {
         uint snapshotRBTC = rewardSnapshots[_borrower].RBTC;
-        uint rewardPerUnitStaked = L_RBTC.sub(snapshotRBTC);
+        uint rewardPerUnitStaked = B_RBTC.sub(snapshotRBTC);
 
         if ( rewardPerUnitStaked == 0 || Vaults[_borrower].status != Status.active) { return 0; }
 
@@ -1106,7 +1106,7 @@ contract VaultManager is MoneypBase, Ownable, CheckContract, IVaultManager {
     // Get the borrower's pending accumulated BPD reward, earned by their stake
     function getPendingBPDDebtReward(address _borrower) public view override returns (uint) {
         uint snapshotBPDDebt = rewardSnapshots[_borrower].BPDDebt;
-        uint rewardPerUnitStaked = L_BPDDebt.sub(snapshotBPDDebt);
+        uint rewardPerUnitStaked = B_BPDDebt.sub(snapshotBPDDebt);
 
         if ( rewardPerUnitStaked == 0 || Vaults[_borrower].status != Status.active) { return 0; }
 
@@ -1125,7 +1125,7 @@ contract VaultManager is MoneypBase, Ownable, CheckContract, IVaultManager {
         */
         if (Vaults[_borrower].status != Status.active) {return false;}
        
-        return (rewardSnapshots[_borrower].RBTC < L_RBTC);
+        return (rewardSnapshots[_borrower].RBTC < B_RBTC);
     }
 
     // Return the Vaults entire debt and coll, including pending rewards from redistributions.
@@ -1199,7 +1199,7 @@ contract VaultManager is MoneypBase, Ownable, CheckContract, IVaultManager {
 
         /*
         * Add distributed coll and debt rewards-per-unit-staked to the running totals. Division uses a "feedback"
-        * error correction, to keep the cumulative error low in the running totals L_RBTC and L_BPDDebt:
+        * error correction, to keep the cumulative error low in the running totals B_RBTC and B_BPDDebt:
         *
         * 1) Form numerators which compensate for the floor division errors that occurred the last time this
         * function was called.
@@ -1219,10 +1219,10 @@ contract VaultManager is MoneypBase, Ownable, CheckContract, IVaultManager {
         lastBPDDebtError_Redistribution = BPDDebtNumerator.sub(BPDDebtRewardPerUnitStaked.mul(totalStakes));
 
         // Add per-unit-staked terms to the running totals
-        L_RBTC = L_RBTC.add(RBTCRewardPerUnitStaked);
-        L_BPDDebt = L_BPDDebt.add(BPDDebtRewardPerUnitStaked);
+        B_RBTC = B_RBTC.add(RBTCRewardPerUnitStaked);
+        B_BPDDebt = B_BPDDebt.add(BPDDebtRewardPerUnitStaked);
 
-        emit LTermsUpdated(L_RBTC, L_BPDDebt);
+        emit LTermsUpdated(B_RBTC, B_BPDDebt);
 
         // Transfer coll and debt from ActivePool to DefaultPool
         _activePool.decreaseBPDDebt(_debt);
