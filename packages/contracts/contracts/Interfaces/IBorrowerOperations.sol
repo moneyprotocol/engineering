@@ -2,56 +2,56 @@
 
 pragma solidity 0.6.11;
 
-// Common interface for the Trove Manager.
+// Common interface for the Vault Manager.
 interface IBorrowerOperations {
 
     // --- Events ---
 
-    event TroveManagerAddressChanged(address _newTroveManagerAddress);
+    event VaultManagerAddressChanged(address _newVaultManagerAddress);
     event ActivePoolAddressChanged(address _activePoolAddress);
     event DefaultPoolAddressChanged(address _defaultPoolAddress);
     event StabilityPoolAddressChanged(address _stabilityPoolAddress);
     event GasPoolAddressChanged(address _gasPoolAddress);
     event CollSurplusPoolAddressChanged(address _collSurplusPoolAddress);
     event PriceFeedAddressChanged(address  _newPriceFeedAddress);
-    event SortedTrovesAddressChanged(address _sortedTrovesAddress);
-    event LUSDTokenAddressChanged(address _lusdTokenAddress);
-    event LQTYStakingAddressChanged(address _lqtyStakingAddress);
+    event SortedVaultsAddressChanged(address _sortedVaultsAddress);
+    event BPDTokenAddressChanged(address _bpdTokenAddress);
+    event MPStakingAddressChanged(address _mpStakingAddress);
 
-    event TroveCreated(address indexed _borrower, uint arrayIndex);
-    event TroveUpdated(address indexed _borrower, uint _debt, uint _coll, uint stake, uint8 operation);
-    event LUSDBorrowingFeePaid(address indexed _borrower, uint _LUSDFee);
+    event VaultCreated(address indexed _borrower, uint arrayIndex);
+    event VaultUpdated(address indexed _borrower, uint _debt, uint _coll, uint stake, uint8 operation);
+    event BPDBorrowingFeePaid(address indexed _borrower, uint _BPDFee);
 
     // --- Functions ---
 
     function setAddresses(
-        address _troveManagerAddress,
+        address _vaultManagerAddress,
         address _activePoolAddress,
         address _defaultPoolAddress,
         address _stabilityPoolAddress,
         address _gasPoolAddress,
         address _collSurplusPoolAddress,
         address _priceFeedAddress,
-        address _sortedTrovesAddress,
-        address _lusdTokenAddress,
-        address _lqtyStakingAddress
+        address _sortedVaultsAddress,
+        address _bpdTokenAddress,
+        address _mpStakingAddress
     ) external;
 
-    function openTrove(uint _maxFee, uint _LUSDAmount, address _upperHint, address _lowerHint) external payable;
+    function openVault(uint _maxFee, uint _BPDAmount, address _upperHint, address _lowerHint) external payable;
 
     function addColl(address _upperHint, address _lowerHint) external payable;
 
-    function moveETHGainToTrove(address _user, address _upperHint, address _lowerHint) external payable;
+    function moveRBTCGainToVault(address _user, address _upperHint, address _lowerHint) external payable;
 
     function withdrawColl(uint _amount, address _upperHint, address _lowerHint) external;
 
-    function withdrawLUSD(uint _maxFee, uint _amount, address _upperHint, address _lowerHint) external;
+    function withdrawBPD(uint _maxFee, uint _amount, address _upperHint, address _lowerHint) external;
 
-    function repayLUSD(uint _amount, address _upperHint, address _lowerHint) external;
+    function repayBPD(uint _amount, address _upperHint, address _lowerHint) external;
 
-    function closeTrove() external;
+    function closeVault() external;
 
-    function adjustTrove(uint _maxFee, uint _collWithdrawal, uint _debtChange, bool isDebtIncrease, address _upperHint, address _lowerHint) external payable;
+    function adjustVault(uint _maxFee, uint _collWithdrawal, uint _debtChange, bool isDebtIncrease, address _upperHint, address _lowerHint) external payable;
 
     function claimCollateral() external;
 
