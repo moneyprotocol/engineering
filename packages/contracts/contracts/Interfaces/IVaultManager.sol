@@ -48,14 +48,14 @@ interface IVaultManager is IMoneypBase {
         address _gasPoolAddress,
         address _collSurplusPoolAddress,
         address _priceFeedAddress,
-        address _BPDTokenAddress,
+        address _bpdTokenAddress,
         address _sortedVaultsAddress,
         address _mpTokenAddress,
         address _mpStakingAddress
     ) external;
 
     function stabilityPool() external view returns (IStabilityPool);
-    function BPDToken() external view returns (IBPDToken);
+    function bpdToken() external view returns (IBPDToken);
     function mpToken() external view returns (IMPToken);
     function mpStaking() external view returns (IMPStaking);
 
