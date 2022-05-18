@@ -22,7 +22,7 @@ contract('VaultManager', async accounts => {
   let borrowerOperations
   
   beforeEach(async () => {
-    contracts = await deploymentHelper.deployLiquityCore()
+    contracts = await deploymentHelper.deployMoneypCore()
     const MPContracts = await deploymentHelper.deployMPContracts(bountyAddress, lpRewardsAddress)
     
     bpdToken = contracts.bpdToken
@@ -50,7 +50,7 @@ contract('VaultManager', async accounts => {
     await borrowerOperations.openVault(0, 0, accounts[99], { from: accounts[99], value: dec(100, 'ether') })
     await borrowerOperations.openVault(0, dec(170, 18), accounts[0], { from: accounts[0], value: dec(1, 'ether') })
 
-    await th.openVault_allAccounts_randomETH(1, 2, accounts.slice(1, 10), contracts, dec(170, 18))
+    await th.openVault_allAccounts_randomRBTC(1, 2, accounts.slice(1, 10), contracts, dec(170, 18))
 
     await priceFeed.setPrice(dec(100, 18))
 
@@ -63,7 +63,7 @@ contract('VaultManager', async accounts => {
     await borrowerOperations.addColl(accounts[99], accounts[99], { from: accounts[99], value: 1 })
     
     // check DefaultPool
-    const RBTC_DefaultPool = await defaultPool.getETH()
+    const RBTC_DefaultPool = await defaultPool.getRBTC()
     const BPDDebt_DefaultPool = await defaultPool.getBPDDebt()
     console.log(`RBTC left in Default Pool is: ${RBTC_DefaultPool}`)
     console.log(`BPDDebt left in Default Pool is: ${BPDDebt_DefaultPool}`)
@@ -86,7 +86,7 @@ contract('VaultManager', async accounts => {
     await borrowerOperations.openVault(0, 0, accounts[999], { from: accounts[999], value: dec(1000, 'ether') })
     await borrowerOperations.openVault(0, dec(170, 18), accounts[0], { from: accounts[0], value: dec(1, 'ether') })
 
-    await th.openVault_allAccounts_randomETH(1, 2, accounts.slice(1, 100), contracts, dec(170, 18))
+    await th.openVault_allAccounts_randomRBTC(1, 2, accounts.slice(1, 100), contracts, dec(170, 18))
 
     await priceFeed.setPrice(dec(100, 18))
 
@@ -98,7 +98,7 @@ contract('VaultManager', async accounts => {
    
     await borrowerOperations.addColl(accounts[999], accounts[999], { from: accounts[999], value: 1 })
     // check DefaultPool
-    const RBTC_DefaultPool = await defaultPool.getETH()
+    const RBTC_DefaultPool = await defaultPool.getRBTC()
     const BPDDebt_DefaultPool = await defaultPool.getBPDDebt()
     console.log(`RBTC left in Default Pool is: ${RBTC_DefaultPool}`)
     console.log(`BPDDebt left in Default Pool is: ${BPDDebt_DefaultPool}`)
@@ -131,7 +131,7 @@ contract('VaultManager', async accounts => {
 
     await borrowerOperations.addColl(accounts[99], accounts[99], { from: accounts[99], value: 1 })
     // check DefaultPool
-    const RBTC_DefaultPool = await defaultPool.getETH()
+    const RBTC_DefaultPool = await defaultPool.getRBTC()
     const BPDDebt_DefaultPool = await defaultPool.getBPDDebt()
     console.log(`RBTC left in Default Pool is: ${RBTC_DefaultPool}`)
     console.log(`BPDDebt left in Default Pool is: ${BPDDebt_DefaultPool}`)
@@ -164,7 +164,7 @@ contract('VaultManager', async accounts => {
     await borrowerOperations.addColl(accounts[99], accounts[99], { from: accounts[99], value: 1 })
 
     // check DefaultPool
-    const RBTC_DefaultPool = await defaultPool.getETH()
+    const RBTC_DefaultPool = await defaultPool.getRBTC()
     const BPDDebt_DefaultPool = await defaultPool.getBPDDebt()
     console.log(`RBTC left in Default Pool is: ${RBTC_DefaultPool}`)
     console.log(`BPDDebt left in Default Pool is: ${BPDDebt_DefaultPool}`)
@@ -197,7 +197,7 @@ contract('VaultManager', async accounts => {
     await borrowerOperations.addColl(accounts[999], accounts[999], { from: accounts[999], value: 1 })
 
     // check DefaultPool
-    const RBTC_DefaultPool = await defaultPool.getETH()
+    const RBTC_DefaultPool = await defaultPool.getRBTC()
     const BPDDebt_DefaultPool = await defaultPool.getBPDDebt()
     console.log(`RBTC left in Default Pool is: ${RBTC_DefaultPool}`)
     console.log(`BPDDebt left in Default Pool is: ${BPDDebt_DefaultPool}:`)
@@ -233,23 +233,23 @@ contract('VaultManager', async accounts => {
     await vaultManager.liquidate(accounts[0])
 
     // Grab total active coll and debt before liquidations
-    let totalETHPoolDifference = web3.utils.toBN(0)
+    let totalRBTCPoolDifference = web3.utils.toBN(0)
     let totalBPDDebtPoolDifference = web3.utils.toBN(0)
 
     for (account of accounts.slice(1, 11)) {
-      const activePoolETH = await activePool.getETH()
+      const activePoolRBTC = await activePool.getRBTC()
       const activePoolBPDDebt = await activePool.getBPD()
 
       await vaultManager.liquidate(account)
 
-      const defaultPoolETH = await defaultPool.getETH()
+      const defaultPoolRBTC = await defaultPool.getRBTC()
       const defaultPoolBPDDebt = await defaultPool.getBPDDebt()
 
-      totalETHPoolDifference.add(activePoolETH.sub(defaultPoolETH))
+      totalRBTCPoolDifference.add(activePoolRBTC.sub(defaultPoolRBTC))
       totalBPDDebtPoolDifference.add(activePoolBPDDebt.sub(defaultPoolBPDDebt))
     }
     
-    console.log(`Accumulated RBTC difference between Default and Active Pools is: ${totalETHPoolDifference}`)
+    console.log(`Accumulated RBTC difference between Default and Active Pools is: ${totalRBTCPoolDifference}`)
     console.log(`Accumulated BPDDebt difference between Active and Default Pools is: ${totalBPDDebtPoolDifference}`)
   })
   
@@ -279,22 +279,22 @@ contract('VaultManager', async accounts => {
       await vaultManager.liquidate(account)
     }
 
-    const L_ETH = await vaultManager.L_ETH()
+    const B_RBTC = await vaultManager.B_RBTC()
     const B_BPDDebt = await vaultManager.B_BPDDebt()
 
-    const totalColl = await activePool.getETH()
+    const totalColl = await activePool.getRBTC()
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18))
-    const totalETHRewards = (totalColl.mul(L_ETH)).div(_1e18_BN)
+    const totalRBTCRewards = (totalColl.mul(B_RBTC)).div(_1e18_BN)
     const totalBPDRewards = (totalColl.mul(B_BPDDebt)).div(_1e18_BN)
 
-    const defaultPoolETH = await defaultPool.getETH()
+    const defaultPoolRBTC = await defaultPool.getRBTC()
     const defaultPoolBPDDebt = await defaultPool.getBPDDebt()
 
-    const ETHRewardDifference = defaultPoolETH.sub(totalETHRewards)
+    const RBTCRewardDifference = defaultPoolRBTC.sub(totalRBTCRewards)
     const BPDDebtRewardDifference = defaultPoolBPDDebt.sub(totalBPDRewards)
 
-    console.log(`RBTC difference between total pending rewards and DefaultPool: ${ETHRewardDifference} `)
+    console.log(`RBTC difference between total pending rewards and DefaultPool: ${RBTCRewardDifference} `)
     console.log(`BPDDebt difference between total pending rewards and DefaultPool: ${BPDDebtRewardDifference} `)
   })
 
@@ -328,22 +328,22 @@ contract('VaultManager', async accounts => {
       await vaultManager.liquidate(account)
     }
 
-    const L_ETH = await vaultManager.L_ETH()
+    const B_RBTC = await vaultManager.B_RBTC()
     const B_BPDDebt = await vaultManager.B_BPDDebt()
 
-    const totalColl = await activePool.getETH()
+    const totalColl = await activePool.getRBTC()
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18))
-    const totalETHRewards = (totalColl.mul(L_ETH)).div(_1e18_BN)
+    const totalRBTCRewards = (totalColl.mul(B_RBTC)).div(_1e18_BN)
     const totalBPDRewards = (totalColl.mul(B_BPDDebt)).div(_1e18_BN)
 
-    const defaultPoolETH = await defaultPool.getETH()
+    const defaultPoolRBTC = await defaultPool.getRBTC()
     const defaultPoolBPDDebt = await defaultPool.getBPDDebt()
 
-    const ETHRewardDifference = defaultPoolETH.sub(totalETHRewards)
+    const RBTCRewardDifference = defaultPoolRBTC.sub(totalRBTCRewards)
     const BPDDebtRewardDifference = defaultPoolBPDDebt.sub(totalBPDRewards)
 
-    console.log(`RBTC difference between total pending rewards and DefaultPool: ${ETHRewardDifference} `)
+    console.log(`RBTC difference between total pending rewards and DefaultPool: ${RBTCRewardDifference} `)
     console.log(`BPDDebt difference between total pending rewards and DefaultPool: ${BPDDebtRewardDifference} `)
   })
   
@@ -377,22 +377,22 @@ contract('VaultManager', async accounts => {
       await vaultManager.liquidate(account)
 
     }
-    const L_ETH = await vaultManager.L_ETH()
+    const B_RBTC = await vaultManager.B_RBTC()
     const B_BPDDebt = await vaultManager.B_BPDDebt()
 
-    const totalColl = await activePool.getETH()
+    const totalColl = await activePool.getRBTC()
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18))
-    const totalETHRewards = (totalColl.mul(L_ETH)).div(_1e18_BN)
+    const totalRBTCRewards = (totalColl.mul(B_RBTC)).div(_1e18_BN)
     const totalBPDRewards = (totalColl.mul(B_BPDDebt)).div(_1e18_BN)
 
-    const defaultPoolETH = await defaultPool.getETH()
+    const defaultPoolRBTC = await defaultPool.getRBTC()
     const defaultPoolBPDDebt = await defaultPool.getBPDDebt()
 
-    const ETHRewardDifference = defaultPoolETH.sub(totalETHRewards)
+    const RBTCRewardDifference = defaultPoolRBTC.sub(totalRBTCRewards)
     const BPDDebtRewardDifference = defaultPoolBPDDebt.sub(totalBPDRewards)
 
-    console.log(`RBTC difference between total pending rewards and DefaultPool: ${ETHRewardDifference} `)
+    console.log(`RBTC difference between total pending rewards and DefaultPool: ${RBTCRewardDifference} `)
     console.log(`BPDDebt difference between total pending rewards and DefaultPool: ${BPDDebtRewardDifference} `)
   })
 
@@ -427,22 +427,22 @@ contract('VaultManager', async accounts => {
     }
 
     // check (DefaultPool  - totalRewards)
-    const L_ETH = await vaultManager.L_ETH()
+    const B_RBTC = await vaultManager.B_RBTC()
     const B_BPDDebt = await vaultManager.B_BPDDebt()
 
-    const totalColl = await activePool.getETH()
+    const totalColl = await activePool.getRBTC()
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18))
-    const totalETHRewards = (totalColl.mul(L_ETH)).div(_1e18_BN)
+    const totalRBTCRewards = (totalColl.mul(B_RBTC)).div(_1e18_BN)
     const totalBPDRewards = (totalColl.mul(B_BPDDebt)).div(_1e18_BN)
 
-    const defaultPoolETH = await defaultPool.getETH()
+    const defaultPoolRBTC = await defaultPool.getRBTC()
     const defaultPoolBPDDebt = await defaultPool.getBPDDebt()
 
-    const ETHRewardDifference = defaultPoolETH.sub(totalETHRewards)
+    const RBTCRewardDifference = defaultPoolRBTC.sub(totalRBTCRewards)
     const BPDDebtRewardDifference = defaultPoolBPDDebt.sub(totalBPDRewards)
 
-    console.log(`RBTC difference between total pending rewards and DefaultPool: ${ETHRewardDifference} `)
+    console.log(`RBTC difference between total pending rewards and DefaultPool: ${RBTCRewardDifference} `)
     console.log(`BPDDebt difference between total pending rewards and DefaultPool: ${BPDDebtRewardDifference} `)
   })
 
@@ -481,22 +481,22 @@ contract('VaultManager', async accounts => {
       await vaultManager.liquidate(account)
     }
     // check (DefaultPool - totalRewards from distribution)
-    const L_ETH = await vaultManager.L_ETH()
+    const B_RBTC = await vaultManager.B_RBTC()
     const B_BPDDebt = await vaultManager.B_BPDDebt()
 
-    const totalColl = await activePool.getETH()
+    const totalColl = await activePool.getRBTC()
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18))
-    const totalETHRewards_Distribution = (totalColl.mul(L_ETH)).div(_1e18_BN)
+    const totalRBTCRewards_Distribution = (totalColl.mul(B_RBTC)).div(_1e18_BN)
     const totalBPDRewards_Distribution = (totalColl.mul(B_BPDDebt)).div(_1e18_BN)
 
-    const defaultPoolETH = await defaultPool.getETH()
+    const defaultPoolRBTC = await defaultPool.getRBTC()
     const defaultPoolBPDDebt = await defaultPool.getBPDDebt()
 
-    const ETHRewardDifference = defaultPoolETH.sub(totalETHRewards_Distribution)
+    const RBTCRewardDifference = defaultPoolRBTC.sub(totalRBTCRewards_Distribution)
     const BPDDebtRewardDifference = defaultPoolBPDDebt.sub(totalBPDRewards_Distribution)
 
-    console.log(`RBTC difference between total pending distribution rewards and DefaultPool: ${ETHRewardDifference} `)
+    console.log(`RBTC difference between total pending distribution rewards and DefaultPool: ${RBTCRewardDifference} `)
     console.log(`BPDDebt difference between total pending distribution rewards and DefaultPool: ${BPDDebtRewardDifference} `)
   })
 
@@ -529,22 +529,22 @@ contract('VaultManager', async accounts => {
        await vaultManager.liquidate(account)
      }
      // check (DefaultPool - totalRewards from distribution)
-     const L_ETH = await vaultManager.L_ETH()
+     const B_RBTC = await vaultManager.B_RBTC()
      const B_BPDDebt = await vaultManager.B_BPDDebt()
  
-     const totalColl = await activePool.getETH()
+     const totalColl = await activePool.getRBTC()
  
      const _1e18_BN = web3.utils.toBN(dec(1, 18))
-     const totalETHRewards_Distribution = (totalColl.mul(L_ETH)).div(_1e18_BN)
+     const totalRBTCRewards_Distribution = (totalColl.mul(B_RBTC)).div(_1e18_BN)
      const totalBPDRewards_Distribution = (totalColl.mul(B_BPDDebt)).div(_1e18_BN)
  
-     const defaultPoolETH = await defaultPool.getETH()
+     const defaultPoolRBTC = await defaultPool.getRBTC()
      const defaultPoolBPDDebt = await defaultPool.getBPDDebt()
  
-     const ETHRewardDifference = defaultPoolETH.sub(totalETHRewards_Distribution)
+     const RBTCRewardDifference = defaultPoolRBTC.sub(totalRBTCRewards_Distribution)
      const BPDDebtRewardDifference = defaultPoolBPDDebt.sub(totalBPDRewards_Distribution)
  
-     console.log(`RBTC difference between total pending distribution rewards and DefaultPool: ${ETHRewardDifference} `)
+     console.log(`RBTC difference between total pending distribution rewards and DefaultPool: ${RBTCRewardDifference} `)
      console.log(`BPDDebt difference between total pending distribution rewards and DefaultPool: ${BPDDebtRewardDifference} `)
    })
 
@@ -589,13 +589,13 @@ contract('VaultManager', async accounts => {
     await stabilityPool.provideToSP(whaleSPDeposit,ZERO_ADDRESS, {from: accounts[999]} )
     
     await stabilityPool.withdrawFromSP(dec(50, 18), {from: accounts[1]} )
-    const SP_ETH = await stabilityPool.getETH()
+    const SP_RBTC = await stabilityPool.getRBTC()
     const SP_BPD = await stabilityPool.getTotalBPDDeposits()  
 
     const SP_BPD_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_BPD)
 
      // check Stability Pool
-    console.log(`Surplus RBTC left in in Stability Pool is ${SP_ETH}`)
+    console.log(`Surplus RBTC left in in Stability Pool is ${SP_RBTC}`)
     console.log(`BPD insufficiency in Stability Pool is ${SP_BPD_Insufficiency}`)
    })
 
@@ -642,13 +642,13 @@ contract('VaultManager', async accounts => {
     await stabilityPool.provideToSP(whaleSPDeposit,ZERO_ADDRESS, {from: accounts[999]} )
     
     await stabilityPool.withdrawFromSP(dec(50, 18), {from: accounts[1]} )
-    const SP_ETH = await stabilityPool.getETH()
+    const SP_RBTC = await stabilityPool.getRBTC()
     const SP_BPD = await stabilityPool.getTotalBPDDeposits()  
 
     const SP_BPD_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_BPD)
 
      // check Stability Pool
-    console.log(`Surplus RBTC left in in Stability Pool is ${SP_ETH}`)
+    console.log(`Surplus RBTC left in in Stability Pool is ${SP_RBTC}`)
     console.log(`BPD insufficiency in Stability Pool is ${SP_BPD_Insufficiency}`)
    })
 
@@ -695,13 +695,13 @@ contract('VaultManager', async accounts => {
     await stabilityPool.provideToSP(whaleSPDeposit, ZERO_ADDRESS, {from: accounts[999]} )
     
     await stabilityPool.withdrawFromSP(account1SPDeposit, {from: accounts[1]} )
-    const SP_ETH = await stabilityPool.getETH()
+    const SP_RBTC = await stabilityPool.getRBTC()
     const SP_BPD = await stabilityPool.getTotalBPDDeposits()  
 
     const SP_BPD_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_BPD)
 
      // check Stability Pool
-    console.log(`Surplus RBTC left in in Stability Pool is ${SP_ETH}`)
+    console.log(`Surplus RBTC left in in Stability Pool is ${SP_RBTC}`)
     console.log(`BPD insufficiency in Stability Pool is ${SP_BPD_Insufficiency}`)
    })
 
@@ -755,13 +755,13 @@ contract('VaultManager', async accounts => {
     
     await stabilityPool.withdrawFromSP(account1SPDeposit, {from: accounts[1]} )
 
-    const SP_ETH = await stabilityPool.getETH()
+    const SP_RBTC = await stabilityPool.getRBTC()
     const SP_BPD = await stabilityPool.getTotalBPDDeposits()  
 
     const SP_BPD_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_BPD)
 
      // check Stability Pool
-    console.log(`Surplus RBTC left in in Stability Pool is ${SP_ETH}`)
+    console.log(`Surplus RBTC left in in Stability Pool is ${SP_RBTC}`)
     console.log(`BPD insufficiency in Stability Pool is ${SP_BPD_Insufficiency}`)
    })
 
@@ -812,13 +812,13 @@ contract('VaultManager', async accounts => {
   
   await stabilityPool.withdrawFromSP(account1SPDeposit, {from: accounts[1]} )
 
-  const SP_ETH = await stabilityPool.getETH()
+  const SP_RBTC = await stabilityPool.getRBTC()
   const SP_BPD = await stabilityPool.getTotalBPDDeposits()  
 
   const SP_BPD_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_BPD)
 
    // check Stability Pool
-  console.log(`Surplus RBTC left in in Stability Pool is ${SP_ETH}`)
+  console.log(`Surplus RBTC left in in Stability Pool is ${SP_RBTC}`)
   console.log(`BPD insufficiency in Stability Pool is ${SP_BPD_Insufficiency}`)
  })
 
@@ -844,7 +844,7 @@ contract('VaultManager', async accounts => {
  
   // Starting values for parallel off-chain computation
   let offchainTotalStakes = await vaultManager.totalStakes()
-  let offchainTotalColl = await activePool.getETH()
+  let offchainTotalColl = await activePool.getRBTC()
   let offchainStake = web3.utils.toBN(0)
   let stakeDifference = web3.utils.toBN(0)
   let totalStakesDifference = web3.utils.toBN(0)
@@ -900,7 +900,7 @@ contract('VaultManager', async accounts => {
  
   // Starting values for parallel off-chain computation
   let offchainTotalStakes = await vaultManager.totalStakes()
-  let offchainTotalColl = await activePool.getETH()
+  let offchainTotalColl = await activePool.getRBTC()
   let offchainStake = web3.utils.toBN(0)
   let stakeDifference = web3.utils.toBN(0)
   let totalStakesDifference = web3.utils.toBN(0)
@@ -957,7 +957,7 @@ it("100 accounts. 100x liquidate -> addColl. Random coll. Check stake and totalS
  
   // Starting values for parallel off-chain computation
   let offchainTotalStakes = await vaultManager.totalStakes()
-  let offchainTotalColl = await activePool.getETH()
+  let offchainTotalColl = await activePool.getRBTC()
   let offchainStake = web3.utils.toBN(0)
   let stakeDifference = web3.utils.toBN(0)
   let totalStakesDifference = web3.utils.toBN(0)
@@ -1013,7 +1013,7 @@ it("11 accounts with random large coll, magnitude ~1e8 ether. 1 liquidation. 10 
   await borrowerOperations.openVault(0, dec(170, 18), accounts[0], { from: accounts[0], value: dec(1, 'ether') })
 
   // Vaults open with 100-200 million ether
-  await th.openVault_allAccounts_randomETH(100000000, 200000000, accounts.slice(1, 10), contracts, dec(170, 18))
+  await th.openVault_allAccounts_randomRBTC(100000000, 200000000, accounts.slice(1, 10), contracts, dec(170, 18))
 
   await priceFeed.setPrice(dec(100, 18))
 
@@ -1026,7 +1026,7 @@ it("11 accounts with random large coll, magnitude ~1e8 ether. 1 liquidation. 10 
 
   await borrowerOperations.addColl(accounts[99], accounts[99], { from: accounts[99], value: 1 })
   // check DefaultPool
-  const RBTC_DefaultPool = await defaultPool.getETH()
+  const RBTC_DefaultPool = await defaultPool.getRBTC()
   const BPDDebt_DefaultPool = await defaultPool.getBPDDebt()
   console.log(`RBTC left in Default Pool is: ${RBTC_DefaultPool}`)
   console.log(`BPDDebt left in Default Pool is: ${BPDDebt_DefaultPool}`)
@@ -1050,7 +1050,7 @@ it("101 accounts with random large coll, magnitude ~1e8 ether. 1 liquidation. 50
   await borrowerOperations.openVault(0, dec(170, 18), accounts[0], { from: accounts[0], value: dec(1, 'ether') })
 
    // Vaults open with 100-200 million ether
-  await th.openVault_allAccounts_randomETH(100000000, 200000000, accounts.slice(1, 100), contracts, dec(170, 18))
+  await th.openVault_allAccounts_randomRBTC(100000000, 200000000, accounts.slice(1, 100), contracts, dec(170, 18))
 
   await priceFeed.setPrice(dec(100, 18))
 
@@ -1063,7 +1063,7 @@ it("101 accounts with random large coll, magnitude ~1e8 ether. 1 liquidation. 50
  
   await borrowerOperations.addColl(accounts[999], accounts[999], { from: accounts[999], value: 1 })
   // check DefaultPool
-  const RBTC_DefaultPool = await defaultPool.getETH()
+  const RBTC_DefaultPool = await defaultPool.getRBTC()
   const BPDDebt_DefaultPool = await defaultPool.getBPDDebt()
   console.log(`RBTC left in Default Pool is: ${RBTC_DefaultPool}`)
   console.log(`BPDDebt left in Default Pool is: ${BPDDebt_DefaultPool}`)
@@ -1095,22 +1095,22 @@ it("11 accounts with random RBTC and proportional BPD (180:1). 10 liquidations. 
     await vaultManager.liquidate(account)
   }
 
-  const L_ETH = await vaultManager.L_ETH()
+  const B_RBTC = await vaultManager.B_RBTC()
   const B_BPDDebt = await vaultManager.B_BPDDebt()
 
-  const totalColl = await activePool.getETH()
+  const totalColl = await activePool.getRBTC()
 
   const _1e18_BN = web3.utils.toBN(dec(1, 18))
-  const totalETHRewards = (totalColl.mul(L_ETH)).div(_1e18_BN)
+  const totalRBTCRewards = (totalColl.mul(B_RBTC)).div(_1e18_BN)
   const totalBPDRewards = (totalColl.mul(B_BPDDebt)).div(_1e18_BN)
 
-  const defaultPoolETH = await defaultPool.getETH()
+  const defaultPoolRBTC = await defaultPool.getRBTC()
   const defaultPoolBPDDebt = await defaultPool.getBPDDebt()
 
-  const ETHRewardDifference = defaultPoolETH.sub(totalETHRewards)
+  const RBTCRewardDifference = defaultPoolRBTC.sub(totalRBTCRewards)
   const BPDDebtRewardDifference = defaultPoolBPDDebt.sub(totalBPDRewards)
 
-  console.log(`RBTC difference between total pending rewards and DefaultPool: ${ETHRewardDifference} `)
+  console.log(`RBTC difference between total pending rewards and DefaultPool: ${RBTCRewardDifference} `)
   console.log(`BPDDebt difference between total pending rewards and DefaultPool: ${BPDDebtRewardDifference} `)
 })
  
@@ -1140,22 +1140,22 @@ it("11 accounts with random RBTC and proportional BPD (180:1). 10 liquidations. 
     }
 
     // check (DefaultPool  - totalRewards)
-    const L_ETH = await vaultManager.L_ETH()
+    const B_RBTC = await vaultManager.B_RBTC()
     const B_BPDDebt = await vaultManager.B_BPDDebt()
 
-    const totalColl = await activePool.getETH()
+    const totalColl = await activePool.getRBTC()
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18))
-    const totalETHRewards = (totalColl.mul(L_ETH)).div(_1e18_BN)
+    const totalRBTCRewards = (totalColl.mul(B_RBTC)).div(_1e18_BN)
     const totalBPDRewards = (totalColl.mul(B_BPDDebt)).div(_1e18_BN)
 
-    const defaultPoolETH = await defaultPool.getETH()
+    const defaultPoolRBTC = await defaultPool.getRBTC()
     const defaultPoolBPDDebt = await defaultPool.getBPDDebt()
 
-    const ETHRewardDifference = defaultPoolETH.sub(totalETHRewards)
+    const RBTCRewardDifference = defaultPoolRBTC.sub(totalRBTCRewards)
     const BPDDebtRewardDifference = defaultPoolBPDDebt.sub(totalBPDRewards)
 
-    console.log(`RBTC difference between total pending rewards and DefaultPool: ${ETHRewardDifference} `)
+    console.log(`RBTC difference between total pending rewards and DefaultPool: ${RBTCRewardDifference} `)
     console.log(`BPDDebt difference between total pending rewards and DefaultPool: ${BPDDebtRewardDifference} `)
   })
   /*

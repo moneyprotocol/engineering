@@ -9,14 +9,14 @@ const externalAddrs  = {
   ETH_ERC20: "0xc778417e063141139fce010982780140aa0cd5ab",
 }
 
-const liquityAddrsTest = {
+const moneypAddrsTest = {
   GENERAL_SAFE:"0x8be7e24263c199ebfcfd6aebca83f8d7ed85a5dd",  // Hardhat dev address
   MP_SAFE:"0x20c81d658aae3a8580d990e441a9ef2c9809be74",  //  Hardhat dev address
   // MP_SAFE:"0x66aB6D9362d4F35596279692F0251Db635165871",
   DEPLOYER: "0x66aB6D9362d4F35596279692F0251Db635165871" // Mainnet test deployment address
 }
 
-const liquityAddrs = {
+const moneypAddrs = {
   GENERAL_SAFE:"0x3c198B7f3bA594804aEeA8894d0a58BCc345b8ce", // TODO
   MP_SAFE:"0xbFdECf1Db5c22d4CD3B0Bb970cF867BEFd2caE27", // TODO
   DEPLOYER: "0xD4D121b2ba5dC9eC6e028F9cdDCA1a33c73604D4",
@@ -40,15 +40,15 @@ const waitFunction = async () => {
 const GAS_PRICE = 1000000000 // 1 Gwei
 const TX_CONFIRMATIONS = 1
 
-const ETHERSCAN_BASE_URL = 'https://rinkeby.etherscan.io/address'
+const ASDFGSCAN_BASE_URL = 'https://rinkeby.etherscan.io/address'
 
 module.exports = {
   externalAddrs,
-  liquityAddrs,
+  moneypAddrs,
   beneficiaries,
   OUTPUT_FILE,
   waitFunction,
   GAS_PRICE,
   TX_CONFIRMATIONS,
-  ETHERSCAN_BASE_URL,
+  ASDFGSCAN_BASE_URL,
 };

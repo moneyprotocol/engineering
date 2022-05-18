@@ -43,7 +43,7 @@ contract("PoolManager - random liquidations/deposits, then check all depositors 
     const randomDefaulter = remainingDefaulters[randomDefaulterIndex]
 
     const liquidatedBPD = (await vaultManager.Vaults(randomDefaulter))[0]
-    const liquidatedETH = (await vaultManager.Vaults(randomDefaulter))[1]
+    const liquidatedRBTC = (await vaultManager.Vaults(randomDefaulter))[1]
 
     const price = await priceFeed.getPrice()
     const ICR = (await vaultManager.getCurrentICR(randomDefaulter, price)).toString()
@@ -62,7 +62,7 @@ contract("PoolManager - random liquidations/deposits, then check all depositors 
     }
     if (await vaultManager.checkRecoveryMode(price)) { console.log("recovery mode: TRUE") }
 
-    console.log(`Liquidation. addr: ${th.squeezeAddr(randomDefaulter)} ICR: ${ICRPercent}% coll: ${liquidatedETH} debt: ${liquidatedBPD} SP BPD before: ${BPDinPoolBefore} SP BPD after: ${BPDinPoolAfter} tx success: ${liquidatedTx.receipt.status}`)
+    console.log(`Liquidation. addr: ${th.squeezeAddr(randomDefaulter)} ICR: ${ICRPercent}% coll: ${liquidatedRBTC} debt: ${liquidatedBPD} SP BPD before: ${BPDinPoolBefore} SP BPD after: ${BPDinPoolAfter} tx success: ${liquidatedTx.receipt.status}`)
   }
 
   const performSPDeposit = async (depositorAccounts, currentDepositors, currentDepositorsDict) => {
@@ -174,14 +174,14 @@ contract("PoolManager - random liquidations/deposits, then check all depositors 
     for (depositor of currentDepositors) {
       const initialDeposit = (await stabilityPool.deposits(depositor))[0]
       const finalDeposit = await stabilityPool.getCompoundedBPDDeposit(depositor)
-      const ETHGain = await stabilityPool.getDepositorETHGain(depositor)
-      const ETHinSP = (await stabilityPool.getETH()).toString()
+      const RBTCGain = await stabilityPool.getDepositorRBTCGain(depositor)
+      const RBTCinSP = (await stabilityPool.getRBTC()).toString()
       const BPDinSP = (await stabilityPool.getTotalBPDDeposits()).toString()
 
       // Attempt to withdraw
       const withdrawalTx = await stabilityPool.withdrawFromSP(dec(1, 36), { from: depositor })
 
-      const ETHinSPAfter = (await stabilityPool.getETH()).toString()
+      const RBTCinSPAfter = (await stabilityPool.getRBTC()).toString()
       const BPDinSPAfter = (await stabilityPool.getTotalBPDDeposits()).toString()
       const BPDBalanceSPAfter = (await bpdToken.balanceOf(stabilityPool.address))
       const depositAfter = await stabilityPool.getCompoundedBPDDeposit(depositor)
@@ -189,15 +189,15 @@ contract("PoolManager - random liquidations/deposits, then check all depositors 
       console.log(`--Before withdrawal--
                     withdrawer addr: ${th.squeezeAddr(depositor)}
                      initial deposit: ${initialDeposit}
-                     RBTC gain: ${ETHGain}
-                     RBTC in SP: ${ETHinSP}
+                     RBTC gain: ${RBTCGain}
+                     RBTC in SP: ${RBTCinSP}
                      compounded deposit: ${finalDeposit} 
                      BPD in SP: ${BPDinSP}
                     
                     --After withdrawal--
                      Withdrawal tx success: ${withdrawalTx.receipt.status} 
                      Deposit after: ${depositAfter}
-                     RBTC remaining in SP: ${ETHinSPAfter}
+                     RBTC remaining in SP: ${RBTCinSPAfter}
                      SP BPD deposits tracker after: ${BPDinSPAfter}
                      SP BPD balance after: ${BPDBalanceSPAfter}
                      `)
@@ -214,7 +214,7 @@ contract("PoolManager - random liquidations/deposits, then check all depositors 
     })
 
     beforeEach(async () => {
-      contracts = await deploymentHelper.deployLiquityCore()
+      contracts = await deploymentHelper.deployMoneypCore()
       const MPContracts = await deploymentHelper.deployMPContracts(bountyAddress, lpRewardsAddress)
 
       stabilityPool = contracts.stabilityPool
@@ -295,18 +295,18 @@ contract("PoolManager - random liquidations/deposits, then check all depositors 
       await skyrocketPriceAndCheckAllVaultsSafe()
 
       const totalBPDDepositsBeforeWithdrawals = await stabilityPool.getTotalBPDDeposits()
-      const totalETHRewardsBeforeWithdrawals = await stabilityPool.getETH()
+      const totalRBTCRewardsBeforeWithdrawals = await stabilityPool.getRBTC()
 
       await attemptWithdrawAllDeposits(currentDepositors)
 
       const totalBPDDepositsAfterWithdrawals = await stabilityPool.getTotalBPDDeposits()
-      const totalETHRewardsAfterWithdrawals = await stabilityPool.getETH()
+      const totalRBTCRewardsAfterWithdrawals = await stabilityPool.getRBTC()
 
       console.log(`Total BPD deposits before any withdrawals: ${totalBPDDepositsBeforeWithdrawals}`)
-      console.log(`Total RBTC rewards before any withdrawals: ${totalETHRewardsBeforeWithdrawals}`)
+      console.log(`Total RBTC rewards before any withdrawals: ${totalRBTCRewardsBeforeWithdrawals}`)
 
       console.log(`Remaining BPD deposits after withdrawals: ${totalBPDDepositsAfterWithdrawals}`)
-      console.log(`Remaining RBTC rewards after withdrawals: ${totalETHRewardsAfterWithdrawals}`)
+      console.log(`Remaining RBTC rewards after withdrawals: ${totalRBTCRewardsAfterWithdrawals}`)
 
       console.log(`current depositors length: ${currentDepositors.length}`)
       console.log(`remaining defaulters length: ${remainingDefaulters.length}`)
@@ -367,18 +367,18 @@ contract("PoolManager - random liquidations/deposits, then check all depositors 
       await skyrocketPriceAndCheckAllVaultsSafe()
 
       const totalBPDDepositsBeforeWithdrawals = await stabilityPool.getTotalBPDDeposits()
-      const totalETHRewardsBeforeWithdrawals = await stabilityPool.getETH()
+      const totalRBTCRewardsBeforeWithdrawals = await stabilityPool.getRBTC()
 
       await attemptWithdrawAllDeposits(currentDepositors)
 
       const totalBPDDepositsAfterWithdrawals = await stabilityPool.getTotalBPDDeposits()
-      const totalETHRewardsAfterWithdrawals = await stabilityPool.getETH()
+      const totalRBTCRewardsAfterWithdrawals = await stabilityPool.getRBTC()
 
       console.log(`Total BPD deposits before any withdrawals: ${totalBPDDepositsBeforeWithdrawals}`)
-      console.log(`Total RBTC rewards before any withdrawals: ${totalETHRewardsBeforeWithdrawals}`)
+      console.log(`Total RBTC rewards before any withdrawals: ${totalRBTCRewardsBeforeWithdrawals}`)
 
       console.log(`Remaining BPD deposits after withdrawals: ${totalBPDDepositsAfterWithdrawals}`)
-      console.log(`Remaining RBTC rewards after withdrawals: ${totalETHRewardsAfterWithdrawals}`)
+      console.log(`Remaining RBTC rewards after withdrawals: ${totalRBTCRewardsAfterWithdrawals}`)
 
       console.log(`current depositors length: ${currentDepositors.length}`)
       console.log(`remaining defaulters length: ${remainingDefaulters.length}`)
@@ -439,18 +439,18 @@ contract("PoolManager - random liquidations/deposits, then check all depositors 
       await skyrocketPriceAndCheckAllVaultsSafe()
 
       const totalBPDDepositsBeforeWithdrawals = await stabilityPool.getTotalBPDDeposits()
-      const totalETHRewardsBeforeWithdrawals = await stabilityPool.getETH()
+      const totalRBTCRewardsBeforeWithdrawals = await stabilityPool.getRBTC()
 
       await attemptWithdrawAllDeposits(currentDepositors)
 
       const totalBPDDepositsAfterWithdrawals = await stabilityPool.getTotalBPDDeposits()
-      const totalETHRewardsAfterWithdrawals = await stabilityPool.getETH()
+      const totalRBTCRewardsAfterWithdrawals = await stabilityPool.getRBTC()
 
       console.log(`Total BPD deposits before any withdrawals: ${totalBPDDepositsBeforeWithdrawals}`)
-      console.log(`Total RBTC rewards before any withdrawals: ${totalETHRewardsBeforeWithdrawals}`)
+      console.log(`Total RBTC rewards before any withdrawals: ${totalRBTCRewardsBeforeWithdrawals}`)
 
       console.log(`Remaining BPD deposits after withdrawals: ${totalBPDDepositsAfterWithdrawals}`)
-      console.log(`Remaining RBTC rewards after withdrawals: ${totalETHRewardsAfterWithdrawals}`)
+      console.log(`Remaining RBTC rewards after withdrawals: ${totalRBTCRewardsAfterWithdrawals}`)
 
       console.log(`current depositors length: ${currentDepositors.length}`)
       console.log(`remaining defaulters length: ${remainingDefaulters.length}`)
@@ -512,18 +512,18 @@ contract("PoolManager - random liquidations/deposits, then check all depositors 
       await skyrocketPriceAndCheckAllVaultsSafe()
 
       const totalBPDDepositsBeforeWithdrawals = await stabilityPool.getTotalBPDDeposits()
-      const totalETHRewardsBeforeWithdrawals = await stabilityPool.getETH()
+      const totalRBTCRewardsBeforeWithdrawals = await stabilityPool.getRBTC()
 
       await attemptWithdrawAllDeposits(currentDepositors)
 
       const totalBPDDepositsAfterWithdrawals = await stabilityPool.getTotalBPDDeposits()
-      const totalETHRewardsAfterWithdrawals = await stabilityPool.getETH()
+      const totalRBTCRewardsAfterWithdrawals = await stabilityPool.getRBTC()
 
       console.log(`Total BPD deposits before any withdrawals: ${totalBPDDepositsBeforeWithdrawals}`)
-      console.log(`Total RBTC rewards before any withdrawals: ${totalETHRewardsBeforeWithdrawals}`)
+      console.log(`Total RBTC rewards before any withdrawals: ${totalRBTCRewardsBeforeWithdrawals}`)
 
       console.log(`Remaining BPD deposits after withdrawals: ${totalBPDDepositsAfterWithdrawals}`)
-      console.log(`Remaining RBTC rewards after withdrawals: ${totalETHRewardsAfterWithdrawals}`)
+      console.log(`Remaining RBTC rewards after withdrawals: ${totalRBTCRewardsAfterWithdrawals}`)
 
       console.log(`current depositors length: ${currentDepositors.length}`)
       console.log(`remaining defaulters length: ${remainingDefaulters.length}`)

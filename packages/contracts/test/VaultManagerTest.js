@@ -52,7 +52,7 @@ contract('VaultManager', async accounts => {
   const withdrawBPD = async (params) => th.withdrawBPD(contracts, params)
 
   beforeEach(async () => {
-    contracts = await deploymentHelper.deployLiquityCore()
+    contracts = await deploymentHelper.deployMoneypCore()
     contracts.vaultManager = await VaultManagerTester.new()
     contracts.bpdToken = await BPDTokenTester.new(
       contracts.vaultManager.address,
@@ -102,7 +102,7 @@ contract('VaultManager', async accounts => {
     const ICR_AfterWithdrawal = await vaultManager.getCurrentICR(alice, price)
     assert.isAtMost(th.getDifference(ICR_AfterWithdrawal, targetICR), 100)
 
-    // price drops to 1ETH:100BPD, reducing Alice's ICR below MCR
+    // price drops to 1RBTC:100BPD, reducing Alice's ICR below MCR
     await priceFeed.setPrice('100000000000000000000');
 
     // Confirm system is not in Recovery Mode
@@ -126,7 +126,7 @@ contract('VaultManager', async accounts => {
     // --- TEST ---
 
     // check ActivePool RBTC and BPD debt before
-    const activePool_RBTC_Before = (await activePool.getETH()).toString()
+    const activePool_RBTC_Before = (await activePool.getRBTC()).toString()
     const activePool_RawEther_Before = (await web3.eth.getBalance(activePool.address)).toString()
     const activePool_BPDDebt_Before = (await activePool.getBPDDebt()).toString()
 
@@ -134,7 +134,7 @@ contract('VaultManager', async accounts => {
     assert.equal(activePool_RawEther_Before, A_collateral.add(B_collateral))
     th.assertIsApproximatelyEqual(activePool_BPDDebt_Before, A_totalDebt.add(B_totalDebt))
 
-    // price drops to 1ETH:100BPD, reducing Bob's ICR below MCR
+    // price drops to 1RBTC:100BPD, reducing Bob's ICR below MCR
     await priceFeed.setPrice('100000000000000000000');
 
     // Confirm system is not in Recovery Mode
@@ -145,7 +145,7 @@ contract('VaultManager', async accounts => {
     await vaultManager.liquidate(bob, { from: owner });
 
     // check ActivePool RBTC and BPD debt 
-    const activePool_RBTC_After = (await activePool.getETH()).toString()
+    const activePool_RBTC_After = (await activePool.getRBTC()).toString()
     const activePool_RawEther_After = (await web3.eth.getBalance(activePool.address)).toString()
     const activePool_BPDDebt_After = (await activePool.getBPDDebt()).toString()
 
@@ -162,7 +162,7 @@ contract('VaultManager', async accounts => {
     // --- TEST ---
 
     // check DefaultPool RBTC and BPD debt before
-    const defaultPool_RBTC_Before = (await defaultPool.getETH())
+    const defaultPool_RBTC_Before = (await defaultPool.getRBTC())
     const defaultPool_RawEther_Before = (await web3.eth.getBalance(defaultPool.address)).toString()
     const defaultPool_BPDDebt_Before = (await defaultPool.getBPDDebt()).toString()
 
@@ -170,7 +170,7 @@ contract('VaultManager', async accounts => {
     assert.equal(defaultPool_RawEther_Before, '0')
     assert.equal(defaultPool_BPDDebt_Before, '0')
 
-    // price drops to 1ETH:100BPD, reducing Bob's ICR below MCR
+    // price drops to 1RBTC:100BPD, reducing Bob's ICR below MCR
     await priceFeed.setPrice('100000000000000000000');
 
     // Confirm system is not in Recovery Mode
@@ -180,13 +180,13 @@ contract('VaultManager', async accounts => {
     await vaultManager.liquidate(bob, { from: owner });
 
     // check after
-    const defaultPool_RBTC_After = (await defaultPool.getETH()).toString()
+    const defaultPool_RBTC_After = (await defaultPool.getRBTC()).toString()
     const defaultPool_RawEther_After = (await web3.eth.getBalance(defaultPool.address)).toString()
     const defaultPool_BPDDebt_After = (await defaultPool.getBPDDebt()).toString()
 
-    const defaultPool_ETH = th.applyLiquidationFee(B_collateral)
-    assert.equal(defaultPool_RBTC_After, defaultPool_ETH)
-    assert.equal(defaultPool_RawEther_After, defaultPool_ETH)
+    const defaultPooB_RBTC = th.applyLiquidationFee(B_collateral)
+    assert.equal(defaultPool_RBTC_After, defaultPooB_RBTC)
+    assert.equal(defaultPool_RawEther_After, defaultPooB_RBTC)
     th.assertIsApproximatelyEqual(defaultPool_BPDDebt_After, B_totalDebt)
   })
 
@@ -201,7 +201,7 @@ contract('VaultManager', async accounts => {
     const totalStakes_Before = (await vaultManager.totalStakes()).toString()
     assert.equal(totalStakes_Before, A_collateral.add(B_collateral))
 
-    // price drops to 1ETH:100BPD, reducing Bob's ICR below MCR
+    // price drops to 1RBTC:100BPD, reducing Bob's ICR below MCR
     await priceFeed.setPrice('100000000000000000000');
 
     // Confirm system is not in Recovery Mode
@@ -293,7 +293,7 @@ contract('VaultManager', async accounts => {
     assert.equal(totalStakesSnapshot_Before, '0')
     assert.equal(totalCollateralSnapshot_Before, '0')
 
-    // price drops to 1ETH:100BPD, reducing Bob's ICR below MCR
+    // price drops to 1RBTC:100BPD, reducing Bob's ICR below MCR
     await priceFeed.setPrice('100000000000000000000');
 
     // Confirm system is not in Recovery Mode
@@ -314,7 +314,7 @@ contract('VaultManager', async accounts => {
     assert.equal(totalCollateralSnapshot_After, A_collateral.add(th.applyLiquidationFee(B_collateral)))
   })
 
-  it("liquidate(): updates the L_ETH and B_BPDDebt reward-per-unit-staked totals", async () => {
+  it("liquidate(): updates the B_RBTC and B_BPDDebt reward-per-unit-staked totals", async () => {
     // --- SETUP ---
     const { collateral: A_collateral, totalDebt: A_totalDebt } = await openVault({ ICR: toBN(dec(8, 18)), extraParams: { from: alice } })
     const { collateral: B_collateral, totalDebt: B_totalDebt } = await openVault({ ICR: toBN(dec(4, 18)), extraParams: { from: bob } })
@@ -322,7 +322,7 @@ contract('VaultManager', async accounts => {
 
     // --- TEST ---
 
-    // price drops to 1ETH:100BPD, reducing Carols's ICR below MCR
+    // price drops to 1RBTC:100BPD, reducing Carols's ICR below MCR
     await priceFeed.setPrice('100000000000000000000');
 
     // Confirm system is not in Recovery Mode
@@ -334,7 +334,7 @@ contract('VaultManager', async accounts => {
     assert.isFalse(await sortedVaults.contains(carol))
 
     // Carol's ether*0.995 and BPD should be added to the DefaultPool.
-    const L_RBTC_AfterCarolLiquidated = await vaultManager.L_ETH()
+    const L_RBTC_AfterCarolLiquidated = await vaultManager.B_RBTC()
     const B_BPDDebt_AfterCarolLiquidated = await vaultManager.B_BPDDebt()
 
     const L_RBTC_expected_1 = th.applyLiquidationFee(C_collateral).mul(mv._1e18BN).div(A_collateral.add(B_collateral))
@@ -348,7 +348,7 @@ contract('VaultManager', async accounts => {
     // Confirm system is not in Recovery Mode
     assert.isFalse(await th.checkRecoveryMode(contracts));
 
-    // price drops to 1ETH:50BPD, reducing Bob's ICR below MCR
+    // price drops to 1RBTC:50BPD, reducing Bob's ICR below MCR
     await priceFeed.setPrice(dec(50, 18));
     const price = await priceFeed.getPrice()
 
@@ -365,9 +365,9 @@ contract('VaultManager', async accounts => {
    
    The system rewards-per-unit-staked should now be:
    
-   L_ETH = (0.995 / 20) + (10.4975*0.995  / 10) = 1.09425125 RBTC
+   B_RBTC = (0.995 / 20) + (10.4975*0.995  / 10) = 1.09425125 RBTC
    B_BPDDebt = (180 / 20) + (890 / 10) = 98 BPD */
-    const L_RBTC_AfterBobLiquidated = await vaultManager.L_ETH()
+    const L_RBTC_AfterBobLiquidated = await vaultManager.B_RBTC()
     const B_BPDDebt_AfterBobLiquidated = await vaultManager.B_BPDDebt()
 
     const L_RBTC_expected_2 = L_RBTC_expected_1.add(th.applyLiquidationFee(B_collateral.add(B_collateral.mul(L_RBTC_expected_1).div(mv._1e18BN))).mul(mv._1e18BN).div(A_collateral))
@@ -711,9 +711,9 @@ contract('VaultManager', async accounts => {
     assert.isFalse(await sortedVaults.contains(carol))
     // Check Dennis' SP deposit has absorbed Carol's debt, and he has received her liquidated RBTC
     const dennis_Deposit_Before = (await stabilityPool.getCompoundedBPDDeposit(dennis)).toString()
-    const dennis_ETHGain_Before = (await stabilityPool.getDepositorETHGain(dennis)).toString()
+    const dennis_RBTCGain_Before = (await stabilityPool.getDepositorRBTCGain(dennis)).toString()
     assert.isAtMost(th.getDifference(dennis_Deposit_Before, spDeposit.sub(liquidatedDebt)), 1000000)
-    assert.isAtMost(th.getDifference(dennis_ETHGain_Before, liquidatedColl), 1000)
+    assert.isAtMost(th.getDifference(dennis_RBTCGain_Before, liquidatedColl), 1000)
 
     // Confirm system is not in Recovery Mode
     assert.isFalse(await th.checkRecoveryMode(contracts));
@@ -729,9 +729,9 @@ contract('VaultManager', async accounts => {
 
     // Check Dennis' SP deposit does not change after liquidation attempt
     const dennis_Deposit_After = (await stabilityPool.getCompoundedBPDDeposit(dennis)).toString()
-    const dennis_ETHGain_After = (await stabilityPool.getDepositorETHGain(dennis)).toString()
+    const dennis_RBTCGain_After = (await stabilityPool.getDepositorRBTCGain(dennis)).toString()
     assert.equal(dennis_Deposit_Before, dennis_Deposit_After)
-    assert.equal(dennis_ETHGain_Before, dennis_ETHGain_After)
+    assert.equal(dennis_RBTCGain_Before, dennis_RBTCGain_After)
   })
 
   it("liquidate(): does not liquidate a SP depositor's vault with ICR > 110%, and does not affect their SP deposit or RBTC gain", async () => {
@@ -756,9 +756,9 @@ contract('VaultManager', async accounts => {
 
     // Check Bob' SP deposit has absorbed Carol's debt, and he has received her liquidated RBTC
     const bob_Deposit_Before = (await stabilityPool.getCompoundedBPDDeposit(bob)).toString()
-    const bob_ETHGain_Before = (await stabilityPool.getDepositorETHGain(bob)).toString()
+    const bob_RBTCGain_Before = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
     assert.isAtMost(th.getDifference(bob_Deposit_Before, spDeposit.sub(liquidatedDebt)), 1000000)
-    assert.isAtMost(th.getDifference(bob_ETHGain_Before, liquidatedColl), 1000)
+    assert.isAtMost(th.getDifference(bob_RBTCGain_Before, liquidatedColl), 1000)
 
     // Confirm system is not in Recovery Mode
     assert.isFalse(await th.checkRecoveryMode(contracts));
@@ -771,9 +771,9 @@ contract('VaultManager', async accounts => {
 
     // Check Bob' SP deposit does not change after liquidation attempt
     const bob_Deposit_After = (await stabilityPool.getCompoundedBPDDeposit(bob)).toString()
-    const bob_ETHGain_After = (await stabilityPool.getDepositorETHGain(bob)).toString()
+    const bob_RBTCGain_After = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
     assert.equal(bob_Deposit_Before, bob_Deposit_After)
-    assert.equal(bob_ETHGain_Before, bob_ETHGain_After)
+    assert.equal(bob_RBTCGain_Before, bob_RBTCGain_After)
   })
 
   it("liquidate(): liquidates a SP depositor's vault with ICR < 110%, and the liquidation correctly impacts their SP deposit and RBTC gain", async () => {
@@ -793,9 +793,9 @@ contract('VaultManager', async accounts => {
 
     // Check Bob' SP deposit has absorbed Carol's debt, and he has received her liquidated RBTC
     const bob_Deposit_Before = await stabilityPool.getCompoundedBPDDeposit(bob)
-    const bob_ETHGain_Before = await stabilityPool.getDepositorETHGain(bob)
+    const bob_RBTCGain_Before = await stabilityPool.getDepositorRBTCGain(bob)
     assert.isAtMost(th.getDifference(bob_Deposit_Before, B_spDeposit.sub(C_debt)), 1000000)
-    assert.isAtMost(th.getDifference(bob_ETHGain_Before, th.applyLiquidationFee(C_collateral)), 1000)
+    assert.isAtMost(th.getDifference(bob_RBTCGain_Before, th.applyLiquidationFee(C_collateral)), 1000)
 
     // Alice provides BPD to SP
     await stabilityPool.provideToSP(A_spDeposit, ZERO_ADDRESS, { from: alice })
@@ -819,18 +819,18 @@ contract('VaultManager', async accounts => {
 
      Check Bob' SP deposit has been reduced to 50 BPD, and his RBTC gain has increased to 1.5 RBTC. */
     const alice_Deposit_After = (await stabilityPool.getCompoundedBPDDeposit(alice)).toString()
-    const alice_ETHGain_After = (await stabilityPool.getDepositorETHGain(alice)).toString()
+    const alice_RBTCGain_After = (await stabilityPool.getDepositorRBTCGain(alice)).toString()
 
     const totalDeposits = bob_Deposit_Before.add(A_spDeposit)
 
     assert.isAtMost(th.getDifference(alice_Deposit_After, A_spDeposit.sub(B_debt.mul(A_spDeposit).div(totalDeposits))), 1000000)
-    assert.isAtMost(th.getDifference(alice_ETHGain_After, th.applyLiquidationFee(B_collateral).mul(A_spDeposit).div(totalDeposits)), 1000000)
+    assert.isAtMost(th.getDifference(alice_RBTCGain_After, th.applyLiquidationFee(B_collateral).mul(A_spDeposit).div(totalDeposits)), 1000000)
 
     const bob_Deposit_After = await stabilityPool.getCompoundedBPDDeposit(bob)
-    const bob_ETHGain_After = await stabilityPool.getDepositorETHGain(bob)
+    const bob_RBTCGain_After = await stabilityPool.getDepositorRBTCGain(bob)
 
     assert.isAtMost(th.getDifference(bob_Deposit_After, bob_Deposit_Before.sub(B_debt.mul(bob_Deposit_Before).div(totalDeposits))), 1000000)
-    assert.isAtMost(th.getDifference(bob_ETHGain_After, bob_ETHGain_Before.add(th.applyLiquidationFee(B_collateral).mul(bob_Deposit_Before).div(totalDeposits))), 1000000)
+    assert.isAtMost(th.getDifference(bob_RBTCGain_After, bob_RBTCGain_Before.add(th.applyLiquidationFee(B_collateral).mul(bob_Deposit_Before).div(totalDeposits))), 1000000)
   })
 
   it("liquidate(): does not alter the liquidated user's token balance", async () => {
@@ -976,7 +976,7 @@ contract('VaultManager', async accounts => {
 
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider)
 
-    // Price drops to 1ETH:100BPD, reducing defaulters to below MCR
+    // Price drops to 1RBTC:100BPD, reducing defaulters to below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
     assert.isFalse(await th.checkRecoveryMode(contracts))
@@ -1018,7 +1018,7 @@ contract('VaultManager', async accounts => {
 
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider)
 
-    // Price drops to 1ETH:100BPD, reducing defaulters to below MCR
+    // Price drops to 1RBTC:100BPD, reducing defaulters to below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
     assert.isFalse(await th.checkRecoveryMode(contracts))
@@ -1089,14 +1089,14 @@ contract('VaultManager', async accounts => {
     assert.isFalse(await vaultManager.hasPendingRewards(E))
 
     // Check C's pending coll and debt rewards are <= the coll and debt in the DefaultPool
-    const pendingRBTC_C = await vaultManager.getPendingETHReward(C)
+    const pendingRBTC_C = await vaultManager.getPendingRBTCReward(C)
     const pendingBPDDebt_C = await vaultManager.getPendingBPDDebtReward(C)
-    const defaultPoolETH = await defaultPool.getETH()
+    const defaultPoolRBTC = await defaultPool.getRBTC()
     const defaultPoolBPDDebt = await defaultPool.getBPDDebt()
-    assert.isTrue(pendingRBTC_C.lte(defaultPoolETH))
+    assert.isTrue(pendingRBTC_C.lte(defaultPoolRBTC))
     assert.isTrue(pendingBPDDebt_C.lte(defaultPoolBPDDebt))
     //Check only difference is dust
-    assert.isAtMost(th.getDifference(pendingRBTC_C, defaultPoolETH), 1000)
+    assert.isAtMost(th.getDifference(pendingRBTC_C, defaultPoolRBTC), 1000)
     assert.isAtMost(th.getDifference(pendingBPDDebt_C, defaultPoolBPDDebt), 1000)
 
     // Confirm system is still in Recovery Mode
@@ -1138,7 +1138,7 @@ contract('VaultManager', async accounts => {
 
     // --- TEST ---
 
-    // Price drops to 1ETH:100BPD, reducing Bob and Carol's ICR below MCR
+    // Price drops to 1RBTC:100BPD, reducing Bob and Carol's ICR below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
 
@@ -1672,24 +1672,24 @@ contract('VaultManager', async accounts => {
     const alice_Deposit_After = await stabilityPool.getCompoundedBPDDeposit(alice)
     const bob_Deposit_After = await stabilityPool.getCompoundedBPDDeposit(bob)
 
-    const whale_ETHGain = await stabilityPool.getDepositorETHGain(whale)
-    const alice_ETHGain = await stabilityPool.getDepositorETHGain(alice)
-    const bob_ETHGain = await stabilityPool.getDepositorETHGain(bob)
+    const whale_RBTCGain = await stabilityPool.getDepositorRBTCGain(whale)
+    const alice_RBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
+    const bob_RBTCGain = await stabilityPool.getDepositorRBTCGain(bob)
 
     assert.isAtMost(th.getDifference(whale_Deposit_After, whaleDeposit.sub(liquidatedDebt.mul(whaleDeposit).div(totalDeposits))), 100000)
     assert.isAtMost(th.getDifference(alice_Deposit_After, A_deposit.sub(liquidatedDebt.mul(A_deposit).div(totalDeposits))), 100000)
     assert.isAtMost(th.getDifference(bob_Deposit_After, B_deposit.sub(liquidatedDebt.mul(B_deposit).div(totalDeposits))), 100000)
 
-    assert.isAtMost(th.getDifference(whale_ETHGain, th.applyLiquidationFee(liquidatedColl).mul(whaleDeposit).div(totalDeposits)), 100000)
-    assert.isAtMost(th.getDifference(alice_ETHGain, th.applyLiquidationFee(liquidatedColl).mul(A_deposit).div(totalDeposits)), 100000)
-    assert.isAtMost(th.getDifference(bob_ETHGain, th.applyLiquidationFee(liquidatedColl).mul(B_deposit).div(totalDeposits)), 100000)
+    assert.isAtMost(th.getDifference(whale_RBTCGain, th.applyLiquidationFee(liquidatedColl).mul(whaleDeposit).div(totalDeposits)), 100000)
+    assert.isAtMost(th.getDifference(alice_RBTCGain, th.applyLiquidationFee(liquidatedColl).mul(A_deposit).div(totalDeposits)), 100000)
+    assert.isAtMost(th.getDifference(bob_RBTCGain, th.applyLiquidationFee(liquidatedColl).mul(B_deposit).div(totalDeposits)), 100000)
 
     // Check total remaining deposits and RBTC gain in Stability Pool
     const total_BPDinSP = (await stabilityPool.getTotalBPDDeposits()).toString()
-    const total_ETHinSP = (await stabilityPool.getETH()).toString()
+    const totaB_RBTCinSP = (await stabilityPool.getRBTC()).toString()
 
     assert.isAtMost(th.getDifference(total_BPDinSP, totalDeposits.sub(liquidatedDebt)), 1000)
-    assert.isAtMost(th.getDifference(total_ETHinSP, th.applyLiquidationFee(liquidatedColl)), 1000)
+    assert.isAtMost(th.getDifference(totaB_RBTCinSP, th.applyLiquidationFee(liquidatedColl)), 1000)
   })
 
   it("liquidateVaults(): when SP > 0, triggers MP reward event - increases the sum G", async () => {
@@ -1711,7 +1711,7 @@ contract('VaultManager', async accounts => {
 
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider)
 
-    // Price drops to 1ETH:100BPD, reducing defaulters to below MCR
+    // Price drops to 1RBTC:100BPD, reducing defaulters to below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
     assert.isFalse(await th.checkRecoveryMode(contracts))
@@ -1755,7 +1755,7 @@ contract('VaultManager', async accounts => {
 
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider)
 
-    // Price drops to 1ETH:100BPD, reducing defaulters to below MCR
+    // Price drops to 1RBTC:100BPD, reducing defaulters to below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
     assert.isFalse(await th.checkRecoveryMode(contracts))
@@ -1828,14 +1828,14 @@ contract('VaultManager', async accounts => {
     assert.isFalse(await vaultManager.hasPendingRewards(E))
 
     // Check C's pending coll and debt rewards are <= the coll and debt in the DefaultPool
-    const pendingRBTC_C = await vaultManager.getPendingETHReward(C)
+    const pendingRBTC_C = await vaultManager.getPendingRBTCReward(C)
     const pendingBPDDebt_C = await vaultManager.getPendingBPDDebtReward(C)
-    const defaultPoolETH = await defaultPool.getETH()
+    const defaultPoolRBTC = await defaultPool.getRBTC()
     const defaultPoolBPDDebt = await defaultPool.getBPDDebt()
-    assert.isTrue(pendingRBTC_C.lte(defaultPoolETH))
+    assert.isTrue(pendingRBTC_C.lte(defaultPoolRBTC))
     assert.isTrue(pendingBPDDebt_C.lte(defaultPoolBPDDebt))
     //Check only difference is dust
-    assert.isAtMost(th.getDifference(pendingRBTC_C, defaultPoolETH), 1000)
+    assert.isAtMost(th.getDifference(pendingRBTC_C, defaultPoolRBTC), 1000)
     assert.isAtMost(th.getDifference(pendingBPDDebt_C, defaultPoolBPDDebt), 1000)
 
     // Confirm system is still in Recovery Mode
@@ -1874,7 +1874,7 @@ contract('VaultManager', async accounts => {
 
     // --- TEST ---
 
-    // Price drops to 1ETH:100BPD, reducing A, B, C ICR below MCR
+    // Price drops to 1RBTC:100BPD, reducing A, B, C ICR below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
 
@@ -1928,7 +1928,7 @@ contract('VaultManager', async accounts => {
 
     // --- TEST ---
 
-    // Price drops to 1ETH:100BPD, reducing A, B, C ICR below MCR
+    // Price drops to 1RBTC:100BPD, reducing A, B, C ICR below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
 
@@ -1985,7 +1985,7 @@ contract('VaultManager', async accounts => {
 
     // --- TEST ---
 
-    // Price drops to 1ETH:100BPD, reducing A, B, C ICR below MCR
+    // Price drops to 1RBTC:100BPD, reducing A, B, C ICR below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
 
@@ -2039,7 +2039,7 @@ contract('VaultManager', async accounts => {
 
     // --- TEST ---
 
-    // Price drops to 1ETH:100BPD, reducing A, B, C ICR below MCR
+    // Price drops to 1RBTC:100BPD, reducing A, B, C ICR below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
 
@@ -2075,7 +2075,7 @@ contract('VaultManager', async accounts => {
 
     // --- TEST ---
 
-    // Price drops to 1ETH:100BPD, reducing A, B, C ICR below MCR
+    // Price drops to 1RBTC:100BPD, reducing A, B, C ICR below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
 
@@ -2143,7 +2143,7 @@ contract('VaultManager', async accounts => {
 
     // --- TEST ---
 
-    // Price drops to 1ETH:100BPD, reducing A, B, C ICR below MCR
+    // Price drops to 1RBTC:100BPD, reducing A, B, C ICR below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
 
@@ -2212,7 +2212,7 @@ contract('VaultManager', async accounts => {
 
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider)
 
-    // Price drops to 1ETH:100BPD, reducing defaulters to below MCR
+    // Price drops to 1RBTC:100BPD, reducing defaulters to below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
     assert.isFalse(await th.checkRecoveryMode(contracts))
@@ -2256,7 +2256,7 @@ contract('VaultManager', async accounts => {
 
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider)
 
-    // Price drops to 1ETH:100BPD, reducing defaulters to below MCR
+    // Price drops to 1RBTC:100BPD, reducing defaulters to below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
     assert.isFalse(await th.checkRecoveryMode(contracts))
@@ -2330,7 +2330,7 @@ contract('VaultManager', async accounts => {
     // start Dennis with a high ICR
     await openVault({ ICR: toBN(dec(100, 18)), extraBPDAmount: redemptionAmount, extraParams: { from: dennis } })
 
-    const dennis_ETHBalance_Before = toBN(await web3.eth.getBalance(dennis))
+    const dennis_RBTCBalance_Before = toBN(await web3.eth.getBalance(dennis))
 
     const dennis_BPDBalance_Before = await bpdToken.balanceOf(dennis)
 
@@ -2371,7 +2371,7 @@ contract('VaultManager', async accounts => {
       }
     )
 
-    const ETHFee = th.getEmittedRedemptionValues(redemptionTx)[3]
+    const RBTCFee = th.getEmittedRedemptionValues(redemptionTx)[3]
 
     const alice_Vault_After = await vaultManager.Vaults(alice)
     const bob_Vault_After = await vaultManager.Vaults(bob)
@@ -2388,13 +2388,13 @@ contract('VaultManager', async accounts => {
     assert.equal(bob_debt_After, '0')
     assert.equal(carol_debt_After, '0')
 
-    const dennis_ETHBalance_After = toBN(await web3.eth.getBalance(dennis))
-    const receivedETH = dennis_ETHBalance_After.sub(dennis_ETHBalance_Before)
+    const dennis_RBTCBalance_After = toBN(await web3.eth.getBalance(dennis))
+    const receivedRBTC = dennis_RBTCBalance_After.sub(dennis_RBTCBalance_Before)
 
-    const expectedTotalETHDrawn = redemptionAmount.div(toBN(200)) // convert redemptionAmount BPD to RBTC, at RBTC:USD price 200
-    const expectedReceivedETH = expectedTotalETHDrawn.sub(toBN(ETHFee))
+    const expectedTotalRBTCDrawn = redemptionAmount.div(toBN(200)) // convert redemptionAmount BPD to RBTC, at RBTC:USD price 200
+    const expectedReceivedRBTC = expectedTotalRBTCDrawn.sub(toBN(RBTCFee))
 
-    th.assertIsApproximatelyEqual(expectedReceivedETH, receivedETH)
+    th.assertIsApproximatelyEqual(expectedReceivedRBTC, receivedRBTC)
 
     const dennis_BPDBalance_After = (await bpdToken.balanceOf(dennis)).toString()
     assert.equal(dennis_BPDBalance_After, dennis_BPDBalance_Before.sub(redemptionAmount))
@@ -2414,7 +2414,7 @@ contract('VaultManager', async accounts => {
 
     // --- TEST --- 
 
-    // open vault from redeemer.  Redeemer has highest ICR (100ETH, 100 BPD), 20000%
+    // open vault from redeemer.  Redeemer has highest ICR (100RBTC, 100 BPD), 20000%
     const { bpdAmount: F_bpdAmount } = await openVault({ ICR: toBN(dec(200, 18)), extraBPDAmount: redemptionAmount.mul(toBN(2)), extraParams: { from: flyn } })
 
     // skip bootstrapping phase
@@ -2471,7 +2471,7 @@ contract('VaultManager', async accounts => {
 
     // --- TEST --- 
 
-    // open vault from redeemer.  Redeemer has highest ICR (100ETH, 100 BPD), 20000%
+    // open vault from redeemer.  Redeemer has highest ICR (100RBTC, 100 BPD), 20000%
     const { bpdAmount: F_bpdAmount } = await openVault({ ICR: toBN(dec(200, 18)), extraBPDAmount: redemptionAmount.mul(toBN(2)), extraParams: { from: flyn } })
 
     // skip bootstrapping phase
@@ -2571,7 +2571,7 @@ contract('VaultManager', async accounts => {
 
     await openVault({ ICR: toBN(dec(100, 18)), extraBPDAmount: redemptionAmount, extraParams: { from: dennis } })
 
-    const dennis_ETHBalance_Before = toBN(await web3.eth.getBalance(dennis))
+    const dennis_RBTCBalance_Before = toBN(await web3.eth.getBalance(dennis))
 
     const dennis_BPDBalance_Before = await bpdToken.balanceOf(dennis)
 
@@ -2634,7 +2634,7 @@ contract('VaultManager', async accounts => {
       }
     )
 
-    const ETHFee = th.getEmittedRedemptionValues(redemptionTx)[3]
+    const RBTCFee = th.getEmittedRedemptionValues(redemptionTx)[3]
 
     // Since Alice already redeemed 1 BPD from Carol's Vault, Dennis was  able to redeem:
     //  - 9 BPD from Carol's
@@ -2645,14 +2645,14 @@ contract('VaultManager', async accounts => {
     // got in the way, he would have needed to redeem 3 BPD to fully complete his redemption of 20 BPD.
     // This would have required a different hint, therefore he ended up with a partial redemption.
 
-    const dennis_ETHBalance_After = toBN(await web3.eth.getBalance(dennis))
-    const receivedETH = dennis_ETHBalance_After.sub(dennis_ETHBalance_Before)
+    const dennis_RBTCBalance_After = toBN(await web3.eth.getBalance(dennis))
+    const receivedRBTC = dennis_RBTCBalance_After.sub(dennis_RBTCBalance_Before)
 
     // Expect only 17 worth of RBTC drawn
-    const expectedTotalETHDrawn = fullfilledRedemptionAmount.sub(frontRunRedepmtion).div(toBN(200)) // redempted BPD converted to RBTC, at RBTC:USD price 200
-    const expectedReceivedETH = expectedTotalETHDrawn.sub(ETHFee)
+    const expectedTotalRBTCDrawn = fullfilledRedemptionAmount.sub(frontRunRedepmtion).div(toBN(200)) // redempted BPD converted to RBTC, at RBTC:USD price 200
+    const expectedReceivedRBTC = expectedTotalRBTCDrawn.sub(RBTCFee)
 
-    th.assertIsApproximatelyEqual(expectedReceivedETH, receivedETH)
+    th.assertIsApproximatelyEqual(expectedReceivedRBTC, receivedRBTC)
 
     const dennis_BPDBalance_After = (await bpdToken.balanceOf(dennis)).toString()
     th.assertIsApproximatelyEqual(dennis_BPDBalance_After, dennis_BPDBalance_Before.sub(fullfilledRedemptionAmount.sub(frontRunRedepmtion)))
@@ -2676,7 +2676,7 @@ contract('VaultManager', async accounts => {
 
     // --- TEST --- 
 
-    const carol_ETHBalance_Before = toBN(await web3.eth.getBalance(carol))
+    const caroB_RBTCBalance_Before = toBN(await web3.eth.getBalance(carol))
 
     // skip bootstrapping phase
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
@@ -2695,15 +2695,15 @@ contract('VaultManager', async accounts => {
       }
     )
 
-    const ETHFee = th.getEmittedRedemptionValues(redemptionTx)[3]
+    const RBTCFee = th.getEmittedRedemptionValues(redemptionTx)[3]
 
-    const carol_ETHBalance_After = toBN(await web3.eth.getBalance(carol))
+    const caroB_RBTCBalance_After = toBN(await web3.eth.getBalance(carol))
 
-    const expectedTotalETHDrawn = toBN(amount).div(toBN(100)) // convert 100 BPD to RBTC at RBTC:USD price of 100
-    const expectedReceivedETH = expectedTotalETHDrawn.sub(ETHFee)
+    const expectedTotalRBTCDrawn = toBN(amount).div(toBN(100)) // convert 100 BPD to RBTC at RBTC:USD price of 100
+    const expectedReceivedRBTC = expectedTotalRBTCDrawn.sub(RBTCFee)
 
-    const receivedETH = carol_ETHBalance_After.sub(carol_ETHBalance_Before)
-    assert.isTrue(expectedReceivedETH.eq(receivedETH))
+    const receivedRBTC = caroB_RBTCBalance_After.sub(caroB_RBTCBalance_Before)
+    assert.isTrue(expectedReceivedRBTC.eq(receivedRBTC))
 
     const carol_BPDBalance_After = (await bpdToken.balanceOf(carol)).toString()
     assert.equal(carol_BPDBalance_After, '0')
@@ -2918,15 +2918,15 @@ contract('VaultManager', async accounts => {
 
     // Attempt with maxFee > 5.5%
     const price = await priceFeed.getPrice()
-    const ETHDrawn = attemptedBPDRedemption.mul(mv._1e18BN).div(price)
-    const slightlyMoreThanFee = (await vaultManager.getRedemptionFeeWithDecay(ETHDrawn))
+    const RBTCDrawn = attemptedBPDRedemption.mul(mv._1e18BN).div(price)
+    const slightlyMoreThanFee = (await vaultManager.getRedemptionFeeWithDecay(RBTCDrawn))
     const tx1 = await th.redeemCollateralAndGetTxObject(A, contracts, attemptedBPDRedemption, slightlyMoreThanFee)
     assert.isTrue(tx1.receipt.status)
 
     await vaultManager.setBaseRate(0)  // Artificially zero the baseRate
     
     // Attempt with maxFee = 5.5%
-    const exactSameFee = (await vaultManager.getRedemptionFeeWithDecay(ETHDrawn))
+    const exactSameFee = (await vaultManager.getRedemptionFeeWithDecay(RBTCDrawn))
     const tx2 = await th.redeemCollateralAndGetTxObject(C, contracts, attemptedBPDRedemption, exactSameFee)
     assert.isTrue(tx2.receipt.status)
 
@@ -2989,15 +2989,15 @@ contract('VaultManager', async accounts => {
     const carol_SPDeposit_before = (await stabilityPool.getCompoundedBPDDeposit(carol)).toString()
     const dennis_SPDeposit_before = (await stabilityPool.getCompoundedBPDDeposit(dennis)).toString()
 
-    const bob_ETHGain_before = (await stabilityPool.getDepositorETHGain(bob)).toString()
-    const carol_ETHGain_before = (await stabilityPool.getDepositorETHGain(carol)).toString()
-    const dennis_ETHGain_before = (await stabilityPool.getDepositorETHGain(dennis)).toString()
+    const bob_RBTCGain_before = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
+    const caroB_RBTCGain_before = (await stabilityPool.getDepositorRBTCGain(carol)).toString()
+    const dennis_RBTCGain_before = (await stabilityPool.getDepositorRBTCGain(dennis)).toString()
 
     // Check the remaining BPD and RBTC in Stability Pool after liquidation is non-zero
     const BPDinSP = await stabilityPool.getTotalBPDDeposits()
-    const ETHinSP = await stabilityPool.getETH()
+    const RBTCinSP = await stabilityPool.getRBTC()
     assert.isTrue(BPDinSP.gte(mv._zeroBN))
-    assert.isTrue(ETHinSP.gte(mv._zeroBN))
+    assert.isTrue(RBTCinSP.gte(mv._zeroBN))
 
     // skip bootstrapping phase
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
@@ -3019,18 +3019,18 @@ contract('VaultManager', async accounts => {
     const carol_SPDeposit_after = (await stabilityPool.getCompoundedBPDDeposit(carol)).toString()
     const dennis_SPDeposit_after = (await stabilityPool.getCompoundedBPDDeposit(dennis)).toString()
 
-    const bob_ETHGain_after = (await stabilityPool.getDepositorETHGain(bob)).toString()
-    const carol_ETHGain_after = (await stabilityPool.getDepositorETHGain(carol)).toString()
-    const dennis_ETHGain_after = (await stabilityPool.getDepositorETHGain(dennis)).toString()
+    const bob_RBTCGain_after = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
+    const caroB_RBTCGain_after = (await stabilityPool.getDepositorRBTCGain(carol)).toString()
+    const dennis_RBTCGain_after = (await stabilityPool.getDepositorRBTCGain(dennis)).toString()
 
     // Check B, C, D Stability Pool deposits and RBTC gain have not been affected by redemptions from their vaults
     assert.equal(bob_SPDeposit_before, bob_SPDeposit_after)
     assert.equal(carol_SPDeposit_before, carol_SPDeposit_after)
     assert.equal(dennis_SPDeposit_before, dennis_SPDeposit_after)
 
-    assert.equal(bob_ETHGain_before, bob_ETHGain_after)
-    assert.equal(carol_ETHGain_before, carol_ETHGain_after)
-    assert.equal(dennis_ETHGain_before, dennis_ETHGain_after)
+    assert.equal(bob_RBTCGain_before, bob_RBTCGain_after)
+    assert.equal(caroB_RBTCGain_before, caroB_RBTCGain_after)
+    assert.equal(dennis_RBTCGain_before, dennis_RBTCGain_after)
   })
 
   it("redeemCollateral(): caller can redeem their entire BPDToken balance", async () => {
@@ -3054,7 +3054,7 @@ contract('VaultManager', async accounts => {
 
     // Get active debt and coll before redemption
     const activePool_debt_before = await activePool.getBPDDebt()
-    const activePool_coll_before = await activePool.getETH()
+    const activePool_coll_before = await activePool.getRBTC()
 
     th.assertIsApproximatelyEqual(activePool_debt_before, totalDebt)
     assert.equal(activePool_coll_before.toString(), totalColl)
@@ -3092,7 +3092,7 @@ contract('VaultManager', async accounts => {
     /* Check ActivePool coll reduced by $400 worth of Bitcoin: at RBTC:USD price of $200, this should be 2 RBTC.
 
     therefore remaining ActivePool RBTC should be 198 */
-    const activePool_coll_after = await activePool.getETH()
+    const activePool_coll_after = await activePool.getRBTC()
     // console.log(`activePool_coll_after: ${activePool_coll_after}`)
     assert.equal(activePool_coll_after.toString(), activePool_coll_before.sub(toBN(dec(2, 18))))
 
@@ -3122,7 +3122,7 @@ contract('VaultManager', async accounts => {
 
     // Get active debt and coll before redemption
     const activePool_debt_before = await activePool.getBPDDebt()
-    const activePool_coll_before = (await activePool.getETH()).toString()
+    const activePool_coll_before = (await activePool.getRBTC()).toString()
 
     th.assertIsApproximatelyEqual(activePool_debt_before, totalDebt)
     assert.equal(activePool_coll_before, totalColl)
@@ -3267,7 +3267,7 @@ contract('VaultManager', async accounts => {
     const _950_BPD = '950000000000000000000'
 
     // Check Bitcoin in activePool
-    const activeRBTC_0 = await activePool.getETH()
+    const activeRBTC_0 = await activePool.getRBTC()
     assert.equal(activeRBTC_0, totalColl.toString());
 
     let firstRedemptionHint
@@ -3304,7 +3304,7 @@ contract('VaultManager', async accounts => {
     RBTC removed = (120/200) = 0.6 RBTC
     Total active RBTC = 280 - 0.6 = 279.4 RBTC */
 
-    const activeRBTC_1 = await activePool.getETH()
+    const activeRBTC_1 = await activePool.getRBTC()
     assert.equal(activeRBTC_1.toString(), activeRBTC_0.sub(toBN(_120_BPD).mul(mv._1e18BN).div(price)));
 
     // Flyn redeems 373 BPD
@@ -3333,7 +3333,7 @@ contract('VaultManager', async accounts => {
     /* 373 BPD redeemed.  Expect $373 worth of RBTC removed. At RBTC:USD price of $200, 
     RBTC removed = (373/200) = 1.865 RBTC
     Total active RBTC = 279.4 - 1.865 = 277.535 RBTC */
-    const activeRBTC_2 = await activePool.getETH()
+    const activeRBTC_2 = await activePool.getRBTC()
     assert.equal(activeRBTC_2.toString(), activeRBTC_1.sub(toBN(_373_BPD).mul(mv._1e18BN).div(price)));
 
     // Graham redeems 950 BPD
@@ -3362,7 +3362,7 @@ contract('VaultManager', async accounts => {
     /* 950 BPD redeemed.  Expect $950 worth of RBTC removed. At RBTC:USD price of $200, 
     RBTC removed = (950/200) = 4.75 RBTC
     Total active RBTC = 277.535 - 4.75 = 272.785 RBTC */
-    const activeRBTC_3 = (await activePool.getETH()).toString()
+    const activeRBTC_3 = (await activePool.getRBTC()).toString()
     assert.equal(activeRBTC_3.toString(), activeRBTC_2.sub(toBN(_950_BPD).mul(mv._1e18BN).div(price)));
   })
 
@@ -3569,7 +3569,7 @@ contract('VaultManager', async accounts => {
     assert.isTrue(lastFeeOpTime_3.gt(lastFeeOpTime_1))
   })
 
-  it("redeemCollateral(): a redemption made at zero base rate send a non-zero ETHFee to MP staking contract", async () => {
+  it("redeemCollateral(): a redemption made at zero base rate send a non-zero RBTCFee to MP staking contract", async () => {
     // time fast-forwards 1 year, and multisig stakes 1 MP
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider)
     await mpToken.approve(mpStaking.address, dec(1, 18), { from: multisig })
@@ -3621,7 +3621,7 @@ contract('VaultManager', async accounts => {
     assert.equal(await vaultManager.baseRate(), '0')
 
     // Check MP Staking RBTC-fees-per-MP-staked before is zero
-    const F_RBTC_Before = await mpStaking.F_ETH()
+    const F_RBTC_Before = await mpStaking.F_RBTC()
     assert.equal(F_RBTC_Before, '0')
 
     const A_balanceBefore = await bpdToken.balanceOf(A)
@@ -3637,11 +3637,11 @@ contract('VaultManager', async accounts => {
     assert.isTrue(baseRate_1.gt(toBN('0')))
 
     // Check MP Staking RBTC-fees-per-MP-staked after is non-zero
-    const F_RBTC_After = await mpStaking.F_ETH()
+    const F_RBTC_After = await mpStaking.F_RBTC()
     assert.isTrue(F_RBTC_After.gt('0'))
   })
 
-  it("redeemCollateral(): a redemption made at a non-zero base rate send a non-zero ETHFee to MP staking contract", async () => {
+  it("redeemCollateral(): a redemption made at a non-zero base rate send a non-zero RBTCFee to MP staking contract", async () => {
     // time fast-forwards 1 year, and multisig stakes 1 MP
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider)
     await mpToken.approve(mpStaking.address, dec(1, 18), { from: multisig })
@@ -3712,7 +3712,7 @@ contract('VaultManager', async accounts => {
     assert.isTrue(baseRate_1.gt(toBN('0')))
 
     // Check MP Staking RBTC-fees-per-MP-staked before is zero
-    const F_RBTC_Before = await mpStaking.F_ETH()
+    const F_RBTC_Before = await mpStaking.F_RBTC()
 
     // B redeems 10 BPD
     await th.redeemCollateral(B, contracts, dec(10, 18))
@@ -3720,13 +3720,13 @@ contract('VaultManager', async accounts => {
     // Check B's balance has decreased by 10 BPD
     assert.equal(await bpdToken.balanceOf(B), B_balanceBefore.sub(toBN(dec(10, 18))).toString())
 
-    const F_RBTC_After = await mpStaking.F_ETH()
+    const F_RBTC_After = await mpStaking.F_RBTC()
 
     // check MP Staking balance has increased
     assert.isTrue(F_RBTC_After.gt(F_RBTC_Before))
   })
 
-  it("redeemCollateral(): a redemption sends the RBTC remainder (ETHDrawn - ETHFee) to the redeemer", async () => {
+  it("redeemCollateral(): a redemption sends the RBTC remainder (RBTCDrawn - RBTCFee) to the redeemer", async () => {
     // time fast-forwards 1 year, and multisig stakes 1 MP
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider)
     await mpToken.approve(mpStaking.address, dec(1, 18), { from: multisig })
@@ -3758,21 +3758,21 @@ contract('VaultManager', async accounts => {
 
     /*
     At RBTC:USD price of 200:
-    ETHDrawn = (9 / 200) = 0.045 RBTC
-    ETHfee = (0.005 + (1/2) *( 9/260)) * ETHDrawn = 0.00100384615385 RBTC
-    ETHRemainder = 0.045 - 0.001003... = 0.0439961538462
+    RBTCDrawn = (9 / 200) = 0.045 RBTC
+    RBTCfee = (0.005 + (1/2) *( 9/260)) * RBTCDrawn = 0.00100384615385 RBTC
+    RBTCRemainder = 0.045 - 0.001003... = 0.0439961538462
     */
 
     const A_balanceAfter = toBN(await web3.eth.getBalance(A))
 
     // check A's RBTC balance has increased by 0.045 RBTC 
     const price = await priceFeed.getPrice()
-    const ETHDrawn = redemptionAmount.mul(mv._1e18BN).div(price)
+    const RBTCDrawn = redemptionAmount.mul(mv._1e18BN).div(price)
     th.assertIsApproximatelyEqual(
       A_balanceAfter.sub(A_balanceBefore),
-      ETHDrawn.sub(
+      RBTCDrawn.sub(
         toBN(dec(5, 15)).add(redemptionAmount.mul(mv._1e18BN).div(totalDebt).div(toBN(2)))
-          .mul(ETHDrawn).div(mv._1e18BN)
+          .mul(RBTCDrawn).div(mv._1e18BN)
       ),
       100000
     )
@@ -3850,9 +3850,9 @@ contract('VaultManager', async accounts => {
     /*
     At RBTC:USD price of 200, with full redemptions from A, B, C:
 
-    ETHDrawn from A = 100/200 = 0.5 RBTC --> Surplus = (1-0.5) = 0.5
-    ETHDrawn from B = 120/200 = 0.6 RBTC --> Surplus = (1-0.6) = 0.4
-    ETHDrawn from C = 130/200 = 0.65 RBTC --> Surplus = (2-0.65) = 1.35
+    RBTCDrawn from A = 100/200 = 0.5 RBTC --> Surplus = (1-0.5) = 0.5
+    RBTCDrawn from B = 120/200 = 0.6 RBTC --> Surplus = (1-0.6) = 0.4
+    RBTCDrawn from C = 130/200 = 0.65 RBTC --> Surplus = (2-0.65) = 1.35
     */
 
     const A_balanceAfter = toBN(await web3.eth.getBalance(A))
@@ -4033,7 +4033,7 @@ contract('VaultManager', async accounts => {
     assert.equal(carol_PendingBPDDebtReward, 0)
   })
 
-  it("getPendingETHReward(): Returns 0 if there is no pending RBTC reward", async () => {
+  it("getPendingRBTCReward(): Returns 0 if there is no pending RBTC reward", async () => {
     // make some vaults
     const { totalDebt } = await openVault({ ICR: toBN(dec(2, 18)), extraBPDAmount: dec(100, 18), extraParams: { from: defaulter_1 } })
 
@@ -4051,14 +4051,14 @@ contract('VaultManager', async accounts => {
     assert.isFalse(await sortedVaults.contains(defaulter_1))
 
     // Confirm there are no pending rewards from liquidation
-    const current_L_ETH = await vaultManager.L_ETH()
-    assert.equal(current_L_ETH, 0)
+    const current_B_RBTC = await vaultManager.B_RBTC()
+    assert.equal(current_B_RBTC, 0)
 
-    const carolSnapshot_L_ETH = (await vaultManager.rewardSnapshots(carol))[0]
-    assert.equal(carolSnapshot_L_ETH, 0)
+    const carolSnapshot_B_RBTC = (await vaultManager.rewardSnapshots(carol))[0]
+    assert.equal(carolSnapshot_B_RBTC, 0)
 
-    const carol_PendingETHReward = await vaultManager.getPendingETHReward(carol)
-    assert.equal(carol_PendingETHReward, 0)
+    const carol_PendingRBTCReward = await vaultManager.getPendingRBTCReward(carol)
+    assert.equal(carol_PendingRBTCReward, 0)
   })
 
   // --- computeICR ---

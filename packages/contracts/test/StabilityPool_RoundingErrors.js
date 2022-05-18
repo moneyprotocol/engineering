@@ -2,7 +2,7 @@
 const deploymentHelpers = require("../utils/truffleDeploymentHelpers.js")
 const testHelpers = require("../utils/testHelpers.js")
 
-const deployLiquity = deploymentHelpers.deployLiquity
+const deployMoneyp = deploymentHelpers.deployMoneyp
 const getAddresses = deploymentHelpers.getAddresses
 const connectContracts = deploymentHelpers.connectContracts
 
@@ -22,7 +22,7 @@ contract('Pool Manager: Sum-Product rounding errors', async accounts => {
   let borrowerOperations
 
   beforeEach(async () => {
-    contracts = await deployLiquity()
+    contracts = await deployMoneyp()
     
     priceFeed = contracts.priceFeedTestnet
     bpdToken = contracts.bpdToken
@@ -60,13 +60,13 @@ contract('Pool Manager: Sum-Product rounding errors', async accounts => {
     }
 
     const SP_TotalDeposits = await stabilityPool.getTotalBPDDeposits()
-    const SP_ETH = await stabilityPool.getETH()
+    const SP_RBTC = await stabilityPool.getRBTC()
     const compoundedDeposit = await stabilityPool.getCompoundedBPDDeposit(depositors[0])
-    const RBTC_Gain = await stabilityPool.getCurrentETHGain(depositors[0])
+    const RBTC_Gain = await stabilityPool.getCurrentRBTCGain(depositors[0])
 
     // Check depostiors receive their share without too much error
     assert.isAtMost(th.getDifference(SP_TotalDeposits.div(th.toBN(depositors.length)), compoundedDeposit), 100000)
-    assert.isAtMost(th.getDifference(SP_ETH.div(th.toBN(depositors.length)), RBTC_Gain), 100000)
+    assert.isAtMost(th.getDifference(SP_RBTC.div(th.toBN(depositors.length)), RBTC_Gain), 100000)
   })
 })
 

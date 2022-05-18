@@ -28,7 +28,7 @@ contract('CollSurplusPool', async accounts => {
   const openVault = async (params) => th.openVault(contracts, params)
 
   beforeEach(async () => {
-    contracts = await deploymentHelper.deployLiquityCore()
+    contracts = await deploymentHelper.deployMoneypCore()
     contracts.vaultManager = await VaultManagerTester.new()
     contracts.bpdToken = await BPDToken.new(
       contracts.vaultManager.address,
@@ -46,8 +46,8 @@ contract('CollSurplusPool', async accounts => {
     await deploymentHelper.connectMPContractsToCore(MPContracts, contracts)
   })
 
-  it("CollSurplusPool::getETH(): Returns the RBTC balance of the CollSurplusPool after redemption", async () => {
-    const RBTC_1 = await collSurplusPool.getETH()
+  it("CollSurplusPool::getRBTC(): Returns the RBTC balance of the CollSurplusPool after redemption", async () => {
+    const RBTC_1 = await collSurplusPool.getRBTC()
     assert.equal(RBTC_1, '0')
 
     const price = toBN(dec(100, 18))
@@ -62,7 +62,7 @@ contract('CollSurplusPool', async accounts => {
     // At RBTC:USD = 100, this redemption should leave 1 ether of coll surplus
     await th.redeemCollateralAndGetTxObject(A, contracts, B_netDebt)
 
-    const RBTC_2 = await collSurplusPool.getETH()
+    const RBTC_2 = await collSurplusPool.getRBTC()
     th.assertIsApproximatelyEqual(RBTC_2, B_coll.sub(B_netDebt.mul(mv._1e18BN).div(price)))
   })
 
@@ -94,7 +94,7 @@ contract('CollSurplusPool', async accounts => {
     // At RBTC:USD = 100, this redemption should leave 1 ether of coll surplus for B
     await th.redeemCollateralAndGetTxObject(A, contracts, B_netDebt)
 
-    const RBTC_2 = await collSurplusPool.getETH()
+    const RBTC_2 = await collSurplusPool.getRBTC()
     th.assertIsApproximatelyEqual(RBTC_2, B_coll.sub(B_netDebt.mul(mv._1e18BN).div(price)))
 
     const claimCollateralData = th.getTransactionData('claimCollateral()', [])

@@ -49,7 +49,7 @@ contract('StabilityPool - MP Rewards', async accounts => {
   describe("MP Rewards", async () => {
 
     beforeEach(async () => {
-      contracts = await deploymentHelper.deployLiquityCore()
+      contracts = await deploymentHelper.deployMoneypCore()
       contracts.vaultManager = await VaultManagerTester.new()
       contracts.bpdToken = await BPDToken.new(
         contracts.vaultManager.address,
@@ -142,8 +142,8 @@ contract('StabilityPool - MP Rewards', async accounts => {
       assert.equal(B_pendingMPGain, '0')
 
       // Check depositor B has a pending RBTC gain
-      const B_pendingETHGain = await stabilityPool.getDepositorETHGain(B)
-      assert.isTrue(B_pendingETHGain.gt(toBN('0')))
+      const B_pendingRBTCGain = await stabilityPool.getDepositorRBTCGain(B)
+      assert.isTrue(B_pendingRBTCGain.gt(toBN('0')))
     })
 
 

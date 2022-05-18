@@ -3,7 +3,7 @@ const deploymentHelper = require("../utils/deploymentHelpers.js")
 const { BNConverter } = require("../utils/BNConverter.js")
 const testHelpers = require("../utils/testHelpers.js")
 const VaultManagerTester = artifacts.require("./VaultManagerTester.sol")
-const LiquityMathTester = artifacts.require("./LiquityMathTester.sol")
+const MoneypMathTester = artifacts.require("./MoneypMathTester.sol")
 
 const th = testHelpers.TestHelper
 const timeValues = testHelpers.TimeValues
@@ -334,12 +334,12 @@ contract('Fee arithmetic tests', async accounts => {
     vaultManagerTester = await VaultManagerTester.new()
     VaultManagerTester.setAsDeployed(vaultManagerTester)
 
-    mathTester = await LiquityMathTester.new()
-    LiquityMathTester.setAsDeployed(mathTester)
+    mathTester = await MoneypMathTester.new()
+    MoneypMathTester.setAsDeployed(mathTester)
   })
 
   beforeEach(async () => {
-    contracts = await deploymentHelper.deployLiquityCore()
+    contracts = await deploymentHelper.deployMoneypCore()
     const MPContracts = await deploymentHelper.deployMPContracts(bountyAddress, lpRewardsAddress, multisig)
 
     await deploymentHelper.connectMPContracts(MPContracts)

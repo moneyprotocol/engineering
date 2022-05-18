@@ -1,4 +1,4 @@
-/* Script that logs gas costs for Liquity operations under various conditions. 
+/* Script that logs gas costs for Moneyp operations under various conditions. 
   Note: uses Mocha testing structure, but simply prints gas costs of transactions. No assertions.
 */
 const fs = require('fs')
@@ -163,9 +163,9 @@ contract('Gas cost tests', async accounts => {
   // it("", async () => {
   //   const message = 'openVault(), 10 accounts, each account adds 10 ether and issues 100 BPD'
 
-  //   const amountETH = dec(10, 'ether')
+  //   const amountRBTC = dec(10, 'ether')
   //   const amountBPD = 0
-  //   const gasResults = await th.openVault_allAccounts(_10_Accounts, contracts, amountETH, amountBPD)
+  //   const gasResults = await th.openVault_allAccounts(_10_Accounts, contracts, amountRBTC, amountBPD)
   //   th.logGasMetrics(gasResults, message)
   //   th.logAllGasCosts(gasResults)
 
@@ -174,9 +174,9 @@ contract('Gas cost tests', async accounts => {
 
   // it("", async () => {
   //   const message = 'openVault(), 10 accounts, each account adds 10 ether and issues less BPD than the previous one'
-  //   const amountETH = dec(10, 'ether')
+  //   const amountRBTC = dec(10, 'ether')
   //   const amountBPD = 200
-  //   const gasResults = await th.openVault_allAccounts_decreasingBPDAmounts(_10_Accounts, contracts, amountETH, amountBPD)
+  //   const gasResults = await th.openVault_allAccounts_decreasingBPDAmounts(_10_Accounts, contracts, amountRBTC, amountBPD)
   //   th.logGasMetrics(gasResults, message)
   //   th.logAllGasCosts(gasResults)
 
@@ -185,7 +185,7 @@ contract('Gas cost tests', async accounts => {
 
   it("", async () => {
     const message = 'openVault(), 50 accounts, each account adds random ether and random BPD'
-    const amountETH = dec(10, 'ether')
+    const amountRBTC = dec(10, 'ether')
     const amountBPD = 0
     const gasResults = await th.openVault_allAccounts_randomRBTC_randomBPD(1, 9, _50_Accounts, contracts, 2, 100, true)
     th.logGasMetrics(gasResults, message)
@@ -200,9 +200,9 @@ contract('Gas cost tests', async accounts => {
   //   const message = 'adjustVault(). RBTC/BPD Increase/Increase. 10 accounts, each account adjusts up -  1 ether and 100 BPD'
   //   await borrowerOperations.openVault(_100pct, 0, accounts[999], ZERO_ADDRESS, { from: accounts[999], value: dec(100, 'ether') })
 
-  //   const amountETH = dec(10, 'ether')
+  //   const amountRBTC = dec(10, 'ether')
   //   const amountBPD = dec(100, 18)
-  //   await th.openVault_allAccounts(_10_Accounts, contracts, amountETH, amountBPD)
+  //   await th.openVault_allAccounts(_10_Accounts, contracts, amountRBTC, amountBPD)
 
 
   //   const amountRBTC_2 = dec(1, 'ether')
@@ -219,9 +219,9 @@ contract('Gas cost tests', async accounts => {
   //   const message = 'adjustVault(). RBTC/BPD Decrease/Decrease. 10 accounts, each account adjusts down by 0.1 ether and 10 BPD'
   //   await borrowerOperations.openVault(_100pct, 0, accounts[999], ZERO_ADDRESS, { from: accounts[999], value: dec(100, 'ether') })
 
-  //   const amountETH = dec(10, 'ether')
+  //   const amountRBTC = dec(10, 'ether')
   //   const amountBPD = dec(100, 18)
-  //   await th.openVault_allAccounts(_10_Accounts, contracts, amountETH, amountBPD)
+  //   await th.openVault_allAccounts(_10_Accounts, contracts, amountRBTC, amountBPD)
 
   //   const amountRBTC_2 = "-100000000000000000"  // coll decrease of 0.1 RBTC 
   //   const amountBPD_2 = "-10000000000000000000" // debt decrease of 10 BPD 
@@ -237,9 +237,9 @@ contract('Gas cost tests', async accounts => {
   //   const message = 'adjustVault(). RBTC/BPD Increase/Decrease. 10 accounts, each account adjusts up by 0.1 ether and down by 10 BPD'
   //   await borrowerOperations.openVault(_100pct, 0, accounts[999], ZERO_ADDRESS, { from: accounts[999], value: dec(100, 'ether') })
 
-  //   const amountETH = dec(10, 'ether')
+  //   const amountRBTC = dec(10, 'ether')
   //   const amountBPD = dec(100, 18)
-  //   await th.openVault_allAccounts(_10_Accounts, contracts, amountETH, amountBPD)
+  //   await th.openVault_allAccounts(_10_Accounts, contracts, amountRBTC, amountBPD)
 
   //   const amountRBTC_2 = "100000000000000000"  // coll increase of 0.1 RBTC 
   //   const amountBPD_2 = "-10000000000000000000" // debt decrease of 10 BPD 
@@ -255,9 +255,9 @@ contract('Gas cost tests', async accounts => {
   //   const message = 'adjustVault(). 30 accounts, each account adjusts up by random amounts. No size range transition'
   //   await borrowerOperations.openVault(_100pct, 0, accounts[999], ZERO_ADDRESS, { from: accounts[999], value: dec(100, 'ether') })
 
-  //   const amountETH = dec(10, 'ether')
+  //   const amountRBTC = dec(10, 'ether')
   //   const amountBPD = dec(100, 18)
-  //   await th.openVault_allAccounts(_30_Accounts, contracts, amountETH, amountBPD)
+  //   await th.openVault_allAccounts(_30_Accounts, contracts, amountRBTC, amountBPD)
 
   //   // Randomly add between 1-9 RBTC, and withdraw 1-100 BPD
   //   const gasResults = await th.adjustVault_allAccounts_randomAmount(_30_Accounts, contracts, 1, 9, 1, 100)
@@ -272,9 +272,9 @@ contract('Gas cost tests', async accounts => {
     const message = 'adjustVault(). 40 accounts, each account adjusts up by random amounts. HAS size range transition'
     await borrowerOperations.openVault(_100pct, 0, accounts[999], ZERO_ADDRESS, { from: accounts[999], value: dec(100, 'ether') })
 
-    const amountETH = dec(9, 'ether')
+    const amountRBTC = dec(9, 'ether')
     const amountBPD = dec(100, 18)
-    await th.openVault_allAccounts(_40_Accounts, contracts, amountETH, amountBPD)
+    await th.openVault_allAccounts(_40_Accounts, contracts, amountRBTC, amountBPD)
     // Randomly add between 1-9 RBTC, and withdraw 1-100 BPD
     const gasResults = await th.adjustVault_allAccounts_randomAmount(_40_Accounts, contracts, 1, 9, 1, 100)
 
@@ -1502,11 +1502,11 @@ contract('Gas cost tests', async accounts => {
     th.appendData(gasResults, message, data)
   })
 
-  // --- withdrawETHGainToVault() ---
+  // --- withdrawRBTCGainToVault() ---
 
-  // --- withdrawETHGainToVault() - deposit has pending rewards ---
+  // --- withdrawRBTCGainToVault() - deposit has pending rewards ---
   // it("", async () => {
-  //   const message = 'withdrawETHGainToVault(), pending rewards in system. Accounts withdraw 180 BPD, provide 180 BPD, then withdraw all to SP after a liquidation'
+  //   const message = 'withdrawRBTCGainToVault(), pending rewards in system. Accounts withdraw 180 BPD, provide 180 BPD, then withdraw all to SP after a liquidation'
   //   // 10 accts each open Vault with 10 ether, withdraw 180 BPD, and provide 130 BPD to Stability Pool
   //   await th.openVault_allAccounts(accounts.slice(2, 12), contracts, dec(10, 'ether'), dec(130, 18))
   //   await th.provideToSP_allAccounts(accounts.slice(2, 12), stabilityPool, dec(130, 18))
@@ -1531,7 +1531,7 @@ contract('Gas cost tests', async accounts => {
   //   await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider)
 
   //   // 5 active Vaults withdraw their RBTC gain to their vault
-  //   const gasResults = await th.withdrawETHGainToVault_allAccounts(accounts.slice(7, 12), contracts)
+  //   const gasResults = await th.withdrawRBTCGainToVault_allAccounts(accounts.slice(7, 12), contracts)
   //   th.logGasMetrics(gasResults, message)
   //   th.logAllGasCosts(gasResults)
 
@@ -1539,7 +1539,7 @@ contract('Gas cost tests', async accounts => {
   // })
 
   it("", async () => {
-    const message = 'withdrawETHGainToVault(), pending rewards in system. Accounts withdraw 180 BPD, provide a random amount, then withdraw all to SP after a liquidation'
+    const message = 'withdrawRBTCGainToVault(), pending rewards in system. Accounts withdraw 180 BPD, provide a random amount, then withdraw all to SP after a liquidation'
     // 20 accts each open Vault with 10 ether, withdraw 180 BPD, and provide 180 BPD to Stability Pool
     await th.openVault_allAccounts(accounts.slice(2, 22), contracts, dec(10, 'ether'), dec(130, 18))
     await await th.provideToSP_allAccounts_randomAmount(1, 129, accounts.slice(2, 22), stabilityPool)
@@ -1564,7 +1564,7 @@ contract('Gas cost tests', async accounts => {
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider)
   
     // 5 active Vaults withdraw their RBTC gain to their vault
-    const gasResults = await th.withdrawETHGainToVault_allAccounts(accounts.slice(2, 22), contracts)
+    const gasResults = await th.withdrawRBTCGainToVault_allAccounts(accounts.slice(2, 22), contracts)
     th.logGasMetrics(gasResults, message)
     th.logAllGasCosts(gasResults)
 

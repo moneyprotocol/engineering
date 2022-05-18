@@ -9,7 +9,7 @@ const StabilityPool = artifacts.require("./StabilityPool.sol")
 const FunctionCaller = artifacts.require("./FunctionCaller.sol")
 const BorrowerOperations = artifacts.require("./BorrowerOperations.sol")
 
-const deployLiquity = async () => {
+const deployMoneyp = async () => {
   const priceFeedTestnet = await PriceFeedTestnet.new()
   const sortedVaults = await SortedVaults.new()
   const vaultManager = await VaultManager.new()
@@ -108,6 +108,6 @@ const connectEchidnaProxy = async (echidnaProxy, addresses) => {
 module.exports = {
   connectEchidnaProxy: connectEchidnaProxy,
   getAddresses: getAddresses,
-  deployLiquity: deployLiquity,
+  deployMoneyp: deployMoneyp,
   connectContracts: connectContracts
 }

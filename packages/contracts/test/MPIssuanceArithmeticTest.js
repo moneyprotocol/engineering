@@ -49,7 +49,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
   })
 
   beforeEach(async () => {
-    contracts = await deploymentHelper.deployLiquityCore()
+    contracts = await deploymentHelper.deployMoneypCore()
     const MPContracts = await deploymentHelper.deployMPTesterContractsHardhat(bountyAddress, lpRewardsAddress, multisig)
     contracts.stabilityPool = await StabilityPool.new()
     contracts = await deploymentHelper.deployBPDToken(contracts)

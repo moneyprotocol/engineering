@@ -61,7 +61,7 @@ contract('BorrowerWrappers', async accounts => {
   const openVault = async (params) => th.openVault(contracts, params)
 
   beforeEach(async () => {
-    contracts = await deploymentHelper.deployLiquityCore()
+    contracts = await deploymentHelper.deployMoneypCore()
     contracts.vaultManager = await VaultManagerTester.new()
     contracts = await deploymentHelper.deployBPDToken(contracts)
     const MPContracts = await deploymentHelper.deployMPTesterContractsHardhat(bountyAddress, lpRewardsAddress, multisig)
@@ -103,7 +103,7 @@ contract('BorrowerWrappers', async accounts => {
     const balanceBefore = toBN(await web3.eth.getBalance(alice))
 
     // recover RBTC
-    await borrowerWrappers.transferETH(alice, amount, { from: alice, gasPrice: 0 })
+    await borrowerWrappers.transferRBTC(alice, amount, { from: alice, gasPrice: 0 })
     const balanceAfter = toBN(await web3.eth.getBalance(alice))
 
     assert.equal(balanceAfter.sub(balanceBefore), amount.toString())
@@ -121,7 +121,7 @@ contract('BorrowerWrappers', async accounts => {
 
     // try to recover RBTC
     const proxy = borrowerWrappers.getProxyFromUser(alice)
-    const signature = 'transferETH(address,uint256)'
+    const signature = 'transferRBTC(address,uint256)'
     const calldata = th.getTransactionData(signature, [alice, amount])
     await assertRevert(proxy.methods["execute(address,bytes)"](borrowerWrappers.scriptAddress, calldata, { from: bob }), 'ds-auth-unauthorized')
 
@@ -284,7 +284,7 @@ contract('BorrowerWrappers', async accounts => {
     const expectedCompoundedBPDDeposit_A = toBN(dec(150, 18)).sub(expectedBPDLoss_A)
     const compoundedBPDDeposit_A = await stabilityPool.getCompoundedBPDDeposit(alice)
     // collateral * 150 / 2500 * 0.995
-    const expectedETHGain_A = collateral.mul(aliceDeposit).div(totalDeposits).mul(toBN(dec(995, 15))).div(mv._1e18BN)
+    const expectedRBTCGain_A = collateral.mul(aliceDeposit).div(totalDeposits).mul(toBN(dec(995, 15))).div(mv._1e18BN)
 
     assert.isAtMost(th.getDifference(expectedCompoundedBPDDeposit_A, compoundedBPDDeposit_A), 1000)
 
@@ -297,7 +297,7 @@ contract('BorrowerWrappers', async accounts => {
     const depositBefore = (await stabilityPool.deposits(alice))[0]
     const stakeBefore = await mpStaking.stakes(alice)
 
-    const proportionalBPD = expectedETHGain_A.mul(price).div(ICRBefore)
+    const proportionalBPD = expectedRBTCGain_A.mul(price).div(ICRBefore)
     const borrowingRate = await vaultManagerOriginal.getBorrowingRateWithDecay()
     const netDebtChange = proportionalBPD.mul(mv._1e18BN).div(mv._1e18BN.add(borrowingRate))
 
@@ -328,7 +328,7 @@ contract('BorrowerWrappers', async accounts => {
     // check vault has increased debt by the ICR proportional amount to RBTC gain
     th.assertIsApproximatelyEqual(vaultDebtAfter, vaultDebtBefore.add(proportionalBPD))
     // check vault has increased collateral by the RBTC gain
-    th.assertIsApproximatelyEqual(vaultCollAfter, vaultCollBefore.add(expectedETHGain_A))
+    th.assertIsApproximatelyEqual(vaultCollAfter, vaultCollBefore.add(expectedRBTCGain_A))
     // check that ICR remains constant
     th.assertIsApproximatelyEqual(ICRAfter, ICRBefore)
     // check that Stability Pool deposit
@@ -340,8 +340,8 @@ contract('BorrowerWrappers', async accounts => {
     th.assertIsApproximatelyEqual(stakeAfter, stakeBefore.add(expectedMPGain_A))
 
     // Expect Alice has withdrawn all RBTC gain
-    const alice_pendingETHGain = await stabilityPool.getDepositorETHGain(alice)
-    assert.equal(alice_pendingETHGain, 0)
+    const alice_pendingRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
+    assert.equal(alice_pendingRBTCGain, 0)
   })
 
 
@@ -450,8 +450,8 @@ contract('BorrowerWrappers', async accounts => {
     th.assertIsApproximatelyEqual(stakeAfter, stakeBefore)
 
     // Expect Alice has withdrawn all RBTC gain
-    const alice_pendingETHGain = await stabilityPool.getDepositorETHGain(alice)
-    assert.equal(alice_pendingETHGain, 0)
+    const alice_pendingRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
+    assert.equal(alice_pendingRBTCGain, 0)
   })
 
   it('claimStakingGainsAndRecycle(): with only RBTC gain', async () => {
@@ -485,7 +485,7 @@ contract('BorrowerWrappers', async accounts => {
 
     // Alice RBTC gain is ((150/2000) * (redemption fee over redeemedAmount) / price)
     const redemptionFee = await vaultManager.getRedemptionFeeWithDecay(redeemedAmount)
-    const expectedETHGain_A = redemptionFee.mul(toBN(dec(150, 18))).div(toBN(dec(2000, 18))).mul(mv._1e18BN).div(price)
+    const expectedRBTCGain_A = redemptionFee.mul(toBN(dec(150, 18))).div(toBN(dec(2000, 18))).mul(mv._1e18BN).div(price)
 
     const ethBalanceBefore = await web3.eth.getBalance(borrowerOperations.getProxyAddressFromUser(alice))
     const vaultCollBefore = await vaultManager.getVaultColl(alice)
@@ -496,7 +496,7 @@ contract('BorrowerWrappers', async accounts => {
     const depositBefore = (await stabilityPool.deposits(alice))[0]
     const stakeBefore = await mpStaking.stakes(alice)
 
-    const proportionalBPD = expectedETHGain_A.mul(price).div(ICRBefore)
+    const proportionalBPD = expectedRBTCGain_A.mul(price).div(ICRBefore)
     const borrowingRate = await vaultManagerOriginal.getBorrowingRateWithDecay()
     const netDebtChange = proportionalBPD.mul(toBN(dec(1, 18))).div(toBN(dec(1, 18)).add(borrowingRate))
 
@@ -527,7 +527,7 @@ contract('BorrowerWrappers', async accounts => {
     // check vault has increased debt by the ICR proportional amount to RBTC gain
     th.assertIsApproximatelyEqual(vaultDebtAfter, vaultDebtBefore.add(proportionalBPD), 10000)
     // check vault has increased collateral by the RBTC gain
-    th.assertIsApproximatelyEqual(vaultCollAfter, vaultCollBefore.add(expectedETHGain_A))
+    th.assertIsApproximatelyEqual(vaultCollAfter, vaultCollBefore.add(expectedRBTCGain_A))
     // check that ICR remains constant
     th.assertIsApproximatelyEqual(ICRAfter, ICRBefore)
     // check that Stability Pool deposit
@@ -539,8 +539,8 @@ contract('BorrowerWrappers', async accounts => {
     th.assertIsApproximatelyEqual(stakeAfter, stakeBefore.add(expectedMPGain_A))
 
     // Expect Alice has withdrawn all RBTC gain
-    const alice_pendingETHGain = await stabilityPool.getDepositorETHGain(alice)
-    assert.equal(alice_pendingETHGain, 0)
+    const alice_pendingRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
+    assert.equal(alice_pendingRBTCGain, 0)
   })
 
   it('claimStakingGainsAndRecycle(): with only BPD gain', async () => {
@@ -608,8 +608,8 @@ contract('BorrowerWrappers', async accounts => {
     th.assertIsApproximatelyEqual(mpBalanceBefore, mpBalanceAfter)
 
     // Expect Alice has withdrawn all RBTC gain
-    const alice_pendingETHGain = await stabilityPool.getDepositorETHGain(alice)
-    assert.equal(alice_pendingETHGain, 0)
+    const alice_pendingRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
+    assert.equal(alice_pendingRBTCGain, 0)
   })
 
   it('claimStakingGainsAndRecycle(): with both RBTC and BPD gains', async () => {
@@ -646,7 +646,7 @@ contract('BorrowerWrappers', async accounts => {
 
     // Alice RBTC gain is ((150/2000) * (redemption fee over redeemedAmount) / price)
     const redemptionFee = await vaultManager.getRedemptionFeeWithDecay(redeemedAmount)
-    const expectedETHGain_A = redemptionFee.mul(toBN(dec(150, 18))).div(toBN(dec(2000, 18))).mul(mv._1e18BN).div(price)
+    const expectedRBTCGain_A = redemptionFee.mul(toBN(dec(150, 18))).div(toBN(dec(2000, 18))).mul(mv._1e18BN).div(price)
 
     const ethBalanceBefore = await web3.eth.getBalance(borrowerOperations.getProxyAddressFromUser(alice))
     const vaultCollBefore = await vaultManager.getVaultColl(alice)
@@ -657,7 +657,7 @@ contract('BorrowerWrappers', async accounts => {
     const depositBefore = (await stabilityPool.deposits(alice))[0]
     const stakeBefore = await mpStaking.stakes(alice)
 
-    const proportionalBPD = expectedETHGain_A.mul(price).div(ICRBefore)
+    const proportionalBPD = expectedRBTCGain_A.mul(price).div(ICRBefore)
     const borrowingRate = await vaultManagerOriginal.getBorrowingRateWithDecay()
     const netDebtChange = proportionalBPD.mul(toBN(dec(1, 18))).div(toBN(dec(1, 18)).add(borrowingRate))
     const expectedTotalBPD = expectedBPDGain_A.add(netDebtChange)
@@ -688,7 +688,7 @@ contract('BorrowerWrappers', async accounts => {
     // check vault has increased debt by the ICR proportional amount to RBTC gain
     th.assertIsApproximatelyEqual(vaultDebtAfter, vaultDebtBefore.add(proportionalBPD), 10000)
     // check vault has increased collateral by the RBTC gain
-    th.assertIsApproximatelyEqual(vaultCollAfter, vaultCollBefore.add(expectedETHGain_A))
+    th.assertIsApproximatelyEqual(vaultCollAfter, vaultCollBefore.add(expectedRBTCGain_A))
     // check that ICR remains constant
     th.assertIsApproximatelyEqual(ICRAfter, ICRBefore)
     // check that Stability Pool deposit
@@ -700,8 +700,8 @@ contract('BorrowerWrappers', async accounts => {
     th.assertIsApproximatelyEqual(stakeAfter, stakeBefore.add(expectedMPGain_A))
 
     // Expect Alice has withdrawn all RBTC gain
-    const alice_pendingETHGain = await stabilityPool.getDepositorETHGain(alice)
-    assert.equal(alice_pendingETHGain, 0)
+    const alice_pendingRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
+    assert.equal(alice_pendingRBTCGain, 0)
   })
 
 })

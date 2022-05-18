@@ -49,7 +49,7 @@ contract('Gas compensation tests', async accounts => {
   })
 
   beforeEach(async () => {
-    contracts = await deploymentHelper.deployLiquityCore()
+    contracts = await deploymentHelper.deployMoneypCore()
     contracts.vaultManager = await VaultManagerTester.new()
     contracts.bpdToken = await BPDToken.new(
       contracts.vaultManager.address,
@@ -385,8 +385,8 @@ contract('Gas compensation tests', async accounts => {
     assert.isTrue(BPDinSP_A.lte(BPDinSP_0))
 
     // Check RBTC in SP has received the liquidation
-    const ETHinSP_A = await stabilityPool.getETH()
-    assert.equal(ETHinSP_A.toString(), aliceColl.sub(_0pt5percent_aliceColl)) // 1 RBTC - 0.5%
+    const RBTCinSP_A = await stabilityPool.getRBTC()
+    assert.equal(RBTCinSP_A.toString(), aliceColl.sub(_0pt5percent_aliceColl)) // 1 RBTC - 0.5%
 
     // --- Price drops to 3 ---
     await priceFeed.setPrice(dec(3, 18))
@@ -415,8 +415,8 @@ contract('Gas compensation tests', async accounts => {
     assert.isTrue(BPDinSP_B.lt(BPDinSP_A))
 
     // Check RBTC in SP has received the liquidation
-    const ETHinSP_B = await stabilityPool.getETH()
-    assert.equal(ETHinSP_B.toString(), aliceColl.sub(_0pt5percent_aliceColl).add(bobColl).sub(_0pt5percent_bobColl)) // (1 + 2 RBTC) * 0.995
+    const RBTCinSP_B = await stabilityPool.getRBTC()
+    assert.equal(RBTCinSP_B.toString(), aliceColl.sub(_0pt5percent_aliceColl).add(bobColl).sub(_0pt5percent_bobColl)) // (1 + 2 RBTC) * 0.995
 
 
     // --- Price drops to 3 ---
@@ -447,8 +447,8 @@ contract('Gas compensation tests', async accounts => {
     assert.isTrue(BPDinSP_C.lt(BPDinSP_B))
 
     // Check RBTC in SP has not changed due to the lquidation of C
-    const ETHinSP_C = await stabilityPool.getETH()
-    assert.equal(ETHinSP_C.toString(), aliceColl.sub(_0pt5percent_aliceColl).add(bobColl).sub(_0pt5percent_bobColl).add(carolColl).sub(_0pt5percent_carolColl)) // (1+2+3 RBTC) * 0.995
+    const RBTCinSP_C = await stabilityPool.getRBTC()
+    assert.equal(RBTCinSP_C.toString(), aliceColl.sub(_0pt5percent_aliceColl).add(bobColl).sub(_0pt5percent_bobColl).add(carolColl).sub(_0pt5percent_carolColl)) // (1+2+3 RBTC) * 0.995
   })
 
   it('gas compensation from pool-offset liquidations: 0.5% collateral < $10 in value. Compensates $10 worth of collateral, liquidates the remainder', async () => {
@@ -467,7 +467,7 @@ contract('Gas compensation tests', async accounts => {
     await stabilityPool.provideToSP(dec(1, 23), ZERO_ADDRESS, { from: erin })
 
     const BPDinSP_0 = await stabilityPool.getTotalBPDDeposits()
-    const ETHinSP_0 = await stabilityPool.getETH()
+    const RBTCinSP_0 = await stabilityPool.getRBTC()
 
     // --- Price drops to 199.999 ---
     await priceFeed.setPrice('199999000000000000000')
@@ -505,11 +505,11 @@ contract('Gas compensation tests', async accounts => {
 
     // Check RBTC in SP has increased by the remainder of B's coll
     const collRemainder_A = aliceColl.sub(_0pt5percent_aliceColl)
-    const ETHinSP_A = await stabilityPool.getETH()
+    const RBTCinSP_A = await stabilityPool.getRBTC()
 
-    const SPETHIncrease_A = ETHinSP_A.sub(ETHinSP_0)
+    const SPRBTCIncrease_A = RBTCinSP_A.sub(RBTCinSP_0)
 
-    assert.isAtMost(th.getDifference(SPETHIncrease_A, collRemainder_A), 1000)
+    assert.isAtMost(th.getDifference(SPRBTCIncrease_A, collRemainder_A), 1000)
 
     // --- Price drops to 15 ---
     await priceFeed.setPrice(dec(15, 18))
@@ -547,11 +547,11 @@ contract('Gas compensation tests', async accounts => {
 
     // Check RBTC in SP has increased by the remainder of B's coll
     const collRemainder_B = bobColl.sub(_0pt5percent_bobColl)
-    const ETHinSP_B = await stabilityPool.getETH()
+    const RBTCinSP_B = await stabilityPool.getRBTC()
 
-    const SPETHIncrease_B = ETHinSP_B.sub(ETHinSP_A)
+    const SPRBTCIncrease_B = RBTCinSP_B.sub(RBTCinSP_A)
 
-    assert.isAtMost(th.getDifference(SPETHIncrease_B, collRemainder_B), 1000)
+    assert.isAtMost(th.getDifference(SPRBTCIncrease_B, collRemainder_B), 1000)
   })
 
   it('gas compensation from pool-offset liquidations: 0.5% collateral > $10 in value. Compensates 0.5% of  collateral, liquidates the remainder', async () => {
@@ -571,7 +571,7 @@ contract('Gas compensation tests', async accounts => {
     await stabilityPool.provideToSP(dec(1, 23), ZERO_ADDRESS, { from: erin })
 
     const BPDinSP_0 = await stabilityPool.getTotalBPDDeposits()
-    const ETHinSP_0 = await stabilityPool.getETH()
+    const RBTCinSP_0 = await stabilityPool.getRBTC()
 
     await priceFeed.setPrice(dec(200, 18))
     const price_1 = await priceFeed.getPrice()
@@ -608,11 +608,11 @@ contract('Gas compensation tests', async accounts => {
 
     // Check RBTC in SP has increased by the remainder of A's coll
     const collRemainder_A = aliceColl.sub(_0pt5percent_aliceColl)
-    const ETHinSP_A = await stabilityPool.getETH()
+    const RBTCinSP_A = await stabilityPool.getRBTC()
 
-    const SPETHIncrease_A = ETHinSP_A.sub(ETHinSP_0)
+    const SPRBTCIncrease_A = RBTCinSP_A.sub(RBTCinSP_0)
 
-    assert.isAtMost(th.getDifference(SPETHIncrease_A, collRemainder_A), 1000)
+    assert.isAtMost(th.getDifference(SPRBTCIncrease_A, collRemainder_A), 1000)
 
 
     /* 
@@ -647,11 +647,11 @@ contract('Gas compensation tests', async accounts => {
 
     // Check RBTC in SP has increased by the remainder of B's coll
     const collRemainder_B = bobColl.sub(_0pt5percent_bobColl)
-    const ETHinSP_B = await stabilityPool.getETH()
+    const RBTCinSP_B = await stabilityPool.getRBTC()
 
-    const SPETHIncrease_B = ETHinSP_B.sub(ETHinSP_A)
+    const SPRBTCIncrease_B = RBTCinSP_B.sub(RBTCinSP_A)
 
-    assert.isAtMost(th.getDifference(SPETHIncrease_B, collRemainder_B), 1000)
+    assert.isAtMost(th.getDifference(SPRBTCIncrease_B, collRemainder_B), 1000)
 
   })
 
@@ -746,7 +746,7 @@ contract('Gas compensation tests', async accounts => {
     await stabilityPool.provideToSP(dec(1, 23), ZERO_ADDRESS, { from: erin })
 
     const BPDinSP_0 = await stabilityPool.getTotalBPDDeposits()
-    const ETHinSP_0 = await stabilityPool.getETH()
+    const RBTCinSP_0 = await stabilityPool.getRBTC()
 
     // --- Price drops to 199.999 ---
     await priceFeed.setPrice('199999000000000000000')
@@ -842,7 +842,7 @@ contract('Gas compensation tests', async accounts => {
     await stabilityPool.provideToSP(dec(1, 23), ZERO_ADDRESS, { from: erin })
 
     const BPDinSP_0 = await stabilityPool.getTotalBPDDeposits()
-    const ETHinSP_0 = await stabilityPool.getETH()
+    const RBTCinSP_0 = await stabilityPool.getRBTC()
 
     await priceFeed.setPrice(dec(200, 18))
     const price_1 = await priceFeed.getPrice()
@@ -988,8 +988,8 @@ contract('Gas compensation tests', async accounts => {
     assert.equal(expectedGasComp, compensationReceived)
 
     // Check RBTC in stability pool now equals the expected liquidated collateral
-    const ETHinSP = (await stabilityPool.getETH()).toString()
-    assert.equal(expectedLiquidatedColl, ETHinSP)
+    const RBTCinSP = (await stabilityPool.getRBTC()).toString()
+    assert.equal(expectedLiquidatedColl, RBTCinSP)
   })
 
   // liquidateVaults - full redistribution
@@ -1065,8 +1065,8 @@ contract('Gas compensation tests', async accounts => {
     assert.isAtMost(th.getDifference(expectedGasComp, compensationReceived), 1000)
 
     // Check RBTC in defaultPool now equals the expected liquidated collateral
-    const ETHinDefaultPool = (await defaultPool.getETH()).toString()
-    assert.isAtMost(th.getDifference(expectedLiquidatedColl, ETHinDefaultPool), 1000)
+    const RBTCinDefaultPool = (await defaultPool.getRBTC()).toString()
+    assert.isAtMost(th.getDifference(expectedLiquidatedColl, RBTCinDefaultPool), 1000)
   })
 
   //  --- event emission in liquidation sequence ---

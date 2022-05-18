@@ -10,7 +10,7 @@ const toBN = th.toBN
 const dec = th.dec
 
 contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async accounts => {
-  const [liquityAG, A, B] = accounts;
+  const [moneypAG, A, B] = accounts;
   const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000)
 
   let MPContracts
@@ -39,7 +39,7 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
     it("Stores the deployer's address", async () => {
       const storedDeployerAddress = await communityIssuance.owner()
 
-      assert.equal(liquityAG, storedDeployerAddress)
+      assert.equal(moneypAG, storedDeployerAddress)
     })
   })
 
@@ -47,7 +47,7 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
     it("Stores the deployer's address", async () => {
       const storedDeployerAddress = await mpStaking.owner()
 
-      assert.equal(liquityAG, storedDeployerAddress)
+      assert.equal(moneypAG, storedDeployerAddress)
     })
   })
 
@@ -108,7 +108,7 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
 
       const storedDeployerAddress = await communityIssuance.owner()
 
-      assert.equal(storedDeployerAddress, liquityAG)
+      assert.equal(storedDeployerAddress, moneypAG)
     })
 
     it("Has a supply cap of 32 million", async () => {
@@ -117,29 +117,29 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
       assert.isTrue(expectedCISupplyCap.eq(supplyCap))
     })
 
-    it("Liquity AG can set addresses if CI's MP balance is equal or greater than 32 million ", async () => {
+    it("Moneyp AG can set addresses if CI's MP balance is equal or greater than 32 million ", async () => {
       const MPBalance = await mpToken.balanceOf(communityIssuance.address)
       assert.isTrue(MPBalance.eq(expectedCISupplyCap))
 
       // Deploy core contracts, just to get the Stability Pool address
-      const coreContracts = await deploymentHelper.deployLiquityCore()
+      const coreContracts = await deploymentHelper.deployMoneypCore()
 
       const tx = await communityIssuance.setAddresses(
         mpToken.address,
         coreContracts.stabilityPool.address,
-        { from: liquityAG }
+        { from: moneypAG }
       );
       assert.isTrue(tx.receipt.status)
     })
 
-    it("Liquity AG can't set addresses if CI's MP balance is < 32 million ", async () => {
+    it("Moneyp AG can't set addresses if CI's MP balance is < 32 million ", async () => {
       const newCI = await CommunityIssuance.new()
 
       const MPBalance = await mpToken.balanceOf(newCI.address)
       assert.equal(MPBalance, '0')
 
       // Deploy core contracts, just to get the Stability Pool address
-      const coreContracts = await deploymentHelper.deployLiquityCore()
+      const coreContracts = await deploymentHelper.deployMoneypCore()
 
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider)
       await mpToken.transfer(newCI.address, '31999999999999999999999999', {from: multisig}) // 1e-18 less than CI expects (32 million)
@@ -148,7 +148,7 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
         const tx = await newCI.setAddresses(
           mpToken.address,
           coreContracts.stabilityPool.address,
-          { from: liquityAG }
+          { from: moneypAG }
         );
       
         // Check it gives the expected error message for a failed Solidity 'assert'
@@ -161,7 +161,7 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
   describe('Connecting MPToken to LCF, CI and MPStaking', async accounts => {
     it('sets the correct MPToken address in MPStaking', async () => {
       // Deploy core contracts and set the MPToken address in the CI and MPStaking
-      const coreContracts = await deploymentHelper.deployLiquityCore()
+      const coreContracts = await deploymentHelper.deployMoneypCore()
       await deploymentHelper.connectMPContractsToCore(MPContracts, coreContracts)
 
       const mpTokenAddress = mpToken.address
@@ -179,7 +179,7 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
 
     it('sets the correct MPToken address in CommunityIssuance', async () => {
       // Deploy core contracts and set the MPToken address in the CI and MPStaking
-      const coreContracts = await deploymentHelper.deployLiquityCore()
+      const coreContracts = await deploymentHelper.deployMoneypCore()
       await deploymentHelper.connectMPContractsToCore(MPContracts, coreContracts)
 
       const mpTokenAddress = mpToken.address

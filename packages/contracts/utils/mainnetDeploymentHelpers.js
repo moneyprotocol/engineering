@@ -62,7 +62,7 @@ class MainnetDeploymentHelper {
     return contract
   }
 
-  async deployLiquityCoreMainnet(tellorMasterAddr, deploymentState) {
+  async deployMoneypCoreMainnet(tellorMasterAddr, deploymentState) {
     // Get contract factories
     const priceFeedFactory = await this.getFactory("PriceFeed")
     const sortedVaultsFactory = await this.getFactory("SortedVaults")
@@ -102,7 +102,7 @@ class MainnetDeploymentHelper {
       bpdTokenParams
     )
 
-    if (!this.configParams.ETHERSCAN_BASE_URL) {
+    if (!this.configParams.ASDFGSCAN_BASE_URL) {
       console.log('No Etherscan Url defined, skipping verification')
     } else {
       await this.verifyContract('priceFeed', deploymentState)
@@ -162,7 +162,7 @@ class MainnetDeploymentHelper {
       mpTokenParams
     )
 
-    if (!this.configParams.ETHERSCAN_BASE_URL) {
+    if (!this.configParams.ASDFGSCAN_BASE_URL) {
       console.log('No Etherscan Url defined, skipping verification')
     } else {
       await this.verifyContract('mpStaking', deploymentState)
@@ -184,7 +184,7 @@ class MainnetDeploymentHelper {
     const unipoolFactory = await this.getFactory("Unipool")
     const unipool = await this.loadOrDeploy(unipoolFactory, 'unipool', deploymentState)
 
-    if (!this.configParams.ETHERSCAN_BASE_URL) {
+    if (!this.configParams.ASDFGSCAN_BASE_URL) {
       console.log('No Etherscan Url defined, skipping verification')
     } else {
       await this.verifyContract('unipool', deploymentState)
@@ -193,11 +193,11 @@ class MainnetDeploymentHelper {
     return unipool
   }
 
-  async deployMultiVaultGetterMainnet(liquityCore, deploymentState) {
+  async deployMultiVaultGetterMainnet(moneypCore, deploymentState) {
     const multiVaultGetterFactory = await this.getFactory("MultiVaultGetter")
     const multiVaultGetterParams = [
-      liquityCore.vaultManager.address,
-      liquityCore.sortedVaults.address
+      moneypCore.vaultManager.address,
+      moneypCore.sortedVaults.address
     ]
     const multiVaultGetter = await this.loadOrDeploy(
       multiVaultGetterFactory,
@@ -206,7 +206,7 @@ class MainnetDeploymentHelper {
       multiVaultGetterParams
     )
 
-    if (!this.configParams.ETHERSCAN_BASE_URL) {
+    if (!this.configParams.ASDFGSCAN_BASE_URL) {
       console.log('No Etherscan Url defined, skipping verification')
     } else {
       await this.verifyContract('multiVaultGetter', deploymentState, multiVaultGetterParams)
@@ -342,10 +342,10 @@ class MainnetDeploymentHelper {
       ))
   }
 
-  async connectUnipoolMainnet(uniPool, MPContracts, BPDWETHPairAddr, duration) {
+  async connectUnipoolMainnet(uniPool, MPContracts, BPDWRBTCPairAddr, duration) {
     const gasPrice = this.configParams.GAS_PRICE
     await this.isOwnershipRenounced(uniPool) ||
-      await this.sendAndWaitForTransaction(uniPool.setParams(MPContracts.mpToken.address, BPDWETHPairAddr, duration, {gasPrice}))
+      await this.sendAndWaitForTransaction(uniPool.setParams(MPContracts.mpToken.address, BPDWRBTCPairAddr, duration, {gasPrice}))
   }
 
   // --- Verify on Ethrescan ---
@@ -373,7 +373,7 @@ class MainnetDeploymentHelper {
       }
     }
 
-    deploymentState[name].verification = `${this.configParams.ETHERSCAN_BASE_URL}/${deploymentState[name].address}#code`
+    deploymentState[name].verification = `${this.configParams.ASDFGSCAN_BASE_URL}/${deploymentState[name].address}#code`
 
     this.saveDeployment(deploymentState)
   }

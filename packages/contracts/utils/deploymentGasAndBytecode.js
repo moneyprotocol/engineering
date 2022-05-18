@@ -18,7 +18,7 @@ const HintHelpers = artifacts.require("./HintHelpers.sol")
 const CommunityIssuanceTester = artifacts.require("./MP/CommunityIssuanceTester.sol")
 const ActivePoolTester = artifacts.require("./ActivePoolTester.sol")
 const DefaultPoolTester = artifacts.require("./DefaultPoolTester.sol")
-const LiquityMathTester = artifacts.require("./LiquityMathTester.sol")
+const MoneypMathTester = artifacts.require("./MoneypMathTester.sol")
 const BorrowerOperationsTester = artifacts.require("./BorrowerOperationsTester.sol")
 const VaultManagerTester = artifacts.require("./VaultManagerTester.sol")
 const BPDTokenTester = artifacts.require("./BPDTokenTester.sol")
@@ -52,7 +52,7 @@ const TesterContractABIs  = [
   CommunityIssuanceTester,
   ActivePoolTester,
   DefaultPoolTester,
-  LiquityMathTester,
+  MoneypMathTester,
   BorrowerOperationsTester,
   VaultManagerTester,
   BPDTokenTester,
@@ -74,9 +74,9 @@ const getBytecodeSize = (contractABI) => {
   // console.log(`${contractABI.contractName} deployed bytecode length: ${deployedBytecodeLength}`)
 }
 
-const getUSDCostFromGasCost = (deploymentGasTotal, gasPriceInGwei, ETHPrice) => {
-  const dollarCost = (deploymentGasTotal * gasPriceInGwei * ETHPrice) / 1e9
-  console.log(`At gas price ${gasPriceInGwei} GWei, and RBTC Price $${ETHPrice} per RBTC, the total cost of deployment in USD is: $${dollarCost}`)
+const getUSDCostFromGasCost = (deploymentGasTotal, gasPriceInGwei, RBTCPrice) => {
+  const dollarCost = (deploymentGasTotal * gasPriceInGwei * RBTCPrice) / 1e9
+  console.log(`At gas price ${gasPriceInGwei} GWei, and RBTC Price $${RBTCPrice} per RBTC, the total cost of deployment in USD is: $${dollarCost}`)
 }
 
 const logContractDeploymentCosts = async (contracts) => {
@@ -108,7 +108,7 @@ const logContractBytecodeLengths = (contractABIs) => {
 
 // Run script: log deployment gas costs and bytecode lengths for all contracts
 async function main() {
-  const coreContracts = await dh.deployLiquityCoreHardhat()
+  const coreContracts = await dh.deployMoneypCoreHardhat()
   const MPContracts = await dh.deployMPContractsHardhat(ARBITRARY_ADDRESS, ARBITRARY_ADDRESS)
   const testerContracts = await dh.deployTesterContractsHardhat()
 

@@ -7,7 +7,7 @@ const { TestHelper } = require('../utils/testHelpers.js');
 const { assertRevert } = TestHelper;
 
 const Uni = artifacts.require('ERC20Mock');
-const Lqty = artifacts.require('MPToken');
+const Mp = artifacts.require('MPToken');
 const Unipool = artifacts.require('Unipool');
 const NonPayable = artifacts.require('NonPayable');
 
@@ -51,7 +51,7 @@ contract('Unipool', function ([_, wallet1, wallet2, wallet3, wallet4, bountyAddr
       const communityIssuance = await NonPayable.new();
       const mpStaking = await NonPayable.new();
       const lockupContractFactory = await NonPayable.new();
-      that.mp = await Lqty.new(
+      that.mp = await Mp.new(
         communityIssuance.address,
         mpStaking.address,
         lockupContractFactory.address,

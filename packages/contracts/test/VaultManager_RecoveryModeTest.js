@@ -52,7 +52,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
   const openVault = async (params) => th.openVault(contracts, params)
 
   beforeEach(async () => {
-    contracts = await deploymentHelper.deployLiquityCore()
+    contracts = await deploymentHelper.deployMoneypCore()
     contracts.vaultManager = await VaultManagerTester.new()
     contracts.bpdToken = await BPDToken.new(
       contracts.vaultManager.address,
@@ -91,7 +91,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
 
     // --- TEST ---
 
-    // price drops to 1ETH:150BPD, reducing TCR below 150%.  setPrice() calls checkTCRAndSetRecoveryMode() internally.
+    // price drops to 1RBTC:150BPD, reducing TCR below 150%.  setPrice() calls checkTCRAndSetRecoveryMode() internally.
     await priceFeed.setPrice(dec(15, 17))
 
     // const price = await priceFeed.getPrice()
@@ -111,7 +111,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
 
     // --- TEST ---
 
-    // price drops to 1ETH:150BPD, reducing TCR below 150%
+    // price drops to 1RBTC:150BPD, reducing TCR below 150%
     await priceFeed.setPrice('150000000000000000000')
 
     const recoveryMode_Before = await th.checkRecoveryMode(contracts);
@@ -147,7 +147,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     assert.equal(TCR, '1500000000000000000')
 
     // --- TEST ---
-    // price drops to 1ETH:150BPD, reducing TCR below 150%
+    // price drops to 1RBTC:150BPD, reducing TCR below 150%
     await priceFeed.setPrice('150000000000000000000')
 
     const recoveryMode_Before = await th.checkRecoveryMode(contracts);
@@ -178,7 +178,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     assert.equal(totalStakes_Before.toString(), A_coll.add(B_coll))
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -210,7 +210,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     assert.equal(TCR, '1500000000000000000')
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%, and all Vaults below 100% ICR
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%, and all Vaults below 100% ICR
     await priceFeed.setPrice('100000000000000000000')
 
     const recoveryMode = await th.checkRecoveryMode(contracts)
@@ -255,7 +255,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     assert.isTrue(bob_Vault_isInSortedList_Before)
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -296,7 +296,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     // assert.equal(TCR, '1500000000000000000')
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%, and all Vaults below 100% ICR
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%, and all Vaults below 100% ICR
     await priceFeed.setPrice('100000000000000000000')
 
     const recoveryMode = await th.checkRecoveryMode(contracts)
@@ -331,7 +331,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     assert.equal(totalStakes_Before.toString(), A_coll.add(B_coll))
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR to 117%
+    // price drops to 1RBTC:100BPD, reducing TCR to 117%
     await priceFeed.setPrice('100000000000000000000')
     price = await priceFeed.getPrice()
 
@@ -366,7 +366,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     assert.equal(totalCollateralSnapshot_1, 0)
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%, and all Vaults below 100% ICR
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%, and all Vaults below 100% ICR
     await priceFeed.setPrice('100000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -424,7 +424,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     assert.isTrue(bob_Vault_isInSortedList_Before)
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -459,7 +459,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(spDeposit, ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -485,7 +485,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
   
     Stability Pool rewards for alice should be:
     BPDLoss: 390BPD
-    ETHGain: (390 / 2000) * 21*0.995 = 4.074525 ether
+    RBTCGain: (390 / 2000) * 21*0.995 = 4.074525 ether
 
     After offsetting 390 BPD and 4.074525 ether, the remainders - 1610 BPD and 16.820475 ether - should be redistributed to all active Vaults.
    */
@@ -493,11 +493,11 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await vaultManager.liquidate(bob, { from: owner })
 
     const aliceDeposit = await stabilityPool.getCompoundedBPDDeposit(alice)
-    const aliceETHGain = await stabilityPool.getDepositorETHGain(alice)
-    const aliceExpectedETHGain = spDeposit.mul(th.applyLiquidationFee(B_coll)).div(B_totalDebt)
+    const aliceRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
+    const aliceExpectedRBTCGain = spDeposit.mul(th.applyLiquidationFee(B_coll)).div(B_totalDebt)
 
     assert.equal(aliceDeposit.toString(), 0)
-    assert.equal(aliceETHGain.toString(), aliceExpectedETHGain)
+    assert.equal(aliceRBTCGain.toString(), aliceExpectedRBTCGain)
 
     /* Now, check redistribution to active Vaults. Remainders of 1610 BPD and 16.82 ether are distributed.
     
@@ -506,13 +506,13 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     Rewards-per-unit-staked from the redistribution should be:
   
     B_BPDDebt = 1610 / 6 = 268.333 BPD
-    L_ETH = 16.820475 /6 =  2.8034125 ether
+    B_RBTC = 16.820475 /6 =  2.8034125 ether
     */
     const B_BPDDebt = (await vaultManager.B_BPDDebt()).toString()
-    const L_ETH = (await vaultManager.L_ETH()).toString()
+    const B_RBTC = (await vaultManager.B_RBTC()).toString()
 
     assert.isAtMost(th.getDifference(B_BPDDebt, B_totalDebt.sub(spDeposit).mul(mv._1e18BN).div(A_coll.add(D_coll))), 100)
-    assert.isAtMost(th.getDifference(L_ETH, th.applyLiquidationFee(B_coll.sub(B_coll.mul(spDeposit).div(B_totalDebt)).mul(mv._1e18BN).div(A_coll.add(D_coll)))), 100)
+    assert.isAtMost(th.getDifference(B_RBTC, th.applyLiquidationFee(B_coll.sub(B_coll.mul(spDeposit).div(B_totalDebt)).mul(mv._1e18BN).div(A_coll.add(D_coll)))), 100)
   })
 
   // --- liquidate(), applied to vault with ICR > 110% that has the lowest ICR 
@@ -526,7 +526,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     const { collateral: D_coll } = await openVault({ ICR: toBN(dec(266, 16)), extraBPDAmount: dec(2000, 18), extraParams: { from: dennis } })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -552,10 +552,10 @@ contract('VaultManager - in Recovery Mode', async accounts => {
 
     // Check that redistribution rewards don't change
     const B_BPDDebt = (await vaultManager.B_BPDDebt()).toString()
-    const L_ETH = (await vaultManager.L_ETH()).toString()
+    const B_RBTC = (await vaultManager.B_RBTC()).toString()
 
     assert.equal(B_BPDDebt, '0')
-    assert.equal(L_ETH, '0')
+    assert.equal(B_RBTC, '0')
 
     // Check that Bob's Vault and stake remains active with unchanged coll and debt
     const bob_Vault = await vaultManager.Vaults(bob);
@@ -587,7 +587,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(spDeposit, ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
     const price = await priceFeed.getPrice()
     const TCR = await th.getTCR(contracts)
@@ -610,10 +610,10 @@ contract('VaultManager - in Recovery Mode', async accounts => {
   
     */
     const aliceExpectedDeposit = await stabilityPool.getCompoundedBPDDeposit(alice)
-    const aliceExpectedETHGain = await stabilityPool.getDepositorETHGain(alice)
+    const aliceExpectedRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
 
     assert.isAtMost(th.getDifference(aliceExpectedDeposit.toString(), spDeposit.sub(B_totalDebt)), 2000)
-    assert.isAtMost(th.getDifference(aliceExpectedETHGain, th.applyLiquidationFee(B_totalDebt.mul(th.toBN(dec(11, 17))).div(price))), 3000)
+    assert.isAtMost(th.getDifference(aliceExpectedRBTCGain, th.applyLiquidationFee(B_totalDebt.mul(th.toBN(dec(11, 17))).div(price))), 3000)
 
     // check Bob’s collateral surplus
     const bob_remainingCollateral = B_coll.sub(B_totalDebt.mul(th.toBN(dec(11, 17))).div(price))
@@ -638,7 +638,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(spDeposit, ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
     const price = await priceFeed.getPrice()
     const TCR = await th.getTCR(contracts)
@@ -661,10 +661,10 @@ contract('VaultManager - in Recovery Mode', async accounts => {
 
     */
     const aliceExpectedDeposit = await stabilityPool.getCompoundedBPDDeposit(alice)
-    const aliceExpectedETHGain = await stabilityPool.getDepositorETHGain(alice)
+    const aliceExpectedRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
 
     assert.isAtMost(th.getDifference(aliceExpectedDeposit.toString(), spDeposit.sub(B_totalDebt)), 2000)
-    assert.isAtMost(th.getDifference(aliceExpectedETHGain, th.applyLiquidationFee(B_totalDebt.mul(th.toBN(dec(11, 17))).div(price))), 3000)
+    assert.isAtMost(th.getDifference(aliceExpectedRBTCGain, th.applyLiquidationFee(B_totalDebt.mul(th.toBN(dec(11, 17))).div(price))), 3000)
 
     // check Bob’s collateral surplus
     th.assertIsApproximatelyEqual(await collSurplusPool.getCollateral(bob), '0')
@@ -682,7 +682,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(B_totalDebt.add(toBN(1)), ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -732,7 +732,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(B_totalDebt.add(toBN(1)), ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -774,7 +774,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(B_totalDebt.add(toBN(1)), ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -912,7 +912,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP('1490000000000000000000', ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
 
     const recoveryMode = await th.checkRecoveryMode(contracts)
@@ -950,7 +950,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(dec(100, 18), ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
 
     const recoveryMode = await th.checkRecoveryMode(contracts)
@@ -1001,7 +1001,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(dec(100, 18), ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
 
     const recoveryMode = await th.checkRecoveryMode(contracts)
@@ -1043,7 +1043,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(dec(100, 18), ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
 
     const recoveryMode = await th.checkRecoveryMode(contracts)
@@ -1082,7 +1082,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(dec(100, 18), ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
 
     const recoveryMode = await th.checkRecoveryMode(contracts)
@@ -1094,16 +1094,16 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     // check Stability Pool rewards. Nothing happened, so everything should remain the same
 
     const aliceExpectedDeposit = await stabilityPool.getCompoundedBPDDeposit(alice)
-    const aliceExpectedETHGain = await stabilityPool.getDepositorETHGain(alice)
+    const aliceExpectedRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
 
     assert.equal(aliceExpectedDeposit.toString(), dec(100, 18))
-    assert.equal(aliceExpectedETHGain.toString(), '0')
+    assert.equal(aliceExpectedRBTCGain.toString(), '0')
 
     /* For this Recovery Mode test case with ICR > 110%, there should be no redistribution of remainder to active Vaults. 
     Redistribution rewards-per-unit-staked should be zero. */
 
     const B_BPDDebt_After = (await vaultManager.B_BPDDebt()).toString()
-    const L_RBTC_After = (await vaultManager.L_ETH()).toString()
+    const L_RBTC_After = (await vaultManager.B_RBTC()).toString()
 
     assert.equal(B_BPDDebt_After, '0')
     assert.equal(L_RBTC_After, '0')
@@ -1123,7 +1123,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(dec(100, 18), ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice(dec(100, 18))
     const price = await priceFeed.getPrice()
 
@@ -1200,7 +1200,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
 
     //Confirm liquidations have not led to any redistributions to vaults
     const B_BPDDebt_After = (await vaultManager.B_BPDDebt()).toString()
-    const L_RBTC_After = (await vaultManager.L_ETH()).toString()
+    const L_RBTC_After = (await vaultManager.B_RBTC()).toString()
 
     assert.equal(B_BPDDebt_After, '0')
     assert.equal(L_RBTC_After, '0')
@@ -1534,9 +1534,9 @@ contract('VaultManager - in Recovery Mode', async accounts => {
 
     // Check Dennis' SP deposit has absorbed Carol's debt, and he has received her liquidated RBTC
     const dennis_Deposit_Before = (await stabilityPool.getCompoundedBPDDeposit(dennis)).toString()
-    const dennis_ETHGain_Before = (await stabilityPool.getDepositorETHGain(dennis)).toString()
+    const dennis_RBTCGain_Before = (await stabilityPool.getDepositorRBTCGain(dennis)).toString()
     assert.isAtMost(th.getDifference(dennis_Deposit_Before, spDeposit.sub(C_totalDebt)), 1000)
-    assert.isAtMost(th.getDifference(dennis_ETHGain_Before, th.applyLiquidationFee(C_coll)), 1000)
+    assert.isAtMost(th.getDifference(dennis_RBTCGain_Before, th.applyLiquidationFee(C_coll)), 1000)
 
     // Attempt to liquidate Dennis
     try {
@@ -1547,9 +1547,9 @@ contract('VaultManager - in Recovery Mode', async accounts => {
 
     // Check Dennis' SP deposit does not change after liquidation attempt
     const dennis_Deposit_After = (await stabilityPool.getCompoundedBPDDeposit(dennis)).toString()
-    const dennis_ETHGain_After = (await stabilityPool.getDepositorETHGain(dennis)).toString()
+    const dennis_RBTCGain_After = (await stabilityPool.getDepositorRBTCGain(dennis)).toString()
     assert.equal(dennis_Deposit_Before, dennis_Deposit_After)
-    assert.equal(dennis_ETHGain_Before, dennis_ETHGain_After)
+    assert.equal(dennis_RBTCGain_Before, dennis_RBTCGain_After)
   })
 
   it("liquidate(): does not alter the liquidated user's token balance", async () => {
@@ -1602,7 +1602,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(B_totalDebt, ZERO_ADDRESS, { from: alice })
 
     // --- TEST ---
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
     let price = await priceFeed.getPrice()
     const TCR = await th.getTCR(contracts)
@@ -1674,7 +1674,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await openVault({ ICR: toBN(dec(266, 16)), extraBPDAmount: B_totalDebt_2, extraParams: { from: alice } })
     await stabilityPool.provideToSP(B_totalDebt_2, ZERO_ADDRESS, { from: alice })
 
-    // price drops to 1ETH:100BPD, reducing TCR below 150%
+    // price drops to 1RBTC:100BPD, reducing TCR below 150%
     await priceFeed.setPrice('100000000000000000000')
     price = await priceFeed.getPrice()
     const TCR = await th.getTCR(contracts)
@@ -1723,7 +1723,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     await stabilityPool.provideToSP(liquidationAmount, ZERO_ADDRESS, { from: alice })
 
     // price drops
-    // price drops to 1ETH:90BPD, reducing TCR below 150%
+    // price drops to 1RBTC:90BPD, reducing TCR below 150%
     await priceFeed.setPrice('90000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -1847,7 +1847,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     // Alice deposits BPD to Stability Pool
     await stabilityPool.provideToSP(liquidationAmount, ZERO_ADDRESS, { from: alice })
 
-    // price drops to 1ETH:85BPD, reducing TCR below 150%
+    // price drops to 1RBTC:85BPD, reducing TCR below 150%
     await priceFeed.setPrice('85000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -2048,7 +2048,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
 
     // --- TEST ---
 
-    // Price drops to 1ETH:100BPD, reducing Bob and Carol's ICR below MCR
+    // Price drops to 1RBTC:100BPD, reducing Bob and Carol's ICR below MCR
     await priceFeed.setPrice(dec(100, 18));
     const price = await priceFeed.getPrice()
 
@@ -2419,7 +2419,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     assert.isTrue(await sortedVaults.contains(whale))
 
     // Check A's collateral and debt remain the same
-    const entireColl_A = (await vaultManager.Vaults(alice))[1].add(await vaultManager.getPendingETHReward(alice))
+    const entireColl_A = (await vaultManager.Vaults(alice))[1].add(await vaultManager.getPendingRBTCReward(alice))
     const entireDebt_A = (await vaultManager.Vaults(alice))[0].add(await vaultManager.getPendingBPDDebtReward(alice))
 
     assert.equal(entireColl_A.toString(), A_coll)
@@ -2564,16 +2564,16 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     Total RBTC gain: 5*0.995 RBTC */
 
     const BPDinSP = (await stabilityPool.getTotalBPDDeposits()).toString()
-    const ETHinSP = (await stabilityPool.getETH()).toString()
+    const RBTCinSP = (await stabilityPool.getRBTC()).toString()
 
     // Check remaining BPD Deposits and RBTC gain, for whale and depositors whose vaults were liquidated
     const whale_Deposit_After = (await stabilityPool.getCompoundedBPDDeposit(whale)).toString()
     const alice_Deposit_After = (await stabilityPool.getCompoundedBPDDeposit(alice)).toString()
     const bob_Deposit_After = (await stabilityPool.getCompoundedBPDDeposit(bob)).toString()
 
-    const whale_ETHGain = (await stabilityPool.getDepositorETHGain(whale)).toString()
-    const alice_ETHGain = (await stabilityPool.getDepositorETHGain(alice)).toString()
-    const bob_ETHGain = (await stabilityPool.getDepositorETHGain(bob)).toString()
+    const whale_RBTCGain = (await stabilityPool.getDepositorRBTCGain(whale)).toString()
+    const alice_RBTCGain = (await stabilityPool.getDepositorRBTCGain(alice)).toString()
+    const bob_RBTCGain = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
 
     const liquidatedDebt = A_totalDebt.add(B_totalDebt).add(C_totalDebt)
     const liquidatedColl = A_coll.add(B_coll).add(C_coll)
@@ -2581,16 +2581,16 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     assert.isAtMost(th.getDifference(alice_Deposit_After, A_bpdAmount.sub(liquidatedDebt.mul(A_bpdAmount).div(totalDeposit))), 100000)
     assert.isAtMost(th.getDifference(bob_Deposit_After, B_bpdAmount.sub(liquidatedDebt.mul(B_bpdAmount).div(totalDeposit))), 100000)
 
-    assert.isAtMost(th.getDifference(whale_ETHGain, th.applyLiquidationFee(liquidatedColl).mul(W_bpdAmount).div(totalDeposit)), 2000)
-    assert.isAtMost(th.getDifference(alice_ETHGain, th.applyLiquidationFee(liquidatedColl).mul(A_bpdAmount).div(totalDeposit)), 2000)
-    assert.isAtMost(th.getDifference(bob_ETHGain, th.applyLiquidationFee(liquidatedColl).mul(B_bpdAmount).div(totalDeposit)), 2000)
+    assert.isAtMost(th.getDifference(whale_RBTCGain, th.applyLiquidationFee(liquidatedColl).mul(W_bpdAmount).div(totalDeposit)), 2000)
+    assert.isAtMost(th.getDifference(alice_RBTCGain, th.applyLiquidationFee(liquidatedColl).mul(A_bpdAmount).div(totalDeposit)), 2000)
+    assert.isAtMost(th.getDifference(bob_RBTCGain, th.applyLiquidationFee(liquidatedColl).mul(B_bpdAmount).div(totalDeposit)), 2000)
 
     // Check total remaining deposits and RBTC gain in Stability Pool
     const total_BPDinSP = (await stabilityPool.getTotalBPDDeposits()).toString()
-    const total_ETHinSP = (await stabilityPool.getETH()).toString()
+    const totaB_RBTCinSP = (await stabilityPool.getRBTC()).toString()
 
     assert.isAtMost(th.getDifference(total_BPDinSP, totalDeposit.sub(liquidatedDebt)), 1000)
-    assert.isAtMost(th.getDifference(total_ETHinSP, th.applyLiquidationFee(liquidatedColl)), 1000)
+    assert.isAtMost(th.getDifference(totaB_RBTCinSP, th.applyLiquidationFee(liquidatedColl)), 1000)
   })
 
   it("liquidateVaults(): Liquidating vaults at ICR <=100% with SP deposits does not alter their deposit or RBTC gain", async () => {
@@ -2617,9 +2617,9 @@ contract('VaultManager - in Recovery Mode', async accounts => {
 
     // Check BPD and RBTC in Pool  before
     const BPDinSP_Before = (await stabilityPool.getTotalBPDDeposits()).toString()
-    const ETHinSP_Before = (await stabilityPool.getETH()).toString()
+    const RBTCinSP_Before = (await stabilityPool.getRBTC()).toString()
     assert.equal(BPDinSP_Before, dec(800, 18))
-    assert.equal(ETHinSP_Before, '0')
+    assert.equal(RBTCinSP_Before, '0')
 
     // *** Check A, B, C ICRs < 100
     assert.isTrue((await vaultManager.getCurrentICR(alice, price)).lte(mv._ICR100))
@@ -2639,26 +2639,26 @@ contract('VaultManager - in Recovery Mode', async accounts => {
 
     // Check BPD and RBTC in Pool after
     const BPDinSP_After = (await stabilityPool.getTotalBPDDeposits()).toString()
-    const ETHinSP_After = (await stabilityPool.getETH()).toString()
+    const RBTCinSP_After = (await stabilityPool.getRBTC()).toString()
     assert.equal(BPDinSP_Before, BPDinSP_After)
-    assert.equal(ETHinSP_Before, ETHinSP_After)
+    assert.equal(RBTCinSP_Before, RBTCinSP_After)
 
     // Check remaining BPD Deposits and RBTC gain, for whale and depositors whose vaults were liquidated
     const whale_Deposit_After = (await stabilityPool.getCompoundedBPDDeposit(whale)).toString()
     const alice_Deposit_After = (await stabilityPool.getCompoundedBPDDeposit(alice)).toString()
     const bob_Deposit_After = (await stabilityPool.getCompoundedBPDDeposit(bob)).toString()
 
-    const whale_ETHGain_After = (await stabilityPool.getDepositorETHGain(whale)).toString()
-    const alice_ETHGain_After = (await stabilityPool.getDepositorETHGain(alice)).toString()
-    const bob_ETHGain_After = (await stabilityPool.getDepositorETHGain(bob)).toString()
+    const whale_RBTCGain_After = (await stabilityPool.getDepositorRBTCGain(whale)).toString()
+    const alice_RBTCGain_After = (await stabilityPool.getDepositorRBTCGain(alice)).toString()
+    const bob_RBTCGain_After = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
 
     assert.equal(whale_Deposit_After, dec(400, 18))
     assert.equal(alice_Deposit_After, dec(100, 18))
     assert.equal(bob_Deposit_After, dec(300, 18))
 
-    assert.equal(whale_ETHGain_After, '0')
-    assert.equal(alice_ETHGain_After, '0')
-    assert.equal(bob_ETHGain_After, '0')
+    assert.equal(whale_RBTCGain_After, '0')
+    assert.equal(alice_RBTCGain_After, '0')
+    assert.equal(bob_RBTCGain_After, '0')
   })
 
   it("liquidateVaults() with a non fullfilled liquidation: non liquidated vault remains active", async () => {
@@ -3030,7 +3030,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     // Alice deposits BPD to Stability Pool
     await stabilityPool.provideToSP(spDeposit, ZERO_ADDRESS, { from: alice })
 
-    // price drops to 1ETH:85BPD, reducing TCR below 150%
+    // price drops to 1RBTC:85BPD, reducing TCR below 150%
     await priceFeed.setPrice('85000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -3136,7 +3136,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     // Alice deposits BPD to Stability Pool
     await stabilityPool.provideToSP(spDeposit, ZERO_ADDRESS, { from: alice })
 
-    // price drops to 1ETH:85BPD, reducing TCR below 150%
+    // price drops to 1RBTC:85BPD, reducing TCR below 150%
     await priceFeed.setPrice('85000000000000000000')
     const price = await priceFeed.getPrice()
 
@@ -3661,9 +3661,9 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     const bobDebt_After = (await vaultManager.Vaults(bob))[0].add(await vaultManager.getPendingBPDDebtReward(bob))
     const carolDebt_After = (await vaultManager.Vaults(carol))[0].add(await vaultManager.getPendingBPDDebtReward(carol))
 
-    const dennisColl_After = (await vaultManager.Vaults(dennis))[1].add(await vaultManager.getPendingETHReward(dennis))  
-    const bobColl_After = (await vaultManager.Vaults(bob))[1].add(await vaultManager.getPendingETHReward(bob))
-    const carolColl_After = (await vaultManager.Vaults(carol))[1].add(await vaultManager.getPendingETHReward(carol))
+    const dennisColl_After = (await vaultManager.Vaults(dennis))[1].add(await vaultManager.getPendingRBTCReward(dennis))  
+    const bobColl_After = (await vaultManager.Vaults(bob))[1].add(await vaultManager.getPendingRBTCReward(bob))
+    const carolColl_After = (await vaultManager.Vaults(carol))[1].add(await vaultManager.getPendingRBTCReward(carol))
 
     assert.isTrue(dennisColl_After.eq(dennisColl_Before))
     assert.isTrue(bobColl_After.eq(bobColl_Before))
@@ -3946,7 +3946,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     assert.isTrue(await sortedVaults.contains(whale))
 
     // Check A's collateral and debt are the same
-    const entireColl_A = (await vaultManager.Vaults(alice))[1].add(await vaultManager.getPendingETHReward(alice))
+    const entireColl_A = (await vaultManager.Vaults(alice))[1].add(await vaultManager.getPendingRBTCReward(alice))
     const entireDebt_A = (await vaultManager.Vaults(alice))[0].add(await vaultManager.getPendingBPDDebtReward(alice))
 
     assert.equal(entireColl_A.toString(), A_coll)

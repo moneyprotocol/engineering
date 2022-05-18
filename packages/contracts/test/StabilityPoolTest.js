@@ -56,7 +56,7 @@ contract('StabilityPool', async accounts => {
     })
 
     beforeEach(async () => {
-      contracts = await deploymentHelper.deployLiquityCore()
+      contracts = await deploymentHelper.deployMoneypCore()
       contracts.vaultManager = await VaultManagerTester.new()
       contracts.bpdToken = await BPDToken.new(
         contracts.vaultManager.address,
@@ -339,7 +339,7 @@ contract('StabilityPool', async accounts => {
       const txData1 = th.getTransactionData('provideToSP(uint256,address)', [web3.utils.toHex(dec(150, 18)), frontEnd_1])
       const tx1 = await nonPayable.forward(stabilityPool.address, txData1)
 
-      const gain_0 = await stabilityPool.getDepositorETHGain(nonPayable.address)
+      const gain_0 = await stabilityPool.getDepositorRBTCGain(nonPayable.address)
       assert.isTrue(gain_0.eq(toBN(0)), 'NonPayable should not have accumulated gains')
 
       // price drops: defaulters' Vaults fall below MCR, nonPayable and whale Vault remain active
@@ -349,7 +349,7 @@ contract('StabilityPool', async accounts => {
       await vaultManager.liquidate(defaulter_1, { from: owner })
       await vaultManager.liquidate(defaulter_2, { from: owner })
 
-      const gain_1 = await stabilityPool.getDepositorETHGain(nonPayable.address)
+      const gain_1 = await stabilityPool.getDepositorRBTCGain(nonPayable.address)
       assert.isTrue(gain_1.gt(toBN(0)), 'NonPayable should have some accumulated gains')
 
       // NonPayable tries to make deposit #2: 100BPD (which also attempts to withdraw RBTC gain)
@@ -389,15 +389,15 @@ contract('StabilityPool', async accounts => {
       const bob_BPDDeposit_Before = (await stabilityPool.getCompoundedBPDDeposit(bob)).toString()
       const carol_BPDDeposit_Before = (await stabilityPool.getCompoundedBPDDeposit(carol)).toString()
 
-      const alice_ETHGain_Before = (await stabilityPool.getDepositorETHGain(alice)).toString()
-      const bob_ETHGain_Before = (await stabilityPool.getDepositorETHGain(bob)).toString()
-      const carol_ETHGain_Before = (await stabilityPool.getDepositorETHGain(carol)).toString()
+      const alice_RBTCGain_Before = (await stabilityPool.getDepositorRBTCGain(alice)).toString()
+      const bob_RBTCGain_Before = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
+      const caroB_RBTCGain_Before = (await stabilityPool.getDepositorRBTCGain(carol)).toString()
 
-      //check non-zero BPD and ETHGain in the Stability Pool
+      //check non-zero BPD and RBTCGain in the Stability Pool
       const BPDinSP = await stabilityPool.getTotalBPDDeposits()
-      const ETHinSP = await stabilityPool.getETH()
+      const RBTCinSP = await stabilityPool.getRBTC()
       assert.isTrue(BPDinSP.gt(mv._zeroBN))
-      assert.isTrue(ETHinSP.gt(mv._zeroBN))
+      assert.isTrue(RBTCinSP.gt(mv._zeroBN))
 
       // D makes an SP deposit
       await stabilityPool.provideToSP(dec(1000, 18), frontEnd_1, { from: dennis })
@@ -407,18 +407,18 @@ contract('StabilityPool', async accounts => {
       const bob_BPDDeposit_After = (await stabilityPool.getCompoundedBPDDeposit(bob)).toString()
       const carol_BPDDeposit_After = (await stabilityPool.getCompoundedBPDDeposit(carol)).toString()
 
-      const alice_ETHGain_After = (await stabilityPool.getDepositorETHGain(alice)).toString()
-      const bob_ETHGain_After = (await stabilityPool.getDepositorETHGain(bob)).toString()
-      const carol_ETHGain_After = (await stabilityPool.getDepositorETHGain(carol)).toString()
+      const alice_RBTCGain_After = (await stabilityPool.getDepositorRBTCGain(alice)).toString()
+      const bob_RBTCGain_After = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
+      const caroB_RBTCGain_After = (await stabilityPool.getDepositorRBTCGain(carol)).toString()
 
       // Check compounded deposits and RBTC gains for A, B and C have not changed
       assert.equal(alice_BPDDeposit_Before, alice_BPDDeposit_After)
       assert.equal(bob_BPDDeposit_Before, bob_BPDDeposit_After)
       assert.equal(carol_BPDDeposit_Before, carol_BPDDeposit_After)
 
-      assert.equal(alice_ETHGain_Before, alice_ETHGain_After)
-      assert.equal(bob_ETHGain_Before, bob_ETHGain_After)
-      assert.equal(carol_ETHGain_Before, carol_ETHGain_After)
+      assert.equal(alice_RBTCGain_Before, alice_RBTCGain_After)
+      assert.equal(bob_RBTCGain_Before, bob_RBTCGain_After)
+      assert.equal(caroB_RBTCGain_Before, caroB_RBTCGain_After)
     })
 
     it("provideToSP(): doesn't impact system debt, collateral or TCR", async () => {
@@ -451,8 +451,8 @@ contract('StabilityPool', async accounts => {
 
       const activeDebt_Before = (await activePool.getBPDDebt()).toString()
       const defaultedDebt_Before = (await defaultPool.getBPDDebt()).toString()
-      const activeColl_Before = (await activePool.getETH()).toString()
-      const defaultedColl_Before = (await defaultPool.getETH()).toString()
+      const activeColl_Before = (await activePool.getRBTC()).toString()
+      const defaultedColl_Before = (await defaultPool.getRBTC()).toString()
       const TCR_Before = (await th.getTCR(contracts)).toString()
 
       // D makes an SP deposit
@@ -461,8 +461,8 @@ contract('StabilityPool', async accounts => {
 
       const activeDebt_After = (await activePool.getBPDDebt()).toString()
       const defaultedDebt_After = (await defaultPool.getBPDDebt()).toString()
-      const activeColl_After = (await activePool.getETH()).toString()
-      const defaultedColl_After = (await defaultPool.getETH()).toString()
+      const activeColl_After = (await activePool.getRBTC()).toString()
+      const defaultedColl_After = (await defaultPool.getRBTC()).toString()
       const TCR_After = (await th.getTCR(contracts)).toString()
 
       // Check total system debt, collateral and TCR have not changed after a Stability deposit is made
@@ -989,10 +989,10 @@ contract('StabilityPool', async accounts => {
       // --- TEST ---
 
       // get current RBTC balances
-      const A_ETHBalance_Before = await web3.eth.getBalance(A)
-      const B_ETHBalance_Before = await web3.eth.getBalance(B)
-      const C_ETHBalance_Before = await web3.eth.getBalance(C)
-      const D_ETHBalance_Before = await web3.eth.getBalance(D)
+      const A_RBTCBalance_Before = await web3.eth.getBalance(A)
+      const B_RBTCBalance_Before = await web3.eth.getBalance(B)
+      const C_RBTCBalance_Before = await web3.eth.getBalance(C)
+      const D_RBTCBalance_Before = await web3.eth.getBalance(D)
 
       // A, B, C, D provide to SP
       await stabilityPool.provideToSP(dec(100, 18), frontEnd_1, { from: A, gasPrice: 0 })
@@ -1001,16 +1001,16 @@ contract('StabilityPool', async accounts => {
       await stabilityPool.provideToSP(dec(400, 18), ZERO_ADDRESS, { from: D, gasPrice: 0 })
 
       // Get  RBTC balances after
-      const A_ETHBalance_After = await web3.eth.getBalance(A)
-      const B_ETHBalance_After = await web3.eth.getBalance(B)
-      const C_ETHBalance_After = await web3.eth.getBalance(C)
-      const D_ETHBalance_After = await web3.eth.getBalance(D)
+      const A_RBTCBalance_After = await web3.eth.getBalance(A)
+      const B_RBTCBalance_After = await web3.eth.getBalance(B)
+      const C_RBTCBalance_After = await web3.eth.getBalance(C)
+      const D_RBTCBalance_After = await web3.eth.getBalance(D)
 
       // Check RBTC balances have not changed
-      assert.equal(A_ETHBalance_After, A_ETHBalance_Before)
-      assert.equal(B_ETHBalance_After, B_ETHBalance_Before)
-      assert.equal(C_ETHBalance_After, C_ETHBalance_Before)
-      assert.equal(D_ETHBalance_After, D_ETHBalance_Before)
+      assert.equal(A_RBTCBalance_After, A_RBTCBalance_Before)
+      assert.equal(B_RBTCBalance_After, B_RBTCBalance_Before)
+      assert.equal(C_RBTCBalance_After, C_RBTCBalance_Before)
+      assert.equal(D_RBTCBalance_After, D_RBTCBalance_Before)
     })
 
     it("provideToSP(), new deposit after past full withdrawal: depositor does not receive RBTC gains", async () => {
@@ -1057,10 +1057,10 @@ contract('StabilityPool', async accounts => {
       // --- TEST ---
 
       // get current RBTC balances
-      const A_ETHBalance_Before = await web3.eth.getBalance(A)
-      const B_ETHBalance_Before = await web3.eth.getBalance(B)
-      const C_ETHBalance_Before = await web3.eth.getBalance(C)
-      const D_ETHBalance_Before = await web3.eth.getBalance(D)
+      const A_RBTCBalance_Before = await web3.eth.getBalance(A)
+      const B_RBTCBalance_Before = await web3.eth.getBalance(B)
+      const C_RBTCBalance_Before = await web3.eth.getBalance(C)
+      const D_RBTCBalance_Before = await web3.eth.getBalance(D)
 
       // A, B, C, D provide to SP
       await stabilityPool.provideToSP(dec(100, 18), frontEnd_1, { from: A, gasPrice: 0 })
@@ -1069,16 +1069,16 @@ contract('StabilityPool', async accounts => {
       await stabilityPool.provideToSP(dec(400, 18), ZERO_ADDRESS, { from: D, gasPrice: 0 })
 
       // Get  RBTC balances after
-      const A_ETHBalance_After = await web3.eth.getBalance(A)
-      const B_ETHBalance_After = await web3.eth.getBalance(B)
-      const C_ETHBalance_After = await web3.eth.getBalance(C)
-      const D_ETHBalance_After = await web3.eth.getBalance(D)
+      const A_RBTCBalance_After = await web3.eth.getBalance(A)
+      const B_RBTCBalance_After = await web3.eth.getBalance(B)
+      const C_RBTCBalance_After = await web3.eth.getBalance(C)
+      const D_RBTCBalance_After = await web3.eth.getBalance(D)
 
       // Check RBTC balances have not changed
-      assert.equal(A_ETHBalance_After, A_ETHBalance_Before)
-      assert.equal(B_ETHBalance_After, B_ETHBalance_Before)
-      assert.equal(C_ETHBalance_After, C_ETHBalance_Before)
-      assert.equal(D_ETHBalance_After, D_ETHBalance_Before)
+      assert.equal(A_RBTCBalance_After, A_RBTCBalance_Before)
+      assert.equal(B_RBTCBalance_After, B_RBTCBalance_Before)
+      assert.equal(C_RBTCBalance_After, C_RBTCBalance_Before)
+      assert.equal(D_RBTCBalance_After, D_RBTCBalance_Before)
     })
 
     it("provideToSP(), topup: triggers MP reward event - increases the sum G", async () => {
@@ -1508,8 +1508,8 @@ contract('StabilityPool', async accounts => {
       assert.isAtMost(th.getDifference(newDeposit, expectedNewDeposit_A), 100000)
 
       // Expect Alice has withdrawn all RBTC gain
-      const alice_pendingETHGain = await stabilityPool.getDepositorETHGain(alice)
-      assert.equal(alice_pendingETHGain, 0)
+      const alice_pendingRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
+      assert.equal(alice_pendingRBTCGain, 0)
     })
 
     it("withdrawFromSP(): partial retrieval - leaves the correct amount of BPD in the Stability Pool", async () => {
@@ -1629,28 +1629,28 @@ contract('StabilityPool', async accounts => {
 
       // Alice retrieves all of her entitled BPD:
       await stabilityPool.withdrawFromSP(dec(15000, 18), { from: alice })
-      assert.equal(await stabilityPool.getDepositorETHGain(alice), 0)
+      assert.equal(await stabilityPool.getDepositorRBTCGain(alice), 0)
 
       // Alice makes second deposit
       await stabilityPool.provideToSP(dec(10000, 18), frontEnd_1, { from: alice })
-      assert.equal(await stabilityPool.getDepositorETHGain(alice), 0)
+      assert.equal(await stabilityPool.getDepositorRBTCGain(alice), 0)
 
-      const ETHinSP_Before = (await stabilityPool.getETH()).toString()
+      const RBTCinSP_Before = (await stabilityPool.getRBTC()).toString()
 
       // Alice attempts second withdrawal
       await stabilityPool.withdrawFromSP(dec(10000, 18), { from: alice })
-      assert.equal(await stabilityPool.getDepositorETHGain(alice), 0)
+      assert.equal(await stabilityPool.getDepositorRBTCGain(alice), 0)
 
       // Check RBTC in pool does not change
-      const ETHinSP_1 = (await stabilityPool.getETH()).toString()
-      assert.equal(ETHinSP_Before, ETHinSP_1)
+      const RBTCinSP_1 = (await stabilityPool.getRBTC()).toString()
+      assert.equal(RBTCinSP_Before, RBTCinSP_1)
 
       // Third deposit
       await stabilityPool.provideToSP(dec(10000, 18), frontEnd_1, { from: alice })
-      assert.equal(await stabilityPool.getDepositorETHGain(alice), 0)
+      assert.equal(await stabilityPool.getDepositorRBTCGain(alice), 0)
 
       // Alice attempts third withdrawal (this time, frm SP to Vault)
-      const txPromise_A = stabilityPool.withdrawETHGainToVault(alice, alice, { from: alice })
+      const txPromise_A = stabilityPool.withdrawRBTCGainToVault(alice, alice, { from: alice })
       await th.assertRevert(txPromise_A)
     })
 
@@ -1720,27 +1720,27 @@ contract('StabilityPool', async accounts => {
       const [, liquidatedColl,] = th.getEmittedLiquidationValues(liquidationTx_1)
 
       //Get ActivePool and StabilityPool Bitcoin before retrieval:
-      const active_RBTC_Before = await activePool.getETH()
-      const stability_RBTC_Before = await stabilityPool.getETH()
+      const active_RBTC_Before = await activePool.getRBTC()
+      const stability_RBTC_Before = await stabilityPool.getRBTC()
 
       // Expect alice to be entitled to 15000/200000 of the liquidated coll
-      const aliceExpectedETHGain = liquidatedColl.mul(toBN(dec(15000, 18))).div(toBN(dec(200000, 18)))
-      const aliceETHGain = await stabilityPool.getDepositorETHGain(alice)
-      assert.isTrue(aliceExpectedETHGain.eq(aliceETHGain))
+      const aliceExpectedRBTCGain = liquidatedColl.mul(toBN(dec(15000, 18))).div(toBN(dec(200000, 18)))
+      const aliceRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
+      assert.isTrue(aliceExpectedRBTCGain.eq(aliceRBTCGain))
 
       // Alice retrieves all of her deposit
       await stabilityPool.withdrawFromSP(dec(15000, 18), { from: alice })
 
-      const active_RBTC_After = await activePool.getETH()
-      const stability_RBTC_After = await stabilityPool.getETH()
+      const active_RBTC_After = await activePool.getRBTC()
+      const stability_RBTC_After = await stabilityPool.getRBTC()
 
       const active_RBTC_Difference = (active_RBTC_Before.sub(active_RBTC_After))
       const stability_RBTC_Difference = (stability_RBTC_Before.sub(stability_RBTC_After))
 
       assert.equal(active_RBTC_Difference, '0')
 
-      // Expect StabilityPool to have decreased by Alice's ETHGain
-      assert.isAtMost(th.getDifference(stability_RBTC_Difference, aliceETHGain), 10000)
+      // Expect StabilityPool to have decreased by Alice's RBTCGain
+      assert.isAtMost(th.getDifference(stability_RBTC_Difference, aliceRBTCGain), 10000)
     })
 
     it("withdrawFromSP(): All depositors are able to withdraw from the SP to their account", async () => {
@@ -1855,14 +1855,14 @@ contract('StabilityPool', async accounts => {
       const alice_BPDDeposit_Before = (await stabilityPool.getCompoundedBPDDeposit(alice)).toString()
       const bob_BPDDeposit_Before = (await stabilityPool.getCompoundedBPDDeposit(bob)).toString()
 
-      const alice_ETHGain_Before = (await stabilityPool.getDepositorETHGain(alice)).toString()
-      const bob_ETHGain_Before = (await stabilityPool.getDepositorETHGain(bob)).toString()
+      const alice_RBTCGain_Before = (await stabilityPool.getDepositorRBTCGain(alice)).toString()
+      const bob_RBTCGain_Before = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
 
-      //check non-zero BPD and ETHGain in the Stability Pool
+      //check non-zero BPD and RBTCGain in the Stability Pool
       const BPDinSP = await stabilityPool.getTotalBPDDeposits()
-      const ETHinSP = await stabilityPool.getETH()
+      const RBTCinSP = await stabilityPool.getRBTC()
       assert.isTrue(BPDinSP.gt(mv._zeroBN))
-      assert.isTrue(ETHinSP.gt(mv._zeroBN))
+      assert.isTrue(RBTCinSP.gt(mv._zeroBN))
 
       // Price rises
       await priceFeed.setPrice(dec(200, 18))
@@ -1875,15 +1875,15 @@ contract('StabilityPool', async accounts => {
       const alice_BPDDeposit_After = (await stabilityPool.getCompoundedBPDDeposit(alice)).toString()
       const bob_BPDDeposit_After = (await stabilityPool.getCompoundedBPDDeposit(bob)).toString()
 
-      const alice_ETHGain_After = (await stabilityPool.getDepositorETHGain(alice)).toString()
-      const bob_ETHGain_After = (await stabilityPool.getDepositorETHGain(bob)).toString()
+      const alice_RBTCGain_After = (await stabilityPool.getDepositorRBTCGain(alice)).toString()
+      const bob_RBTCGain_After = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
 
       // Check compounded deposits and RBTC gains for A and B have not changed
       assert.equal(alice_BPDDeposit_Before, alice_BPDDeposit_After)
       assert.equal(bob_BPDDeposit_Before, bob_BPDDeposit_After)
 
-      assert.equal(alice_ETHGain_Before, alice_ETHGain_After)
-      assert.equal(bob_ETHGain_Before, bob_ETHGain_After)
+      assert.equal(alice_RBTCGain_Before, alice_RBTCGain_After)
+      assert.equal(bob_RBTCGain_Before, bob_RBTCGain_After)
     })
 
     it("withdrawFromSP(): doesn't impact system debt, collateral or TCR ", async () => {
@@ -1916,8 +1916,8 @@ contract('StabilityPool', async accounts => {
 
       const activeDebt_Before = (await activePool.getBPDDebt()).toString()
       const defaultedDebt_Before = (await defaultPool.getBPDDebt()).toString()
-      const activeColl_Before = (await activePool.getETH()).toString()
-      const defaultedColl_Before = (await defaultPool.getETH()).toString()
+      const activeColl_Before = (await activePool.getRBTC()).toString()
+      const defaultedColl_Before = (await defaultPool.getRBTC()).toString()
       const TCR_Before = (await th.getTCR(contracts)).toString()
 
       // Carol withdraws her Stability deposit 
@@ -1927,8 +1927,8 @@ contract('StabilityPool', async accounts => {
 
       const activeDebt_After = (await activePool.getBPDDebt()).toString()
       const defaultedDebt_After = (await defaultPool.getBPDDebt()).toString()
-      const activeColl_After = (await activePool.getETH()).toString()
-      const defaultedColl_After = (await defaultPool.getETH()).toString()
+      const activeColl_After = (await activePool.getRBTC()).toString()
+      const defaultedColl_After = (await defaultPool.getRBTC()).toString()
       const TCR_After = (await th.getTCR(contracts)).toString()
 
       // Check total system debt, collateral and TCR have not changed after a Stability deposit is made
@@ -2039,26 +2039,26 @@ contract('StabilityPool', async accounts => {
       assert.isTrue(await th.ICRbetween100and110(defaulter_2, vaultManager, price))
       assert.isTrue(await sortedVaults.contains(defaulter_2))
 
-      const A_ETHBalBefore = toBN(await web3.eth.getBalance(A))
+      const A_RBTCBalBefore = toBN(await web3.eth.getBalance(A))
       const A_MPBalBefore = await mpToken.balanceOf(A)
 
       // Check Alice has gains to withdraw
-      const A_pendingETHGain = await stabilityPool.getDepositorETHGain(A)
+      const A_pendingRBTCGain = await stabilityPool.getDepositorRBTCGain(A)
       const A_pendingMPGain = await stabilityPool.getDepositorMPGain(A)
-      assert.isTrue(A_pendingETHGain.gt(toBN('0')))
+      assert.isTrue(A_pendingRBTCGain.gt(toBN('0')))
       assert.isTrue(A_pendingMPGain.gt(toBN('0')))
 
       // Check withdrawal of 0 succeeds
       const tx = await stabilityPool.withdrawFromSP(0, { from: A, gasPrice: 0 })
       assert.isTrue(tx.receipt.status)
 
-      const A_ETHBalAfter = toBN(await web3.eth.getBalance(A))
+      const A_RBTCBalAfter = toBN(await web3.eth.getBalance(A))
 
       const A_MPBalAfter = await mpToken.balanceOf(A)
       const A_MPBalDiff = A_MPBalAfter.sub(A_MPBalBefore)
 
       // Check A's RBTC and MP balances have increased correctly
-      assert.isTrue(A_ETHBalAfter.sub(A_ETHBalBefore).eq(A_pendingETHGain))
+      assert.isTrue(A_RBTCBalAfter.sub(A_RBTCBalBefore).eq(A_pendingRBTCGain))
       assert.isAtMost(th.getDifference(A_MPBalDiff, A_pendingMPGain), 1000)
     })
 
@@ -2115,29 +2115,29 @@ contract('StabilityPool', async accounts => {
       await openVault({ extraBPDAmount: toBN(dec(10000, 18)), ICR: toBN(dec(2, 18)), extraParams: { from: dennis } })
       await stabilityPool.provideToSP(dec(100, 18), frontEnd_1, { from: dennis })
 
-      // Check Dennis has 0 ETHGain
-      const dennis_ETHGain = (await stabilityPool.getDepositorETHGain(dennis)).toString()
-      assert.equal(dennis_ETHGain, '0')
+      // Check Dennis has 0 RBTCGain
+      const dennis_RBTCGain = (await stabilityPool.getDepositorRBTCGain(dennis)).toString()
+      assert.equal(dennis_RBTCGain, '0')
 
-      const dennis_ETHBalance_Before = (web3.eth.getBalance(dennis)).toString()
+      const dennis_RBTCBalance_Before = (web3.eth.getBalance(dennis)).toString()
       const dennis_Collateral_Before = ((await vaultManager.Vaults(dennis))[1]).toString()
-      const ETHinSP_Before = (await stabilityPool.getETH()).toString()
+      const RBTCinSP_Before = (await stabilityPool.getRBTC()).toString()
 
       await priceFeed.setPrice(dec(200, 18))
 
-      // Dennis withdraws his full deposit and ETHGain to his account
+      // Dennis withdraws his full deposit and RBTCGain to his account
       await stabilityPool.withdrawFromSP(dec(100, 18), { from: dennis, gasPrice: 0 })
 
       // Check withdrawal does not alter Dennis' RBTC balance or his vault's collateral
-      const dennis_ETHBalance_After = (web3.eth.getBalance(dennis)).toString()
+      const dennis_RBTCBalance_After = (web3.eth.getBalance(dennis)).toString()
       const dennis_Collateral_After = ((await vaultManager.Vaults(dennis))[1]).toString()
-      const ETHinSP_After = (await stabilityPool.getETH()).toString()
+      const RBTCinSP_After = (await stabilityPool.getRBTC()).toString()
 
-      assert.equal(dennis_ETHBalance_Before, dennis_ETHBalance_After)
+      assert.equal(dennis_RBTCBalance_Before, dennis_RBTCBalance_After)
       assert.equal(dennis_Collateral_Before, dennis_Collateral_After)
 
       // Check withdrawal has not altered the RBTC in the Stability Pool
-      assert.equal(ETHinSP_Before, ETHinSP_After)
+      assert.equal(RBTCinSP_Before, RBTCinSP_After)
     })
 
     it("withdrawFromSP(): Request to withdraw > caller's deposit only withdraws the caller's compounded deposit", async () => {
@@ -2290,9 +2290,9 @@ contract('StabilityPool', async accounts => {
       const bob_Deposit_Before = await stabilityPool.getCompoundedBPDDeposit(bob)
       const carol_Deposit_Before = await stabilityPool.getCompoundedBPDDeposit(carol)
 
-      const alice_ETHGain_Before = await stabilityPool.getDepositorETHGain(alice)
-      const bob_ETHGain_Before = await stabilityPool.getDepositorETHGain(bob)
-      const carol_ETHGain_Before = await stabilityPool.getDepositorETHGain(carol)
+      const alice_RBTCGain_Before = await stabilityPool.getDepositorRBTCGain(alice)
+      const bob_RBTCGain_Before = await stabilityPool.getDepositorRBTCGain(bob)
+      const caroB_RBTCGain_Before = await stabilityPool.getDepositorRBTCGain(carol)
 
       const BPDinSP_Before = await stabilityPool.getTotalBPDDeposits()
 
@@ -2322,17 +2322,17 @@ contract('StabilityPool', async accounts => {
       assert.equal(carol_BPD_Balance_After, carol_expectedBPDBalance)
 
       // Check RBTC balances of A, B, C have increased by the value of their RBTC gain from liquidations, respectively
-      const alice_expectedETHBalance = (alice_RBTC_Balance_Before.add(alice_ETHGain_Before)).toString()
-      const bob_expectedETHBalance = (bob_RBTC_Balance_Before.add(bob_ETHGain_Before)).toString()
-      const carol_expectedETHBalance = (carol_RBTC_Balance_Before.add(carol_ETHGain_Before)).toString()
+      const alice_expectedRBTCBalance = (alice_RBTC_Balance_Before.add(alice_RBTCGain_Before)).toString()
+      const bob_expectedRBTCBalance = (bob_RBTC_Balance_Before.add(bob_RBTCGain_Before)).toString()
+      const carol_expectedRBTCBalance = (carol_RBTC_Balance_Before.add(caroB_RBTCGain_Before)).toString()
 
-      const alice_ETHBalance_After = (await web3.eth.getBalance(alice)).toString()
-      const bob_ETHBalance_After = (await web3.eth.getBalance(bob)).toString()
-      const carol_ETHBalance_After = (await web3.eth.getBalance(carol)).toString()
+      const alice_RBTCBalance_After = (await web3.eth.getBalance(alice)).toString()
+      const bob_RBTCBalance_After = (await web3.eth.getBalance(bob)).toString()
+      const caroB_RBTCBalance_After = (await web3.eth.getBalance(carol)).toString()
 
-      assert.equal(alice_expectedETHBalance, alice_ETHBalance_After)
-      assert.equal(bob_expectedETHBalance, bob_ETHBalance_After)
-      assert.equal(carol_expectedETHBalance, carol_ETHBalance_After)
+      assert.equal(alice_expectedRBTCBalance, alice_RBTCBalance_After)
+      assert.equal(bob_expectedRBTCBalance, bob_RBTCBalance_After)
+      assert.equal(carol_expectedRBTCBalance, caroB_RBTCBalance_After)
 
       // Check BPD in Stability Pool has been reduced by A, B and C's compounded deposit
       const expectedBPDinSP = (BPDinSP_Before
@@ -2344,11 +2344,11 @@ contract('StabilityPool', async accounts => {
       assert.equal(BPDinSP_After, expectedBPDinSP)
 
       // Check RBTC in SP has reduced to zero
-      const ETHinSP_After = (await stabilityPool.getETH()).toString()
-      assert.isAtMost(th.getDifference(ETHinSP_After, '0'), 100000)
+      const RBTCinSP_After = (await stabilityPool.getRBTC()).toString()
+      assert.isAtMost(th.getDifference(RBTCinSP_After, '0'), 100000)
     })
 
-    it("getDepositorETHGain(): depositor does not earn further RBTC gains from liquidations while their compounded deposit == 0: ", async () => {
+    it("getDepositorRBTCGain(): depositor does not earn further RBTC gains from liquidations while their compounded deposit == 0: ", async () => {
       await openVault({ extraBPDAmount: toBN(dec(1, 24)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
 
       // A, B, C open vaults
@@ -2383,8 +2383,8 @@ contract('StabilityPool', async accounts => {
       assert.equal(bob_Deposit, '0')
 
       // Get RBTC gain for A and B
-      const alice_ETHGain_1 = (await stabilityPool.getDepositorETHGain(alice)).toString()
-      const bob_ETHGain_1 = (await stabilityPool.getDepositorETHGain(bob)).toString()
+      const alice_RBTCGain_1 = (await stabilityPool.getDepositorRBTCGain(alice)).toString()
+      const bob_RBTCGain_1 = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
 
       // Whale deposits 10000 BPD to Stability Pool
       await stabilityPool.provideToSP(dec(1, 24), frontEnd_1, { from: whale })
@@ -2394,22 +2394,22 @@ contract('StabilityPool', async accounts => {
       assert.isFalse(await sortedVaults.contains(defaulter_2))
 
       // Check Alice and Bob have not received RBTC gain from liquidation 2 while their deposit was 0
-      const alice_ETHGain_2 = (await stabilityPool.getDepositorETHGain(alice)).toString()
-      const bob_ETHGain_2 = (await stabilityPool.getDepositorETHGain(bob)).toString()
+      const alice_RBTCGain_2 = (await stabilityPool.getDepositorRBTCGain(alice)).toString()
+      const bob_RBTCGain_2 = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
 
-      assert.equal(alice_ETHGain_1, alice_ETHGain_2)
-      assert.equal(bob_ETHGain_1, bob_ETHGain_2)
+      assert.equal(alice_RBTCGain_1, alice_RBTCGain_2)
+      assert.equal(bob_RBTCGain_1, bob_RBTCGain_2)
 
       // Liquidation 3
       await vaultManager.liquidate(defaulter_3)
       assert.isFalse(await sortedVaults.contains(defaulter_3))
 
       // Check Alice and Bob have not received RBTC gain from liquidation 3 while their deposit was 0
-      const alice_ETHGain_3 = (await stabilityPool.getDepositorETHGain(alice)).toString()
-      const bob_ETHGain_3 = (await stabilityPool.getDepositorETHGain(bob)).toString()
+      const alice_RBTCGain_3 = (await stabilityPool.getDepositorRBTCGain(alice)).toString()
+      const bob_RBTCGain_3 = (await stabilityPool.getDepositorRBTCGain(bob)).toString()
 
-      assert.equal(alice_ETHGain_1, alice_ETHGain_3)
-      assert.equal(bob_ETHGain_1, bob_ETHGain_3)
+      assert.equal(alice_RBTCGain_1, alice_RBTCGain_3)
+      assert.equal(bob_RBTCGain_1, bob_RBTCGain_3)
     })
 
     // --- MP functionality ---
@@ -2947,9 +2947,9 @@ contract('StabilityPool', async accounts => {
       await th.assertRevert(withdrawalPromise_C, expectedRevertMessage)
     })
 
-    // --- withdrawETHGainToVault ---
+    // --- withdrawRBTCGainToVault ---
 
-    it("withdrawETHGainToVault(): reverts when user has no active deposit", async () => {
+    it("withdrawRBTCGainToVault(): reverts when user has no active deposit", async () => {
       await openVault({ extraBPDAmount: toBN(dec(100000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
 
       await openVault({ extraBPDAmount: toBN(dec(10000, 18)), ICR: toBN(dec(2, 18)), extraParams: { from: alice } })
@@ -2970,14 +2970,14 @@ contract('StabilityPool', async accounts => {
       await vaultManager.liquidate(defaulter_1)
       assert.isFalse(await sortedVaults.contains(defaulter_1))
 
-      const txAlice = await stabilityPool.withdrawETHGainToVault(alice, alice, { from: alice })
+      const txAlice = await stabilityPool.withdrawRBTCGainToVault(alice, alice, { from: alice })
       assert.isTrue(txAlice.receipt.status)
 
-      const txPromise_B = stabilityPool.withdrawETHGainToVault(bob, bob, { from: bob })
+      const txPromise_B = stabilityPool.withdrawRBTCGainToVault(bob, bob, { from: bob })
       await th.assertRevert(txPromise_B)
     })
 
-    it("withdrawETHGainToVault(): Applies BPDLoss to user's deposit, and redirects RBTC reward to user's Vault", async () => {
+    it("withdrawRBTCGainToVault(): Applies BPDLoss to user's deposit, and redirects RBTC reward to user's Vault", async () => {
       // --- SETUP ---
       // Whale deposits 185000 BPD in StabilityPool
       await openVault({ extraBPDAmount: toBN(dec(1000000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
@@ -3004,18 +3004,18 @@ contract('StabilityPool', async accounts => {
       const liquidationTx_1 = await vaultManager.liquidate(defaulter_1, { from: owner })
       const [liquidatedDebt, liquidatedColl, ,] = th.getEmittedLiquidationValues(liquidationTx_1)
 
-      const ETHGain_A = await stabilityPool.getDepositorETHGain(alice)
+      const RBTCGain_A = await stabilityPool.getDepositorRBTCGain(alice)
       const compoundedDeposit_A = await stabilityPool.getCompoundedBPDDeposit(alice)
 
       // Alice should receive rewards proportional to her deposit as share of total deposits
-      const expectedETHGain_A = liquidatedColl.mul(toBN(dec(15000, 18))).div(toBN(dec(200000, 18)))
+      const expectedRBTCGain_A = liquidatedColl.mul(toBN(dec(15000, 18))).div(toBN(dec(200000, 18)))
       const expectedBPDLoss_A = liquidatedDebt.mul(toBN(dec(15000, 18))).div(toBN(dec(200000, 18)))
       const expectedCompoundedDeposit_A = toBN(dec(15000, 18)).sub(expectedBPDLoss_A)
 
       assert.isAtMost(th.getDifference(expectedCompoundedDeposit_A, compoundedDeposit_A), 100000)
 
       // Alice sends her RBTC Gains to her Vault
-      await stabilityPool.withdrawETHGainToVault(alice, alice, { from: alice })
+      await stabilityPool.withdrawRBTCGainToVault(alice, alice, { from: alice })
 
       // check Alice's BPDLoss has been applied to her deposit expectedCompoundedDeposit_A
       alice_deposit_afterDefault = ((await stabilityPool.deposits(alice))[0])
@@ -3027,10 +3027,10 @@ contract('StabilityPool', async accounts => {
 
       const Vault_RBTC_Increase = (aliceVault_RBTC_After.sub(aliceVault_RBTC_Before)).toString()
 
-      assert.equal(Vault_RBTC_Increase, ETHGain_A)
+      assert.equal(Vault_RBTC_Increase, RBTCGain_A)
     })
 
-    it("withdrawETHGainToVault(): reverts if it would leave vault with ICR < MCR", async () => {
+    it("withdrawRBTCGainToVault(): reverts if it would leave vault with ICR < MCR", async () => {
       // --- SETUP ---
       // Whale deposits 1850 BPD in StabilityPool
       await openVault({ extraBPDAmount: toBN(dec(1000000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
@@ -3057,11 +3057,11 @@ contract('StabilityPool', async accounts => {
       await vaultManager.liquidate(defaulter_1, { from: owner })
 
       // Alice attempts to  her RBTC Gains to her Vault
-      await assertRevert(stabilityPool.withdrawETHGainToVault(alice, alice, { from: alice }),
+      await assertRevert(stabilityPool.withdrawRBTCGainToVault(alice, alice, { from: alice }),
       "BorrowerOps: An operation that would result in ICR < MCR is not permitted")
     })
 
-    it("withdrawETHGainToVault(): Subsequent deposit and withdrawal attempt from same account, with no intermediate liquidations, withdraws zero RBTC", async () => {
+    it("withdrawRBTCGainToVault(): Subsequent deposit and withdrawal attempt from same account, with no intermediate liquidations, withdraws zero RBTC", async () => {
       // --- SETUP ---
       // Whale deposits 1850 BPD in StabilityPool
       await openVault({ extraBPDAmount: toBN(dec(1000000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
@@ -3091,19 +3091,19 @@ contract('StabilityPool', async accounts => {
       await priceFeed.setPrice(dec(200, 18));
 
       // Alice sends her RBTC Gains to her Vault
-      await stabilityPool.withdrawETHGainToVault(alice, alice, { from: alice })
+      await stabilityPool.withdrawRBTCGainToVault(alice, alice, { from: alice })
 
-      assert.equal(await stabilityPool.getDepositorETHGain(alice), 0)
+      assert.equal(await stabilityPool.getDepositorRBTCGain(alice), 0)
 
-      const ETHinSP_Before = (await stabilityPool.getETH()).toString()
+      const RBTCinSP_Before = (await stabilityPool.getRBTC()).toString()
 
       // Alice attempts second withdrawal from SP to Vault - reverts, due to 0 RBTC Gain
-      const txPromise_A = stabilityPool.withdrawETHGainToVault(alice, alice, { from: alice })
+      const txPromise_A = stabilityPool.withdrawRBTCGainToVault(alice, alice, { from: alice })
       await th.assertRevert(txPromise_A)
 
       // Check RBTC in pool does not change
-      const ETHinSP_1 = (await stabilityPool.getETH()).toString()
-      assert.equal(ETHinSP_Before, ETHinSP_1)
+      const RBTCinSP_1 = (await stabilityPool.getRBTC()).toString()
+      assert.equal(RBTCinSP_Before, RBTCinSP_1)
 
       await priceFeed.setPrice(dec(200, 18));
 
@@ -3111,11 +3111,11 @@ contract('StabilityPool', async accounts => {
       await stabilityPool.withdrawFromSP(dec(15000, 18), { from: alice })
 
       // Check RBTC in pool does not change
-      const ETHinSP_2 = (await stabilityPool.getETH()).toString()
-      assert.equal(ETHinSP_Before, ETHinSP_2)
+      const RBTCinSP_2 = (await stabilityPool.getRBTC()).toString()
+      assert.equal(RBTCinSP_Before, RBTCinSP_2)
     })
 
-    it("withdrawETHGainToVault(): decreases StabilityPool RBTC and increases activePool RBTC", async () => {
+    it("withdrawRBTCGainToVault(): decreases StabilityPool RBTC and increases activePool RBTC", async () => {
       // --- SETUP ---
       // Whale deposits 185000 BPD in StabilityPool
       await openVault({ extraBPDAmount: toBN(dec(1000000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
@@ -3138,32 +3138,32 @@ contract('StabilityPool', async accounts => {
       const [liquidatedDebt, liquidatedColl, gasComp] = th.getEmittedLiquidationValues(liquidationTx)
 
       // Expect alice to be entitled to 15000/200000 of the liquidated coll
-      const aliceExpectedETHGain = liquidatedColl.mul(toBN(dec(15000, 18))).div(toBN(dec(200000, 18)))
-      const aliceETHGain = await stabilityPool.getDepositorETHGain(alice)
-      assert.isTrue(aliceExpectedETHGain.eq(aliceETHGain))
+      const aliceExpectedRBTCGain = liquidatedColl.mul(toBN(dec(15000, 18))).div(toBN(dec(200000, 18)))
+      const aliceRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
+      assert.isTrue(aliceExpectedRBTCGain.eq(aliceRBTCGain))
 
       // price bounces back
       await priceFeed.setPrice(dec(200, 18));
 
       //check activePool and StabilityPool Bitcoin before retrieval:
-      const active_RBTC_Before = await activePool.getETH()
-      const stability_RBTC_Before = await stabilityPool.getETH()
+      const active_RBTC_Before = await activePool.getRBTC()
+      const stability_RBTC_Before = await stabilityPool.getRBTC()
 
       // Alice retrieves redirects RBTC gain to her Vault
-      await stabilityPool.withdrawETHGainToVault(alice, alice, { from: alice })
+      await stabilityPool.withdrawRBTCGainToVault(alice, alice, { from: alice })
 
-      const active_RBTC_After = await activePool.getETH()
-      const stability_RBTC_After = await stabilityPool.getETH()
+      const active_RBTC_After = await activePool.getRBTC()
+      const stability_RBTC_After = await stabilityPool.getRBTC()
 
       const active_RBTC_Difference = (active_RBTC_After.sub(active_RBTC_Before)) // AP RBTC should increase
       const stability_RBTC_Difference = (stability_RBTC_Before.sub(stability_RBTC_After)) // SP RBTC should decrease
 
-      // check Pool RBTC values change by Alice's ETHGain, i.e 0.075 RBTC
-      assert.isAtMost(th.getDifference(active_RBTC_Difference, aliceETHGain), 10000)
-      assert.isAtMost(th.getDifference(stability_RBTC_Difference, aliceETHGain), 10000)
+      // check Pool RBTC values change by Alice's RBTCGain, i.e 0.075 RBTC
+      assert.isAtMost(th.getDifference(active_RBTC_Difference, aliceRBTCGain), 10000)
+      assert.isAtMost(th.getDifference(stability_RBTC_Difference, aliceRBTCGain), 10000)
     })
 
-    it("withdrawETHGainToVault(): All depositors are able to withdraw their RBTC gain from the SP to their Vault", async () => {
+    it("withdrawRBTCGainToVault(): All depositors are able to withdraw their RBTC gain from the SP to their Vault", async () => {
       // Whale opens vault 
       await openVault({ extraBPDAmount: toBN(dec(100000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
 
@@ -3184,21 +3184,21 @@ contract('StabilityPool', async accounts => {
       await priceFeed.setPrice(dec(200, 18));
 
       // All depositors attempt to withdraw
-      const tx1 = await stabilityPool.withdrawETHGainToVault(alice, alice, { from: alice })
+      const tx1 = await stabilityPool.withdrawRBTCGainToVault(alice, alice, { from: alice })
       assert.isTrue(tx1.receipt.status)
-      const tx2 = await stabilityPool.withdrawETHGainToVault(bob, bob, { from: bob })
+      const tx2 = await stabilityPool.withdrawRBTCGainToVault(bob, bob, { from: bob })
       assert.isTrue(tx1.receipt.status)
-      const tx3 = await stabilityPool.withdrawETHGainToVault(carol, carol, { from: carol })
+      const tx3 = await stabilityPool.withdrawRBTCGainToVault(carol, carol, { from: carol })
       assert.isTrue(tx1.receipt.status)
-      const tx4 = await stabilityPool.withdrawETHGainToVault(dennis, dennis, { from: dennis })
+      const tx4 = await stabilityPool.withdrawRBTCGainToVault(dennis, dennis, { from: dennis })
       assert.isTrue(tx1.receipt.status)
-      const tx5 = await stabilityPool.withdrawETHGainToVault(erin, erin, { from: erin })
+      const tx5 = await stabilityPool.withdrawRBTCGainToVault(erin, erin, { from: erin })
       assert.isTrue(tx1.receipt.status)
-      const tx6 = await stabilityPool.withdrawETHGainToVault(flyn, flyn, { from: flyn })
+      const tx6 = await stabilityPool.withdrawRBTCGainToVault(flyn, flyn, { from: flyn })
       assert.isTrue(tx1.receipt.status)
     })
 
-    it("withdrawETHGainToVault(): All depositors withdraw, each withdraw their correct RBTC gain", async () => {
+    it("withdrawRBTCGainToVault(): All depositors withdraw, each withdraw their correct RBTC gain", async () => {
       // Whale opens vault 
       await openVault({ extraBPDAmount: toBN(dec(100000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
 
@@ -3229,32 +3229,32 @@ contract('StabilityPool', async accounts => {
 
       await priceFeed.setPrice(dec(200, 18))
 
-      await stabilityPool.withdrawETHGainToVault(alice, alice, { from: alice })
+      await stabilityPool.withdrawRBTCGainToVault(alice, alice, { from: alice })
       const aliceCollAfter = (await vaultManager.Vaults(alice))[1]
       assert.isAtMost(th.getDifference(aliceCollAfter.sub(collBefore), expectedCollGain), 10000)
 
-      await stabilityPool.withdrawETHGainToVault(bob, bob, { from: bob })
+      await stabilityPool.withdrawRBTCGainToVault(bob, bob, { from: bob })
       const bobCollAfter = (await vaultManager.Vaults(bob))[1]
       assert.isAtMost(th.getDifference(bobCollAfter.sub(collBefore), expectedCollGain), 10000)
 
-      await stabilityPool.withdrawETHGainToVault(carol, carol, { from: carol })
+      await stabilityPool.withdrawRBTCGainToVault(carol, carol, { from: carol })
       const carolCollAfter = (await vaultManager.Vaults(carol))[1]
       assert.isAtMost(th.getDifference(carolCollAfter.sub(collBefore), expectedCollGain), 10000)
 
-      await stabilityPool.withdrawETHGainToVault(dennis, dennis, { from: dennis })
+      await stabilityPool.withdrawRBTCGainToVault(dennis, dennis, { from: dennis })
       const dennisCollAfter = (await vaultManager.Vaults(dennis))[1]
       assert.isAtMost(th.getDifference(dennisCollAfter.sub(collBefore), expectedCollGain), 10000)
 
-      await stabilityPool.withdrawETHGainToVault(erin, erin, { from: erin })
+      await stabilityPool.withdrawRBTCGainToVault(erin, erin, { from: erin })
       const erinCollAfter = (await vaultManager.Vaults(erin))[1]
       assert.isAtMost(th.getDifference(erinCollAfter.sub(collBefore), expectedCollGain), 10000)
 
-      await stabilityPool.withdrawETHGainToVault(flyn, flyn, { from: flyn })
+      await stabilityPool.withdrawRBTCGainToVault(flyn, flyn, { from: flyn })
       const flynCollAfter = (await vaultManager.Vaults(flyn))[1]
       assert.isAtMost(th.getDifference(flynCollAfter.sub(collBefore), expectedCollGain), 10000)
     })
 
-    it("withdrawETHGainToVault(): caller can withdraw full deposit and RBTC gain to their vault during Recovery Mode", async () => {
+    it("withdrawRBTCGainToVault(): caller can withdraw full deposit and RBTC gain to their vault during Recovery Mode", async () => {
       // --- SETUP ---
 
      // Defaulter opens
@@ -3290,19 +3290,19 @@ contract('StabilityPool', async accounts => {
       await vaultManager.liquidate(defaulter_1)
       assert.isFalse(await sortedVaults.contains(defaulter_1))
 
-      const alice_ETHGain_Before = await stabilityPool.getDepositorETHGain(alice)
-      const bob_ETHGain_Before = await stabilityPool.getDepositorETHGain(bob)
-      const carol_ETHGain_Before = await stabilityPool.getDepositorETHGain(carol)
+      const alice_RBTCGain_Before = await stabilityPool.getDepositorRBTCGain(alice)
+      const bob_RBTCGain_Before = await stabilityPool.getDepositorRBTCGain(bob)
+      const caroB_RBTCGain_Before = await stabilityPool.getDepositorRBTCGain(carol)
 
       // A, B, C withdraw their full RBTC gain from the Stability Pool to their vault
-      await stabilityPool.withdrawETHGainToVault(alice, alice, { from: alice })
-      await stabilityPool.withdrawETHGainToVault(bob, bob, { from: bob })
-      await stabilityPool.withdrawETHGainToVault(carol, carol, { from: carol })
+      await stabilityPool.withdrawRBTCGainToVault(alice, alice, { from: alice })
+      await stabilityPool.withdrawRBTCGainToVault(bob, bob, { from: bob })
+      await stabilityPool.withdrawRBTCGainToVault(carol, carol, { from: carol })
 
       // Check collateral of vaults A, B, C has increased by the value of their RBTC gain from liquidations, respectively
-      const alice_expectedCollateral = (alice_Collateral_Before.add(alice_ETHGain_Before)).toString()
-      const bob_expectedColalteral = (bob_Collateral_Before.add(bob_ETHGain_Before)).toString()
-      const carol_expectedCollateral = (carol_Collateral_Before.add(carol_ETHGain_Before)).toString()
+      const alice_expectedCollateral = (alice_Collateral_Before.add(alice_RBTCGain_Before)).toString()
+      const bob_expectedColalteral = (bob_Collateral_Before.add(bob_RBTCGain_Before)).toString()
+      const carol_expectedCollateral = (carol_Collateral_Before.add(caroB_RBTCGain_Before)).toString()
 
       const alice_Collateral_After = (await vaultManager.Vaults(alice))[1]
       const bob_Collateral_After = (await vaultManager.Vaults(bob))[1]
@@ -3313,11 +3313,11 @@ contract('StabilityPool', async accounts => {
       assert.equal(carol_expectedCollateral, carol_Collateral_After)
 
       // Check RBTC in SP has reduced to zero
-      const ETHinSP_After = (await stabilityPool.getETH()).toString()
-      assert.isAtMost(th.getDifference(ETHinSP_After, '0'), 100000)
+      const RBTCinSP_After = (await stabilityPool.getRBTC()).toString()
+      assert.isAtMost(th.getDifference(RBTCinSP_After, '0'), 100000)
     })
 
-    it("withdrawETHGainToVault(): reverts if user has no vault", async () => {
+    it("withdrawRBTCGainToVault(): reverts if user has no vault", async () => {
       await openVault({ extraBPDAmount: toBN(dec(10000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
 
       // A, B, C open vaults 
@@ -3344,10 +3344,10 @@ contract('StabilityPool', async accounts => {
       await priceFeed.setPrice(dec(200, 18))
 
       // D attempts to withdraw his RBTC gain to Vault
-      await th.assertRevert(stabilityPool.withdrawETHGainToVault(dennis, dennis, { from: dennis }), "caller must have an active vault to withdraw ETHGain to")
+      await th.assertRevert(stabilityPool.withdrawRBTCGainToVault(dennis, dennis, { from: dennis }), "caller must have an active vault to withdraw RBTCGain to")
     })
 
-    it("withdrawETHGainToVault(): triggers MP reward event - increases the sum G", async () => {
+    it("withdrawRBTCGainToVault(): triggers MP reward event - increases the sum G", async () => {
       await openVault({ extraBPDAmount: toBN(dec(10000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
 
       // A, B, C open vaults 
@@ -3383,10 +3383,10 @@ contract('StabilityPool', async accounts => {
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider)
 
       // Check B has non-zero RBTC gain
-      assert.isTrue((await stabilityPool.getDepositorETHGain(B)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(B)).gt(ZERO))
 
       // B withdraws to vault
-      await stabilityPool.withdrawETHGainToVault(B, B, { from: B })
+      await stabilityPool.withdrawRBTCGainToVault(B, B, { from: B })
 
       const G_2 = await stabilityPool.epochToScaleToG(0, 0)
 
@@ -3394,7 +3394,7 @@ contract('StabilityPool', async accounts => {
       assert.isTrue(G_2.gt(G_1))
     })
 
-    it("withdrawETHGainToVault(), partial withdrawal: doesn't change the front end tag", async () => {
+    it("withdrawRBTCGainToVault(), partial withdrawal: doesn't change the front end tag", async () => {
       await openVault({ extraBPDAmount: toBN(dec(10000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
 
       // A, B, C open vaults 
@@ -3417,16 +3417,16 @@ contract('StabilityPool', async accounts => {
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider)
 
       // Check A, B, C have non-zero RBTC gain
-      assert.isTrue((await stabilityPool.getDepositorETHGain(A)).gt(ZERO))
-      assert.isTrue((await stabilityPool.getDepositorETHGain(B)).gt(ZERO))
-      assert.isTrue((await stabilityPool.getDepositorETHGain(C)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(A)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(B)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(C)).gt(ZERO))
 
       await priceFeed.setPrice(dec(200, 18))
 
       // A, B, C withdraw to vault
-      await stabilityPool.withdrawETHGainToVault(A, A, { from: A })
-      await stabilityPool.withdrawETHGainToVault(B, B, { from: B })
-      await stabilityPool.withdrawETHGainToVault(C, C, { from: C })
+      await stabilityPool.withdrawRBTCGainToVault(A, A, { from: A })
+      await stabilityPool.withdrawRBTCGainToVault(B, B, { from: B })
+      await stabilityPool.withdrawRBTCGainToVault(C, C, { from: C })
 
       const frontEndTag_A = (await stabilityPool.deposits(A))[1]
       const frontEndTag_B = (await stabilityPool.deposits(B))[1]
@@ -3438,7 +3438,7 @@ contract('StabilityPool', async accounts => {
       assert.equal(frontEndTag_C, ZERO_ADDRESS)
     })
 
-    it("withdrawETHGainToVault(), eligible deposit: depositor receives MP rewards", async () => {
+    it("withdrawRBTCGainToVault(), eligible deposit: depositor receives MP rewards", async () => {
       await openVault({ extraBPDAmount: toBN(dec(10000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
 
        // A, B, C open vaults 
@@ -3466,16 +3466,16 @@ contract('StabilityPool', async accounts => {
       const C_MPBalance_Before = await mpToken.balanceOf(C)
 
       // Check A, B, C have non-zero RBTC gain
-      assert.isTrue((await stabilityPool.getDepositorETHGain(A)).gt(ZERO))
-      assert.isTrue((await stabilityPool.getDepositorETHGain(B)).gt(ZERO))
-      assert.isTrue((await stabilityPool.getDepositorETHGain(C)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(A)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(B)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(C)).gt(ZERO))
 
       await priceFeed.setPrice(dec(200, 18))
 
       // A, B, C withdraw to vault
-      await stabilityPool.withdrawETHGainToVault(A, A, { from: A })
-      await stabilityPool.withdrawETHGainToVault(B, B, { from: B })
-      await stabilityPool.withdrawETHGainToVault(C, C, { from: C })
+      await stabilityPool.withdrawRBTCGainToVault(A, A, { from: A })
+      await stabilityPool.withdrawRBTCGainToVault(B, B, { from: B })
+      await stabilityPool.withdrawRBTCGainToVault(C, C, { from: C })
 
       // Get MP balance after
       const A_MPBalance_After = await mpToken.balanceOf(A)
@@ -3488,7 +3488,7 @@ contract('StabilityPool', async accounts => {
       assert.isTrue(C_MPBalance_After.gt(C_MPBalance_Before))
     })
 
-    it("withdrawETHGainToVault(), eligible deposit: tagged front end receives MP rewards", async () => {
+    it("withdrawRBTCGainToVault(), eligible deposit: tagged front end receives MP rewards", async () => {
       await openVault({ extraBPDAmount: toBN(dec(10000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
 
      // A, B, C open vaults 
@@ -3518,14 +3518,14 @@ contract('StabilityPool', async accounts => {
       await priceFeed.setPrice(dec(200, 18))
 
       // Check A, B, C have non-zero RBTC gain
-      assert.isTrue((await stabilityPool.getDepositorETHGain(A)).gt(ZERO))
-      assert.isTrue((await stabilityPool.getDepositorETHGain(B)).gt(ZERO))
-      assert.isTrue((await stabilityPool.getDepositorETHGain(C)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(A)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(B)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(C)).gt(ZERO))
 
       // A, B, C withdraw
-      await stabilityPool.withdrawETHGainToVault(A, A, { from: A })
-      await stabilityPool.withdrawETHGainToVault(B, B, { from: B })
-      await stabilityPool.withdrawETHGainToVault(C, C, { from: C })
+      await stabilityPool.withdrawRBTCGainToVault(A, A, { from: A })
+      await stabilityPool.withdrawRBTCGainToVault(B, B, { from: B })
+      await stabilityPool.withdrawRBTCGainToVault(C, C, { from: C })
 
       // Get front ends' MP balance after
       const F1_MPBalance_After = await mpToken.balanceOf(frontEnd_1)
@@ -3538,7 +3538,7 @@ contract('StabilityPool', async accounts => {
       assert.isTrue(F3_MPBalance_After.gt(F3_MPBalance_Before))
     })
 
-    it("withdrawETHGainToVault(), eligible deposit: tagged front end's stake decreases", async () => {
+    it("withdrawRBTCGainToVault(), eligible deposit: tagged front end's stake decreases", async () => {
       await openVault({ extraBPDAmount: toBN(dec(100000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
 
       // A, B, C, D, E, F open vaults 
@@ -3574,14 +3574,14 @@ contract('StabilityPool', async accounts => {
       await priceFeed.setPrice(dec(200, 18))
 
       // Check A, B, C have non-zero RBTC gain
-      assert.isTrue((await stabilityPool.getDepositorETHGain(A)).gt(ZERO))
-      assert.isTrue((await stabilityPool.getDepositorETHGain(B)).gt(ZERO))
-      assert.isTrue((await stabilityPool.getDepositorETHGain(C)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(A)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(B)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(C)).gt(ZERO))
 
       // A, B, C withdraw to vault
-      await stabilityPool.withdrawETHGainToVault(A, A, { from: A })
-      await stabilityPool.withdrawETHGainToVault(B, B, { from: B })
-      await stabilityPool.withdrawETHGainToVault(C, C, { from: C })
+      await stabilityPool.withdrawRBTCGainToVault(A, A, { from: A })
+      await stabilityPool.withdrawRBTCGainToVault(B, B, { from: B })
+      await stabilityPool.withdrawRBTCGainToVault(C, C, { from: C })
 
       // Get front ends' stakes after
       const F1_Stake_After = await stabilityPool.frontEndStakes(frontEnd_1)
@@ -3594,7 +3594,7 @@ contract('StabilityPool', async accounts => {
       assert.isTrue(F3_Stake_After.lt(F3_Stake_Before))
     })
 
-    it("withdrawETHGainToVault(), eligible deposit: tagged front end's snapshots update", async () => {
+    it("withdrawRBTCGainToVault(), eligible deposit: tagged front end's snapshots update", async () => {
       await openVault({ extraBPDAmount: toBN(dec(100000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
 
       // A, B, C, open vaults 
@@ -3656,22 +3656,22 @@ contract('StabilityPool', async accounts => {
       // --- TEST ---
 
       // Check A, B, C have non-zero RBTC gain
-      assert.isTrue((await stabilityPool.getDepositorETHGain(A)).gt(ZERO))
-      assert.isTrue((await stabilityPool.getDepositorETHGain(B)).gt(ZERO))
-      assert.isTrue((await stabilityPool.getDepositorETHGain(C)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(A)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(B)).gt(ZERO))
+      assert.isTrue((await stabilityPool.getDepositorRBTCGain(C)).gt(ZERO))
 
       await priceFeed.setPrice(dec(200, 18))
 
       // A, B, C withdraw RBTC gain to vaults. Grab G at each stage, as it can increase a bit
       // between topups, because some block.timestamp time passes (and MP is issued) between ops
       const G1 = await stabilityPool.epochToScaleToG(currentScale, currentEpoch)
-      await stabilityPool.withdrawETHGainToVault(A, A, { from: A })
+      await stabilityPool.withdrawRBTCGainToVault(A, A, { from: A })
 
       const G2 = await stabilityPool.epochToScaleToG(currentScale, currentEpoch)
-      await stabilityPool.withdrawETHGainToVault(B, B, { from: B })
+      await stabilityPool.withdrawRBTCGainToVault(B, B, { from: B })
 
       const G3 = await stabilityPool.epochToScaleToG(currentScale, currentEpoch)
-      await stabilityPool.withdrawETHGainToVault(C, C, { from: C })
+      await stabilityPool.withdrawRBTCGainToVault(C, C, { from: C })
 
       const frontEnds = [frontEnd_1, frontEnd_2, frontEnd_3]
       const G_Values = [G1, G2, G3]
@@ -3692,7 +3692,7 @@ contract('StabilityPool', async accounts => {
       }
     })
 
-    it("withdrawETHGainToVault(): reverts when depositor has no RBTC gain", async () => {
+    it("withdrawRBTCGainToVault(): reverts when depositor has no RBTC gain", async () => {
       await openVault({ extraBPDAmount: toBN(dec(100000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
 
       // Whale transfers BPD to A, B
@@ -3715,15 +3715,15 @@ contract('StabilityPool', async accounts => {
       await stabilityPool.provideToSP(dec(3000, 18), ZERO_ADDRESS, { from: E })
 
       // Confirm A, B, C have zero RBTC gain
-      assert.equal(await stabilityPool.getDepositorETHGain(A), '0')
-      assert.equal(await stabilityPool.getDepositorETHGain(B), '0')
-      assert.equal(await stabilityPool.getDepositorETHGain(C), '0')
+      assert.equal(await stabilityPool.getDepositorRBTCGain(A), '0')
+      assert.equal(await stabilityPool.getDepositorRBTCGain(B), '0')
+      assert.equal(await stabilityPool.getDepositorRBTCGain(C), '0')
 
-      // Check withdrawETHGainToVault reverts for A, B, C
-      const txPromise_A = stabilityPool.withdrawETHGainToVault(A, A, { from: A })
-      const txPromise_B = stabilityPool.withdrawETHGainToVault(B, B, { from: B })
-      const txPromise_C = stabilityPool.withdrawETHGainToVault(C, C, { from: C })
-      const txPromise_D = stabilityPool.withdrawETHGainToVault(D, D, { from: D })
+      // Check withdrawRBTCGainToVault reverts for A, B, C
+      const txPromise_A = stabilityPool.withdrawRBTCGainToVault(A, A, { from: A })
+      const txPromise_B = stabilityPool.withdrawRBTCGainToVault(B, B, { from: B })
+      const txPromise_C = stabilityPool.withdrawRBTCGainToVault(C, C, { from: C })
+      const txPromise_D = stabilityPool.withdrawRBTCGainToVault(D, D, { from: D })
 
       await th.assertRevert(txPromise_A)
       await th.assertRevert(txPromise_B)

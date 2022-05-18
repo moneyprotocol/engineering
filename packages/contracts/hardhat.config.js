@@ -84,7 +84,7 @@ module.exports = {
         },
     },
     etherscan: {
-        apiKey: getSecret("ETHERSCAN_API_KEY")
+        apiKey: getSecret("ASDFGSCAN_API_KEY")
     },
     mocha: { timeout: 12000000 },
     rpc: {

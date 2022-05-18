@@ -23,7 +23,7 @@ const CommunityIssuanceTester = artifacts.require("./CommunityIssuanceTester.sol
 const StabilityPoolTester = artifacts.require("./StabilityPoolTester.sol")
 const ActivePoolTester = artifacts.require("./ActivePoolTester.sol")
 const DefaultPoolTester = artifacts.require("./DefaultPoolTester.sol")
-const LiquityMathTester = artifacts.require("./LiquityMathTester.sol")
+const MoneypMathTester = artifacts.require("./MoneypMathTester.sol")
 const BorrowerOperationsTester = artifacts.require("./BorrowerOperationsTester.sol")
 const VaultManagerTester = artifacts.require("./VaultManagerTester.sol")
 const BPDTokenTester = artifacts.require("./BPDTokenTester.sol")
@@ -46,7 +46,7 @@ const {
   MPStakingProxy
 } = require('../utils/proxyHelpers.js')
 
-/* "Liquity core" consists of all contracts in the core Liquity system.
+/* "Moneyp core" consists of all contracts in the core Moneyp system.
 
 MP contracts consist of only those contracts related to the MP Token:
 
@@ -61,15 +61,15 @@ const maxBytes32 = '0x' + 'f'.repeat(64)
 
 class DeploymentHelper {
 
-  static async deployLiquityCore() {
+  static async deployMoneypCore() {
     const cmdLineArgs = process.argv
     const frameworkPath = cmdLineArgs[1]
     // console.log(`Framework used:  ${frameworkPath}`)
 
     if (frameworkPath.includes("hardhat")) {
-      return this.deployLiquityCoreHardhat()
+      return this.deployMoneypCoreHardhat()
     } else if (frameworkPath.includes("truffle")) {
-      return this.deployLiquityCoreTruffle()
+      return this.deployMoneypCoreTruffle()
     }
   }
 
@@ -85,7 +85,7 @@ class DeploymentHelper {
     }
   }
 
-  static async deployLiquityCoreHardhat() {
+  static async deployMoneypCoreHardhat() {
     const priceFeedTestnet = await PriceFeedTestnet.new()
     const sortedVaults = await SortedVaults.new()
     const vaultManager = await VaultManager.new()
@@ -145,7 +145,7 @@ class DeploymentHelper {
     testerContracts.stabilityPool = await StabilityPoolTester.new()
     testerContracts.gasPool = await GasPool.new()
     testerContracts.collSurplusPool = await CollSurplusPool.new()
-    testerContracts.math = await LiquityMathTester.new()
+    testerContracts.math = await MoneypMathTester.new()
     testerContracts.borrowerOperations = await BorrowerOperationsTester.new()
     testerContracts.vaultManager = await VaultManagerTester.new()
     testerContracts.functionCaller = await FunctionCaller.new()
@@ -216,7 +216,7 @@ class DeploymentHelper {
     return MPContracts
   }
 
-  static async deployLiquityCoreTruffle() {
+  static async deployMoneypCoreTruffle() {
     const priceFeedTestnet = await PriceFeedTestnet.new()
     const sortedVaults = await SortedVaults.new()
     const vaultManager = await VaultManager.new()

@@ -58,7 +58,7 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
     })
 
     beforeEach(async () => {
-      contracts = await deploymentHelper.deployLiquityCore()
+      contracts = await deploymentHelper.deployMoneypCore()
       const MPContracts = await deploymentHelper.deployMPContracts(bountyAddress, lpRewardsAddress, multisig)
       contracts.vaultManager = await VaultManagerTester.new()
       contracts = await deploymentHelper.deployBPDToken(contracts)
@@ -108,17 +108,17 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txC = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: carol })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '6666666666666666666666'), 10000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '6666666666666666666666'), 10000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '6666666666666666666666'), 10000)
 
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, '33166666666666666667'), 10000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, '33166666666666666667'), 10000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, '33166666666666666667'), 10000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, '33166666666666666667'), 10000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, '33166666666666666667'), 10000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, '33166666666666666667'), 10000)
     })
 
     it("withdrawFromSP(): Depositors with equal initial deposit withdraw correct compounded deposit and RBTC Gain after two identical liquidations", async () => {
@@ -148,17 +148,17 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txB = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: bob })
       const txC = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: carol })
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '3333333333333333333333'), 10000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '3333333333333333333333'), 10000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '3333333333333333333333'), 10000)
 
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, '66333333333333333333'), 10000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, '66333333333333333333'), 10000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, '66333333333333333333'), 10000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, '66333333333333333333'), 10000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, '66333333333333333333'), 10000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, '66333333333333333333'), 10000)
     })
 
     it("withdrawFromSP():  Depositors with equal initial deposit withdraw correct compounded deposit and RBTC Gain after three identical liquidations", async () => {
@@ -191,17 +191,17 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txC = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: carol })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '0'), 10000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '0'), 10000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '0'), 10000)
 
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, dec(99500, 15)), 10000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, dec(99500, 15)), 10000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, dec(99500, 15)), 10000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, dec(99500, 15)), 10000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, dec(99500, 15)), 10000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, dec(99500, 15)), 10000)
     })
 
     // --- Identical deposits, increasing liquidation amounts ---
@@ -233,18 +233,18 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txC = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: carol })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '6000000000000000000000'), 10000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '6000000000000000000000'), 10000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '6000000000000000000000'), 10000)
 
       // (0.5 + 0.7) * 99.5 / 3
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, dec(398, 17)), 10000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, dec(398, 17)), 10000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, dec(398, 17)), 10000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, dec(398, 17)), 10000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, dec(398, 17)), 10000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, dec(398, 17)), 10000)
     })
 
     it("withdrawFromSP(): Depositors with equal initial deposit withdraw correct compounded deposit and RBTC Gain after three liquidations of increasing BPD", async () => {
@@ -277,18 +277,18 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txC = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: carol })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '4000000000000000000000'), 10000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '4000000000000000000000'), 10000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '4000000000000000000000'), 10000)
 
       // (0.5 + 0.6 + 0.7) * 99.5 / 3
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, dec(597, 17)), 10000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, dec(597, 17)), 10000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, dec(597, 17)), 10000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, dec(597, 17)), 10000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, dec(597, 17)), 10000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, dec(597, 17)), 10000)
     })
 
     // --- Increasing deposits, identical liquidation amounts ---
@@ -321,17 +321,17 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txC = await stabilityPool.withdrawFromSP(dec(30000, 18), { from: carol })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '6666666666666666666666'), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '13333333333333333333333'), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '20000000000000000000000'), 100000)
 
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, '33166666666666666667'), 100000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, '66333333333333333333'), 100000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, '33166666666666666667'), 100000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, '66333333333333333333'), 100000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, dec(995, 17)), 100000)
     })
 
     it("withdrawFromSP(): Depositors with varying deposits withdraw correct compounded deposit and RBTC Gain after three identical liquidations", async () => {
@@ -365,17 +365,17 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txC = await stabilityPool.withdrawFromSP(dec(30000, 18), { from: carol })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '5000000000000000000000'), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '10000000000000000000000'), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '15000000000000000000000'), 100000)
 
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, '49750000000000000000'), 100000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, '149250000000000000000'), 100000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, '49750000000000000000'), 100000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, '149250000000000000000'), 100000)
     })
 
     // --- Varied deposits and varied liquidation amount ---
@@ -419,9 +419,9 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txC = await stabilityPool.withdrawFromSP(dec(500000, 18), { from: carol })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       // ()
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '901719380174061000000'), 100000000000)
@@ -429,9 +429,9 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '5906261940140100000000'), 10000000000)
 
       // 2710 * 0.995 * {2000, 456000, 13100}/4711
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, '11447463383570366500'), 10000000000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, '2610021651454043834000'), 10000000000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, '74980885162385912900'), 10000000000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, '11447463383570366500'), 10000000000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, '2610021651454043834000'), 10000000000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, '74980885162385912900'), 10000000000)
     })
 
     // --- Deposit enters at t > 0
@@ -472,10 +472,10 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txD = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: dennis })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
-      const dennis_ETHWithdrawn = th.getEventArgByName(txD, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const dennis_RBTCWithdrawn = th.getEventArgByName(txD, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       console.log()
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '1666666666666666666666'), 100000)
@@ -484,11 +484,11 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(dennis)).toString(), '5000000000000000000000'), 100000)
 
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, '82916666666666666667'), 100000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, '82916666666666666667'), 100000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, '82916666666666666667'), 100000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, '82916666666666666667'), 100000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, '82916666666666666667'), 100000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, '82916666666666666667'), 100000)
 
-      assert.isAtMost(th.getDifference(dennis_ETHWithdrawn, '49750000000000000000'), 100000)
+      assert.isAtMost(th.getDifference(dennis_RBTCWithdrawn, '49750000000000000000'), 100000)
     })
 
     it("withdrawFromSP(): A, B, C Deposit -> 2 liquidations -> D deposits -> 2 liquidations. All deposits and liquidations = 100 BPD.  A, B, C, D withdraw correct BPD deposit and RBTC Gain", async () => {
@@ -529,20 +529,20 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txD = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: dennis })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
-      const dennis_ETHWithdrawn = th.getEventArgByName(txD, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const dennis_RBTCWithdrawn = th.getEventArgByName(txD, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '0'), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '0'), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '0'), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(dennis)).toString(), '0'), 100000)
 
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(dennis_ETHWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(dennis_RBTCWithdrawn, dec(995, 17)), 100000)
     })
 
     it("withdrawFromSP(): A, B, C Deposit -> 2 liquidations -> D deposits -> 2 liquidations. Various deposit and liquidation vals.  A, B, C, D withdraw correct BPD deposit and RBTC Gain", async () => {
@@ -595,10 +595,10 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txD = await stabilityPool.withdrawFromSP(dec(100000, 18), { from: dennis })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
-      const dennis_ETHWithdrawn = th.getEventArgByName(txD, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const dennis_RBTCWithdrawn = th.getEventArgByName(txD, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '17832817337461300000000'), 100000000000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '5944272445820430000000'), 100000000000)
@@ -606,10 +606,10 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(dennis)).toString(), '11764705882352900000000'), 100000000000)
 
       // 3.5*0.995 * {60000,20000,15000,0} / 95000 + 450*0.995 * {60000/950*{60000,20000,15000},25000} / (120000-35000)
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, '419563467492260055900'), 100000000000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, '139854489164086692700'), 100000000000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, '104890866873065014000'), 100000000000)
-      assert.isAtMost(th.getDifference(dennis_ETHWithdrawn, '131691176470588233700'), 100000000000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, '419563467492260055900'), 100000000000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, '139854489164086692700'), 100000000000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, '104890866873065014000'), 100000000000)
+      assert.isAtMost(th.getDifference(dennis_RBTCWithdrawn, '131691176470588233700'), 100000000000)
     })
 
     // --- Depositor leaves ---
@@ -644,9 +644,9 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txD = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: dennis })
       await priceFeed.setPrice(dec(100, 18))
 
-      const dennis_ETHWithdrawn = th.getEventArgByName(txD, 'ETHGainWithdrawn', '_ETH').toString()
+      const dennis_RBTCWithdrawn = th.getEventArgByName(txD, 'RBTCGainWithdrawn', '_RBTC').toString()
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(dennis)).toString(), '5000000000000000000000'), 100000)
-      assert.isAtMost(th.getDifference(dennis_ETHWithdrawn, '49750000000000000000'), 100000)
+      assert.isAtMost(th.getDifference(dennis_RBTCWithdrawn, '49750000000000000000'), 100000)
 
       // Two more defaulters are liquidated
       await vaultManager.liquidate(defaulter_3, { from: owner });
@@ -657,17 +657,17 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txC = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: carol })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '0'), 1000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '0'), 1000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '0'), 1000)
 
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, dec(995, 17)), 100000)
     })
 
     it("withdrawFromSP(): A, B, C, D deposit -> 2 liquidations -> D withdraws -> 2 liquidations. Various deposit and liquidation vals. A, B, C, D withdraw correct BPD deposit and RBTC Gain", async () => {
@@ -714,10 +714,10 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txD = await stabilityPool.withdrawFromSP(dec(40000, 18), { from: dennis })
       await priceFeed.setPrice(dec(100, 18))
 
-      const dennis_ETHWithdrawn = th.getEventArgByName(txD, 'ETHGainWithdrawn', '_ETH').toString()
+      const dennis_RBTCWithdrawn = th.getEventArgByName(txD, 'RBTCGainWithdrawn', '_RBTC').toString()
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(dennis)).toString(), '27692307692307700000000'), 100000000000)
       // 300*0.995 * 40000/97500
-      assert.isAtMost(th.getDifference(dennis_ETHWithdrawn, '122461538461538466100'), 100000000000)
+      assert.isAtMost(th.getDifference(dennis_RBTCWithdrawn, '122461538461538466100'), 100000000000)
 
       // Two more defaulters are liquidated
       await vaultManager.liquidate(defaulter_3, { from: owner });
@@ -728,18 +728,18 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txC = await stabilityPool.withdrawFromSP(dec(100000, 18), { from: carol })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '1672240802675590000000'), 10000000000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '2090301003344480000000'), 100000000000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '1045150501672240000000'), 100000000000)
 
       // 300*0.995 * {20000,25000,12500}/97500 + 350*0.995 * {20000,25000,12500}/57500
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, '182361204013377919900'), 100000000000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, '227951505016722411000'), 100000000000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, '113975752508361205500'), 100000000000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, '182361204013377919900'), 100000000000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, '227951505016722411000'), 100000000000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, '113975752508361205500'), 100000000000)
     })
 
     // --- One deposit enters at t > 0, and another leaves later ---
@@ -779,9 +779,9 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txD = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: dennis })
       await priceFeed.setPrice(dec(100, 18))
 
-      const dennis_ETHWithdrawn = th.getEventArgByName(txD, 'ETHGainWithdrawn', '_ETH').toString()
+      const dennis_RBTCWithdrawn = th.getEventArgByName(txD, 'RBTCGainWithdrawn', '_RBTC').toString()
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(dennis)).toString(), '1666666666666666666666'), 100000)
-      assert.isAtMost(th.getDifference(dennis_ETHWithdrawn, '82916666666666666667'), 100000)
+      assert.isAtMost(th.getDifference(dennis_RBTCWithdrawn, '82916666666666666667'), 100000)
 
       await vaultManager.liquidate(defaulter_4, { from: owner });
 
@@ -790,17 +790,17 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txC = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: carol })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '666666666666666666666'), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '666666666666666666666'), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '2000000000000000000000'), 100000)
 
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, '92866666666666666667'), 100000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, '92866666666666666667'), 100000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, '79600000000000000000'), 100000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, '92866666666666666667'), 100000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, '92866666666666666667'), 100000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, '79600000000000000000'), 100000)
     })
 
     // --- Tests for full offset - Pool empties to 0 ---
@@ -851,26 +851,26 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txC = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: carol })
       const txD = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: dennis })
 
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
-      const dennis_ETHWithdrawn = th.getEventArgByName(txD, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const dennis_RBTCWithdrawn = th.getEventArgByName(txD, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       // Expect Alice And Bob's compounded deposit to be 0 BPD
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '0'), 10000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '0'), 10000)
 
       // Expect Alice and Bob's RBTC Gain to be 100 RBTC
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, dec(995, 17)), 100000)
 
       // Expect Carol And Dennis' compounded deposit to be 50 BPD
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), '5000000000000000000000'), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(dennis)).toString(), '5000000000000000000000'), 100000)
 
       // Expect Carol and and Dennis RBTC Gain to be 50 RBTC
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, '49750000000000000000'), 100000)
-      assert.isAtMost(th.getDifference(dennis_ETHWithdrawn, '49750000000000000000'), 100000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, '49750000000000000000'), 100000)
+      assert.isAtMost(th.getDifference(dennis_RBTCWithdrawn, '49750000000000000000'), 100000)
     })
 
     // A, B deposit 10000
@@ -1011,11 +1011,11 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txD = await stabilityPool.withdrawFromSP(dec(20000, 18), { from: dennis })
       const txE = await stabilityPool.withdrawFromSP(dec(30000, 18), { from: erin })
 
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
-      const dennis_ETHWithdrawn = th.getEventArgByName(txD, 'ETHGainWithdrawn', '_ETH').toString()
-      const erin_ETHWithdrawn = th.getEventArgByName(txE, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const dennis_RBTCWithdrawn = th.getEventArgByName(txD, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const erin_RBTCWithdrawn = th.getEventArgByName(txE, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       // Expect Alice And Bob's compounded deposit to be 0 BPD
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '0'), 10000)
@@ -1026,12 +1026,12 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(erin)).toString(), '25000000000000000000000'), 100000)
 
       //Expect Alice and Bob's RBTC Gain to be 1 RBTC
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, dec(995, 17)), 100000)
 
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, '16583333333333333333'), 100000)
-      assert.isAtMost(th.getDifference(dennis_ETHWithdrawn, '33166666666666666667'), 100000)
-      assert.isAtMost(th.getDifference(erin_ETHWithdrawn, '49750000000000000000'), 100000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, '16583333333333333333'), 100000)
+      assert.isAtMost(th.getDifference(dennis_RBTCWithdrawn, '33166666666666666667'), 100000)
+      assert.isAtMost(th.getDifference(erin_RBTCWithdrawn, '49750000000000000000'), 100000)
     })
 
     // A deposits 10000
@@ -1061,10 +1061,10 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txA = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: alice })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), 0), 100000)
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, dec(995, 17)), 100000)
     })
 
     //--- Serial full offsets ---
@@ -1142,14 +1142,14 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txG = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: graham })
       const txH = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: harriet })
 
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
-      const dennis_ETHWithdrawn = th.getEventArgByName(txD, 'ETHGainWithdrawn', '_ETH').toString()
-      const erin_ETHWithdrawn = th.getEventArgByName(txE, 'ETHGainWithdrawn', '_ETH').toString()
-      const flyn_ETHWithdrawn = th.getEventArgByName(txF, 'ETHGainWithdrawn', '_ETH').toString()
-      const graham_ETHWithdrawn = th.getEventArgByName(txG, 'ETHGainWithdrawn', '_ETH').toString()
-      const harriet_ETHWithdrawn = th.getEventArgByName(txH, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const dennis_RBTCWithdrawn = th.getEventArgByName(txD, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const erin_RBTCWithdrawn = th.getEventArgByName(txE, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const flyn_RBTCWithdrawn = th.getEventArgByName(txF, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const graham_RBTCWithdrawn = th.getEventArgByName(txG, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const harriet_RBTCWithdrawn = th.getEventArgByName(txH, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       // Expect all deposits to be 0 BPD
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(alice)).toString(), '0'), 100000)
@@ -1163,14 +1163,14 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
 
       /* Expect all RBTC gains to be 100 RBTC:  Since each liquidation of empties the pool, depositors
       should only earn RBTC from the single liquidation that cancelled with their deposit */
-      assert.isAtMost(th.getDifference(alice_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(dennis_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(erin_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(flyn_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(graham_ETHWithdrawn, dec(995, 17)), 100000)
-      assert.isAtMost(th.getDifference(harriet_ETHWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(alice_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(dennis_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(erin_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(flyn_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(graham_RBTCWithdrawn, dec(995, 17)), 100000)
+      assert.isAtMost(th.getDifference(harriet_RBTCWithdrawn, dec(995, 17)), 100000)
 
       const finalEpoch = (await stabilityPool.currentEpoch()).toString()
       assert.equal(finalEpoch, 4)
@@ -1214,7 +1214,7 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       await priceFeed.setPrice(dec(100, 18))
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = await th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = await th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       await bpdToken.transfer(bob, dec(10000, 18), { from: whale })
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: bob })
@@ -1225,11 +1225,11 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       assert.equal(await stabilityPool.currentScale(), '1')
 
       const txB = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: bob })
-      const bob_ETHWithdrawn = await th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
+      const bob_RBTCWithdrawn = await th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       // Expect Bob to withdraw 1% of initial deposit (100 BPD) and all the liquidated RBTC (60 ether)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), '100000000000000000000'), 100000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, '59700000000000000000'), 100000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, '59700000000000000000'), 100000)
     })
 
     // A deposits 10000
@@ -1300,13 +1300,13 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), dec(200, 18)), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(dennis)).toString(), dec(300, 18)), 100000)
 
-      const bob_ETHWithdrawn = await th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = await th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
-      const dennis_ETHWithdrawn = await th.getEventArgByName(txD, 'ETHGainWithdrawn', '_ETH').toString()
+      const bob_RBTCWithdrawn = await th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = await th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const dennis_RBTCWithdrawn = await th.getEventArgByName(txD, 'RBTCGainWithdrawn', '_RBTC').toString()
 
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, '54725000000000000000'), 100000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, '109450000000000000000'), 100000)
-      assert.isAtMost(th.getDifference(dennis_ETHWithdrawn, '164175000000000000000'), 100000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, '54725000000000000000'), 100000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, '109450000000000000000'), 100000)
+      assert.isAtMost(th.getDifference(dennis_RBTCWithdrawn, '164175000000000000000'), 100000)
     })
 
     // Deposit's RBTC reward spans one scale change - deposit reduced by correct amount
@@ -1356,11 +1356,11 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       assert.equal(await stabilityPool.currentScale(), '1')
 
       const txB = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: bob })
-      const bob_ETHWithdrawn = await th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
+      const bob_RBTCWithdrawn = await th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       // Bob should withdraw 1e-5 of initial deposit: 0.1 BPD and the full RBTC gain of 100 ether
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), dec(1, 17)), 100000)
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, dec(995, 17)), 100000000000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, dec(995, 17)), 100000000000)
     })
 
     // A make deposit 10000 BPD
@@ -1413,22 +1413,22 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       assert.equal(await stabilityPool.currentScale(), '1')
 
       const txB = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: bob })
-      const bob_ETHWithdrawn = await th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
+      const bob_RBTCWithdrawn = await th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       const txC = await stabilityPool.withdrawFromSP(dec(20000, 18), { from: carol })
-      const carol_ETHWithdrawn = await th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
+      const caroB_RBTCWithdrawn = await th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       const txD = await stabilityPool.withdrawFromSP(dec(30000, 18), { from: dennis })
-      const dennis_ETHWithdrawn = await th.getEventArgByName(txD, 'ETHGainWithdrawn', '_ETH').toString()
+      const dennis_RBTCWithdrawn = await th.getEventArgByName(txD, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       // {B, C, D} should have a compounded deposit of {0.1, 0.2, 0.3} BPD
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(bob)).toString(), dec(1, 17)), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(carol)).toString(), dec(2, 17)), 100000)
       assert.isAtMost(th.getDifference((await bpdToken.balanceOf(dennis)).toString(), dec(3, 17)), 100000)
 
-      assert.isAtMost(th.getDifference(bob_ETHWithdrawn, dec(995, 17)), 10000000000)
-      assert.isAtMost(th.getDifference(carol_ETHWithdrawn, dec(1990, 17)), 100000000000)
-      assert.isAtMost(th.getDifference(dennis_ETHWithdrawn, dec(2985, 17)), 100000000000)
+      assert.isAtMost(th.getDifference(bob_RBTCWithdrawn, dec(995, 17)), 10000000000)
+      assert.isAtMost(th.getDifference(caroB_RBTCWithdrawn, dec(1990, 17)), 100000000000)
+      assert.isAtMost(th.getDifference(dennis_RBTCWithdrawn, dec(2985, 17)), 100000000000)
     })
 
     // A make deposit 10000 BPD
@@ -1525,10 +1525,10 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txC = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: carol })
       const txD = await stabilityPool.withdrawFromSP(dec(10000, 18), { from: dennis })
 
-      const alice_ETHWithdrawn = await th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH').toString()
-      const bob_ETHWithdrawn = await th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH').toString()
-      const carol_ETHWithdrawn = await th.getEventArgByName(txC, 'ETHGainWithdrawn', '_ETH').toString()
-      const dennis_ETHWithdrawn = await th.getEventArgByName(txD, 'ETHGainWithdrawn', '_ETH').toString()
+      const alice_RBTCWithdrawn = await th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const bob_RBTCWithdrawn = await th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const caroB_RBTCWithdrawn = await th.getEventArgByName(txC, 'RBTCGainWithdrawn', '_RBTC').toString()
+      const dennis_RBTCWithdrawn = await th.getEventArgByName(txD, 'RBTCGainWithdrawn', '_RBTC').toString()
 
       // A, B, C should withdraw 0 - their deposits have been completely used up
       assert.equal(await bpdToken.balanceOf(alice), '0')
@@ -1539,10 +1539,10 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
 
       // 99.5 RBTC is offset at each L, 0.5 goes to gas comp
       // Each depositor gets RBTC rewards of around 99.5 RBTC - 1e17 error tolerance
-      assert.isTrue(toBN(alice_ETHWithdrawn).sub(toBN(dec(995, 17))).abs().lte(toBN(dec(1, 17))))
-      assert.isTrue(toBN(bob_ETHWithdrawn).sub(toBN(dec(995, 17))).abs().lte(toBN(dec(1, 17))))
-      assert.isTrue(toBN(carol_ETHWithdrawn).sub(toBN(dec(995, 17))).abs().lte(toBN(dec(1, 17))))
-      assert.isTrue(toBN(dennis_ETHWithdrawn).sub(toBN(dec(995, 17))).abs().lte(toBN(dec(1, 17))))
+      assert.isTrue(toBN(alice_RBTCWithdrawn).sub(toBN(dec(995, 17))).abs().lte(toBN(dec(1, 17))))
+      assert.isTrue(toBN(bob_RBTCWithdrawn).sub(toBN(dec(995, 17))).abs().lte(toBN(dec(1, 17))))
+      assert.isTrue(toBN(caroB_RBTCWithdrawn).sub(toBN(dec(995, 17))).abs().lte(toBN(dec(1, 17))))
+      assert.isTrue(toBN(dennis_RBTCWithdrawn).sub(toBN(dec(995, 17))).abs().lte(toBN(dec(1, 17))))
     })
 
     it("withdrawFromSP(): 2 depositors can withdraw after each receiving half of a pool-emptying liquidation", async () => {
@@ -1724,7 +1724,7 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       assert.equal(await stabilityPool.P(), dec(1, 16)) // Scale changes and P changes to 1e(12-5+9) = 1e16
       assert.equal(await stabilityPool.currentScale(), '2')
 
-      const alice_ETHGainAt2ndScaleChange = (await stabilityPool.getDepositorETHGain(alice)).toString()
+      const alice_RBTCGainAt2ndScaleChange = (await stabilityPool.getDepositorRBTCGain(alice)).toString()
 
       // E deposits 9999.9 BPD
       await bpdToken.transfer(erin, dec(99999, 17), { from: whale })
@@ -1736,12 +1736,12 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       assert.equal(await stabilityPool.P(), dec(1, 11)) // P decreases to 1e(16-5) = 1e11
       assert.equal(await stabilityPool.currentScale(), '2')
 
-      const alice_ETHGainAfterFurtherLiquidation = (await stabilityPool.getDepositorETHGain(alice)).toString()
+      const alice_RBTCGainAfterFurtherLiquidation = (await stabilityPool.getDepositorRBTCGain(alice)).toString()
   
       const alice_scaleSnapshot = (await stabilityPool.depositSnapshots(alice))[2].toString()
 
       assert.equal(alice_scaleSnapshot, '0')
-      assert.equal(alice_ETHGainAt2ndScaleChange, alice_ETHGainAfterFurtherLiquidation)
+      assert.equal(alice_RBTCGainAt2ndScaleChange, alice_RBTCGainAfterFurtherLiquidation)
     })
 
     // --- Extreme values, confirm no overflows ---
@@ -1772,8 +1772,8 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txB = await stabilityPool.withdrawFromSP(dec(1, 36), { from: bob })
 
       // Grab the RBTC gain from the emitted event in the tx log
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH')
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH')
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC')
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC')
 
       // Check BPD balances
       const aliceBPDBalance = await bpdToken.balanceOf(alice)
@@ -1789,15 +1789,15 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       assert.isTrue(bobBPDBalDiff.lte(toBN(dec(1, 18))))
 
       // Check RBTC gains
-      const aliceExpectedETHGain = toBN(dec(4975, 23))
-      const aliceETHDiff = aliceExpectedETHGain.sub(toBN(alice_ETHWithdrawn))
+      const aliceExpectedRBTCGain = toBN(dec(4975, 23))
+      const aliceRBTCDiff = aliceExpectedRBTCGain.sub(toBN(alice_RBTCWithdrawn))
 
-      assert.isTrue(aliceETHDiff.lte(toBN(dec(1, 18))))
+      assert.isTrue(aliceRBTCDiff.lte(toBN(dec(1, 18))))
 
-      const bobExpectedETHGain = toBN(dec(4975, 23))
-      const bobETHDiff = bobExpectedETHGain.sub(toBN(bob_ETHWithdrawn))
+      const bobExpectedRBTCGain = toBN(dec(4975, 23))
+      const bobRBTCDiff = bobExpectedRBTCGain.sub(toBN(bob_RBTCWithdrawn))
 
-      assert.isTrue(bobETHDiff.lte(toBN(dec(1, 18))))
+      assert.isTrue(bobRBTCDiff.lte(toBN(dec(1, 18))))
     })
 
     it("withdrawFromSP(): Small liquidated coll/debt, large deposits and RBTC price", async () => {
@@ -1826,8 +1826,8 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
       const txA = await stabilityPool.withdrawFromSP(dec(1, 38), { from: alice })
       const txB = await stabilityPool.withdrawFromSP(dec(1, 38), { from: bob })
 
-      const alice_ETHWithdrawn = th.getEventArgByName(txA, 'ETHGainWithdrawn', '_ETH')
-      const bob_ETHWithdrawn = th.getEventArgByName(txB, 'ETHGainWithdrawn', '_ETH')
+      const alice_RBTCWithdrawn = th.getEventArgByName(txA, 'RBTCGainWithdrawn', '_RBTC')
+      const bob_RBTCWithdrawn = th.getEventArgByName(txB, 'RBTCGainWithdrawn', '_RBTC')
 
       const aliceBPDBalance = await bpdToken.balanceOf(alice)
       const aliceExpectedBPDBalance = toBN('99999999999999997500000000000000000000')
@@ -1841,9 +1841,9 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
 
       assert.isTrue(bobBPDBalDiff.lte(toBN('100000000000000000000')))
 
-      // Expect RBTC gain per depositor of ~1e11 wei to be rounded to 0 by the ETHGainedPerUnitStaked calculation (e / D), where D is ~1e36.
-      assert.equal(alice_ETHWithdrawn.toString(), '0')
-      assert.equal(bob_ETHWithdrawn.toString(), '0')
+      // Expect RBTC gain per depositor of ~1e11 wei to be rounded to 0 by the RBTCGainedPerUnitStaked calculation (e / D), where D is ~1e36.
+      assert.equal(alice_RBTCWithdrawn.toString(), '0')
+      assert.equal(bob_RBTCWithdrawn.toString(), '0')
     })
   })
 })

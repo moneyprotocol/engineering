@@ -1,4 +1,4 @@
-/* Script that logs gas costs for Liquity operations under various conditions. 
+/* Script that logs gas costs for Moneyp operations under various conditions. 
 
   Note: uses Mocha testing structure, but the purpose of each test is simply to print gas costs.
 
@@ -35,7 +35,7 @@ contract('Gas cost tests', async accounts => {
   let data = []
 
   beforeEach(async () => {
-    contracts = await deploymentHelper.deployLiquityCore()
+    contracts = await deploymentHelper.deployMoneypCore()
     const MPContracts = await deploymentHelper.deployMPContracts(bountyAddress, lpRewardsAddress)
 
     priceFeed = contracts.priceFeedTestnet

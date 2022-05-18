@@ -7,7 +7,7 @@ const { dec, toBN, assertRevert } = th
 
 contract('After the initial lockup period has passed', async accounts => {
   const [
-    liquityAG,
+    moneypAG,
     teamMember_1,
     teamMember_2,
     teamMember_3,
@@ -63,7 +63,7 @@ contract('After the initial lockup period has passed', async accounts => {
   beforeEach(async () => {
     // Deploy all contracts from the first account
     MPContracts = await deploymentHelper.deployMPTesterContractsHardhat(bountyAddress, lpRewardsAddress, multisig)
-    coreContracts = await deploymentHelper.deployLiquityCore()
+    coreContracts = await deploymentHelper.deployMoneypCore()
 
     mpStaking = MPContracts.mpStaking
     mpToken = MPContracts.mpToken
@@ -83,13 +83,13 @@ contract('After the initial lockup period has passed', async accounts => {
     _18monthsFromSystemDeployment = await th.getTimeFromSystemDeployment(mpToken, web3, secondsIn18Months)
 
     // Deploy 3 LCs for team members on vesting schedules
-    const deployedLCtx_T1 = await lockupContractFactory.deployLockupContract(teamMember_1, oneYearFromSystemDeployment, { from: liquityAG })
-    const deployedLCtx_T2 = await lockupContractFactory.deployLockupContract(teamMember_2, oneYearFromSystemDeployment, { from: liquityAG })
-    const deployedLCtx_T3 = await lockupContractFactory.deployLockupContract(teamMember_3, oneYearFromSystemDeployment, { from: liquityAG })
+    const deployedLCtx_T1 = await lockupContractFactory.deployLockupContract(teamMember_1, oneYearFromSystemDeployment, { from: moneypAG })
+    const deployedLCtx_T2 = await lockupContractFactory.deployLockupContract(teamMember_2, oneYearFromSystemDeployment, { from: moneypAG })
+    const deployedLCtx_T3 = await lockupContractFactory.deployLockupContract(teamMember_3, oneYearFromSystemDeployment, { from: moneypAG })
 
-    const deployedLCtx_I1 = await lockupContractFactory.deployLockupContract(investor_1, oneYearFromSystemDeployment, { from: liquityAG })
-    const deployedLCtx_I2 = await lockupContractFactory.deployLockupContract(investor_2, oneYearFromSystemDeployment, { from: liquityAG })
-    const deployedLCtx_I3 = await lockupContractFactory.deployLockupContract(investor_3, oneYearFromSystemDeployment, { from: liquityAG })
+    const deployedLCtx_I1 = await lockupContractFactory.deployLockupContract(investor_1, oneYearFromSystemDeployment, { from: moneypAG })
+    const deployedLCtx_I2 = await lockupContractFactory.deployLockupContract(investor_2, oneYearFromSystemDeployment, { from: moneypAG })
+    const deployedLCtx_I3 = await lockupContractFactory.deployLockupContract(investor_3, oneYearFromSystemDeployment, { from: moneypAG })
 
     // LCs for team members on vesting schedules
     LC_T1 = await th.getLCFromDeploymentTx(deployedLCtx_T1)
@@ -135,9 +135,9 @@ contract('After the initial lockup period has passed', async accounts => {
   describe('Deploying new LCs', async accounts => {
     it("MP Deployer can deploy new LCs", async () => {
       // MP deployer deploys LCs
-      const LCDeploymentTx_A = await lockupContractFactory.deployLockupContract(A, justOverOneYearFromSystemDeployment, { from: liquityAG })
-      const LCDeploymentTx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: liquityAG })
-      const LCDeploymentTx_C = await lockupContractFactory.deployLockupContract(C, '9595995999999900000023423234', { from: liquityAG })
+      const LCDeploymentTx_A = await lockupContractFactory.deployLockupContract(A, justOverOneYearFromSystemDeployment, { from: moneypAG })
+      const LCDeploymentTx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: moneypAG })
+      const LCDeploymentTx_C = await lockupContractFactory.deployLockupContract(C, '9595995999999900000023423234', { from: moneypAG })
 
       assert.isTrue(LCDeploymentTx_A.receipt.status)
       assert.isTrue(LCDeploymentTx_B.receipt.status)
@@ -148,7 +148,7 @@ contract('After the initial lockup period has passed', async accounts => {
       // Various EOAs deploy LCs
       const LCDeploymentTx_1 = await lockupContractFactory.deployLockupContract(A, justOverOneYearFromSystemDeployment, { from: teamMember_1 })
       const LCDeploymentTx_2 = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: investor_2 })
-      const LCDeploymentTx_3 = await lockupContractFactory.deployLockupContract(liquityAG, '9595995999999900000023423234', { from: A })
+      const LCDeploymentTx_3 = await lockupContractFactory.deployLockupContract(moneypAG, '9595995999999900000023423234', { from: A })
 
       assert.isTrue(LCDeploymentTx_1.receipt.status)
       assert.isTrue(LCDeploymentTx_2.receipt.status)
@@ -347,7 +347,7 @@ contract('After the initial lockup period has passed', async accounts => {
       const variousEOAs = [
         teamMember_1,
         teamMember_3,
-        liquityAG,
+        moneypAG,
         investor_1,
         investor_2,
         investor_3,
@@ -492,16 +492,16 @@ contract('After the initial lockup period has passed', async accounts => {
 
 
     it("Anyone can transfer to an EOA", async () => {
-      // Start D, E, liquityAG with some MP
+      // Start D, E, moneypAG with some MP
       await mpToken.unprotectedMint(D, dec(1, 24))
       await mpToken.unprotectedMint(E, dec(2, 24))
-      await mpToken.unprotectedMint(liquityAG, dec(3, 24))
+      await mpToken.unprotectedMint(moneypAG, dec(3, 24))
       await mpToken.unprotectedMint(multisig, dec(4, 24))
 
       // MP holders transfer to other EOAs
       const MPtransferTx_1 = await mpToken.transfer(A, dec(1, 18), { from: D })
-      const MPtransferTx_2 = await mpToken.transfer(liquityAG, dec(1, 18), { from: E })
-      const MPtransferTx_3 = await mpToken.transfer(F, dec(1, 18), { from: liquityAG })
+      const MPtransferTx_2 = await mpToken.transfer(moneypAG, dec(1, 18), { from: E })
+      const MPtransferTx_3 = await mpToken.transfer(F, dec(1, 18), { from: moneypAG })
       const MPtransferTx_4 = await mpToken.transfer(G, dec(1, 18), { from: multisig })
 
       assert.isTrue(MPtransferTx_1.receipt.status)
@@ -514,13 +514,13 @@ contract('After the initial lockup period has passed', async accounts => {
       // EOAs approve EOAs to spend MP
       const MPapproveTx_1 = await mpToken.approve(A, dec(1, 18), { from: multisig })
       const MPapproveTx_2 = await mpToken.approve(B, dec(1, 18), { from: G })
-      const MPapproveTx_3 = await mpToken.approve(liquityAG, dec(1, 18), { from: F })
+      const MPapproveTx_3 = await mpToken.approve(moneypAG, dec(1, 18), { from: F })
       await assert.isTrue(MPapproveTx_1.receipt.status)
       await assert.isTrue(MPapproveTx_2.receipt.status)
       await assert.isTrue(MPapproveTx_3.receipt.status)
     })
 
-    it("Anyone can increaseAllowance for any EOA or Liquity contract", async () => {
+    it("Anyone can increaseAllowance for any EOA or Moneyp contract", async () => {
       // Anyone can increaseAllowance of EOAs to spend MP
       const MPIncreaseAllowanceTx_1 = await mpToken.increaseAllowance(A, dec(1, 18), { from: multisig })
       const MPIncreaseAllowanceTx_2 = await mpToken.increaseAllowance(B, dec(1, 18), { from: G })
@@ -529,13 +529,13 @@ contract('After the initial lockup period has passed', async accounts => {
       await assert.isTrue(MPIncreaseAllowanceTx_2.receipt.status)
       await assert.isTrue(MPIncreaseAllowanceTx_3.receipt.status)
 
-      // Increase allowance of Liquity contracts from F
+      // Increase allowance of Moneyp contracts from F
       for (const contract of Object.keys(coreContracts)) {
         const MPIncreaseAllowanceTx = await mpToken.increaseAllowance(coreContracts[contract].address, dec(1, 18), { from: F })
         await assert.isTrue(MPIncreaseAllowanceTx.receipt.status)
       }
 
-      // Increase allowance of Liquity contracts from multisig
+      // Increase allowance of Moneyp contracts from multisig
       for (const contract of Object.keys(coreContracts)) {
         const MPIncreaseAllowanceTx = await mpToken.increaseAllowance(coreContracts[contract].address, dec(1, 18), { from: multisig })
         await assert.isTrue(MPIncreaseAllowanceTx.receipt.status)
@@ -554,7 +554,7 @@ contract('After the initial lockup period has passed', async accounts => {
       }
     })
 
-    it("Anyone can decreaseAllowance for any EOA or Liquity contract", async () => {
+    it("Anyone can decreaseAllowance for any EOA or Moneyp contract", async () => {
       //First, increase allowance of A, B LiqAG and core contracts
       const MPapproveTx_1 = await mpToken.approve(A, dec(1, 18), { from: multisig })
       const MPapproveTx_2 = await mpToken.approve(B, dec(1, 18), { from: G })
@@ -834,7 +834,7 @@ contract('After the initial lockup period has passed', async accounts => {
       const unlockTime = await LC_B.unlockTime()
       assert.isTrue(currentTime.gt(unlockTime))
 
-      const variousEOAs = [teamMember_2, liquityAG, investor_1, A, C, D, E]
+      const variousEOAs = [teamMember_2, moneypAG, investor_1, A, C, D, E]
 
       // Several EOAs attempt to withdraw from LC deployed by D
       for (account of variousEOAs) {

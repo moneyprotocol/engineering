@@ -18,7 +18,7 @@ async function mainnetDeploy(configParams) {
   const deploymentState = mdh.loadPreviousDeployment()
 
   console.log(`deployer address: ${deployerWallet.address}`)
-  assert.equal(deployerWallet.address, configParams.liquityAddrs.DEPLOYER)
+  assert.equal(deployerWallet.address, configParams.moneypAddrs.DEPLOYER)
   assert.equal(account2Wallet.address, configParams.beneficiaries.ACCOUNT_2)
   let deployerETHBalance = await ethers.provider.getBalance(deployerWallet.address)
   console.log(`deployerETHBalance before: ${deployerETHBalance}`)
@@ -38,12 +38,12 @@ async function mainnetDeploy(configParams) {
   console.log(`deployer's RBTC balance before deployments: ${deployerETHBalance}`)
 
   // Deploy core logic contracts
-  const liquityCore = await mdh.deployLiquityCoreMainnet(configParams.externalAddrs.TELLOR_MASTER, deploymentState)
-  await mdh.logContractObjects(liquityCore)
+  const moneypCore = await mdh.deployMoneypCoreMainnet(configParams.externalAddrs.TELLOR_MASTER, deploymentState)
+  await mdh.logContractObjects(moneypCore)
 
   // Check Uniswap Pair BPD-RBTC pair before pair creation
-  let BPDWETHPairAddr = await uniswapV2Factory.getPair(liquityCore.bpdToken.address, configParams.externalAddrs.ETH_ERC20)
-  let WETHBPDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.ETH_ERC20, liquityCore.bpdToken.address)
+  let BPDWETHPairAddr = await uniswapV2Factory.getPair(moneypCore.bpdToken.address, configParams.externalAddrs.ETH_ERC20)
+  let WETHBPDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.ETH_ERC20, moneypCore.bpdToken.address)
   assert.equal(BPDWETHPairAddr, WETHBPDPairAddr)
 
 
@@ -51,14 +51,14 @@ async function mainnetDeploy(configParams) {
     // Deploy Unipool for BPD-WETH
     await mdh.sendAndWaitForTransaction(uniswapV2Factory.createPair(
       configParams.externalAddrs.ETH_ERC20,
-      liquityCore.bpdToken.address,
+      moneypCore.bpdToken.address,
       { gasPrice }
     ))
 
     // Check Uniswap Pair BPD-WETH pair after pair creation (forwards and backwards should have same address)
-    BPDWETHPairAddr = await uniswapV2Factory.getPair(liquityCore.bpdToken.address, configParams.externalAddrs.ETH_ERC20)
+    BPDWETHPairAddr = await uniswapV2Factory.getPair(moneypCore.bpdToken.address, configParams.externalAddrs.ETH_ERC20)
     assert.notEqual(BPDWETHPairAddr, th.ZERO_ADDRESS)
-    WETHBPDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.ETH_ERC20, liquityCore.bpdToken.address)
+    WETHBPDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.ETH_ERC20, moneypCore.bpdToken.address)
     console.log(`BPD-WETH pair contract address after Uniswap pair creation: ${BPDWETHPairAddr}`)
     assert.equal(WETHBPDPairAddr, BPDWETHPairAddr)
   }
@@ -68,19 +68,19 @@ async function mainnetDeploy(configParams) {
 
   // Deploy MP Contracts
   const MPContracts = await mdh.deployMPContractsMainnet(
-    configParams.liquityAddrs.GENERAL_SAFE, // bounty address
+    configParams.moneypAddrs.GENERAL_SAFE, // bounty address
     unipool.address,  // lp rewards address
-    configParams.liquityAddrs.MP_SAFE, // multisig MP endowment address
+    configParams.moneypAddrs.MP_SAFE, // multisig MP endowment address
     deploymentState,
   )
 
   // Connect all core contracts up
-  await mdh.connectCoreContractsMainnet(liquityCore, MPContracts, configParams.externalAddrs.CHAINLINK_ETHUSD_PROXY)
+  await mdh.connectCoreContractsMainnet(moneypCore, MPContracts, configParams.externalAddrs.CHAINLINK_ETHUSD_PROXY)
   await mdh.connectMPContractsMainnet(MPContracts)
-  await mdh.connectMPContractsToCoreMainnet(MPContracts, liquityCore)
+  await mdh.connectMPContractsToCoreMainnet(MPContracts, moneypCore)
 
   // Deploy a read-only multi-vault getter
-  const multiVaultGetter = await mdh.deployMultiVaultGetterMainnet(liquityCore, deploymentState)
+  const multiVaultGetter = await mdh.deployMultiVaultGetterMainnet(moneypCore, deploymentState)
 
   // Connect Unipool to MPToken and the BPD-WETH pair address, with a 6 week duration
   const LPRewardsDuration = timeVals.SECONDS_IN_SIX_WEEKS
@@ -128,7 +128,7 @@ async function mainnetDeploy(configParams) {
     }
 
     // verify
-    if (configParams.ETHERSCAN_BASE_URL) {
+    if (configParams.ASDFGSCAN_BASE_URL) {
       await mdh.verifyContract(investor, deploymentState)
     }
   }
@@ -148,7 +148,7 @@ async function mainnetDeploy(configParams) {
   console.log(`current Chainlink price: ${chainlinkPrice}`)
 
   // // TODO: Check Tellor price directly (through TellorCaller)
-  let tellorPriceResponse = await liquityCore.tellorCaller.getTellorCurrentValue(1) // id == 1: the RBTC-USD request ID
+  let tellorPriceResponse = await moneypCore.tellorCaller.getTellorCurrentValue(1) // id == 1: the RBTC-USD request ID
   console.log(`current Tellor price: ${tellorPriceResponse[1]}`)
   console.log(`current Tellor timestamp: ${tellorPriceResponse[2]}`)
 
@@ -173,9 +173,9 @@ async function mainnetDeploy(configParams) {
   // --- Check correct addresses set in MPToken
   console.log("STORED ADDRESSES IN MP TOKEN")
   const storedMultisigAddress = await MPContracts.mpToken.multisigAddress()
-  assert.equal(configParams.liquityAddrs.MP_SAFE.toLowerCase(), storedMultisigAddress.toLowerCase())
+  assert.equal(configParams.moneypAddrs.MP_SAFE.toLowerCase(), storedMultisigAddress.toLowerCase())
   console.log(`multi-sig address stored in MPToken : ${th.squeezeAddr(storedMultisigAddress)}`)
-  console.log(`MP Safe address: ${th.squeezeAddr(configParams.liquityAddrs.MP_SAFE)}`)
+  console.log(`MP Safe address: ${th.squeezeAddr(configParams.moneypAddrs.MP_SAFE)}`)
 
   // --- MP allowances of different addresses ---
   console.log("INITIAL MP BALANCES")
@@ -185,12 +185,12 @@ async function mainnetDeploy(configParams) {
   th.logBN('Unipool MP balance       ', unipoolMPBal)
 
   // MP Safe
-  const mpSafeBal = await MPContracts.mpToken.balanceOf(configParams.liquityAddrs.MP_SAFE)
+  const mpSafeBal = await MPContracts.mpToken.balanceOf(configParams.moneypAddrs.MP_SAFE)
    // TODO: Uncomment for real launch  assert.equal(mpDeployerBal.toString(), '64666666666666666666666667')
   th.logBN('MP Safe balance     ', mpSafeBal)
 
   // Bounties/hackathons (General Safe)
-  const generalSafeBal = await MPContracts.mpToken.balanceOf(configParams.liquityAddrs.GENERAL_SAFE)
+  const generalSafeBal = await MPContracts.mpToken.balanceOf(configParams.moneypAddrs.GENERAL_SAFE)
    // TODO: Uncomment for real launch  assert.equal(generalSafeBal.toString(), '2000000000000000000000000')
   th.logBN('General Safe balance       ', generalSafeBal)
 
@@ -202,19 +202,19 @@ async function mainnetDeploy(configParams) {
   // --- PriceFeed ---
   console.log("PRICEFEED CHECKS")
   // Check Pricefeed's status and last good price
-  const lastGoodPrice = await liquityCore.priceFeed.lastGoodPrice()
-  const priceFeedInitialStatus = await liquityCore.priceFeed.status()
+  const lastGoodPrice = await moneypCore.priceFeed.lastGoodPrice()
+  const priceFeedInitialStatus = await moneypCore.priceFeed.status()
   th.logBN('PriceFeed first stored price', lastGoodPrice)
   console.log(`PriceFeed initial status: ${priceFeedInitialStatus}`)
 
   // Check PriceFeed's & TellorCaller's stored addresses
-  const priceFeedCLAddress = await liquityCore.priceFeed.priceAggregator()
-  const priceFeedTellorCallerAddress = await liquityCore.priceFeed.tellorCaller()
+  const priceFeedCLAddress = await moneypCore.priceFeed.priceAggregator()
+  const priceFeedTellorCallerAddress = await moneypCore.priceFeed.tellorCaller()
   assert.equal(priceFeedCLAddress, configParams.externalAddrs.CHAINLINK_ETHUSD_PROXY)
-  assert.equal(priceFeedTellorCallerAddress, liquityCore.tellorCaller.address)
+  assert.equal(priceFeedTellorCallerAddress, moneypCore.tellorCaller.address)
 
   // Check Tellor address
-  const tellorCallerTellorMasterAddress = await liquityCore.tellorCaller.tellor()
+  const tellorCallerTellorMasterAddress = await moneypCore.tellorCaller.tellor()
   assert.equal(tellorCallerTellorMasterAddress, configParams.externalAddrs.TELLOR_MASTER)
 
   // --- Unipool ---
@@ -227,13 +227,13 @@ async function mainnetDeploy(configParams) {
   // --- Sorted Vaults ---
 
   // Check max size
-  const sortedVaultsMaxSize = (await liquityCore.sortedVaults.data())[2]
+  const sortedVaultsMaxSize = (await moneypCore.sortedVaults.data())[2]
   assert.equal(sortedVaultsMaxSize, '115792089237316195423570985008687907853269984665640564039457584007913129639935')
 
   // --- VaultManager ---
 
-  const liqReserve = await liquityCore.vaultManager.BPD_GAS_COMPENSATION()
-  const minNetDebt = await liquityCore.vaultManager.MIN_NET_DEBT()
+  const liqReserve = await moneypCore.vaultManager.BPD_GAS_COMPENSATION()
+  const minNetDebt = await moneypCore.vaultManager.MIN_NET_DEBT()
 
   th.logBN('system liquidation reserve', liqReserve)
   th.logBN('system min net debt      ', minNetDebt)
@@ -241,13 +241,13 @@ async function mainnetDeploy(configParams) {
   // --- Make first BPD-RBTC liquidity provision ---
 
   // Open vault if not yet opened
-  const vaultStatus = await liquityCore.vaultManager.getVaultStatus(deployerWallet.address)
+  const vaultStatus = await moneypCore.vaultManager.getVaultStatus(deployerWallet.address)
   if (vaultStatus.toString() != '1') {
     let _3kBPDWithdrawal = th.dec(3000, 18) // 3000 BPD
     let _3ETHcoll = th.dec(3, 'ether') // 3 RBTC
     console.log('Opening vault...')
     await mdh.sendAndWaitForTransaction(
-      liquityCore.borrowerOperations.openVault(
+      moneypCore.borrowerOperations.openVault(
         th._100pct,
         _3kBPDWithdrawal,
         th.ZERO_ADDRESS,
@@ -260,16 +260,16 @@ async function mainnetDeploy(configParams) {
   }
 
   // Check deployer now has an open vault
-  console.log(`deployer is in sorted list after making vault: ${await liquityCore.sortedVaults.contains(deployerWallet.address)}`)
+  console.log(`deployer is in sorted list after making vault: ${await moneypCore.sortedVaults.contains(deployerWallet.address)}`)
 
-  const deployerVault = await liquityCore.vaultManager.Vaults(deployerWallet.address)
+  const deployerVault = await moneypCore.vaultManager.Vaults(deployerWallet.address)
   th.logBN('deployer debt', deployerVault[0])
   th.logBN('deployer coll', deployerVault[1])
   th.logBN('deployer stake', deployerVault[2])
   console.log(`deployer's vault status: ${deployerVault[3]}`)
 
   // Check deployer has BPD
-  let deployerBPDBal = await liquityCore.bpdToken.balanceOf(deployerWallet.address)
+  let deployerBPDBal = await moneypCore.bpdToken.balanceOf(deployerWallet.address)
   th.logBN("deployer's BPD balance", deployerBPDBal)
 
   // Check Uniswap pool has BPD and WETH tokens
@@ -282,7 +282,7 @@ async function mainnetDeploy(configParams) {
   const token0Addr = await BPDETHPair.token0()
   const token1Addr = await BPDETHPair.token1()
   console.log(`BPD-RBTC Pair token 0: ${th.squeezeAddr(token0Addr)},
-        BPDToken contract addr: ${th.squeezeAddr(liquityCore.bpdToken.address)}`)
+        BPDToken contract addr: ${th.squeezeAddr(moneypCore.bpdToken.address)}`)
   console.log(`BPD-RBTC Pair token 1: ${th.squeezeAddr(token1Addr)},
         WETH ERC20 contract addr: ${th.squeezeAddr(configParams.externalAddrs.ETH_ERC20)}`)
 
@@ -303,10 +303,10 @@ async function mainnetDeploy(configParams) {
   if (deployerLPTokenBal.toString() == '0') {
     console.log('Providing liquidity to Uniswap...')
     // Give router an allowance for BPD
-    await liquityCore.bpdToken.increaseAllowance(uniswapV2Router02.address, dec(10000, 18))
+    await moneypCore.bpdToken.increaseAllowance(uniswapV2Router02.address, dec(10000, 18))
 
     // Check Router's spending allowance
-    const routerBPDAllowanceFromDeployer = await liquityCore.bpdToken.allowance(deployerWallet.address, uniswapV2Router02.address)
+    const routerBPDAllowanceFromDeployer = await moneypCore.bpdToken.allowance(deployerWallet.address, uniswapV2Router02.address)
     th.logBN("router's spending allowance for deployer's BPD", routerBPDAllowanceFromDeployer)
 
     // Get amounts for liquidity provision
@@ -327,7 +327,7 @@ async function mainnetDeploy(configParams) {
     // Provide liquidity to BPD-RBTC pair
     await mdh.sendAndWaitForTransaction(
       uniswapV2Router02.addLiquidityETH(
-        liquityCore.bpdToken.address, // address of BPD token
+        moneypCore.bpdToken.address, // address of BPD token
         BPDAmount, // BPD provision
         minBPDAmount, // minimum BPD provision
         LP_ETH, // minimum RBTC provision
@@ -391,14 +391,14 @@ async function mainnetDeploy(configParams) {
   // --- Make SP deposit and earn MP ---
   console.log("CHECK DEPLOYER MAKING DEPOSIT AND EARNING MP")
 
-  let SPDeposit = await liquityCore.stabilityPool.getCompoundedBPDDeposit(deployerWallet.address)
+  let SPDeposit = await moneypCore.stabilityPool.getCompoundedBPDDeposit(deployerWallet.address)
   th.logBN("deployer SP deposit before making deposit", SPDeposit)
 
   // Provide to SP
-  await mdh.sendAndWaitForTransaction(liquityCore.stabilityPool.provideToSP(dec(15, 18), th.ZERO_ADDRESS, { gasPrice, gasLimit: 400000 }))
+  await mdh.sendAndWaitForTransaction(moneypCore.stabilityPool.provideToSP(dec(15, 18), th.ZERO_ADDRESS, { gasPrice, gasLimit: 400000 }))
 
   // Get SP deposit 
-  SPDeposit = await liquityCore.stabilityPool.getCompoundedBPDDeposit(deployerWallet.address)
+  SPDeposit = await moneypCore.stabilityPool.getCompoundedBPDDeposit(deployerWallet.address)
   th.logBN("deployer SP deposit after depositing 15 BPD", SPDeposit)
 
   console.log("wait 90 seconds before withdrawing...")
@@ -406,9 +406,9 @@ async function mainnetDeploy(configParams) {
   await configParams.waitFunction()
 
   // Withdraw from SP
-  await mdh.sendAndWaitForTransaction(liquityCore.stabilityPool.withdrawFromSP(dec(1000, 18), { gasPrice, gasLimit: 400000 }))
+  await mdh.sendAndWaitForTransaction(moneypCore.stabilityPool.withdrawFromSP(dec(1000, 18), { gasPrice, gasLimit: 400000 }))
 
-  SPDeposit = await liquityCore.stabilityPool.getCompoundedBPDDeposit(deployerWallet.address)
+  SPDeposit = await moneypCore.stabilityPool.getCompoundedBPDDeposit(deployerWallet.address)
   th.logBN("deployer SP deposit after full withdrawal", SPDeposit)
 
   deployerMPBal = await MPContracts.mpToken.balanceOf(deployerWallet.address)
@@ -469,20 +469,20 @@ async function mainnetDeploy(configParams) {
 
 
   // --- 2nd Account opens vault ---
-  const vault2Status = await liquityCore.vaultManager.getVaultStatus(account2Wallet.address)
+  const vault2Status = await moneypCore.vaultManager.getVaultStatus(account2Wallet.address)
   if (vault2Status.toString() != '1') {
     console.log("Acct 2 opens a vault ...")
     let _2kBPDWithdrawal = th.dec(2000, 18) // 2000 BPD
     let _1pt5_ETHcoll = th.dec(15, 17) // 1.5 RBTC
     const borrowerOpsEthersFactory = await ethers.getContractFactory("BorrowerOperations", account2Wallet)
-    const borrowerOpsAcct2 = await new ethers.Contract(liquityCore.borrowerOperations.address, borrowerOpsEthersFactory.interface, account2Wallet)
+    const borrowerOpsAcct2 = await new ethers.Contract(moneypCore.borrowerOperations.address, borrowerOpsEthersFactory.interface, account2Wallet)
 
     await mdh.sendAndWaitForTransaction(borrowerOpsAcct2.openVault(th._100pct, _2kBPDWithdrawal, th.ZERO_ADDRESS, th.ZERO_ADDRESS, { value: _1pt5_ETHcoll, gasPrice, gasLimit: 1000000 }))
   } else {
     console.log('Acct 2 already has an active vault')
   }
 
-  const acct2Vault = await liquityCore.vaultManager.Vaults(account2Wallet.address)
+  const acct2Vault = await moneypCore.vaultManager.Vaults(account2Wallet.address)
   th.logBN('acct2 debt', acct2Vault[0])
   th.logBN('acct2 coll', acct2Vault[1])
   th.logBN('acct2 stake', acct2Vault[2])
@@ -496,14 +496,14 @@ async function mainnetDeploy(configParams) {
   console.log("CHECK DEPLOYER WITHDRAWING STAKING GAINS")
 
   // check deployer's BPD balance before withdrawing staking gains
-  deployerBPDBal = await liquityCore.bpdToken.balanceOf(deployerWallet.address)
+  deployerBPDBal = await moneypCore.bpdToken.balanceOf(deployerWallet.address)
   th.logBN('deployer BPD bal before withdrawing staking gains', deployerBPDBal)
 
   // Deployer withdraws staking gains
   await mdh.sendAndWaitForTransaction(MPContracts.mpStaking.unstake(0, { gasPrice, gasLimit: 1000000 }))
 
   // check deployer's BPD balance after withdrawing staking gains
-  deployerBPDBal = await liquityCore.bpdToken.balanceOf(deployerWallet.address)
+  deployerBPDBal = await moneypCore.bpdToken.balanceOf(deployerWallet.address)
   th.logBN('deployer BPD bal after withdrawing staking gains', deployerBPDBal)
 
 
@@ -515,27 +515,27 @@ async function mainnetDeploy(configParams) {
   th.logBN("BPD-RBTC Pair's current RBTC reserves", reserves[1])
 
   // Number of vaults
-  const numVaults = await liquityCore.vaultManager.getVaultOwnersCount()
+  const numVaults = await moneypCore.vaultManager.getVaultOwnersCount()
   console.log(`number of vaults: ${numVaults} `)
 
   // Sorted list size
-  const listSize = await liquityCore.sortedVaults.getSize()
+  const listSize = await moneypCore.sortedVaults.getSize()
   console.log(`Vault list size: ${listSize} `)
 
   // Total system debt and coll
-  const entireSystemDebt = await liquityCore.vaultManager.getEntireSystemDebt()
-  const entireSystemColl = await liquityCore.vaultManager.getEntireSystemColl()
+  const entireSystemDebt = await moneypCore.vaultManager.getEntireSystemDebt()
+  const entireSystemColl = await moneypCore.vaultManager.getEntireSystemColl()
   th.logBN("Entire system debt", entireSystemDebt)
   th.logBN("Entire system coll", entireSystemColl)
 
   // current borrowing rate
-  const baseRate = await liquityCore.vaultManager.baseRate()
-  const currentBorrowingRate = await liquityCore.vaultManager.getBorrowingRateWithDecay()
+  const baseRate = await moneypCore.vaultManager.baseRate()
+  const currentBorrowingRate = await moneypCore.vaultManager.getBorrowingRateWithDecay()
   th.logBN("Base rate", baseRate)
   th.logBN("Current borrowing rate", currentBorrowingRate)
 
   // total SP deposits
-  const totalSPDeposits = await liquityCore.stabilityPool.getTotalBPDDeposits()
+  const totalSPDeposits = await moneypCore.stabilityPool.getTotalBPDDeposits()
   th.logBN("Total BPD SP deposits", totalSPDeposits)
 
   // total MP Staked in MPStaking
@@ -550,25 +550,25 @@ async function mainnetDeploy(configParams) {
 
   // VaultManager 
   console.log("VaultManager state variables:")
-  const totalStakes = await liquityCore.vaultManager.totalStakes()
-  const totalStakesSnapshot = await liquityCore.vaultManager.totalStakesSnapshot()
-  const totalCollateralSnapshot = await liquityCore.vaultManager.totalCollateralSnapshot()
+  const totalStakes = await moneypCore.vaultManager.totalStakes()
+  const totalStakesSnapshot = await moneypCore.vaultManager.totalStakesSnapshot()
+  const totalCollateralSnapshot = await moneypCore.vaultManager.totalCollateralSnapshot()
   th.logBN("Total vault stakes", totalStakes)
   th.logBN("Snapshot of total vault stakes before last liq. ", totalStakesSnapshot)
   th.logBN("Snapshot of total vault collateral before last liq. ", totalCollateralSnapshot)
 
-  const L_ETH = await liquityCore.vaultManager.L_ETH()
-  const B_BPDDebt = await liquityCore.vaultManager.B_BPDDebt()
-  th.logBN("L_ETH", L_ETH)
+  const B_RBTC = await moneypCore.vaultManager.B_RBTC()
+  const B_BPDDebt = await moneypCore.vaultManager.B_BPDDebt()
+  th.logBN("B_RBTC", B_RBTC)
   th.logBN("B_BPDDebt", B_BPDDebt)
 
   // StabilityPool
   console.log("StabilityPool state variables:")
-  const P = await liquityCore.stabilityPool.P()
-  const currentScale = await liquityCore.stabilityPool.currentScale()
-  const currentEpoch = await liquityCore.stabilityPool.currentEpoch()
-  const S = await liquityCore.stabilityPool.epochToScaleToSum(currentEpoch, currentScale)
-  const G = await liquityCore.stabilityPool.epochToScaleToG(currentEpoch, currentScale)
+  const P = await moneypCore.stabilityPool.P()
+  const currentScale = await moneypCore.stabilityPool.currentScale()
+  const currentEpoch = await moneypCore.stabilityPool.currentEpoch()
+  const S = await moneypCore.stabilityPool.epochToScaleToSum(currentEpoch, currentScale)
+  const G = await moneypCore.stabilityPool.epochToScaleToG(currentEpoch, currentScale)
   th.logBN("Product P", P)
   th.logBN("Current epoch", currentEpoch)
   th.logBN("Current scale", currentScale)
@@ -578,9 +578,9 @@ async function mainnetDeploy(configParams) {
   // MPStaking
   console.log("MPStaking state variables:")
   const F_BPD = await MPContracts.mpStaking.F_BPD()
-  const F_ETH = await MPContracts.mpStaking.F_ETH()
+  const F_RBTC = await MPContracts.mpStaking.F_RBTC()
   th.logBN("F_BPD", F_BPD)
-  th.logBN("F_ETH", F_ETH)
+  th.logBN("F_RBTC", F_RBTC)
 
 
   // CommunityIssuance

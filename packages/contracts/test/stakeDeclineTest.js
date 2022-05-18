@@ -49,7 +49,7 @@ contract('VaultManager', async accounts => {
   }
 
   beforeEach(async () => {
-    contracts = await deploymentHelper.deployLiquityCore()
+    contracts = await deploymentHelper.deployMoneypCore()
     contracts.vaultManager = await VaultManagerTester.new()
     contracts.bpdToken = await BPDTokenTester.new(
       contracts.vaultManager.address,
@@ -106,7 +106,7 @@ contract('VaultManager', async accounts => {
     console.log(`totalStakesSnapshot after L1: ${await vaultManager.totalStakesSnapshot()}`)
     console.log(`totalCollateralSnapshot after L1: ${await vaultManager.totalCollateralSnapshot()}`)
     console.log(`Snapshots ratio after L1: ${await getSnapshotsRatio()}`)
-    console.log(`B pending RBTC reward after L1: ${await vaultManager.getPendingETHReward(B)}`)
+    console.log(`B pending RBTC reward after L1: ${await vaultManager.getPendingRBTCReward(B)}`)
     console.log(`B stake after L1: ${(await vaultManager.Vaults(B))[2]}`)
 
     // adjust vault B 1 wei: apply rewards

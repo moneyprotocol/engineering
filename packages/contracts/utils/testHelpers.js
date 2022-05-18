@@ -277,8 +277,8 @@ class TestHelper {
   // These functions use the PriceFeedTestNet view price function getPrice() which is sufficient for testing.
   // the mainnet contract PriceFeed uses fetchPrice, which is non-view and writes to storage.
 
-  // To checkRecoveryMode / getTCR from the Liquity mainnet contracts, pass a price value - this can be the lastGoodPrice
-  // stored in Liquity, or the current Chainlink ETHUSD price, etc.
+  // To checkRecoveryMode / getTCR from the Moneyp mainnet contracts, pass a price value - this can be the lastGoodPrice
+  // stored in Moneyp, or the current Chainlink RBTCUSD price, etc.
 
 
   static async checkRecoveryMode(contracts) {
@@ -372,10 +372,10 @@ class TestHelper {
 
         const BPDAmount = redemptionTx.logs[i].args[0]
         const totalBPDRedeemed = redemptionTx.logs[i].args[1]
-        const totalETHDrawn = redemptionTx.logs[i].args[2]
-        const ETHFee = redemptionTx.logs[i].args[3]
+        const totalRBTCDrawn = redemptionTx.logs[i].args[2]
+        const RBTCFee = redemptionTx.logs[i].args[3]
 
-        return [BPDAmount, totalBPDRedeemed, totalETHDrawn, ETHFee]
+        return [BPDAmount, totalBPDRedeemed, totalRBTCDrawn, RBTCFee]
       }
     }
     throw ("The transaction logs do not contain a redemption event")
@@ -481,9 +481,9 @@ class TestHelper {
     // console.log(`account: ${account}`)
     const rawColl = (await contracts.vaultManager.Vaults(account))[1]
     const rawDebt = (await contracts.vaultManager.Vaults(account))[0]
-    const pendingETHReward = await contracts.vaultManager.getPendingETHReward(account)
+    const pendingRBTCReward = await contracts.vaultManager.getPendingRBTCReward(account)
     const pendingBPDDebtReward = await contracts.vaultManager.getPendingBPDDebtReward(account)
-    const entireColl = rawColl.add(pendingETHReward)
+    const entireColl = rawColl.add(pendingRBTCReward)
     const entireDebt = rawDebt.add(pendingBPDDebtReward)
 
     return { entireColl, entireDebt }
@@ -526,14 +526,14 @@ class TestHelper {
     return { newColl, newDebt }
   }
 
-  static async getCollAndDebtFromAdjustment(contracts, account, ETHChange, BPDChange) {
+  static async getCollAndDebtFromAdjustment(contracts, account, RBTCChange, BPDChange) {
     const { entireColl, entireDebt } = await this.getEntireCollAndDebt(contracts, account)
 
     // const coll = (await contracts.vaultManager.Vaults(account))[1]
     // const debt = (await contracts.vaultManager.Vaults(account))[0]
 
     const fee = BPDChange.gt(this.toBN('0')) ? await contracts.vaultManager.getBorrowingFee(BPDChange) : this.toBN('0')
-    const newColl = entireColl.add(ETHChange)
+    const newColl = entireColl.add(RBTCChange)
     const newDebt = entireDebt.add(BPDChange).add(fee)
 
     return { newColl, newDebt }
@@ -542,26 +542,26 @@ class TestHelper {
  
   // --- BorrowerOperations gas functions ---
 
-  static async openVault_allAccounts(accounts, contracts, ETHAmount, BPDAmount) {
+  static async openVault_allAccounts(accounts, contracts, RBTCAmount, BPDAmount) {
     const gasCostList = []
     const totalDebt = await this.getOpenVaultTotalDebt(contracts, BPDAmount)
 
     for (const account of accounts) {
-      const {upperHint, lowerHint} = await this.getBorrowerOpsListHint(contracts, ETHAmount, totalDebt)
+      const {upperHint, lowerHint} = await this.getBorrowerOpsListHint(contracts, RBTCAmount, totalDebt)
 
-      const tx = await contracts.borrowerOperations.openVault(this._100pct, BPDAmount, upperHint, lowerHint, { from: account, value: ETHAmount })
+      const tx = await contracts.borrowerOperations.openVault(this._100pct, BPDAmount, upperHint, lowerHint, { from: account, value: RBTCAmount })
       const gas = this.gasUsed(tx)
       gasCostList.push(gas)
     }
     return this.getGasMetrics(gasCostList)
   }
 
-  static async openVault_allAccounts_randomETH(minETH, maxETH, accounts, contracts, BPDAmount) {
+  static async openVault_allAccounts_randomRBTC(minRBTC, maxRBTC, accounts, contracts, BPDAmount) {
     const gasCostList = []
     const totalDebt = await this.getOpenVaultTotalDebt(contracts, BPDAmount)
 
     for (const account of accounts) {
-      const randCollAmount = this.randAmountInWei(minETH, maxETH)
+      const randCollAmount = this.randAmountInWei(minRBTC, maxRBTC)
       const {upperHint, lowerHint} = await this.getBorrowerOpsListHint(contracts, randCollAmount, totalDebt)
 
       const tx = await contracts.borrowerOperations.openVault(this._100pct, BPDAmount, upperHint, lowerHint, { from: account, value: randCollAmount })
@@ -571,11 +571,11 @@ class TestHelper {
     return this.getGasMetrics(gasCostList)
   }
 
-  static async openVault_allAccounts_randomRBTC_ProportionalBPD(minETH, maxETH, accounts, contracts, proportion) {
+  static async openVault_allAccounts_randomRBTC_ProportionalBPD(minRBTC, maxRBTC, accounts, contracts, proportion) {
     const gasCostList = []
   
     for (const account of accounts) {
-      const randCollAmount = this.randAmountInWei(minETH, maxETH)
+      const randCollAmount = this.randAmountInWei(minRBTC, maxRBTC)
       const proportionalBPD = (web3.utils.toBN(proportion)).mul(web3.utils.toBN(randCollAmount))
       const totalDebt = await this.getOpenVaultTotalDebt(contracts, proportionalBPD)
 
@@ -588,7 +588,7 @@ class TestHelper {
     return this.getGasMetrics(gasCostList)
   }
 
-  static async openVault_allAccounts_randomRBTC_randomBPD(minETH, maxETH, accounts, contracts, minBPDProportion, maxBPDProportion, logging = false) {
+  static async openVault_allAccounts_randomRBTC_randomBPD(minRBTC, maxRBTC, accounts, contracts, minBPDProportion, maxBPDProportion, logging = false) {
     const gasCostList = []
     const price = await contracts.priceFeedTestnet.getPrice()
     const _1e18 = web3.utils.toBN('1000000000000000000')
@@ -596,7 +596,7 @@ class TestHelper {
     let i = 0
     for (const account of accounts) {
 
-      const randCollAmount = this.randAmountInWei(minETH, maxETH)
+      const randCollAmount = this.randAmountInWei(minRBTC, maxRBTC)
       // console.log(`randCollAmount ${randCollAmount }`)
       const randBPDProportion = this.randAmountInWei(minBPDProportion, maxBPDProportion)
       const proportionalBPD = (web3.utils.toBN(randBPDProportion)).mul(web3.utils.toBN(randCollAmount).div(_1e18))
@@ -617,15 +617,15 @@ class TestHelper {
     return this.getGasMetrics(gasCostList)
   }
 
-  static async openVault_allAccounts_randomBPD(minBPD, maxBPD, accounts, contracts, ETHAmount) {
+  static async openVault_allAccounts_randomBPD(minBPD, maxBPD, accounts, contracts, RBTCAmount) {
     const gasCostList = []
 
     for (const account of accounts) {
       const randBPDAmount = this.randAmountInWei(minBPD, maxBPD)
       const totalDebt = await this.getOpenVaultTotalDebt(contracts, randBPDAmount)
-      const {upperHint, lowerHint} = await this.getBorrowerOpsListHint(contracts, ETHAmount, totalDebt)
+      const {upperHint, lowerHint} = await this.getBorrowerOpsListHint(contracts, RBTCAmount, totalDebt)
 
-      const tx = await contracts.borrowerOperations.openVault(this._100pct, randBPDAmount, upperHint, lowerHint, { from: account, value: ETHAmount })
+      const tx = await contracts.borrowerOperations.openVault(this._100pct, randBPDAmount, upperHint, lowerHint, { from: account, value: RBTCAmount })
       const gas = this.gasUsed(tx)
       gasCostList.push(gas)
     }
@@ -643,7 +643,7 @@ class TestHelper {
     return this.getGasMetrics(gasCostList)
   }
 
-  static async openVault_allAccounts_decreasingBPDAmounts(accounts, contracts, ETHAmount, maxBPDAmount) {
+  static async openVault_allAccounts_decreasingBPDAmounts(accounts, contracts, RBTCAmount, maxBPDAmount) {
     const gasCostList = []
 
     let i = 0
@@ -651,9 +651,9 @@ class TestHelper {
       const BPDAmount = (maxBPDAmount - i).toString()
       const BPDAmountWei = web3.utils.toWei(BPDAmount, 'ether')
       const totalDebt = await this.getOpenVaultTotalDebt(contracts, BPDAmountWei)
-      const {upperHint, lowerHint} = await this.getBorrowerOpsListHint(contracts, ETHAmount, totalDebt)
+      const {upperHint, lowerHint} = await this.getBorrowerOpsListHint(contracts, RBTCAmount, totalDebt)
 
-      const tx = await contracts.borrowerOperations.openVault(this._100pct, BPDAmountWei, upperHint, lowerHint, { from: account, value: ETHAmount })
+      const tx = await contracts.borrowerOperations.openVault(this._100pct, BPDAmountWei, upperHint, lowerHint, { from: account, value: RBTCAmount })
       const gas = this.gasUsed(tx)
       gasCostList.push(gas)
       i += 1
@@ -738,16 +738,16 @@ class TestHelper {
     }
   }
 
-  static async adjustVault_allAccounts(accounts, contracts, ETHAmount, BPDAmount) {
+  static async adjustVault_allAccounts(accounts, contracts, RBTCAmount, BPDAmount) {
     const gasCostList = []
 
     for (const account of accounts) {
       let tx;
 
-      let ETHChangeBN = this.toBN(ETHAmount)
+      let RBTCChangeBN = this.toBN(RBTCAmount)
       let BPDChangeBN = this.toBN(BPDAmount)
 
-      const { newColl, newDebt } = await this.getCollAndDebtFromAdjustment(contracts, account, ETHChangeBN, BPDChangeBN)
+      const { newColl, newDebt } = await this.getCollAndDebtFromAdjustment(contracts, account, RBTCChangeBN, BPDChangeBN)
       const {upperHint, lowerHint} = await this.getBorrowerOpsListHint(contracts, newColl, newDebt)
 
       const zero = this.toBN('0')
@@ -756,12 +756,12 @@ class TestHelper {
       BPDChangeBN = BPDChangeBN.abs() 
 
       // Add RBTC to vault
-      if (ETHChangeBN.gt(zero)) {
-        tx = await contracts.borrowerOperations.adjustVault(this._100pct, 0, BPDChangeBN, isDebtIncrease, upperHint, lowerHint, { from: account, value: ETHChangeBN })
+      if (RBTCChangeBN.gt(zero)) {
+        tx = await contracts.borrowerOperations.adjustVault(this._100pct, 0, BPDChangeBN, isDebtIncrease, upperHint, lowerHint, { from: account, value: RBTCChangeBN })
       // Withdraw RBTC from vault
-      } else if (ETHChangeBN.lt(zero)) {
-        ETHChangeBN = ETHChangeBN.neg()
-        tx = await contracts.borrowerOperations.adjustVault(this._100pct, ETHChangeBN, BPDChangeBN, isDebtIncrease, upperHint, lowerHint, { from: account })
+      } else if (RBTCChangeBN.lt(zero)) {
+        RBTCChangeBN = RBTCChangeBN.neg()
+        tx = await contracts.borrowerOperations.adjustVault(this._100pct, RBTCChangeBN, BPDChangeBN, isDebtIncrease, upperHint, lowerHint, { from: account })
       }
 
       const gas = this.gasUsed(tx)
@@ -770,16 +770,16 @@ class TestHelper {
     return this.getGasMetrics(gasCostList)
   }
 
-  static async adjustVault_allAccounts_randomAmount(accounts, contracts, ETHMin, ETHMax, BPDMin, BPDMax) {
+  static async adjustVault_allAccounts_randomAmount(accounts, contracts, RBTCMin, RBTCMax, BPDMin, BPDMax) {
     const gasCostList = []
 
     for (const account of accounts) {
       let tx;
   
-      let ETHChangeBN = this.toBN(this.randAmountInWei(ETHMin, ETHMax))
+      let RBTCChangeBN = this.toBN(this.randAmountInWei(RBTCMin, RBTCMax))
       let BPDChangeBN = this.toBN(this.randAmountInWei(BPDMin, BPDMax))
 
-      const { newColl, newDebt } = await this.getCollAndDebtFromAdjustment(contracts, account, ETHChangeBN, BPDChangeBN)
+      const { newColl, newDebt } = await this.getCollAndDebtFromAdjustment(contracts, account, RBTCChangeBN, BPDChangeBN)
       const {upperHint, lowerHint} = await this.getBorrowerOpsListHint(contracts, newColl, newDebt)
 
       const zero = this.toBN('0')
@@ -788,16 +788,16 @@ class TestHelper {
       BPDChangeBN = BPDChangeBN.abs() 
 
       // Add RBTC to vault
-      if (ETHChangeBN.gt(zero)) {
-        tx = await contracts.borrowerOperations.adjustVault(this._100pct, 0, BPDChangeBN, isDebtIncrease, upperHint, lowerHint, { from: account, value: ETHChangeBN })
+      if (RBTCChangeBN.gt(zero)) {
+        tx = await contracts.borrowerOperations.adjustVault(this._100pct, 0, BPDChangeBN, isDebtIncrease, upperHint, lowerHint, { from: account, value: RBTCChangeBN })
       // Withdraw RBTC from vault
-      } else if (ETHChangeBN.lt(zero)) {
-        ETHChangeBN = ETHChangeBN.neg()
-        tx = await contracts.borrowerOperations.adjustVault(this._100pct, ETHChangeBN, BPDChangeBN, isDebtIncrease, lowerHint,  upperHint,{ from: account })
+      } else if (RBTCChangeBN.lt(zero)) {
+        RBTCChangeBN = RBTCChangeBN.neg()
+        tx = await contracts.borrowerOperations.adjustVault(this._100pct, RBTCChangeBN, BPDChangeBN, isDebtIncrease, lowerHint,  upperHint,{ from: account })
       }
 
       const gas = this.gasUsed(tx)
-      // console.log(`RBTC change: ${ETHChangeBN},  BPDChange: ${BPDChangeBN}, gas: ${gas} `)
+      // console.log(`RBTC change: ${RBTCChangeBN},  BPDChange: ${BPDChangeBN}, gas: ${gas} `)
 
       gasCostList.push(gas)
     }
@@ -1052,18 +1052,18 @@ class TestHelper {
     return this.getGasMetrics(gasCostList)
   }
 
-  static async withdrawETHGainToVault_allAccounts(accounts, contracts) {
+  static async withdrawRBTCGainToVault_allAccounts(accounts, contracts) {
     const gasCostList = []
     for (const account of accounts) {
 
       let {entireColl, entireDebt } = await this.getEntireCollAndDebt(contracts, account)
       console.log(`entireColl: ${entireColl}`)
       console.log(`entireDebt: ${entireDebt}`)
-      const ETHGain = await contracts.stabilityPool.getDepositorETHGain(account)
-      const newColl = entireColl.add(ETHGain)
+      const RBTCGain = await contracts.stabilityPool.getDepositorRBTCGain(account)
+      const newColl = entireColl.add(RBTCGain)
       const {upperHint, lowerHint} = await this.getBorrowerOpsListHint(contracts, newColl, entireDebt)
 
-      const tx = await contracts.stabilityPool.withdrawETHGainToVault(upperHint, lowerHint, { from: account })
+      const tx = await contracts.stabilityPool.withdrawRBTCGainToVault(upperHint, lowerHint, { from: account })
       const gas = this.gasUsed(tx)
       gasCostList.push(gas)
     }

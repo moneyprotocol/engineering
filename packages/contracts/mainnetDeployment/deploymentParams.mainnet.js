@@ -1,16 +1,16 @@
 const externalAddrs  = {
   // https://data.chain.link/eth-usd
-  CHAINLINK_ETHUSD_PROXY: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419", 
+  CHAINLINK_RBTCUSD_PROXY: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419", 
   // https://docs.tellor.io/tellor/integration/reference-page
   TELLOR_MASTER:"0x88dF592F8eb5D7Bd38bFeF7dEb0fBc02cf3778a0",
   // https://uniswap.org/docs/v2/smart-contracts/factory/
   UNISWAP_V2_FACTORY: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
   UNIWAP_V2_ROUTER02: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
   // https://etherscan.io/token/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2
-  ETH_ERC20: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+  RBTC_ERC20: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
 }
 
-const liquityAddrs = {
+const moneypAddrs = {
   GENERAL_SAFE:"0x8be7e24263c199ebfcfd6aebca83f8d7ed85a5dd", // TODO - 
   MP_SAFE:"0x20c81d658aae3a8580d990e441a9ef2c9809be74", // TODO - 
   DEPLOYER: "0xF8e5C47a6866e97F5D561982Ff80D39c436E573E" // Mainnet TEST deployment address
@@ -31,15 +31,15 @@ const waitFunction = async () => {
 const GAS_PRICE = 130000000000
 const TX_CONFIRMATIONS = 3 // for mainnet
 
-const ETHERSCAN_BASE_URL = 'https://etherscan.io/address'
+const ASDFGSCAN_BASE_URL = 'https://etherscan.io/address'
 
 module.exports = {
   externalAddrs,
-  liquityAddrs,
+  moneypAddrs,
   beneficiaries,
   OUTPUT_FILE,
   waitFunction,
   GAS_PRICE,
   TX_CONFIRMATIONS,
-  // ETHERSCAN_BASE_URL,
+  // ASDFGSCAN_BASE_URL,
 };

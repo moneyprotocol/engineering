@@ -10,7 +10,7 @@ const timeValues = testHelpers.TimeValues
 const { dec, toBN, assertRevert } = th
 
 contract('Deploying and funding One Year Lockup Contracts', async accounts => {
-  const [liquityAG, A, B, C, D, E, F, G, H, I, J] = accounts;
+  const [moneypAG, A, B, C, D, E, F, G, H, I, J] = accounts;
 
   const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000)
 
@@ -51,9 +51,9 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
     it("MP Deployer can deploy LCs through the Factory", async () => {
     
       // MP deployer deploys LCs
-      const LCDeploymentTx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: liquityAG })
-      const LCDeploymentTx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: liquityAG })
-      const LCDeploymentTx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: liquityAG })
+      const LCDeploymentTx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: moneypAG })
+      const LCDeploymentTx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: moneypAG })
+      const LCDeploymentTx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: moneypAG })
 
       assert.isTrue(LCDeploymentTx_A.receipt.status)
       assert.isTrue(LCDeploymentTx_B.receipt.status)
@@ -64,7 +64,7 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
       // Various EOAs deploy LCs
       const LCDeploymentTx_1 = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: G })
       const LCDeploymentTx_2 = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: H })
-      const LCDeploymentTx_3 = await lockupContractFactory.deployLockupContract(liquityAG, oneYearFromSystemDeployment, { from: I })
+      const LCDeploymentTx_3 = await lockupContractFactory.deployLockupContract(moneypAG, oneYearFromSystemDeployment, { from: I })
       const LCDeploymentTx_4 = await lockupContractFactory.deployLockupContract(D, oneYearFromSystemDeployment, { from: J })
 
       assert.isTrue(LCDeploymentTx_1.receipt.status)
@@ -75,13 +75,13 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
 
     it("MP Deployer can deploy LCs directly", async () => {
       // MP deployer deploys LCs
-      const LC_A = await LockupContract.new(mpToken.address, A, oneYearFromSystemDeployment, { from: liquityAG })
+      const LC_A = await LockupContract.new(mpToken.address, A, oneYearFromSystemDeployment, { from: moneypAG })
       const LC_A_txReceipt = await web3.eth.getTransactionReceipt(LC_A.transactionHash)
 
-      const LC_B = await LockupContract.new(mpToken.address, B, oneYearFromSystemDeployment, { from: liquityAG })
+      const LC_B = await LockupContract.new(mpToken.address, B, oneYearFromSystemDeployment, { from: moneypAG })
       const LC_B_txReceipt = await web3.eth.getTransactionReceipt(LC_B.transactionHash)
 
-      const LC_C = await LockupContract.new(mpToken.address, C, oneYearFromSystemDeployment, { from: liquityAG })
+      const LC_C = await LockupContract.new(mpToken.address, C, oneYearFromSystemDeployment, { from: moneypAG })
       const LC_C_txReceipt = await web3.eth.getTransactionReceipt(LC_C.transactionHash)
 
       // Check deployment succeeded
@@ -109,11 +109,11 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
 
     it("LC deployment stores the beneficiary's address in the LC", async () => {
       // Deploy 5 LCs
-      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_D = await lockupContractFactory.deployLockupContract(D, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_E = await lockupContractFactory.deployLockupContract(E, oneYearFromSystemDeployment, { from: liquityAG })
+      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_D = await lockupContractFactory.deployLockupContract(D, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_E = await lockupContractFactory.deployLockupContract(E, oneYearFromSystemDeployment, { from: moneypAG })
 
       // Grab contracts from deployment tx events
       const LC_A = await th.getLCFromDeploymentTx(deployedLCtx_A)
@@ -137,11 +137,11 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
 
     it("LC deployment through the Factory registers the LC in the Factory", async () => {
       // Deploy 5 LCs
-      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_D = await lockupContractFactory.deployLockupContract(D, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_E = await lockupContractFactory.deployLockupContract(E, oneYearFromSystemDeployment, { from: liquityAG })
+      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_D = await lockupContractFactory.deployLockupContract(D, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_E = await lockupContractFactory.deployLockupContract(E, oneYearFromSystemDeployment, { from: moneypAG })
 
       // Grab contract addresses from deployment tx events
       const LCAddress_A = await th.getLCAddressFromDeploymentTx(deployedLCtx_A)
@@ -159,11 +159,11 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
 
     it("LC deployment through the Factory records the LC contract address and deployer as a k-v pair in the Factory", async () => {
       // Deploy 5 LCs
-      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_D = await lockupContractFactory.deployLockupContract(D, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_E = await lockupContractFactory.deployLockupContract(E, oneYearFromSystemDeployment, { from: liquityAG })
+      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_D = await lockupContractFactory.deployLockupContract(D, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_E = await lockupContractFactory.deployLockupContract(E, oneYearFromSystemDeployment, { from: moneypAG })
 
       // Grab contract addresses from deployment tx events
       const LCAddress_A = await th.getLCAddressFromDeploymentTx(deployedLCtx_A)
@@ -172,16 +172,16 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
       const LCAddress_D = await th.getLCAddressFromDeploymentTx(deployedLCtx_D)
       const LCAddress_E = await th.getLCAddressFromDeploymentTx(deployedLCtx_E)
 
-      assert.equal(liquityAG, await lockupContractFactory.lockupContractToDeployer(LCAddress_A))
-      assert.equal(liquityAG, await lockupContractFactory.lockupContractToDeployer(LCAddress_B))
-      assert.equal(liquityAG, await lockupContractFactory.lockupContractToDeployer(LCAddress_C))
-      assert.equal(liquityAG, await lockupContractFactory.lockupContractToDeployer(LCAddress_D))
-      assert.equal(liquityAG, await lockupContractFactory.lockupContractToDeployer(LCAddress_E))
+      assert.equal(moneypAG, await lockupContractFactory.lockupContractToDeployer(LCAddress_A))
+      assert.equal(moneypAG, await lockupContractFactory.lockupContractToDeployer(LCAddress_B))
+      assert.equal(moneypAG, await lockupContractFactory.lockupContractToDeployer(LCAddress_C))
+      assert.equal(moneypAG, await lockupContractFactory.lockupContractToDeployer(LCAddress_D))
+      assert.equal(moneypAG, await lockupContractFactory.lockupContractToDeployer(LCAddress_E))
     })
 
     it("LC deployment through the Factory sets the unlockTime in the LC", async () => {
       // Deploy 3 LCs through factory
-      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: liquityAG })
+      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: moneypAG })
       const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, '230582305895235', { from: B })
       const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, dec(20, 18), { from: E })
 
@@ -203,7 +203,7 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
 
     it("Direct deployment of LC sets the unlockTime in the LC", async () => {
       // Deploy 3 LCs directly
-      const LC_A = await LockupContract.new(mpToken.address, A, oneYearFromSystemDeployment, { from: liquityAG })
+      const LC_A = await LockupContract.new(mpToken.address, A, oneYearFromSystemDeployment, { from: moneypAG })
       const LC_B = await LockupContract.new(mpToken.address, B, '230582305895235', { from: B })
       const LC_C = await LockupContract.new(mpToken.address, C, dec(20, 18), { from: E })
 
@@ -222,7 +222,7 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
       const nearlyOneYear = toBN(oneYearFromSystemDeployment).sub(toBN('60'))  // 1 minute short of 1 year
       
       // Deploy 3 LCs through factory
-      const LCDeploymentPromise_A = lockupContractFactory.deployLockupContract(A, nearlyOneYear, { from: liquityAG })
+      const LCDeploymentPromise_A = lockupContractFactory.deployLockupContract(A, nearlyOneYear, { from: moneypAG })
       const LCDeploymentPromise_B = lockupContractFactory.deployLockupContract(B, '37', { from: B })
       const LCDeploymentPromise_C = lockupContractFactory.deployLockupContract(C, '43200', { from: E })
 
@@ -236,7 +236,7 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
       const nearlyOneYear = toBN(oneYearFromSystemDeployment).sub(toBN('60'))  // 1 minute short of 1 year
       
       // Deploy 3 LCs directly with unlockTime < 1 year from system deployment
-      const LCDeploymentPromise_A = LockupContract.new(mpToken.address, A, nearlyOneYear, { from: liquityAG })
+      const LCDeploymentPromise_A = LockupContract.new(mpToken.address, A, nearlyOneYear, { from: moneypAG })
       const LCDeploymentPromise_B = LockupContract.new(mpToken.address, B, '37', { from: B })
       const LCDeploymentPromise_C = LockupContract.new(mpToken.address, C, '43200', { from: E })
      
@@ -252,11 +252,11 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
   describe('Funding LCs', async accounts => {
     it("MP transfer from MP deployer to their deployed LC increases the MP balance of the LC", async () => {
       // Deploy 5 LCs
-      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_D = await lockupContractFactory.deployLockupContract(D, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_E = await lockupContractFactory.deployLockupContract(E, oneYearFromSystemDeployment, { from: liquityAG })
+      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_D = await lockupContractFactory.deployLockupContract(D, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_E = await lockupContractFactory.deployLockupContract(E, oneYearFromSystemDeployment, { from: moneypAG })
 
       // Grab contract addresses from deployment tx events
       const LCAddress_A = await th.getLCAddressFromDeploymentTx(deployedLCtx_A)
@@ -326,9 +326,9 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
   describe('Withdrawal attempts on funded, inactive LCs immediately after funding', async accounts => {
     it("Beneficiary can't withdraw from their funded LC", async () => {
       // Deploy 3 LCs
-      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: liquityAG })
+      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: moneypAG })
 
       // Grab contract objects from deployment tx events
       const LC_A = await th.getLCFromDeploymentTx(deployedLCtx_A)
@@ -360,9 +360,9 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
 
     it("MP multisig can't withraw from a LC which it funded", async () => {
       // Deploy 3 LCs
-      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: liquityAG })
-      const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: liquityAG })
+      const deployedLCtx_A = await lockupContractFactory.deployLockupContract(A, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_B = await lockupContractFactory.deployLockupContract(B, oneYearFromSystemDeployment, { from: moneypAG })
+      const deployedLCtx_C = await lockupContractFactory.deployLockupContract(C, oneYearFromSystemDeployment, { from: moneypAG })
 
       // Grab contract objects from deployment tx events
       const LC_A = await th.getLCFromDeploymentTx(deployedLCtx_A)
@@ -398,7 +398,7 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
       // Grab contract objects from deployment tx events
       const LC_A = await th.getLCFromDeploymentTx(deployedLCtx_A)
 
-      // LiquityAG transfers MP to the LC
+      // MoneypAG transfers MP to the LC
       await mpToken.transfer(LC_A.address, MPEntitlement_A, { from: multisig })
 
       assert.equal(await mpToken.balanceOf(LC_A.address), MPEntitlement_A)

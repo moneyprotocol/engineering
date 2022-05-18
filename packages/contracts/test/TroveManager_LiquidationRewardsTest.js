@@ -556,7 +556,7 @@ contract('VaultManager - Redistribution reward calculations', async accounts => 
     assert.isTrue(txA.receipt.status)
     assert.isFalse(await sortedVaults.contains(alice))
 
-    // Expect Bob now holds all Bitcoin and BPDDebt in the system: 2 + 0.4975+0.4975*0.995+0.995 Bitcoin and 110*3 BPD (10 each for gas compensation)
+    // Expect Bob now holds all Ether and BPDDebt in the system: 2 + 0.4975+0.4975*0.995+0.995 Ether and 110*3 BPD (10 each for gas compensation)
     const bob_Coll = ((await vaultManager.Vaults(bob))[1]
       .add(await vaultManager.getPendingRBTCReward(bob)))
       .toString()
@@ -894,7 +894,7 @@ contract('VaultManager - Redistribution reward calculations', async accounts => 
     assert.isTrue(txA.receipt.status)
     assert.isFalse(await sortedVaults.contains(alice))
 
-    // Expect Bob now holds all Bitcoin and BPDDebt in the system: 2.5 Bitcoin and 300 BPD
+    // Expect Bob now holds all Ether and BPDDebt in the system: 2.5 Ether and 300 BPD
     // 1 + 0.995/2 - 0.5 + 1.4975*0.995
     const bob_Coll = ((await vaultManager.Vaults(bob))[1]
       .add(await vaultManager.getPendingRBTCReward(bob)))

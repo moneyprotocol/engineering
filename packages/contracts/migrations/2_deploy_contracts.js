@@ -37,7 +37,7 @@ module.exports = function(deployer) {
     const bpdToken = await BPDToken.deployed()
     const functionCaller = await FunctionCaller.deployed()
 
-    const liquityContracts = {
+    const moneypContracts = {
       borrowerOperations,
       priceFeed,
       bpdToken,
@@ -50,12 +50,12 @@ module.exports = function(deployer) {
     }
 
     // Grab contract addresses
-    const liquityAddresses = getAddresses(liquityContracts)
+    const moneypAddresses = getAddresses(moneypContracts)
     console.log('deploy_contracts.js - Deployed contract addresses: \n')
-    console.log(liquityAddresses)
+    console.log(moneypAddresses)
     console.log('\n')
 
     // Connect contracts to each other
-    await connectContracts(liquityContracts, liquityAddresses)
+    await connectContracts(moneypContracts, moneypAddresses)
   })
 }

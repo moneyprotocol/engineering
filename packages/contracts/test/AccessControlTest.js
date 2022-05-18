@@ -10,11 +10,11 @@ const toBN = th.toBN
 const assertRevert = th.assertRevert
 
 /* The majority of access control tests are contained in this file. However, tests for restrictions 
-on the Liquity admin address's capabilities during the first year are found in:
+on the Moneyp admin address's capabilities during the first year are found in:
 
 test/launchSequenceTest/DuringLockupPeriodTest.js */
 
-contract('Access Control: Liquity functions with the caller restricted to Liquity contract(s)', async accounts => {
+contract('Access Control: Moneyp functions with the caller restricted to Moneyp contract(s)', async accounts => {
 
   const [owner, alice, bob, carol] = accounts;
   const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000)
@@ -38,7 +38,7 @@ contract('Access Control: Liquity functions with the caller restricted to Liquit
   let lockupContractFactory
 
   before(async () => {
-    coreContracts = await deploymentHelper.deployLiquityCore()
+    coreContracts = await deploymentHelper.deployMoneypCore()
     coreContracts.vaultManager = await VaultManagerTester.new()
     coreContracts = await deploymentHelper.deployBPDTokenTester(coreContracts)
     const MPContracts = await deploymentHelper.deployMPTesterContractsHardhat(bountyAddress, lpRewardsAddress, multisig)
@@ -75,10 +75,10 @@ contract('Access Control: Liquity functions with the caller restricted to Liquit
   })
 
   describe('BorrowerOperations', async accounts => { 
-    it("moveETHGainToVault(): reverts when called by an account that is not StabilityPool", async () => {
+    it("moveRBTCGainToVault(): reverts when called by an account that is not StabilityPool", async () => {
       // Attempt call from alice
       try {
-        const tx1= await borrowerOperations.moveETHGainToVault(bob, bob, bob, { from: bob })
+        const tx1= await borrowerOperations.moveRBTCGainToVault(bob, bob, bob, { from: bob })
       } catch (err) {
          assert.include(err.message, "revert")
         // assert.include(err.message, "BorrowerOps: Caller is not Stability Pool")
@@ -221,11 +221,11 @@ contract('Access Control: Liquity functions with the caller restricted to Liquit
   })
 
   describe('ActivePool', async accounts => {
-    // sendETH
-    it("sendETH(): reverts when called by an account that is not BO nor VaultM nor SP", async () => {
+    // sendRBTC
+    it("sendRBTC(): reverts when called by an account that is not BO nor VaultM nor SP", async () => {
       // Attempt call from alice
       try {
-        const txAlice = await activePool.sendETH(alice, 100, { from: alice })
+        const txAlice = await activePool.sendRBTC(alice, 100, { from: alice })
         
       } catch (err) {
         assert.include(err.message, "revert")
@@ -271,11 +271,11 @@ contract('Access Control: Liquity functions with the caller restricted to Liquit
   })
 
   describe('DefaultPool', async accounts => {
-    // sendETHToActivePool
-    it("sendETHToActivePool(): reverts when called by an account that is not VaultManager", async () => {
+    // sendRBTCToActivePool
+    it("sendRBTCToActivePool(): reverts when called by an account that is not VaultManager", async () => {
       // Attempt call from alice
       try {
-        const txAlice = await defaultPool.sendETHToActivePool(100, { from: alice })
+        const txAlice = await defaultPool.sendRBTCToActivePool(100, { from: alice })
         
       } catch (err) {
         assert.include(err.message, "revert")

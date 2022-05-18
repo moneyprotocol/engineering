@@ -46,7 +46,7 @@ contract('MPStaking revenue share tests', async accounts => {
   const openVault = async (params) => th.openVault(contracts, params)
 
   beforeEach(async () => {
-    contracts = await deploymentHelper.deployLiquityCore()
+    contracts = await deploymentHelper.deployMoneypCore()
     contracts.vaultManager = await VaultManagerTester.new()
     contracts = await deploymentHelper.deployBPDTokenTester(contracts)
     const MPContracts = await deploymentHelper.deployMPTesterContractsHardhat(bountyAddress, lpRewardsAddress, multisig)
@@ -103,7 +103,7 @@ contract('MPStaking revenue share tests', async accounts => {
     await mpStaking.stake(dec(100, 18), {from: A})
 
     // Check RBTC fee per unit staked is zero
-    const F_RBTC_Before = await mpStaking.F_ETH()
+    const F_RBTC_Before = await mpStaking.F_RBTC()
     assert.equal(F_RBTC_Before, '0')
 
     const B_BalBeforeREdemption = await bpdToken.balanceOf(B)
@@ -114,14 +114,14 @@ contract('MPStaking revenue share tests', async accounts => {
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption))
 
     // check RBTC fee emitted in event is non-zero
-    const emittedETHFee = toBN((await th.getEmittedRedemptionValues(redemptionTx))[3])
-    assert.isTrue(emittedETHFee.gt(toBN('0')))
+    const emittedRBTCFee = toBN((await th.getEmittedRedemptionValues(redemptionTx))[3])
+    assert.isTrue(emittedRBTCFee.gt(toBN('0')))
 
     // Check RBTC fee per unit staked has increased by correct amount
-    const F_RBTC_After = await mpStaking.F_ETH()
+    const F_RBTC_After = await mpStaking.F_RBTC()
 
     // Expect fee per unit staked = fee/100, since there is 100 BPD totalStaked
-    const expected_F_RBTC_After = emittedETHFee.div(toBN('100')) 
+    const expected_F_RBTC_After = emittedRBTCFee.div(toBN('100')) 
 
     assert.isTrue(expected_F_RBTC_After.eq(F_RBTC_After))
   })
@@ -140,7 +140,7 @@ contract('MPStaking revenue share tests', async accounts => {
     await mpToken.transfer(A, dec(100, 18), {from: multisig})
 
     // Check RBTC fee per unit staked is zero
-    const F_RBTC_Before = await mpStaking.F_ETH()
+    const F_RBTC_Before = await mpStaking.F_RBTC()
     assert.equal(F_RBTC_Before, '0')
 
     const B_BalBeforeREdemption = await bpdToken.balanceOf(B)
@@ -151,11 +151,11 @@ contract('MPStaking revenue share tests', async accounts => {
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption))
 
     // check RBTC fee emitted in event is non-zero
-    const emittedETHFee = toBN((await th.getEmittedRedemptionValues(redemptionTx))[3])
-    assert.isTrue(emittedETHFee.gt(toBN('0')))
+    const emittedRBTCFee = toBN((await th.getEmittedRedemptionValues(redemptionTx))[3])
+    assert.isTrue(emittedRBTCFee.gt(toBN('0')))
 
     // Check RBTC fee per unit staked has not increased 
-    const F_RBTC_After = await mpStaking.F_ETH()
+    const F_RBTC_After = await mpStaking.F_RBTC()
     assert.equal(F_RBTC_After, '0')
   })
 
@@ -177,7 +177,7 @@ contract('MPStaking revenue share tests', async accounts => {
     await mpStaking.stake(dec(100, 18), {from: A})
 
     // Check BPD fee per unit staked is zero
-    const F_BPD_Before = await mpStaking.F_ETH()
+    const F_BPD_Before = await mpStaking.F_RBTC()
     assert.equal(F_BPD_Before, '0')
 
     const B_BalBeforeREdemption = await bpdToken.balanceOf(B)
@@ -221,7 +221,7 @@ contract('MPStaking revenue share tests', async accounts => {
     await mpToken.transfer(A, dec(100, 18), {from: multisig})
 
     // Check BPD fee per unit staked is zero
-    const F_BPD_Before = await mpStaking.F_ETH()
+    const F_BPD_Before = await mpStaking.F_RBTC()
     assert.equal(F_BPD_Before, '0')
 
     const B_BalBeforeREdemption = await bpdToken.balanceOf(B)
@@ -272,8 +272,8 @@ contract('MPStaking revenue share tests', async accounts => {
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption))
 
     // check RBTC fee 1 emitted in event is non-zero
-    const emittedETHFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3])
-    assert.isTrue(emittedETHFee_1.gt(toBN('0')))
+    const emittedRBTCFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3])
+    assert.isTrue(emittedRBTCFee_1.gt(toBN('0')))
 
     const C_BalBeforeREdemption = await bpdToken.balanceOf(C)
     // C redeems
@@ -283,8 +283,8 @@ contract('MPStaking revenue share tests', async accounts => {
     assert.isTrue(C_BalAfterRedemption.lt(C_BalBeforeREdemption))
  
      // check RBTC fee 2 emitted in event is non-zero
-     const emittedETHFee_2 = toBN((await th.getEmittedRedemptionValues(redemptionTx_2))[3])
-     assert.isTrue(emittedETHFee_2.gt(toBN('0')))
+     const emittedRBTCFee_2 = toBN((await th.getEmittedRedemptionValues(redemptionTx_2))[3])
+     assert.isTrue(emittedRBTCFee_2.gt(toBN('0')))
 
     // D draws debt
     const borrowingTx_1 = await borrowerOperations.withdrawBPD(th._100pct, dec(104, 18), D, D, {from: D})
@@ -300,23 +300,23 @@ contract('MPStaking revenue share tests', async accounts => {
     const emittedBPDFee_2 = toBN(th.getBPDFeeFromBPDBorrowingEvent(borrowingTx_2))
     assert.isTrue(emittedBPDFee_2.gt(toBN('0')))
 
-    const expectedTotalETHGain = emittedETHFee_1.add(emittedETHFee_2)
+    const expectedTotalRBTCGain = emittedRBTCFee_1.add(emittedRBTCFee_2)
     const expectedTotalBPDGain = emittedBPDFee_1.add(emittedBPDFee_2)
 
-    const A_ETHBalance_Before = toBN(await web3.eth.getBalance(A))
+    const A_RBTCBalance_Before = toBN(await web3.eth.getBalance(A))
     const A_BPDBalance_Before = toBN(await bpdToken.balanceOf(A))
 
     // A un-stakes
     await mpStaking.unstake(dec(100, 18), {from: A, gasPrice: 0})
 
-    const A_ETHBalance_After = toBN(await web3.eth.getBalance(A))
+    const A_RBTCBalance_After = toBN(await web3.eth.getBalance(A))
     const A_BPDBalance_After = toBN(await bpdToken.balanceOf(A))
 
 
-    const A_ETHGain = A_ETHBalance_After.sub(A_ETHBalance_Before)
+    const A_RBTCGain = A_RBTCBalance_After.sub(A_RBTCBalance_Before)
     const A_BPDGain = A_BPDBalance_After.sub(A_BPDBalance_Before)
 
-    assert.isAtMost(th.getDifference(expectedTotalETHGain, A_ETHGain), 1000)
+    assert.isAtMost(th.getDifference(expectedTotalRBTCGain, A_RBTCGain), 1000)
     assert.isAtMost(th.getDifference(expectedTotalBPDGain, A_BPDGain), 1000)
   })
 
@@ -345,8 +345,8 @@ contract('MPStaking revenue share tests', async accounts => {
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption))
 
     // check RBTC fee 1 emitted in event is non-zero
-    const emittedETHFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3])
-    assert.isTrue(emittedETHFee_1.gt(toBN('0')))
+    const emittedRBTCFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3])
+    assert.isTrue(emittedRBTCFee_1.gt(toBN('0')))
 
     const C_BalBeforeREdemption = await bpdToken.balanceOf(C)
     // C redeems
@@ -356,8 +356,8 @@ contract('MPStaking revenue share tests', async accounts => {
     assert.isTrue(C_BalAfterRedemption.lt(C_BalBeforeREdemption))
  
      // check RBTC fee 2 emitted in event is non-zero
-     const emittedETHFee_2 = toBN((await th.getEmittedRedemptionValues(redemptionTx_2))[3])
-     assert.isTrue(emittedETHFee_2.gt(toBN('0')))
+     const emittedRBTCFee_2 = toBN((await th.getEmittedRedemptionValues(redemptionTx_2))[3])
+     assert.isTrue(emittedRBTCFee_2.gt(toBN('0')))
 
     // D draws debt
     const borrowingTx_1 = await borrowerOperations.withdrawBPD(th._100pct, dec(104, 18), D, D, {from: D})
@@ -373,26 +373,26 @@ contract('MPStaking revenue share tests', async accounts => {
     const emittedBPDFee_2 = toBN(th.getBPDFeeFromBPDBorrowingEvent(borrowingTx_2))
     assert.isTrue(emittedBPDFee_2.gt(toBN('0')))
 
-    const expectedTotalETHGain = emittedETHFee_1.add(emittedETHFee_2)
+    const expectedTotalRBTCGain = emittedRBTCFee_1.add(emittedRBTCFee_2)
     const expectedTotalBPDGain = emittedBPDFee_1.add(emittedBPDFee_2)
 
-    const A_ETHBalance_Before = toBN(await web3.eth.getBalance(A))
+    const A_RBTCBalance_Before = toBN(await web3.eth.getBalance(A))
     const A_BPDBalance_Before = toBN(await bpdToken.balanceOf(A))
 
     // A tops up
     await mpStaking.stake(dec(50, 18), {from: A, gasPrice: 0})
 
-    const A_ETHBalance_After = toBN(await web3.eth.getBalance(A))
+    const A_RBTCBalance_After = toBN(await web3.eth.getBalance(A))
     const A_BPDBalance_After = toBN(await bpdToken.balanceOf(A))
 
-    const A_ETHGain = A_ETHBalance_After.sub(A_ETHBalance_Before)
+    const A_RBTCGain = A_RBTCBalance_After.sub(A_RBTCBalance_Before)
     const A_BPDGain = A_BPDBalance_After.sub(A_BPDBalance_Before)
 
-    assert.isAtMost(th.getDifference(expectedTotalETHGain, A_ETHGain), 1000)
+    assert.isAtMost(th.getDifference(expectedTotalRBTCGain, A_RBTCGain), 1000)
     assert.isAtMost(th.getDifference(expectedTotalBPDGain, A_BPDGain), 1000)
   })
 
-  it("getPendingETHGain(): Returns the staker's correct pending RBTC gain", async () => { 
+  it("getPendingRBTCGain(): Returns the staker's correct pending RBTC gain", async () => { 
     await openVault({ extraBPDAmount: toBN(dec(10000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: whale } })
     await openVault({ extraBPDAmount: toBN(dec(20000, 18)), ICR: toBN(dec(2, 18)), extraParams: { from: A } })
     await openVault({ extraBPDAmount: toBN(dec(30000, 18)), ICR: toBN(dec(2, 18)), extraParams: { from: B } })
@@ -417,8 +417,8 @@ contract('MPStaking revenue share tests', async accounts => {
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption))
 
     // check RBTC fee 1 emitted in event is non-zero
-    const emittedETHFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3])
-    assert.isTrue(emittedETHFee_1.gt(toBN('0')))
+    const emittedRBTCFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3])
+    assert.isTrue(emittedRBTCFee_1.gt(toBN('0')))
 
     const C_BalBeforeREdemption = await bpdToken.balanceOf(C)
     // C redeems
@@ -428,14 +428,14 @@ contract('MPStaking revenue share tests', async accounts => {
     assert.isTrue(C_BalAfterRedemption.lt(C_BalBeforeREdemption))
  
      // check RBTC fee 2 emitted in event is non-zero
-     const emittedETHFee_2 = toBN((await th.getEmittedRedemptionValues(redemptionTx_2))[3])
-     assert.isTrue(emittedETHFee_2.gt(toBN('0')))
+     const emittedRBTCFee_2 = toBN((await th.getEmittedRedemptionValues(redemptionTx_2))[3])
+     assert.isTrue(emittedRBTCFee_2.gt(toBN('0')))
 
-    const expectedTotalETHGain = emittedETHFee_1.add(emittedETHFee_2)
+    const expectedTotalRBTCGain = emittedRBTCFee_1.add(emittedRBTCFee_2)
 
-    const A_ETHGain = await mpStaking.getPendingETHGain(A)
+    const A_RBTCGain = await mpStaking.getPendingRBTCGain(A)
 
-    assert.isAtMost(th.getDifference(expectedTotalETHGain, A_ETHGain), 1000)
+    assert.isAtMost(th.getDifference(expectedTotalRBTCGain, A_RBTCGain), 1000)
   })
 
   it("getPendingBPDGain(): Returns the staker's correct pending BPD gain", async () => { 
@@ -463,8 +463,8 @@ contract('MPStaking revenue share tests', async accounts => {
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption))
 
     // check RBTC fee 1 emitted in event is non-zero
-    const emittedETHFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3])
-    assert.isTrue(emittedETHFee_1.gt(toBN('0')))
+    const emittedRBTCFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3])
+    assert.isTrue(emittedRBTCFee_1.gt(toBN('0')))
 
     const C_BalBeforeREdemption = await bpdToken.balanceOf(C)
     // C redeems
@@ -474,8 +474,8 @@ contract('MPStaking revenue share tests', async accounts => {
     assert.isTrue(C_BalAfterRedemption.lt(C_BalBeforeREdemption))
  
      // check RBTC fee 2 emitted in event is non-zero
-     const emittedETHFee_2 = toBN((await th.getEmittedRedemptionValues(redemptionTx_2))[3])
-     assert.isTrue(emittedETHFee_2.gt(toBN('0')))
+     const emittedRBTCFee_2 = toBN((await th.getEmittedRedemptionValues(redemptionTx_2))[3])
+     assert.isTrue(emittedRBTCFee_2.gt(toBN('0')))
 
     // D draws debt
     const borrowingTx_1 = await borrowerOperations.withdrawBPD(th._100pct, dec(104, 18), D, D, {from: D})
@@ -531,13 +531,13 @@ contract('MPStaking revenue share tests', async accounts => {
 
     // F redeems
     const redemptionTx_1 = await th.redeemCollateralAndGetTxObject(F, contracts, dec(45, 18))
-    const emittedETHFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3])
-    assert.isTrue(emittedETHFee_1.gt(toBN('0')))
+    const emittedRBTCFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3])
+    assert.isTrue(emittedRBTCFee_1.gt(toBN('0')))
 
      // G redeems
      const redemptionTx_2 = await th.redeemCollateralAndGetTxObject(G, contracts, dec(197, 18))
-     const emittedETHFee_2 = toBN((await th.getEmittedRedemptionValues(redemptionTx_2))[3])
-     assert.isTrue(emittedETHFee_2.gt(toBN('0')))
+     const emittedRBTCFee_2 = toBN((await th.getEmittedRedemptionValues(redemptionTx_2))[3])
+     assert.isTrue(emittedRBTCFee_2.gt(toBN('0')))
 
     // F draws debt
     const borrowingTx_1 = await borrowerOperations.withdrawBPD(th._100pct, dec(104, 18), F, F, {from: F})
@@ -560,8 +560,8 @@ contract('MPStaking revenue share tests', async accounts => {
 
      // G redeems
      const redemptionTx_3 = await th.redeemCollateralAndGetTxObject(C, contracts, dec(197, 18))
-     const emittedETHFee_3 = toBN((await th.getEmittedRedemptionValues(redemptionTx_3))[3])
-     assert.isTrue(emittedETHFee_3.gt(toBN('0')))
+     const emittedRBTCFee_3 = toBN((await th.getEmittedRedemptionValues(redemptionTx_3))[3])
+     assert.isTrue(emittedRBTCFee_3.gt(toBN('0')))
 
      // G draws debt
     const borrowingTx_3 = await borrowerOperations.withdrawBPD(th._100pct, dec(17, 18), G, G, {from: G})
@@ -571,10 +571,10 @@ contract('MPStaking revenue share tests', async accounts => {
     /*  
     Expected rewards:
 
-    A_ETH: (100* ETHFee_1)/600 + (100* ETHFee_2)/600 + (100*RBTC_Fee_3)/650
-    B_ETH: (200* ETHFee_1)/600 + (200* ETHFee_2)/600 + (200*RBTC_Fee_3)/650
-    C_ETH: (300* ETHFee_1)/600 + (300* ETHFee_2)/600 + (300*RBTC_Fee_3)/650
-    D_ETH:                                             (100*RBTC_Fee_3)/650
+    A_RBTC: (100* RBTCFee_1)/600 + (100* RBTCFee_2)/600 + (100*RBTC_Fee_3)/650
+    B_RBTC: (200* RBTCFee_1)/600 + (200* RBTCFee_2)/600 + (200*RBTC_Fee_3)/650
+    C_RBTC: (300* RBTCFee_1)/600 + (300* RBTCFee_2)/600 + (300*RBTC_Fee_3)/650
+    D_RBTC:                                             (100*RBTC_Fee_3)/650
 
     A_BPD: (100*BPDFee_1 )/600 + (100* BPDFee_2)/600 + (100*BPDFee_3)/650
     B_BPD: (200* BPDFee_1)/600 + (200* BPDFee_2)/600 + (200*BPDFee_3)/650
@@ -583,19 +583,19 @@ contract('MPStaking revenue share tests', async accounts => {
     */
 
     // Expected RBTC gains
-    const expectedETHGain_A = toBN('100').mul(emittedETHFee_1).div( toBN('600'))
-                            .add(toBN('100').mul(emittedETHFee_2).div( toBN('600')))
-                            .add(toBN('100').mul(emittedETHFee_3).div( toBN('650')))
+    const expectedRBTCGain_A = toBN('100').mul(emittedRBTCFee_1).div( toBN('600'))
+                            .add(toBN('100').mul(emittedRBTCFee_2).div( toBN('600')))
+                            .add(toBN('100').mul(emittedRBTCFee_3).div( toBN('650')))
 
-    const expectedETHGain_B = toBN('200').mul(emittedETHFee_1).div( toBN('600'))
-                            .add(toBN('200').mul(emittedETHFee_2).div( toBN('600')))
-                            .add(toBN('200').mul(emittedETHFee_3).div( toBN('650')))
+    const expectedRBTCGain_B = toBN('200').mul(emittedRBTCFee_1).div( toBN('600'))
+                            .add(toBN('200').mul(emittedRBTCFee_2).div( toBN('600')))
+                            .add(toBN('200').mul(emittedRBTCFee_3).div( toBN('650')))
 
-    const expectedETHGain_C = toBN('300').mul(emittedETHFee_1).div( toBN('600'))
-                            .add(toBN('300').mul(emittedETHFee_2).div( toBN('600')))
-                            .add(toBN('300').mul(emittedETHFee_3).div( toBN('650')))
+    const expectedRBTCGain_C = toBN('300').mul(emittedRBTCFee_1).div( toBN('600'))
+                            .add(toBN('300').mul(emittedRBTCFee_2).div( toBN('600')))
+                            .add(toBN('300').mul(emittedRBTCFee_3).div( toBN('650')))
 
-    const expectedETHGain_D = toBN('50').mul(emittedETHFee_3).div( toBN('650'))
+    const expectedRBTCGain_D = toBN('50').mul(emittedRBTCFee_3).div( toBN('650'))
 
     // Expected BPD gains:
     const expectedBPDGain_A = toBN('100').mul(emittedBPDFee_1).div( toBN('600'))
@@ -613,13 +613,13 @@ contract('MPStaking revenue share tests', async accounts => {
     const expectedBPDGain_D = toBN('50').mul(emittedBPDFee_3).div( toBN('650'))
 
 
-    const A_ETHBalance_Before = toBN(await web3.eth.getBalance(A))
+    const A_RBTCBalance_Before = toBN(await web3.eth.getBalance(A))
     const A_BPDBalance_Before = toBN(await bpdToken.balanceOf(A))
-    const B_ETHBalance_Before = toBN(await web3.eth.getBalance(B))
+    const B_RBTCBalance_Before = toBN(await web3.eth.getBalance(B))
     const B_BPDBalance_Before = toBN(await bpdToken.balanceOf(B))
-    const C_ETHBalance_Before = toBN(await web3.eth.getBalance(C))
+    const C_RBTCBalance_Before = toBN(await web3.eth.getBalance(C))
     const C_BPDBalance_Before = toBN(await bpdToken.balanceOf(C))
-    const D_ETHBalance_Before = toBN(await web3.eth.getBalance(D))
+    const D_RBTCBalance_Before = toBN(await web3.eth.getBalance(D))
     const D_BPDBalance_Before = toBN(await bpdToken.balanceOf(D))
 
     // A-D un-stake
@@ -635,33 +635,33 @@ contract('MPStaking revenue share tests', async accounts => {
     assert.equal((await mpStaking.totalMPStaked()), '0')
 
     // Get A-D RBTC and BPD balances
-    const A_ETHBalance_After = toBN(await web3.eth.getBalance(A))
+    const A_RBTCBalance_After = toBN(await web3.eth.getBalance(A))
     const A_BPDBalance_After = toBN(await bpdToken.balanceOf(A))
-    const B_ETHBalance_After = toBN(await web3.eth.getBalance(B))
+    const B_RBTCBalance_After = toBN(await web3.eth.getBalance(B))
     const B_BPDBalance_After = toBN(await bpdToken.balanceOf(B))
-    const C_ETHBalance_After = toBN(await web3.eth.getBalance(C))
+    const C_RBTCBalance_After = toBN(await web3.eth.getBalance(C))
     const C_BPDBalance_After = toBN(await bpdToken.balanceOf(C))
-    const D_ETHBalance_After = toBN(await web3.eth.getBalance(D))
+    const D_RBTCBalance_After = toBN(await web3.eth.getBalance(D))
     const D_BPDBalance_After = toBN(await bpdToken.balanceOf(D))
 
     // Get RBTC and BPD gains
-    const A_ETHGain = A_ETHBalance_After.sub(A_ETHBalance_Before)
+    const A_RBTCGain = A_RBTCBalance_After.sub(A_RBTCBalance_Before)
     const A_BPDGain = A_BPDBalance_After.sub(A_BPDBalance_Before)
-    const B_ETHGain = B_ETHBalance_After.sub(B_ETHBalance_Before)
+    const B_RBTCGain = B_RBTCBalance_After.sub(B_RBTCBalance_Before)
     const B_BPDGain = B_BPDBalance_After.sub(B_BPDBalance_Before)
-    const C_ETHGain = C_ETHBalance_After.sub(C_ETHBalance_Before)
+    const C_RBTCGain = C_RBTCBalance_After.sub(C_RBTCBalance_Before)
     const C_BPDGain = C_BPDBalance_After.sub(C_BPDBalance_Before)
-    const D_ETHGain = D_ETHBalance_After.sub(D_ETHBalance_Before)
+    const D_RBTCGain = D_RBTCBalance_After.sub(D_RBTCBalance_Before)
     const D_BPDGain = D_BPDBalance_After.sub(D_BPDBalance_Before)
 
     // Check gains match expected amounts
-    assert.isAtMost(th.getDifference(expectedETHGain_A, A_ETHGain), 1000)
+    assert.isAtMost(th.getDifference(expectedRBTCGain_A, A_RBTCGain), 1000)
     assert.isAtMost(th.getDifference(expectedBPDGain_A, A_BPDGain), 1000)
-    assert.isAtMost(th.getDifference(expectedETHGain_B, B_ETHGain), 1000)
+    assert.isAtMost(th.getDifference(expectedRBTCGain_B, B_RBTCGain), 1000)
     assert.isAtMost(th.getDifference(expectedBPDGain_B, B_BPDGain), 1000)
-    assert.isAtMost(th.getDifference(expectedETHGain_C, C_ETHGain), 1000)
+    assert.isAtMost(th.getDifference(expectedRBTCGain_C, C_RBTCGain), 1000)
     assert.isAtMost(th.getDifference(expectedBPDGain_C, C_BPDGain), 1000)
-    assert.isAtMost(th.getDifference(expectedETHGain_D, D_ETHGain), 1000)
+    assert.isAtMost(th.getDifference(expectedRBTCGain_D, D_RBTCGain), 1000)
     assert.isAtMost(th.getDifference(expectedBPDGain_D, D_BPDGain), 1000)
   })
  
@@ -690,8 +690,8 @@ contract('MPStaking revenue share tests', async accounts => {
     // B makes a redemption, creating RBTC gain for proxy
     const redemptionTx_1 = await th.redeemCollateralAndGetTxObject(B, contracts, dec(45, 18))
     
-    const proxy_ETHGain = await mpStaking.getPendingETHGain(nonPayable.address)
-    assert.isTrue(proxy_ETHGain.gt(toBN('0')))
+    const proxy_RBTCGain = await mpStaking.getPendingRBTCGain(nonPayable.address)
+    assert.isTrue(proxy_RBTCGain.gt(toBN('0')))
 
     // Expect this tx to revert: stake() tries to send nonPayable proxy's accumulated RBTC gain (albeit 0),
     //  A tells proxy to unstake

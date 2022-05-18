@@ -25,14 +25,14 @@ contract('StabilityPool', async accounts => {
     await stabilityPool.setAddresses(dumbContractAddress, dumbContractAddress, mockActivePoolAddress, dumbContractAddress, dumbContractAddress, dumbContractAddress, dumbContractAddress)
   })
 
-  it('getETH(): gets the recorded RBTC balance', async () => {
-    const recordedETHBalance = await stabilityPool.getETH()
-    assert.equal(recordedETHBalance, 0)
+  it('getRBTC(): gets the recorded RBTC balance', async () => {
+    const recordedRBTCBalance = await stabilityPool.getRBTC()
+    assert.equal(recordedRBTCBalance, 0)
   })
 
   it('getTotalBPDDeposits(): gets the recorded BPD balance', async () => {
-    const recordedETHBalance = await stabilityPool.getTotalBPDDeposits()
-    assert.equal(recordedETHBalance, 0)
+    const recordedRBTCBalance = await stabilityPool.getTotalBPDDeposits()
+    assert.equal(recordedRBTCBalance, 0)
   })
 })
 
@@ -48,14 +48,14 @@ contract('ActivePool', async accounts => {
     await activePool.setAddresses(mockBorrowerOperations.address, dumbContractAddress, dumbContractAddress, dumbContractAddress)
   })
 
-  it('getETH(): gets the recorded RBTC balance', async () => {
-    const recordedETHBalance = await activePool.getETH()
-    assert.equal(recordedETHBalance, 0)
+  it('getRBTC(): gets the recorded RBTC balance', async () => {
+    const recordedRBTCBalance = await activePool.getRBTC()
+    assert.equal(recordedRBTCBalance, 0)
   })
 
   it('getBPDDebt(): gets the recorded BPD balance', async () => {
-    const recordedETHBalance = await activePool.getBPDDebt()
-    assert.equal(recordedETHBalance, 0)
+    const recordedRBTCBalance = await activePool.getBPDDebt()
+    assert.equal(recordedRBTCBalance, 0)
   })
  
   it('increaseBPD(): increases the recorded BPD balance by the correct amount', async () => {
@@ -89,7 +89,7 @@ contract('ActivePool', async accounts => {
   })
 
   // send raw ether
-  it('sendETH(): decreases the recorded RBTC balance by the correct amount', async () => {
+  it('sendRBTC(): decreases the recorded RBTC balance by the correct amount', async () => {
     // setup: give pool 2 ether
     const activePool_initialBalance = web3.utils.toBN(await web3.eth.getBalance(activePool.address))
     assert.equal(activePool_initialBalance, 0)
@@ -104,9 +104,9 @@ contract('ActivePool', async accounts => {
     assert.equal(activePool_BalanceBeforeTx, dec(2, 'ether'))
 
     // send ether from pool to alice
-    //await activePool.sendETH(alice, dec(1, 'ether'), { from: mockBorrowerOperationsAddress })
-    const sendETHData = th.getTransactionData('sendETH(address,uint256)', [alice, web3.utils.toHex(dec(1, 'ether'))])
-    const tx2 = await mockBorrowerOperations.forward(activePool.address, sendETHData, { from: owner })
+    //await activePool.sendRBTC(alice, dec(1, 'ether'), { from: mockBorrowerOperationsAddress })
+    const sendRBTCData = th.getTransactionData('sendRBTC(address,uint256)', [alice, web3.utils.toHex(dec(1, 'ether'))])
+    const tx2 = await mockBorrowerOperations.forward(activePool.address, sendRBTCData, { from: owner })
     assert.isTrue(tx2.receipt.status)
 
     const activePool_BalanceAfterTx = web3.utils.toBN(await web3.eth.getBalance(activePool.address))
@@ -131,14 +131,14 @@ contract('DefaultPool', async accounts => {
     await defaultPool.setAddresses(mockVaultManager.address, mockActivePool.address)
   })
 
-  it('getETH(): gets the recorded BPD balance', async () => {
-    const recordedETHBalance = await defaultPool.getETH()
-    assert.equal(recordedETHBalance, 0)
+  it('getRBTC(): gets the recorded BPD balance', async () => {
+    const recordedRBTCBalance = await defaultPool.getRBTC()
+    assert.equal(recordedRBTCBalance, 0)
   })
 
   it('getBPDDebt(): gets the recorded BPD balance', async () => {
-    const recordedETHBalance = await defaultPool.getBPDDebt()
-    assert.equal(recordedETHBalance, 0)
+    const recordedRBTCBalance = await defaultPool.getBPDDebt()
+    assert.equal(recordedRBTCBalance, 0)
   })
  
   it('increaseBPD(): increases the recorded BPD balance by the correct amount', async () => {
@@ -174,7 +174,7 @@ contract('DefaultPool', async accounts => {
   })
 
   // send raw ether
-  it('sendETHToActivePool(): decreases the recorded RBTC balance by the correct amount', async () => {
+  it('sendRBTCToActivePool(): decreases the recorded RBTC balance by the correct amount', async () => {
     // setup: give pool 2 ether
     const defaultPool_initialBalance = web3.utils.toBN(await web3.eth.getBalance(defaultPool.address))
     assert.equal(defaultPool_initialBalance, 0)
@@ -190,10 +190,10 @@ contract('DefaultPool', async accounts => {
     assert.equal(defaultPool_BalanceBeforeTx, dec(2, 'ether'))
 
     // send ether from pool to alice
-    //await defaultPool.sendETHToActivePool(dec(1, 'ether'), { from: mockVaultManagerAddress })
-    const sendETHData = th.getTransactionData('sendETHToActivePool(uint256)', [web3.utils.toHex(dec(1, 'ether'))])
+    //await defaultPool.sendRBTCToActivePool(dec(1, 'ether'), { from: mockVaultManagerAddress })
+    const sendRBTCData = th.getTransactionData('sendRBTCToActivePool(uint256)', [web3.utils.toHex(dec(1, 'ether'))])
     await mockActivePool.setPayable(true)
-    const tx2 = await mockVaultManager.forward(defaultPool.address, sendETHData, { from: owner })
+    const tx2 = await mockVaultManager.forward(defaultPool.address, sendRBTCData, { from: owner })
     assert.isTrue(tx2.receipt.status)
 
     const defaultPool_BalanceAfterTx = web3.utils.toBN(await web3.eth.getBalance(defaultPool.address))
