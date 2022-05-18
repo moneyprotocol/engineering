@@ -1,7 +1,7 @@
 const fs = require('fs')
 const deploymentHelper = require("../utils/deploymentHelpers.js")
 const testHelpers = require("../utils/testHelpers.js")
-const TroveManagerTester = artifacts.require("./TroveManagerTester.sol")
+const VaultManagerTester = artifacts.require("./VaultManagerTester.sol")
 const LiquityMathTester = artifacts.require("./LiquityMathTester.sol")
 
 const th = testHelpers.TestHelper
@@ -15,12 +15,12 @@ contract('Gas costs for math functions', async accounts => {
   const lpRewardsAddress = accounts[999]
 
   let contracts
-  let troveManagerTester
+  let vaultManagerTester
   let mathTester
 
   before(async () => {
-    troveManagerTester = await TroveManagerTester.new()
-    TroveManagerTester.setAsDeployed(troveManagerTester)
+    vaultManagerTester = await VaultManagerTester.new()
+    VaultManagerTester.setAsDeployed(vaultManagerTester)
 
     mathTester = await LiquityMathTester.new()
     LiquityMathTester.setAsDeployed(mathTester)
@@ -28,26 +28,26 @@ contract('Gas costs for math functions', async accounts => {
 
   beforeEach(async () => {
     contracts = await deploymentHelper.deployLiquityCore()
-    const LQTYContracts = await deploymentHelper.deployLQTYContracts(bountyAddress, lpRewardsAddress)
+    const MPContracts = await deploymentHelper.deployMPContracts(bountyAddress, lpRewardsAddress)
 
     priceFeed = contracts.priceFeedTestnet
-    lusdToken = contracts.lusdToken
-    sortedTroves = contracts.sortedTroves
-    troveManager = contracts.troveManager
+    bpdToken = contracts.bpdToken
+    sortedVaults = contracts.sortedVaults
+    vaultManager = contracts.vaultManager
     activePool = contracts.activePool
     stabilityPool = contracts.stabilityPool
     defaultPool = contracts.defaultPool
     borrowerOperations = contracts.borrowerOperations
     hintHelpers = contracts.hintHelpers
 
-    gtStaking = LQTYContracts.gtStaking
-    lqtyToken = LQTYContracts.lqtyToken
-    communityIssuance = LQTYContracts.communityIssuance
-    lockupContractFactory = LQTYContracts.lockupContractFactory
+    gtStaking = MPContracts.gtStaking
+    mpToken = MPContracts.mpToken
+    communityIssuance = MPContracts.communityIssuance
+    lockupContractFactory = MPContracts.lockupContractFactory
 
-    await deploymentHelper.connectCoreContracts(contracts, LQTYContracts)
-    await deploymentHelper.connectLQTYContracts(LQTYContracts)
-    await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, contracts)
+    await deploymentHelper.connectCoreContracts(contracts, MPContracts)
+    await deploymentHelper.connectMPContracts(MPContracts)
+    await deploymentHelper.connectMPContractsToCore(MPContracts, contracts)
   })
 
   // performs n runs of exponentiation on a random base

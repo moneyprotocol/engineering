@@ -1,27 +1,27 @@
 // Hardhat script
-const SortedTroves = artifacts.require("./SortedTroves.sol")
-const TroveManager = artifacts.require("./TroveManager.sol")
+const SortedVaults = artifacts.require("./SortedVaults.sol")
+const VaultManager = artifacts.require("./VaultManager.sol")
 const PriceFeed = artifacts.require("./PriceFeed.sol")
-const LUSDToken = artifacts.require("./LUSDToken.sol")
+const BPDToken = artifacts.require("./BPDToken.sol")
 const ActivePool = artifacts.require("./ActivePool.sol");
 const DefaultPool = artifacts.require("./DefaultPool.sol");
 const StabilityPool = artifacts.require("./StabilityPool.sol")
 const FunctionCaller = artifacts.require("./FunctionCaller.sol")
 const BorrowerOperations = artifacts.require("./BorrowerOperations.sol")
 
-const LQTYStaking = artifacts.require("./LQTY/LQTYStaking.sol")
-const LQTYToken = artifacts.require("./LQTY/LQTYToken.sol")
-const LockupContractFactory = artifacts.require("./LQTY/LockupContractFactory.sol")
-const CommunityIssuance = artifacts.require("./LQTY/CommunityIssuance.sol")
+const MPStaking = artifacts.require("./MP/MPStaking.sol")
+const MPToken = artifacts.require("./MP/MPToken.sol")
+const LockupContractFactory = artifacts.require("./MP/LockupContractFactory.sol")
+const CommunityIssuance = artifacts.require("./MP/CommunityIssuance.sol")
 const HintHelpers = artifacts.require("./HintHelpers.sol")
 
-const CommunityIssuanceTester = artifacts.require("./LQTY/CommunityIssuanceTester.sol")
+const CommunityIssuanceTester = artifacts.require("./MP/CommunityIssuanceTester.sol")
 const ActivePoolTester = artifacts.require("./ActivePoolTester.sol")
 const DefaultPoolTester = artifacts.require("./DefaultPoolTester.sol")
 const LiquityMathTester = artifacts.require("./LiquityMathTester.sol")
 const BorrowerOperationsTester = artifacts.require("./BorrowerOperationsTester.sol")
-const TroveManagerTester = artifacts.require("./TroveManagerTester.sol")
-const LUSDTokenTester = artifacts.require("./LUSDTokenTester.sol")
+const VaultManagerTester = artifacts.require("./VaultManagerTester.sol")
+const BPDTokenTester = artifacts.require("./BPDTokenTester.sol")
 
 const { TestHelper: th } = require("../utils/testHelpers.js")
 
@@ -31,9 +31,9 @@ const ARBITRARY_ADDRESS = "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419"   // plac
 const coreContractABIs = [
   BorrowerOperations,
   PriceFeed,
-  LUSDToken,
-  SortedTroves,
-  TroveManager,
+  BPDToken,
+  SortedVaults,
+  VaultManager,
   ActivePool,
   StabilityPool,
   DefaultPool,
@@ -41,9 +41,9 @@ const coreContractABIs = [
   HintHelpers,
 ]
 
-const LQTYContractABIs = [
-  LQTYStaking,
-  LQTYToken,
+const MPContractABIs = [
+  MPStaking,
+  MPToken,
   LockupContractFactory,
   CommunityIssuance
 ]
@@ -54,8 +54,8 @@ const TesterContractABIs  = [
   DefaultPoolTester,
   LiquityMathTester,
   BorrowerOperationsTester,
-  TroveManagerTester,
-  LUSDTokenTester,
+  VaultManagerTester,
+  BPDTokenTester,
 ]
 
 const getGasFromContractDeployment = async (contractObject, name) => {
@@ -76,7 +76,7 @@ const getBytecodeSize = (contractABI) => {
 
 const getUSDCostFromGasCost = (deploymentGasTotal, gasPriceInGwei, ETHPrice) => {
   const dollarCost = (deploymentGasTotal * gasPriceInGwei * ETHPrice) / 1e9
-  console.log(`At gas price ${gasPriceInGwei} GWei, and ETH Price $${ETHPrice} per ETH, the total cost of deployment in USD is: $${dollarCost}`)
+  console.log(`At gas price ${gasPriceInGwei} GWei, and RBTC Price $${ETHPrice} per RBTC, the total cost of deployment in USD is: $${dollarCost}`)
 }
 
 const logContractDeploymentCosts = async (contracts) => {
@@ -109,19 +109,19 @@ const logContractBytecodeLengths = (contractABIs) => {
 // Run script: log deployment gas costs and bytecode lengths for all contracts
 async function main() {
   const coreContracts = await dh.deployLiquityCoreHardhat()
-  const LQTYContracts = await dh.deployLQTYContractsHardhat(ARBITRARY_ADDRESS, ARBITRARY_ADDRESS)
+  const MPContracts = await dh.deployMPContractsHardhat(ARBITRARY_ADDRESS, ARBITRARY_ADDRESS)
   const testerContracts = await dh.deployTesterContractsHardhat()
 
-  await dh.connectCoreContracts(coreContracts, LQTYContracts)
-  await dh.connectLQTYContracts(LQTYContracts)
-  await dh.connectLQTYContractsToCore(LQTYContracts, coreContracts)
+  await dh.connectCoreContracts(coreContracts, MPContracts)
+  await dh.connectMPContracts(MPContracts)
+  await dh.connectMPContractsToCore(MPContracts, coreContracts)
 
 
   console.log(`\n`)
-  console.log(`LQTY CONTRACTS`)
-  await logContractDeploymentCosts(LQTYContracts)
+  console.log(`MP CONTRACTS`)
+  await logContractDeploymentCosts(MPContracts)
   console.log(`\n`)
-  logContractBytecodeLengths(LQTYContractABIs)
+  logContractBytecodeLengths(MPContractABIs)
   console.log(`\n`)
 
   console.log(`CORE CONTRACTS`)

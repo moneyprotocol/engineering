@@ -3,11 +3,11 @@
     "address": "0x891d882fDACd2cB8DAeA5289f6019676E797EE5F",
     "txHash": "0x5fa852dc233cad38454caf629712983f29c7372a96e69aa2f326e34fcd636b61"
   },
-  "sortedTroves": {
+  "sortedVaults": {
     "address": "0xb8493cD0E7135462502DF048deeFc9b650fa789F",
     "txHash": "0xd9d5703f10be936c68702148b00312deb2cbc3764de858a09687f58a4f2eae85"
   },
-  "troveManager": {
+  "vaultManager": {
     "address": "0x111Bf64dA957C55601C6D0f9DB2Eb1aef4dDEE23",
     "txHash": "0x101160c5782328c91c902b9b2718ab9ada99b0b5b2f4bf8d60a836758f5d88ba"
   },
@@ -43,7 +43,7 @@
     "address": "0x093FA46A3FC715B65E9A6d37ACD92d99F48B81F6",
     "txHash": "0x0fb57427848327bf9c8edc03c108edb4ecc26e8abe1b8e5595da9b141bf0c450"
   },
-  "lusdToken": {
+  "bpdToken": {
     "address": "0xaa052d8b915c9311e5EA234dd24105d6208087A5",
     "txHash": "0xab1d06662c09b826bdbdccd1226a2bd2a7975e33761a3820a7b343ed24f4b9a9"
   },
@@ -51,7 +51,7 @@
     "address": "0xBAeE57B5e130fC602F0859e6f85029Ec47340298",
     "txHash": "0xeb2eea18bbf1f0a90f93f19034364c14599e9a8322b8501901b102341991a7d0"
   },
-  "lqtyStaking": {
+  "mpStaking": {
     "address": "0x3d130ccbabe9b3561bb1f45f9605EDF2944C9Ee5",
     "txHash": "0x5109ebd72ac63c975ca1e4601a1c0405a0a02998c43d61d5fd28fdab4e0d1a86"
   },
@@ -63,7 +63,7 @@
     "address": "0x89c5eaD36eCA8d7c0840ddD461d406Ad637CD35D",
     "txHash": "0x0dffbdbf9f4803d6158cec83786ef119927322e53f9ce26ea3c8a193d0342b72"
   },
-  "lqtyToken": {
+  "mpToken": {
     "address": "0x05F1b3d2C7C90A61DA377942A35DF94B80537790",
     "txHash": "0xfad74d4c9c8ad5c74b7b53988cd387f53b56facd8e623a2681ec0e973dc5511f"
   },
@@ -87,7 +87,7 @@
     "address": "0x6E57f531239c0E892f79c349b830bC38c8120597",
     "txHash": "0x847f110a4b1608dc9371efc2a1d95ae75d665c57a860e2ba0aa8c1e3a2f564cf"
   },
-  "multiTroveGetter": {
+  "multiVaultGetter": {
     "address": "0x1AfE186670C7DAF5E085ae6269Da9762621F2b71",
     "txHash": "0xd0e7ed37ea5d2f0ba2bd2f52f12e482448a13cb9e6de210fa7f10506d37e3424"
   },

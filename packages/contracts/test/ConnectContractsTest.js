@@ -6,108 +6,108 @@ contract('Deployment script - Sets correct contract addresses dependencies after
   const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000)
   
   let priceFeed
-  let lusdToken
-  let sortedTroves
-  let troveManager
+  let bpdToken
+  let sortedVaults
+  let vaultManager
   let activePool
   let stabilityPool
   let defaultPool
   let functionCaller
   let borrowerOperations
-  let lqtyStaking
-  let lqtyToken
+  let mpStaking
+  let mpToken
   let communityIssuance
   let lockupContractFactory
 
   before(async () => {
     const coreContracts = await deploymentHelper.deployLiquityCore()
-    const LQTYContracts = await deploymentHelper.deployLQTYContracts(bountyAddress, lpRewardsAddress, multisig)
+    const MPContracts = await deploymentHelper.deployMPContracts(bountyAddress, lpRewardsAddress, multisig)
 
     priceFeed = coreContracts.priceFeedTestnet
-    lusdToken = coreContracts.lusdToken
-    sortedTroves = coreContracts.sortedTroves
-    troveManager = coreContracts.troveManager
+    bpdToken = coreContracts.bpdToken
+    sortedVaults = coreContracts.sortedVaults
+    vaultManager = coreContracts.vaultManager
     activePool = coreContracts.activePool
     stabilityPool = coreContracts.stabilityPool
     defaultPool = coreContracts.defaultPool
     functionCaller = coreContracts.functionCaller
     borrowerOperations = coreContracts.borrowerOperations
 
-    lqtyStaking = LQTYContracts.lqtyStaking
-    lqtyToken = LQTYContracts.lqtyToken
-    communityIssuance = LQTYContracts.communityIssuance
-    lockupContractFactory = LQTYContracts.lockupContractFactory
+    mpStaking = MPContracts.mpStaking
+    mpToken = MPContracts.mpToken
+    communityIssuance = MPContracts.communityIssuance
+    lockupContractFactory = MPContracts.lockupContractFactory
 
-    await deploymentHelper.connectLQTYContracts(LQTYContracts)
-    await deploymentHelper.connectCoreContracts(coreContracts, LQTYContracts)
-    await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, coreContracts)
+    await deploymentHelper.connectMPContracts(MPContracts)
+    await deploymentHelper.connectCoreContracts(coreContracts, MPContracts)
+    await deploymentHelper.connectMPContractsToCore(MPContracts, coreContracts)
   })
 
-  it('Sets the correct PriceFeed address in TroveManager', async () => {
+  it('Sets the correct PriceFeed address in VaultManager', async () => {
     const priceFeedAddress = priceFeed.address
 
-    const recordedPriceFeedAddress = await troveManager.priceFeed()
+    const recordedPriceFeedAddress = await vaultManager.priceFeed()
 
     assert.equal(priceFeedAddress, recordedPriceFeedAddress)
   })
 
-  it('Sets the correct LUSDToken address in TroveManager', async () => {
-    const lusdTokenAddress = lusdToken.address
+  it('Sets the correct BPDToken address in VaultManager', async () => {
+    const bpdTokenAddress = bpdToken.address
 
-    const recordedClvTokenAddress = await troveManager.lusdToken()
+    const recordedClvTokenAddress = await vaultManager.bpdToken()
 
-    assert.equal(lusdTokenAddress, recordedClvTokenAddress)
+    assert.equal(bpdTokenAddress, recordedClvTokenAddress)
   })
 
-  it('Sets the correct SortedTroves address in TroveManager', async () => {
-    const sortedTrovesAddress = sortedTroves.address
+  it('Sets the correct SortedVaults address in VaultManager', async () => {
+    const sortedVaultsAddress = sortedVaults.address
 
-    const recordedSortedTrovesAddress = await troveManager.sortedTroves()
+    const recordedSortedVaultsAddress = await vaultManager.sortedVaults()
 
-    assert.equal(sortedTrovesAddress, recordedSortedTrovesAddress)
+    assert.equal(sortedVaultsAddress, recordedSortedVaultsAddress)
   })
 
-  it('Sets the correct BorrowerOperations address in TroveManager', async () => {
+  it('Sets the correct BorrowerOperations address in VaultManager', async () => {
     const borrowerOperationsAddress = borrowerOperations.address
 
-    const recordedBorrowerOperationsAddress = await troveManager.borrowerOperationsAddress()
+    const recordedBorrowerOperationsAddress = await vaultManager.borrowerOperationsAddress()
 
     assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress)
   })
 
-  // ActivePool in TroveM
-  it('Sets the correct ActivePool address in TroveManager', async () => {
+  // ActivePool in VaultM
+  it('Sets the correct ActivePool address in VaultManager', async () => {
     const activePoolAddress = activePool.address
 
-    const recordedActivePoolAddresss = await troveManager.activePool()
+    const recordedActivePoolAddresss = await vaultManager.activePool()
 
     assert.equal(activePoolAddress, recordedActivePoolAddresss)
   })
 
-  // DefaultPool in TroveM
-  it('Sets the correct DefaultPool address in TroveManager', async () => {
+  // DefaultPool in VaultM
+  it('Sets the correct DefaultPool address in VaultManager', async () => {
     const defaultPoolAddress = defaultPool.address
 
-    const recordedDefaultPoolAddresss = await troveManager.defaultPool()
+    const recordedDefaultPoolAddresss = await vaultManager.defaultPool()
 
     assert.equal(defaultPoolAddress, recordedDefaultPoolAddresss)
   })
 
-  // StabilityPool in TroveM
-  it('Sets the correct StabilityPool address in TroveManager', async () => {
+  // StabilityPool in VaultM
+  it('Sets the correct StabilityPool address in VaultManager', async () => {
     const stabilityPoolAddress = stabilityPool.address
 
-    const recordedStabilityPoolAddresss = await troveManager.stabilityPool()
+    const recordedStabilityPoolAddresss = await vaultManager.stabilityPool()
 
     assert.equal(stabilityPoolAddress, recordedStabilityPoolAddresss)
   })
 
-  // LQTY Staking in TroveM
-  it('Sets the correct LQTYStaking address in TroveManager', async () => {
-    const lqtyStakingAddress = lqtyStaking.address
+  // MP Staking in VaultM
+  it('Sets the correct MPStaking address in VaultManager', async () => {
+    const mpStakingAddress = mpStaking.address
 
-    const recordedLQTYStakingAddress = await troveManager.lqtyStaking()
-    assert.equal(lqtyStakingAddress, recordedLQTYStakingAddress)
+    const recordedMPStakingAddress = await vaultManager.mpStaking()
+    assert.equal(mpStakingAddress, recordedMPStakingAddress)
   })
 
   // Active Pool
@@ -136,11 +136,11 @@ contract('Deployment script - Sets correct contract addresses dependencies after
     assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress)
   })
 
-  it('Sets the correct TroveManager address in ActivePool', async () => {
-    const troveManagerAddress = troveManager.address
+  it('Sets the correct VaultManager address in ActivePool', async () => {
+    const vaultManagerAddress = vaultManager.address
 
-    const recordedTroveManagerAddress = await activePool.troveManagerAddress()
-    assert.equal(troveManagerAddress, recordedTroveManagerAddress)
+    const recordedVaultManagerAddress = await activePool.vaultManagerAddress()
+    assert.equal(vaultManagerAddress, recordedVaultManagerAddress)
   })
 
   // Stability Pool
@@ -160,28 +160,28 @@ contract('Deployment script - Sets correct contract addresses dependencies after
     assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress)
   })
 
-  it('Sets the correct LUSDToken address in StabilityPool', async () => {
-    const lusdTokenAddress = lusdToken.address
+  it('Sets the correct BPDToken address in StabilityPool', async () => {
+    const bpdTokenAddress = bpdToken.address
 
-    const recordedClvTokenAddress = await stabilityPool.lusdToken()
+    const recordedClvTokenAddress = await stabilityPool.bpdToken()
 
-    assert.equal(lusdTokenAddress, recordedClvTokenAddress)
+    assert.equal(bpdTokenAddress, recordedClvTokenAddress)
   })
 
-  it('Sets the correct TroveManager address in StabilityPool', async () => {
-    const troveManagerAddress = troveManager.address
+  it('Sets the correct VaultManager address in StabilityPool', async () => {
+    const vaultManagerAddress = vaultManager.address
 
-    const recordedTroveManagerAddress = await stabilityPool.troveManager()
-    assert.equal(troveManagerAddress, recordedTroveManagerAddress)
+    const recordedVaultManagerAddress = await stabilityPool.vaultManager()
+    assert.equal(vaultManagerAddress, recordedVaultManagerAddress)
   })
 
   // Default Pool
 
-  it('Sets the correct TroveManager address in DefaultPool', async () => {
-    const troveManagerAddress = troveManager.address
+  it('Sets the correct VaultManager address in DefaultPool', async () => {
+    const vaultManagerAddress = vaultManager.address
 
-    const recordedTroveManagerAddress = await defaultPool.troveManagerAddress()
-    assert.equal(troveManagerAddress, recordedTroveManagerAddress)
+    const recordedVaultManagerAddress = await defaultPool.vaultManagerAddress()
+    assert.equal(vaultManagerAddress, recordedVaultManagerAddress)
   })
 
   it('Sets the correct ActivePool address in DefaultPool', async () => {
@@ -191,28 +191,28 @@ contract('Deployment script - Sets correct contract addresses dependencies after
     assert.equal(activePoolAddress, recordedActivePoolAddress)
   })
 
-  it('Sets the correct TroveManager address in SortedTroves', async () => {
+  it('Sets the correct VaultManager address in SortedVaults', async () => {
     const borrowerOperationsAddress = borrowerOperations.address
 
-    const recordedBorrowerOperationsAddress = await sortedTroves.borrowerOperationsAddress()
+    const recordedBorrowerOperationsAddress = await sortedVaults.borrowerOperationsAddress()
     assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress)
   })
 
-  it('Sets the correct BorrowerOperations address in SortedTroves', async () => {
-    const troveManagerAddress = troveManager.address
+  it('Sets the correct BorrowerOperations address in SortedVaults', async () => {
+    const vaultManagerAddress = vaultManager.address
 
-    const recordedTroveManagerAddress = await sortedTroves.troveManager()
-    assert.equal(troveManagerAddress, recordedTroveManagerAddress)
+    const recordedVaultManagerAddress = await sortedVaults.vaultManager()
+    assert.equal(vaultManagerAddress, recordedVaultManagerAddress)
   })
 
   //--- BorrowerOperations ---
 
-  // TroveManager in BO
-  it('Sets the correct TroveManager address in BorrowerOperations', async () => {
-    const troveManagerAddress = troveManager.address
+  // VaultManager in BO
+  it('Sets the correct VaultManager address in BorrowerOperations', async () => {
+    const vaultManagerAddress = vaultManager.address
 
-    const recordedTroveManagerAddress = await borrowerOperations.troveManager()
-    assert.equal(troveManagerAddress, recordedTroveManagerAddress)
+    const recordedVaultManagerAddress = await borrowerOperations.vaultManager()
+    assert.equal(vaultManagerAddress, recordedVaultManagerAddress)
   })
 
   // setPriceFeed in BO
@@ -223,12 +223,12 @@ contract('Deployment script - Sets correct contract addresses dependencies after
     assert.equal(priceFeedAddress, recordedPriceFeedAddress)
   })
 
-  // setSortedTroves in BO
-  it('Sets the correct SortedTroves address in BorrowerOperations', async () => {
-    const sortedTrovesAddress = sortedTroves.address
+  // setSortedVaults in BO
+  it('Sets the correct SortedVaults address in BorrowerOperations', async () => {
+    const sortedVaultsAddress = sortedVaults.address
 
-    const recordedSortedTrovesAddress = await borrowerOperations.sortedTroves()
-    assert.equal(sortedTrovesAddress, recordedSortedTrovesAddress)
+    const recordedSortedVaultsAddress = await borrowerOperations.sortedVaults()
+    assert.equal(sortedVaultsAddress, recordedSortedVaultsAddress)
   })
 
   // setActivePool in BO
@@ -247,101 +247,101 @@ contract('Deployment script - Sets correct contract addresses dependencies after
     assert.equal(defaultPoolAddress, recordedDefaultPoolAddress)
   })
 
-  // LQTY Staking in BO
-  it('Sets the correct LQTYStaking address in BorrowerOperations', async () => {
-    const lqtyStakingAddress = lqtyStaking.address
+  // MP Staking in BO
+  it('Sets the correct MPStaking address in BorrowerOperations', async () => {
+    const mpStakingAddress = mpStaking.address
 
-    const recordedLQTYStakingAddress = await borrowerOperations.lqtyStakingAddress()
-    assert.equal(lqtyStakingAddress, recordedLQTYStakingAddress)
+    const recordedMPStakingAddress = await borrowerOperations.mpStakingAddress()
+    assert.equal(mpStakingAddress, recordedMPStakingAddress)
   })
 
 
-  // --- LQTY Staking ---
+  // --- MP Staking ---
 
-  // Sets LQTYToken in LQTYStaking
-  it('Sets the correct LQTYToken address in LQTYStaking', async () => {
-    const lqtyTokenAddress = lqtyToken.address
+  // Sets MPToken in MPStaking
+  it('Sets the correct MPToken address in MPStaking', async () => {
+    const mpTokenAddress = mpToken.address
 
-    const recordedLQTYTokenAddress = await lqtyStaking.lqtyToken()
-    assert.equal(lqtyTokenAddress, recordedLQTYTokenAddress)
+    const recordedMPTokenAddress = await mpStaking.mpToken()
+    assert.equal(mpTokenAddress, recordedMPTokenAddress)
   })
 
-  // Sets ActivePool in LQTYStaking
-  it('Sets the correct ActivePool address in LQTYStaking', async () => {
+  // Sets ActivePool in MPStaking
+  it('Sets the correct ActivePool address in MPStaking', async () => {
     const activePoolAddress = activePool.address
 
-    const recordedActivePoolAddress = await lqtyStaking.activePoolAddress()
+    const recordedActivePoolAddress = await mpStaking.activePoolAddress()
     assert.equal(activePoolAddress, recordedActivePoolAddress)
   })
 
-  // Sets LUSDToken in LQTYStaking
-  it('Sets the correct ActivePool address in LQTYStaking', async () => {
-    const lusdTokenAddress = lusdToken.address
+  // Sets BPDToken in MPStaking
+  it('Sets the correct ActivePool address in MPStaking', async () => {
+    const bpdTokenAddress = bpdToken.address
 
-    const recordedLUSDTokenAddress = await lqtyStaking.lusdToken()
-    assert.equal(lusdTokenAddress, recordedLUSDTokenAddress)
+    const recordedBPDTokenAddress = await mpStaking.bpdToken()
+    assert.equal(bpdTokenAddress, recordedBPDTokenAddress)
   })
 
-  // Sets TroveManager in LQTYStaking
-  it('Sets the correct ActivePool address in LQTYStaking', async () => {
-    const troveManagerAddress = troveManager.address
+  // Sets VaultManager in MPStaking
+  it('Sets the correct ActivePool address in MPStaking', async () => {
+    const vaultManagerAddress = vaultManager.address
 
-    const recordedTroveManagerAddress = await lqtyStaking.troveManagerAddress()
-    assert.equal(troveManagerAddress, recordedTroveManagerAddress)
+    const recordedVaultManagerAddress = await mpStaking.vaultManagerAddress()
+    assert.equal(vaultManagerAddress, recordedVaultManagerAddress)
   })
 
-  // Sets BorrowerOperations in LQTYStaking
-  it('Sets the correct BorrowerOperations address in LQTYStaking', async () => {
+  // Sets BorrowerOperations in MPStaking
+  it('Sets the correct BorrowerOperations address in MPStaking', async () => {
     const borrowerOperationsAddress = borrowerOperations.address
 
-    const recordedBorrowerOperationsAddress = await lqtyStaking.borrowerOperationsAddress()
+    const recordedBorrowerOperationsAddress = await mpStaking.borrowerOperationsAddress()
     assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress)
   })
 
-  // ---  LQTYToken ---
+  // ---  MPToken ---
 
-  // Sets CI in LQTYToken
-  it('Sets the correct CommunityIssuance address in LQTYToken', async () => {
+  // Sets CI in MPToken
+  it('Sets the correct CommunityIssuance address in MPToken', async () => {
     const communityIssuanceAddress = communityIssuance.address
 
-    const recordedcommunityIssuanceAddress = await lqtyToken.communityIssuanceAddress()
+    const recordedcommunityIssuanceAddress = await mpToken.communityIssuanceAddress()
     assert.equal(communityIssuanceAddress, recordedcommunityIssuanceAddress)
   })
 
-  // Sets LQTYStaking in LQTYToken
-  it('Sets the correct LQTYStaking address in LQTYToken', async () => {
-    const lqtyStakingAddress = lqtyStaking.address
+  // Sets MPStaking in MPToken
+  it('Sets the correct MPStaking address in MPToken', async () => {
+    const mpStakingAddress = mpStaking.address
 
-    const recordedLQTYStakingAddress =  await lqtyToken.lqtyStakingAddress()
-    assert.equal(lqtyStakingAddress, recordedLQTYStakingAddress)
+    const recordedMPStakingAddress =  await mpToken.mpStakingAddress()
+    assert.equal(mpStakingAddress, recordedMPStakingAddress)
   })
 
-  // Sets LCF in LQTYToken
-  it('Sets the correct LockupContractFactory address in LQTYToken', async () => {
+  // Sets LCF in MPToken
+  it('Sets the correct LockupContractFactory address in MPToken', async () => {
     const LCFAddress = lockupContractFactory.address
 
-    const recordedLCFAddress =  await lqtyToken.lockupContractFactory()
+    const recordedLCFAddress =  await mpToken.lockupContractFactory()
     assert.equal(LCFAddress, recordedLCFAddress)
   })
 
   // --- LCF  ---
 
-  // Sets LQTYToken in LockupContractFactory
-  it('Sets the correct LQTYToken address in LockupContractFactory', async () => {
-    const lqtyTokenAddress = lqtyToken.address
+  // Sets MPToken in LockupContractFactory
+  it('Sets the correct MPToken address in LockupContractFactory', async () => {
+    const mpTokenAddress = mpToken.address
 
-    const recordedLQTYTokenAddress = await lockupContractFactory.lqtyTokenAddress()
-    assert.equal(lqtyTokenAddress, recordedLQTYTokenAddress)
+    const recordedMPTokenAddress = await lockupContractFactory.mpTokenAddress()
+    assert.equal(mpTokenAddress, recordedMPTokenAddress)
   })
 
   // --- CI ---
 
-  // Sets LQTYToken in CommunityIssuance
-  it('Sets the correct LQTYToken address in CommunityIssuance', async () => {
-    const lqtyTokenAddress = lqtyToken.address
+  // Sets MPToken in CommunityIssuance
+  it('Sets the correct MPToken address in CommunityIssuance', async () => {
+    const mpTokenAddress = mpToken.address
 
-    const recordedLQTYTokenAddress = await communityIssuance.lqtyToken()
-    assert.equal(lqtyTokenAddress, recordedLQTYTokenAddress)
+    const recordedMPTokenAddress = await communityIssuance.mpToken()
+    assert.equal(mpTokenAddress, recordedMPTokenAddress)
   })
 
   it('Sets the correct StabilityPool address in CommunityIssuance', async () => {

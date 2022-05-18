@@ -11,37 +11,37 @@ contract('All Liquity functions with onlyOwner modifier', async accounts => {
   const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000)
   
   let contracts
-  let lusdToken
-  let sortedTroves
-  let troveManager
+  let bpdToken
+  let sortedVaults
+  let vaultManager
   let activePool
   let stabilityPool
   let defaultPool
   let borrowerOperations
 
-  let lqtyStaking
+  let mpStaking
   let communityIssuance
-  let lqtyToken 
+  let mpToken 
   let lockupContractFactory
 
   before(async () => {
     contracts = await deploymentHelper.deployLiquityCore()
     contracts.borrowerOperations = await BorrowerOperationsTester.new()
-    contracts = await deploymentHelper.deployLUSDToken(contracts)
-    const LQTYContracts = await deploymentHelper.deployLQTYContracts(bountyAddress, lpRewardsAddress, multisig)
+    contracts = await deploymentHelper.deployBPDToken(contracts)
+    const MPContracts = await deploymentHelper.deployMPContracts(bountyAddress, lpRewardsAddress, multisig)
 
-    lusdToken = contracts.lusdToken
-    sortedTroves = contracts.sortedTroves
-    troveManager = contracts.troveManager
+    bpdToken = contracts.bpdToken
+    sortedVaults = contracts.sortedVaults
+    vaultManager = contracts.vaultManager
     activePool = contracts.activePool
     stabilityPool = contracts.stabilityPool
     defaultPool = contracts.defaultPool
     borrowerOperations = contracts.borrowerOperations
 
-    lqtyStaking = LQTYContracts.lqtyStaking
-    communityIssuance = LQTYContracts.communityIssuance
-    lqtyToken = LQTYContracts.lqtyToken
-    lockupContractFactory = LQTYContracts.lockupContractFactory
+    mpStaking = MPContracts.mpStaking
+    communityIssuance = MPContracts.communityIssuance
+    mpToken = MPContracts.mpToken
+    lockupContractFactory = MPContracts.lockupContractFactory
   })
 
   const testZeroAddress = async (contract, params, method = 'setAddresses', skip = 0) => {
@@ -77,9 +77,9 @@ contract('All Liquity functions with onlyOwner modifier', async accounts => {
     await th.assertRevert(contract.setAddresses(...params, { from: owner }))
   }
 
-  describe('TroveManager', async accounts => {
+  describe('VaultManager', async accounts => {
     it("setAddresses(): reverts when called by non-owner, with wrong addresses, or twice", async () => {
-      await testSetAddresses(troveManager, 11)
+      await testSetAddresses(vaultManager, 11)
     })
   })
 
@@ -107,31 +107,31 @@ contract('All Liquity functions with onlyOwner modifier', async accounts => {
     })
   })
 
-  describe('SortedTroves', async accounts => {
+  describe('SortedVaults', async accounts => {
     it("setParams(): reverts when called by non-owner, with wrong addresses, or twice", async () => {
       const dumbContract = await GasPool.new()
       const params = [10000001, dumbContract.address, dumbContract.address]
 
       // Attempt call from alice
-      await th.assertRevert(sortedTroves.setParams(...params, { from: alice }))
+      await th.assertRevert(sortedVaults.setParams(...params, { from: alice }))
 
       // Attempt to use zero address
-      await testZeroAddress(sortedTroves, params, 'setParams', 1)
+      await testZeroAddress(sortedVaults, params, 'setParams', 1)
       // Attempt to use non contract
-      await testNonContractAddress(sortedTroves, params, 'setParams', 1)
+      await testNonContractAddress(sortedVaults, params, 'setParams', 1)
 
       // Owner can successfully set params
-      const txOwner = await sortedTroves.setParams(...params, { from: owner })
+      const txOwner = await sortedVaults.setParams(...params, { from: owner })
       assert.isTrue(txOwner.receipt.status)
 
       // fails if called twice
-      await th.assertRevert(sortedTroves.setParams(...params, { from: owner }))
+      await th.assertRevert(sortedVaults.setParams(...params, { from: owner }))
     })
   })
 
   describe('CommunityIssuance', async accounts => {
     it("setAddresses(): reverts when called by non-owner, with wrong addresses, or twice", async () => {
-      const params = [lqtyToken.address, stabilityPool.address]
+      const params = [mpToken.address, stabilityPool.address]
       await th.assertRevert(communityIssuance.setAddresses(...params, { from: alice }))
 
       // Attempt to use zero address
@@ -148,29 +148,29 @@ contract('All Liquity functions with onlyOwner modifier', async accounts => {
     })
   })
 
-  describe('LQTYStaking', async accounts => {
+  describe('MPStaking', async accounts => {
     it("setAddresses(): reverts when called by non-owner, with wrong addresses, or twice", async () => {
-      await testSetAddresses(lqtyStaking, 5)
+      await testSetAddresses(mpStaking, 5)
     })
   })
 
   describe('LockupContractFactory', async accounts => {
-    it("setLQTYAddress(): reverts when called by non-owner, with wrong address, or twice", async () => {
-      await th.assertRevert(lockupContractFactory.setLQTYTokenAddress(lqtyToken.address, { from: alice }))
+    it("setMPAddress(): reverts when called by non-owner, with wrong address, or twice", async () => {
+      await th.assertRevert(lockupContractFactory.setMPTokenAddress(mpToken.address, { from: alice }))
 
-      const params = [lqtyToken.address]
+      const params = [mpToken.address]
 
       // Attempt to use zero address
-      await testZeroAddress(lockupContractFactory, params, 'setLQTYTokenAddress')
+      await testZeroAddress(lockupContractFactory, params, 'setMPTokenAddress')
       // Attempt to use non contract
-      await testNonContractAddress(lockupContractFactory, params, 'setLQTYTokenAddress')
+      await testNonContractAddress(lockupContractFactory, params, 'setMPTokenAddress')
 
       // Owner can successfully set any address
-      const txOwner = await lockupContractFactory.setLQTYTokenAddress(lqtyToken.address, { from: owner })
+      const txOwner = await lockupContractFactory.setMPTokenAddress(mpToken.address, { from: owner })
 
       assert.isTrue(txOwner.receipt.status)
       // fails if called twice
-      await th.assertRevert(lockupContractFactory.setLQTYTokenAddress(lqtyToken.address, { from: owner }))
+      await th.assertRevert(lockupContractFactory.setMPTokenAddress(mpToken.address, { from: owner }))
     })
   })
 })

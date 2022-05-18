@@ -91,8 +91,8 @@ class BorrowerOperationsProxy extends Proxy {
     super(owner, proxies, borrowerOperationsScriptAddress, borrowerOperations)
   }
 
-  async openTrove(...params) {
-    return this.forwardFunction(params, 'openTrove(uint256,uint256,address,address)')
+  async openVault(...params) {
+    return this.forwardFunction(params, 'openVault(uint256,uint256,address,address)')
   }
 
   async addColl(...params) {
@@ -103,40 +103,40 @@ class BorrowerOperationsProxy extends Proxy {
     return this.forwardFunction(params, 'withdrawColl(uint256,address,address)')
   }
 
-  async withdrawLUSD(...params) {
-    return this.forwardFunction(params, 'withdrawLUSD(uint256,uint256,address,address)')
+  async withdrawBPD(...params) {
+    return this.forwardFunction(params, 'withdrawBPD(uint256,uint256,address,address)')
   }
 
-  async repayLUSD(...params) {
-    return this.forwardFunction(params, 'repayLUSD(uint256,address,address)')
+  async repayBPD(...params) {
+    return this.forwardFunction(params, 'repayBPD(uint256,address,address)')
   }
 
-  async closeTrove(...params) {
-    return this.forwardFunction(params, 'closeTrove()')
+  async closeVault(...params) {
+    return this.forwardFunction(params, 'closeVault()')
   }
 
-  async adjustTrove(...params) {
-    return this.forwardFunction(params, 'adjustTrove(uint256,uint256,uint256,bool,address,address)')
+  async adjustVault(...params) {
+    return this.forwardFunction(params, 'adjustVault(uint256,uint256,uint256,bool,address,address)')
   }
 
   async claimRedeemedCollateral(...params) {
     return this.forwardFunction(params, 'claimRedeemedCollateral(address)')
   }
 
-  async getNewTCRFromTroveChange(...params) {
-    return this.proxyFunction('getNewTCRFromTroveChange', params)
+  async getNewTCRFromVaultChange(...params) {
+    return this.proxyFunction('getNewTCRFromVaultChange', params)
   }
 
-  async getNewICRFromTroveChange(...params) {
-    return this.proxyFunction('getNewICRFromTroveChange', params)
+  async getNewICRFromVaultChange(...params) {
+    return this.proxyFunction('getNewICRFromVaultChange', params)
   }
 
   async getCompositeDebt(...params) {
     return this.proxyFunction('getCompositeDebt', params)
   }
 
-  async LUSD_GAS_COMPENSATION(...params) {
-    return this.proxyFunction('LUSD_GAS_COMPENSATION', params)
+  async BPD_GAS_COMPENSATION(...params) {
+    return this.proxyFunction('BPD_GAS_COMPENSATION', params)
   }
 
   async MIN_NET_DEBT(...params) {
@@ -153,8 +153,8 @@ class BorrowerWrappersProxy extends Proxy {
     super(owner, proxies, borrowerWrappersScriptAddress, null)
   }
 
-  async claimCollateralAndOpenTrove(...params) {
-    return this.forwardFunction(params, 'claimCollateralAndOpenTrove(uint256,uint256,address,address)')
+  async claimCollateralAndOpenVault(...params) {
+    return this.forwardFunction(params, 'claimCollateralAndOpenVault(uint256,uint256,address,address)')
   }
 
   async claimSPRewardsAndRecycle(...params) {
@@ -170,25 +170,25 @@ class BorrowerWrappersProxy extends Proxy {
   }
 }
 
-class TroveManagerProxy extends Proxy {
-  constructor(owner, proxies, troveManagerScriptAddress, troveManager) {
-    super(owner, proxies, troveManagerScriptAddress, troveManager)
+class VaultManagerProxy extends Proxy {
+  constructor(owner, proxies, vaultManagerScriptAddress, vaultManager) {
+    super(owner, proxies, vaultManagerScriptAddress, vaultManager)
   }
 
-  async Troves(user) {
-    return this.proxyFunctionWithUser('Troves', user)
+  async Vaults(user) {
+    return this.proxyFunctionWithUser('Vaults', user)
   }
 
-  async getTroveStatus(user) {
-    return this.proxyFunctionWithUser('getTroveStatus', user)
+  async getVaultStatus(user) {
+    return this.proxyFunctionWithUser('getVaultStatus', user)
   }
 
-  async getTroveDebt(user) {
-    return this.proxyFunctionWithUser('getTroveDebt', user)
+  async getVaultDebt(user) {
+    return this.proxyFunctionWithUser('getVaultDebt', user)
   }
 
-  async getTroveColl(user) {
-    return this.proxyFunctionWithUser('getTroveColl', user)
+  async getVaultColl(user) {
+    return this.proxyFunctionWithUser('getVaultColl', user)
   }
 
   async totalStakes() {
@@ -199,8 +199,8 @@ class TroveManagerProxy extends Proxy {
     return this.proxyFunction('getPendingETHReward', params)
   }
 
-  async getPendingLUSDDebtReward(...params) {
-    return this.proxyFunction('getPendingLUSDDebtReward', params)
+  async getPendingBPDDebtReward(...params) {
+    return this.proxyFunction('getPendingBPDDebtReward', params)
   }
 
   async liquidate(user) {
@@ -219,8 +219,8 @@ class TroveManagerProxy extends Proxy {
     return this.proxyFunction('checkRecoveryMode', params)
   }
 
-  async getTroveOwnersCount() {
-    return this.proxyFunction('getTroveOwnersCount', [])
+  async getVaultOwnersCount() {
+    return this.proxyFunction('getVaultOwnersCount', [])
   }
 
   async baseRate() {
@@ -231,8 +231,8 @@ class TroveManagerProxy extends Proxy {
     return this.proxyFunction('L_ETH', [])
   }
 
-  async L_LUSDDebt() {
-    return this.proxyFunction('L_LUSDDebt', [])
+  async B_BPDDebt() {
+    return this.proxyFunction('B_BPDDebt', [])
   }
 
   async rewardSnapshots(user) {
@@ -285,8 +285,8 @@ class StabilityPoolProxy extends Proxy {
     return this.forwardFunction(params, 'provideToSP(uint256,address)')
   }
 
-  async getCompoundedLUSDDeposit(user) {
-    return this.proxyFunctionWithUser('getCompoundedLUSDDeposit', user)
+  async getCompoundedBPDDeposit(user) {
+    return this.proxyFunctionWithUser('getCompoundedBPDDeposit', user)
   }
 
   async deposits(user) {
@@ -298,9 +298,9 @@ class StabilityPoolProxy extends Proxy {
   }
 }
 
-class SortedTrovesProxy extends Proxy {
-  constructor(owner, proxies, sortedTroves) {
-    super(owner, proxies, null, sortedTroves)
+class SortedVaultsProxy extends Proxy {
+  constructor(owner, proxies, sortedVaults) {
+    super(owner, proxies, null, sortedVaults)
   }
 
   async contains(user) {
@@ -381,7 +381,7 @@ class TokenProxy extends Proxy {
   }
 }
 
-class LQTYStakingProxy extends Proxy {
+class MPStakingProxy extends Proxy {
   constructor(owner, proxies, tokenScriptAddress, token) {
     super(owner, proxies, tokenScriptAddress, token)
   }
@@ -394,8 +394,8 @@ class LQTYStakingProxy extends Proxy {
     return this.proxyFunctionWithUser('stakes', user)
   }
 
-  async F_LUSD(user) {
-    return this.proxyFunctionWithUser('F_LUSD', user)
+  async F_BPD(user) {
+    return this.proxyFunctionWithUser('F_BPD', user)
   }
 }
 
@@ -403,9 +403,9 @@ module.exports = {
   buildUserProxies,
   BorrowerOperationsProxy,
   BorrowerWrappersProxy,
-  TroveManagerProxy,
+  VaultManagerProxy,
   StabilityPoolProxy,
-  SortedTrovesProxy,
+  SortedVaultsProxy,
   TokenProxy,
-  LQTYStakingProxy
+  MPStakingProxy
 }

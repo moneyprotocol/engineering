@@ -1,8 +1,8 @@
 
-const SortedTroves = artifacts.require("./SortedTroves.sol")
-const TroveManager = artifacts.require("./TroveManager.sol")
+const SortedVaults = artifacts.require("./SortedVaults.sol")
+const VaultManager = artifacts.require("./VaultManager.sol")
 const PriceFeedTestnet = artifacts.require("./PriceFeedTestnet.sol")
-const LUSDToken = artifacts.require("./LUSDToken.sol")
+const BPDToken = artifacts.require("./BPDToken.sol")
 const ActivePool = artifacts.require("./ActivePool.sol");
 const DefaultPool = artifacts.require("./DefaultPool.sol");
 const StabilityPool = artifacts.require("./StabilityPool.sol")
@@ -11,23 +11,23 @@ const BorrowerOperations = artifacts.require("./BorrowerOperations.sol")
 
 const deployLiquity = async () => {
   const priceFeedTestnet = await PriceFeedTestnet.new()
-  const sortedTroves = await SortedTroves.new()
-  const troveManager = await TroveManager.new()
+  const sortedVaults = await SortedVaults.new()
+  const vaultManager = await VaultManager.new()
   const activePool = await ActivePool.new()
   const stabilityPool = await StabilityPool.new()
   const defaultPool = await DefaultPool.new()
   const functionCaller = await FunctionCaller.new()
   const borrowerOperations = await BorrowerOperations.new()
-  const lusdToken = await LUSDToken.new(
-    troveManager.address,
+  const bpdToken = await BPDToken.new(
+    vaultManager.address,
     stabilityPool.address,
     borrowerOperations.address
   )
   DefaultPool.setAsDeployed(defaultPool)
   PriceFeedTestnet.setAsDeployed(priceFeedTestnet)
-  LUSDToken.setAsDeployed(lusdToken)
-  SortedTroves.setAsDeployed(sortedTroves)
-  TroveManager.setAsDeployed(troveManager)
+  BPDToken.setAsDeployed(bpdToken)
+  SortedVaults.setAsDeployed(sortedVaults)
+  VaultManager.setAsDeployed(vaultManager)
   ActivePool.setAsDeployed(activePool)
   StabilityPool.setAsDeployed(stabilityPool)
   FunctionCaller.setAsDeployed(functionCaller)
@@ -35,9 +35,9 @@ const deployLiquity = async () => {
 
   const contracts = {
     priceFeedTestnet,
-    lusdToken,
-    sortedTroves,
-    troveManager,
+    bpdToken,
+    sortedVaults,
+    vaultManager,
     activePool,
     stabilityPool,
     defaultPool,
@@ -51,9 +51,9 @@ const getAddresses = (contracts) => {
   return {
     BorrowerOperations: contracts.borrowerOperations.address,
     PriceFeedTestnet: contracts.priceFeedTestnet.address,
-    LUSDToken: contracts.lusdToken.address,
-    SortedTroves: contracts.sortedTroves.address,
-    TroveManager: contracts.troveManager.address,
+    BPDToken: contracts.bpdToken.address,
+    SortedVaults: contracts.sortedVaults.address,
+    VaultManager: contracts.vaultManager.address,
     StabilityPool: contracts.stabilityPool.address,
     ActivePool: contracts.activePool.address,
     DefaultPool: contracts.defaultPool.address,
@@ -63,31 +63,31 @@ const getAddresses = (contracts) => {
 
 // Connect contracts to their dependencies
 const connectContracts = async (contracts, addresses) => {
-  // set TroveManager addr in SortedTroves
-  await contracts.sortedTroves.setTroveManager(addresses.TroveManager)
+  // set VaultManager addr in SortedVaults
+  await contracts.sortedVaults.setVaultManager(addresses.VaultManager)
 
   // set contract addresses in the FunctionCaller 
-  await contracts.functionCaller.setTroveManagerAddress(addresses.TroveManager)
-  await contracts.functionCaller.setSortedTrovesAddress(addresses.SortedTroves)
+  await contracts.functionCaller.setVaultManagerAddress(addresses.VaultManager)
+  await contracts.functionCaller.setSortedVaultsAddress(addresses.SortedVaults)
 
-  // set TroveManager addr in PriceFeed
-  await contracts.priceFeedTestnet.setTroveManagerAddress(addresses.TroveManager)
+  // set VaultManager addr in PriceFeed
+  await contracts.priceFeedTestnet.setVaultManagerAddress(addresses.VaultManager)
 
-  // set contracts in the Trove Manager
-  await contracts.troveManager.setLUSDToken(addresses.LUSDToken)
-  await contracts.troveManager.setSortedTroves(addresses.SortedTroves)
-  await contracts.troveManager.setPriceFeed(addresses.PriceFeedTestnet)
-  await contracts.troveManager.setActivePool(addresses.ActivePool)
-  await contracts.troveManager.setDefaultPool(addresses.DefaultPool)
-  await contracts.troveManager.setStabilityPool(addresses.StabilityPool)
-  await contracts.troveManager.setBorrowerOperations(addresses.BorrowerOperations)
+  // set contracts in the Vault Manager
+  await contracts.vaultManager.setBPDToken(addresses.BPDToken)
+  await contracts.vaultManager.setSortedVaults(addresses.SortedVaults)
+  await contracts.vaultManager.setPriceFeed(addresses.PriceFeedTestnet)
+  await contracts.vaultManager.setActivePool(addresses.ActivePool)
+  await contracts.vaultManager.setDefaultPool(addresses.DefaultPool)
+  await contracts.vaultManager.setStabilityPool(addresses.StabilityPool)
+  await contracts.vaultManager.setBorrowerOperations(addresses.BorrowerOperations)
 
   // set contracts in BorrowerOperations 
-  await contracts.borrowerOperations.setSortedTroves(addresses.SortedTroves)
+  await contracts.borrowerOperations.setSortedVaults(addresses.SortedVaults)
   await contracts.borrowerOperations.setPriceFeed(addresses.PriceFeedTestnet)
   await contracts.borrowerOperations.setActivePool(addresses.ActivePool)
   await contracts.borrowerOperations.setDefaultPool(addresses.DefaultPool)
-  await contracts.borrowerOperations.setTroveManager(addresses.TroveManager)
+  await contracts.borrowerOperations.setVaultManager(addresses.VaultManager)
 
   // set contracts in the Pools
   await contracts.stabilityPool.setActivePoolAddress(addresses.ActivePool)
@@ -101,7 +101,7 @@ const connectContracts = async (contracts, addresses) => {
 }
 
 const connectEchidnaProxy = async (echidnaProxy, addresses) => {
-  echidnaProxy.setTroveManager(addresses.TroveManager)
+  echidnaProxy.setVaultManager(addresses.VaultManager)
   echidnaProxy.setBorrowerOperations(addresses.BorrowerOperations)
 }
 

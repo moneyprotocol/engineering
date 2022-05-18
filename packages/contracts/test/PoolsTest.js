@@ -25,13 +25,13 @@ contract('StabilityPool', async accounts => {
     await stabilityPool.setAddresses(dumbContractAddress, dumbContractAddress, mockActivePoolAddress, dumbContractAddress, dumbContractAddress, dumbContractAddress, dumbContractAddress)
   })
 
-  it('getETH(): gets the recorded ETH balance', async () => {
+  it('getETH(): gets the recorded RBTC balance', async () => {
     const recordedETHBalance = await stabilityPool.getETH()
     assert.equal(recordedETHBalance, 0)
   })
 
-  it('getTotalLUSDDeposits(): gets the recorded LUSD balance', async () => {
-    const recordedETHBalance = await stabilityPool.getTotalLUSDDeposits()
+  it('getTotalBPDDeposits(): gets the recorded BPD balance', async () => {
+    const recordedETHBalance = await stabilityPool.getTotalBPDDeposits()
     assert.equal(recordedETHBalance, 0)
   })
 })
@@ -48,48 +48,48 @@ contract('ActivePool', async accounts => {
     await activePool.setAddresses(mockBorrowerOperations.address, dumbContractAddress, dumbContractAddress, dumbContractAddress)
   })
 
-  it('getETH(): gets the recorded ETH balance', async () => {
+  it('getETH(): gets the recorded RBTC balance', async () => {
     const recordedETHBalance = await activePool.getETH()
     assert.equal(recordedETHBalance, 0)
   })
 
-  it('getLUSDDebt(): gets the recorded LUSD balance', async () => {
-    const recordedETHBalance = await activePool.getLUSDDebt()
+  it('getBPDDebt(): gets the recorded BPD balance', async () => {
+    const recordedETHBalance = await activePool.getBPDDebt()
     assert.equal(recordedETHBalance, 0)
   })
  
-  it('increaseLUSD(): increases the recorded LUSD balance by the correct amount', async () => {
-    const recordedLUSD_balanceBefore = await activePool.getLUSDDebt()
-    assert.equal(recordedLUSD_balanceBefore, 0)
+  it('increaseBPD(): increases the recorded BPD balance by the correct amount', async () => {
+    const recordedBPD_balanceBefore = await activePool.getBPDDebt()
+    assert.equal(recordedBPD_balanceBefore, 0)
 
-    // await activePool.increaseLUSDDebt(100, { from: mockBorrowerOperationsAddress })
-    const increaseLUSDDebtData = th.getTransactionData('increaseLUSDDebt(uint256)', ['0x64'])
-    const tx = await mockBorrowerOperations.forward(activePool.address, increaseLUSDDebtData)
+    // await activePool.increaseBPDDebt(100, { from: mockBorrowerOperationsAddress })
+    const increaseBPDDebtData = th.getTransactionData('increaseBPDDebt(uint256)', ['0x64'])
+    const tx = await mockBorrowerOperations.forward(activePool.address, increaseBPDDebtData)
     assert.isTrue(tx.receipt.status)
-    const recordedLUSD_balanceAfter = await activePool.getLUSDDebt()
-    assert.equal(recordedLUSD_balanceAfter, 100)
+    const recordedBPD_balanceAfter = await activePool.getBPDDebt()
+    assert.equal(recordedBPD_balanceAfter, 100)
   })
   // Decrease
-  it('decreaseLUSD(): decreases the recorded LUSD balance by the correct amount', async () => {
+  it('decreaseBPD(): decreases the recorded BPD balance by the correct amount', async () => {
     // start the pool on 100 wei
-    //await activePool.increaseLUSDDebt(100, { from: mockBorrowerOperationsAddress })
-    const increaseLUSDDebtData = th.getTransactionData('increaseLUSDDebt(uint256)', ['0x64'])
-    const tx1 = await mockBorrowerOperations.forward(activePool.address, increaseLUSDDebtData)
+    //await activePool.increaseBPDDebt(100, { from: mockBorrowerOperationsAddress })
+    const increaseBPDDebtData = th.getTransactionData('increaseBPDDebt(uint256)', ['0x64'])
+    const tx1 = await mockBorrowerOperations.forward(activePool.address, increaseBPDDebtData)
     assert.isTrue(tx1.receipt.status)
 
-    const recordedLUSD_balanceBefore = await activePool.getLUSDDebt()
-    assert.equal(recordedLUSD_balanceBefore, 100)
+    const recordedBPD_balanceBefore = await activePool.getBPDDebt()
+    assert.equal(recordedBPD_balanceBefore, 100)
 
-    //await activePool.decreaseLUSDDebt(100, { from: mockBorrowerOperationsAddress })
-    const decreaseLUSDDebtData = th.getTransactionData('decreaseLUSDDebt(uint256)', ['0x64'])
-    const tx2 = await mockBorrowerOperations.forward(activePool.address, decreaseLUSDDebtData)
+    //await activePool.decreaseBPDDebt(100, { from: mockBorrowerOperationsAddress })
+    const decreaseBPDDebtData = th.getTransactionData('decreaseBPDDebt(uint256)', ['0x64'])
+    const tx2 = await mockBorrowerOperations.forward(activePool.address, decreaseBPDDebtData)
     assert.isTrue(tx2.receipt.status)
-    const recordedLUSD_balanceAfter = await activePool.getLUSDDebt()
-    assert.equal(recordedLUSD_balanceAfter, 0)
+    const recordedBPD_balanceAfter = await activePool.getBPDDebt()
+    assert.equal(recordedBPD_balanceAfter, 0)
   })
 
   // send raw ether
-  it('sendETH(): decreases the recorded ETH balance by the correct amount', async () => {
+  it('sendETH(): decreases the recorded RBTC balance by the correct amount', async () => {
     // setup: give pool 2 ether
     const activePool_initialBalance = web3.utils.toBN(await web3.eth.getBalance(activePool.address))
     assert.equal(activePool_initialBalance, 0)
@@ -121,60 +121,60 @@ contract('ActivePool', async accounts => {
 
 contract('DefaultPool', async accounts => {
  
-  let defaultPool, mockTroveManager, mockActivePool
+  let defaultPool, mockVaultManager, mockActivePool
 
   const [owner, alice] = accounts;
   beforeEach(async () => {
     defaultPool = await DefaultPool.new()
-    mockTroveManager = await NonPayable.new()
+    mockVaultManager = await NonPayable.new()
     mockActivePool = await NonPayable.new()
-    await defaultPool.setAddresses(mockTroveManager.address, mockActivePool.address)
+    await defaultPool.setAddresses(mockVaultManager.address, mockActivePool.address)
   })
 
-  it('getETH(): gets the recorded LUSD balance', async () => {
+  it('getETH(): gets the recorded BPD balance', async () => {
     const recordedETHBalance = await defaultPool.getETH()
     assert.equal(recordedETHBalance, 0)
   })
 
-  it('getLUSDDebt(): gets the recorded LUSD balance', async () => {
-    const recordedETHBalance = await defaultPool.getLUSDDebt()
+  it('getBPDDebt(): gets the recorded BPD balance', async () => {
+    const recordedETHBalance = await defaultPool.getBPDDebt()
     assert.equal(recordedETHBalance, 0)
   })
  
-  it('increaseLUSD(): increases the recorded LUSD balance by the correct amount', async () => {
-    const recordedLUSD_balanceBefore = await defaultPool.getLUSDDebt()
-    assert.equal(recordedLUSD_balanceBefore, 0)
+  it('increaseBPD(): increases the recorded BPD balance by the correct amount', async () => {
+    const recordedBPD_balanceBefore = await defaultPool.getBPDDebt()
+    assert.equal(recordedBPD_balanceBefore, 0)
 
-    // await defaultPool.increaseLUSDDebt(100, { from: mockTroveManagerAddress })
-    const increaseLUSDDebtData = th.getTransactionData('increaseLUSDDebt(uint256)', ['0x64'])
-    const tx = await mockTroveManager.forward(defaultPool.address, increaseLUSDDebtData)
+    // await defaultPool.increaseBPDDebt(100, { from: mockVaultManagerAddress })
+    const increaseBPDDebtData = th.getTransactionData('increaseBPDDebt(uint256)', ['0x64'])
+    const tx = await mockVaultManager.forward(defaultPool.address, increaseBPDDebtData)
     assert.isTrue(tx.receipt.status)
 
-    const recordedLUSD_balanceAfter = await defaultPool.getLUSDDebt()
-    assert.equal(recordedLUSD_balanceAfter, 100)
+    const recordedBPD_balanceAfter = await defaultPool.getBPDDebt()
+    assert.equal(recordedBPD_balanceAfter, 100)
   })
   
-  it('decreaseLUSD(): decreases the recorded LUSD balance by the correct amount', async () => {
+  it('decreaseBPD(): decreases the recorded BPD balance by the correct amount', async () => {
     // start the pool on 100 wei
-    //await defaultPool.increaseLUSDDebt(100, { from: mockTroveManagerAddress })
-    const increaseLUSDDebtData = th.getTransactionData('increaseLUSDDebt(uint256)', ['0x64'])
-    const tx1 = await mockTroveManager.forward(defaultPool.address, increaseLUSDDebtData)
+    //await defaultPool.increaseBPDDebt(100, { from: mockVaultManagerAddress })
+    const increaseBPDDebtData = th.getTransactionData('increaseBPDDebt(uint256)', ['0x64'])
+    const tx1 = await mockVaultManager.forward(defaultPool.address, increaseBPDDebtData)
     assert.isTrue(tx1.receipt.status)
 
-    const recordedLUSD_balanceBefore = await defaultPool.getLUSDDebt()
-    assert.equal(recordedLUSD_balanceBefore, 100)
+    const recordedBPD_balanceBefore = await defaultPool.getBPDDebt()
+    assert.equal(recordedBPD_balanceBefore, 100)
 
-    // await defaultPool.decreaseLUSDDebt(100, { from: mockTroveManagerAddress })
-    const decreaseLUSDDebtData = th.getTransactionData('decreaseLUSDDebt(uint256)', ['0x64'])
-    const tx2 = await mockTroveManager.forward(defaultPool.address, decreaseLUSDDebtData)
+    // await defaultPool.decreaseBPDDebt(100, { from: mockVaultManagerAddress })
+    const decreaseBPDDebtData = th.getTransactionData('decreaseBPDDebt(uint256)', ['0x64'])
+    const tx2 = await mockVaultManager.forward(defaultPool.address, decreaseBPDDebtData)
     assert.isTrue(tx2.receipt.status)
 
-    const recordedLUSD_balanceAfter = await defaultPool.getLUSDDebt()
-    assert.equal(recordedLUSD_balanceAfter, 0)
+    const recordedBPD_balanceAfter = await defaultPool.getBPDDebt()
+    assert.equal(recordedBPD_balanceAfter, 0)
   })
 
   // send raw ether
-  it('sendETHToActivePool(): decreases the recorded ETH balance by the correct amount', async () => {
+  it('sendETHToActivePool(): decreases the recorded RBTC balance by the correct amount', async () => {
     // setup: give pool 2 ether
     const defaultPool_initialBalance = web3.utils.toBN(await web3.eth.getBalance(defaultPool.address))
     assert.equal(defaultPool_initialBalance, 0)
@@ -190,10 +190,10 @@ contract('DefaultPool', async accounts => {
     assert.equal(defaultPool_BalanceBeforeTx, dec(2, 'ether'))
 
     // send ether from pool to alice
-    //await defaultPool.sendETHToActivePool(dec(1, 'ether'), { from: mockTroveManagerAddress })
+    //await defaultPool.sendETHToActivePool(dec(1, 'ether'), { from: mockVaultManagerAddress })
     const sendETHData = th.getTransactionData('sendETHToActivePool(uint256)', [web3.utils.toHex(dec(1, 'ether'))])
     await mockActivePool.setPayable(true)
-    const tx2 = await mockTroveManager.forward(defaultPool.address, sendETHData, { from: owner })
+    const tx2 = await mockVaultManager.forward(defaultPool.address, sendETHData, { from: owner })
     assert.isTrue(tx2.receipt.status)
 
     const defaultPool_BalanceAfterTx = web3.utils.toBN(await web3.eth.getBalance(defaultPool.address))

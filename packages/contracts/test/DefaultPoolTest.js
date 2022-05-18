@@ -9,19 +9,19 @@ contract('DefaultPool', async accounts => {
   let defaultPool
   let nonPayable
   let mockActivePool
-  let mockTroveManager
+  let mockVaultManager
 
   let [owner] = accounts
 
   beforeEach('Deploy contracts', async () => {
     defaultPool = await DefaultPool.new()
     nonPayable = await NonPayable.new()
-    mockTroveManager = await NonPayable.new()
+    mockVaultManager = await NonPayable.new()
     mockActivePool = await NonPayable.new()
-    await defaultPool.setAddresses(mockTroveManager.address, mockActivePool.address)
+    await defaultPool.setAddresses(mockVaultManager.address, mockActivePool.address)
   })
 
-  it('sendETHToActivePool(): fails if receiver cannot receive ETH', async () => {
+  it('sendETHToActivePool(): fails if receiver cannot receive RBTC', async () => {
     const amount = dec(1, 'ether')
 
     // start pool with `amount`
@@ -30,9 +30,9 @@ contract('DefaultPool', async accounts => {
     assert.isTrue(tx.receipt.status)
 
     // try to send ether from pool to non-payable
-    //await th.assertRevert(defaultPool.sendETHToActivePool(amount, { from: owner }), 'DefaultPool: sending ETH failed')
+    //await th.assertRevert(defaultPool.sendETHToActivePool(amount, { from: owner }), 'DefaultPool: sending RBTC failed')
     const sendETHData = th.getTransactionData('sendETHToActivePool(uint256)', [web3.utils.toHex(amount)])
-    await th.assertRevert(mockTroveManager.forward(defaultPool.address, sendETHData, { from: owner }), 'DefaultPool: sending ETH failed')
+    await th.assertRevert(mockVaultManager.forward(defaultPool.address, sendETHData, { from: owner }), 'DefaultPool: sending RBTC failed')
   })
 })
 
