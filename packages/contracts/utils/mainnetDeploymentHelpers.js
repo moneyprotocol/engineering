@@ -103,7 +103,7 @@ class MainnetDeploymentHelper {
     )
 
     if (!this.configParams.ASDFGSCAN_BASE_URL) {
-      console.log('No Etherscan Url defined, skipping verification')
+      console.log('No Bitcoinscan Url defined, skipping verification')
     } else {
       await this.verifyContract('priceFeed', deploymentState)
       await this.verifyContract('sortedVaults', deploymentState)
@@ -163,7 +163,7 @@ class MainnetDeploymentHelper {
     )
 
     if (!this.configParams.ASDFGSCAN_BASE_URL) {
-      console.log('No Etherscan Url defined, skipping verification')
+      console.log('No Bitcoinscan Url defined, skipping verification')
     } else {
       await this.verifyContract('mpStaking', deploymentState)
       await this.verifyContract('lockupContractFactory', deploymentState)
@@ -185,7 +185,7 @@ class MainnetDeploymentHelper {
     const unipool = await this.loadOrDeploy(unipoolFactory, 'unipool', deploymentState)
 
     if (!this.configParams.ASDFGSCAN_BASE_URL) {
-      console.log('No Etherscan Url defined, skipping verification')
+      console.log('No Bitcoinscan Url defined, skipping verification')
     } else {
       await this.verifyContract('unipool', deploymentState)
     }
@@ -207,7 +207,7 @@ class MainnetDeploymentHelper {
     )
 
     if (!this.configParams.ASDFGSCAN_BASE_URL) {
-      console.log('No Etherscan Url defined, skipping verification')
+      console.log('No Bitcoinscan Url defined, skipping verification')
     } else {
       await this.verifyContract('multiVaultGetter', deploymentState, multiVaultGetterParams)
     }

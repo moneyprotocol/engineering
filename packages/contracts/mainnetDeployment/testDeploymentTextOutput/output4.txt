@@ -1,6 +1,6 @@
 Loading previous deployment...
 deployer address: 0xF8e5C47a6866e97F5D561982Ff80D39c436E573E
-deployerETHBalance before: 18046115977000000000
+deployerRBTCBalance before: 18046115977000000000
 Uniswp addr: 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f
 Uniswap Factory number of pairs: 31977
 deployer's RBTC balance before deployments: 18046115977000000000
@@ -67,13 +67,13 @@ deployer's BPD balance: 3000.000000000000000000
 BPD-RBTC Pair token 0: 0xaa05...87A5,
       BPDToken contract addr: 0xaa05...87A5
 BPD-RBTC Pair token 1: 0xC02a...6Cc2,
-      WETH ERC20 contract addr: 0xc02a...6cc2
+      WRBTC ERC20 contract addr: 0xc02a...6cc2
 BPD-RBTC Pair's BPD reserves before provision:0
 BPD-RBTC Pair's RBTC reserves before provision:0
 router's spending allowance for deployer's BPD: .000000000000000000
 BPD-RBTC Pair's BPD reserves after provision: 1926.510941640000000000
 BPD-RBTC Pair's RBTC reserves after provision: 1.000000000000000000
 deployer's LP token balance: 43.892037337539936894
-BPDETHPair addr: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
+BPDRBTCPair addr: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
 Pair addr stored in Unipool: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
 deployer's earned MP from Unipool after ~1.5mins: 34.538506760728982948

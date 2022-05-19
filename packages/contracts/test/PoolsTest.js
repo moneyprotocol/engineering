@@ -8,7 +8,7 @@ const testHelpers = require("../utils/testHelpers.js")
 const th = testHelpers.TestHelper
 const dec = th.dec
 
-const _minus_1_Ether = web3.utils.toWei('-1', 'ether')
+const _minus_1_Bitcoin = web3.utils.toWei('-1', 'ether')
 
 contract('StabilityPool', async accounts => {
   /* mock* are EOA’s, temporarily used to call protected functions.
@@ -115,7 +115,7 @@ contract('ActivePool', async accounts => {
     const alice_BalanceChange = alice_Balance_AfterTx.sub(alice_Balance_BeforeTx)
     const pool_BalanceChange = activePool_BalanceAfterTx.sub(activePool_BalanceBeforeTx)
     assert.equal(alice_BalanceChange, dec(1, 'ether'))
-    assert.equal(pool_BalanceChange, _minus_1_Ether)
+    assert.equal(pool_BalanceChange, _minus_1_Bitcoin)
   })
 })
 
@@ -202,7 +202,7 @@ contract('DefaultPool', async accounts => {
     const activePool_BalanceChange = activePool_Balance_AfterTx.sub(activePool_Balance_BeforeTx)
     const defaultPool_BalanceChange = defaultPool_BalanceAfterTx.sub(defaultPool_BalanceBeforeTx)
     assert.equal(activePool_BalanceChange, dec(1, 'ether'))
-    assert.equal(defaultPool_BalanceChange, _minus_1_Ether)
+    assert.equal(defaultPool_BalanceChange, _minus_1_Bitcoin)
   })
 })
 

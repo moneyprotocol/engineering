@@ -23,7 +23,7 @@ async function main() {
   // Send RBTC to the deployer's address
   await whale.sendTransaction({
     to:  deployerWallet.address,
-    value: ethers.utils.parseEther("20.0")
+    value: ethers.utils.parseBitcoin("20.0")
   })
 
   // Stop impersonating whale

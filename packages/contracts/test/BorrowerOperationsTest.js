@@ -125,17 +125,17 @@ contract('BorrowerOperations', async accounts => {
       const { collateral: aliceColl } = await openVault({ ICR: toBN(dec(2, 18)), extraParams: { from: alice } })
 
       const activePool_RBTC_Before = await activePool.getRBTC()
-      const activePool_RawEther_Before = toBN(await web3.eth.getBalance(activePool.address))
+      const activePool_RawBitcoin_Before = toBN(await web3.eth.getBalance(activePool.address))
 
       assert.isTrue(activePool_RBTC_Before.eq(aliceColl))
-      assert.isTrue(activePool_RawEther_Before.eq(aliceColl))
+      assert.isTrue(activePool_RawBitcoin_Before.eq(aliceColl))
 
       await borrowerOperations.addColl(alice, alice, { from: alice, value: dec(1, 'ether') })
 
       const activePool_RBTC_After = await activePool.getRBTC()
-      const activePool_RawEther_After = toBN(await web3.eth.getBalance(activePool.address))
+      const activePool_RawBitcoin_After = toBN(await web3.eth.getBalance(activePool.address))
       assert.isTrue(activePool_RBTC_After.eq(aliceColl.add(toBN(dec(1, 'ether')))))
-      assert.isTrue(activePool_RawEther_After.eq(aliceColl.add(toBN(dec(1, 'ether')))))
+      assert.isTrue(activePool_RawBitcoin_After.eq(aliceColl.add(toBN(dec(1, 'ether')))))
     })
 
     it("addColl(), active Vault: adds the correct collateral amount to the Vault", async () => {
@@ -549,15 +549,15 @@ contract('BorrowerOperations', async accounts => {
 
       // check before
       const activePool_RBTC_before = await activePool.getRBTC()
-      const activePool_RawEther_before = toBN(await web3.eth.getBalance(activePool.address))
+      const activePool_RawBitcoin_before = toBN(await web3.eth.getBalance(activePool.address))
 
       await borrowerOperations.withdrawColl(dec(1, 'ether'), alice, alice, { from: alice })
 
       // check after
       const activePool_RBTC_After = await activePool.getRBTC()
-      const activePool_RawEther_After = toBN(await web3.eth.getBalance(activePool.address))
+      const activePool_RawBitcoin_After = toBN(await web3.eth.getBalance(activePool.address))
       assert.isTrue(activePool_RBTC_After.eq(activePool_RBTC_before.sub(toBN(dec(1, 'ether')))))
-      assert.isTrue(activePool_RawEther_After.eq(activePool_RawEther_before.sub(toBN(dec(1, 'ether')))))
+      assert.isTrue(activePool_RawBitcoin_After.eq(activePool_RawBitcoin_before.sub(toBN(dec(1, 'ether')))))
     })
 
     it("withdrawColl(): updates the stake and updates the total stakes", async () => {
@@ -2447,17 +2447,17 @@ contract('BorrowerOperations', async accounts => {
       await openVault({ extraBPDAmount: toBN(dec(10000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: alice } })
 
       const activePool_RBTC_Before = await activePool.getRBTC()
-      const activePool_RawEther_Before = toBN(await web3.eth.getBalance(activePool.address))
+      const activePool_RawBitcoin_Before = toBN(await web3.eth.getBalance(activePool.address))
       assert.isTrue(activePool_RBTC_Before.gt(toBN('0')))
-      assert.isTrue(activePool_RawEther_Before.gt(toBN('0')))
+      assert.isTrue(activePool_RawBitcoin_Before.gt(toBN('0')))
 
       // Alice adjusts vault - coll decrease and debt decrease
       await borrowerOperations.adjustVault(th._100pct, dec(100, 'finney'), dec(10, 18), false, alice, alice, { from: alice })
 
       const activePool_RBTC_After = await activePool.getRBTC()
-      const activePool_RawEther_After = toBN(await web3.eth.getBalance(activePool.address))
+      const activePool_RawBitcoin_After = toBN(await web3.eth.getBalance(activePool.address))
       assert.isTrue(activePool_RBTC_After.eq(activePool_RBTC_Before.sub(toBN(dec(1, 17)))))
-      assert.isTrue(activePool_RawEther_After.eq(activePool_RBTC_Before.sub(toBN(dec(1, 17)))))
+      assert.isTrue(activePool_RawBitcoin_After.eq(activePool_RBTC_Before.sub(toBN(dec(1, 17)))))
     })
 
     it("adjustVault(): Changes the activePool RBTC and raw ether balance by the amount of RBTC sent", async () => {
@@ -2466,17 +2466,17 @@ contract('BorrowerOperations', async accounts => {
       await openVault({ extraBPDAmount: toBN(dec(10000, 18)), ICR: toBN(dec(10, 18)), extraParams: { from: alice } })
 
       const activePool_RBTC_Before = await activePool.getRBTC()
-      const activePool_RawEther_Before = toBN(await web3.eth.getBalance(activePool.address))
+      const activePool_RawBitcoin_Before = toBN(await web3.eth.getBalance(activePool.address))
       assert.isTrue(activePool_RBTC_Before.gt(toBN('0')))
-      assert.isTrue(activePool_RawEther_Before.gt(toBN('0')))
+      assert.isTrue(activePool_RawBitcoin_Before.gt(toBN('0')))
 
       // Alice adjusts vault - coll increase and debt increase
       await borrowerOperations.adjustVault(th._100pct, 0, dec(100, 18), true, alice, alice, { from: alice, value: dec(1, 'ether') })
 
       const activePool_RBTC_After = await activePool.getRBTC()
-      const activePool_RawEther_After = toBN(await web3.eth.getBalance(activePool.address))
+      const activePool_RawBitcoin_After = toBN(await web3.eth.getBalance(activePool.address))
       assert.isTrue(activePool_RBTC_After.eq(activePool_RBTC_Before.add(toBN(dec(1, 18)))))
-      assert.isTrue(activePool_RawEther_After.eq(activePool_RBTC_Before.add(toBN(dec(1, 18)))))
+      assert.isTrue(activePool_RawBitcoin_After.eq(activePool_RBTC_Before.add(toBN(dec(1, 18)))))
     })
 
     it("adjustVault(): Changes the BPD debt in ActivePool by requested decrease", async () => {
@@ -2823,10 +2823,10 @@ contract('BorrowerOperations', async accounts => {
 
       // Check active Pool RBTC before
       const activePool_RBTC_before = await activePool.getRBTC()
-      const activePool_RawEther_before = toBN(await web3.eth.getBalance(activePool.address))
+      const activePool_RawBitcoin_before = toBN(await web3.eth.getBalance(activePool.address))
       assert.isTrue(activePool_RBTC_before.eq(aliceColl.add(dennisColl)))
       assert.isTrue(activePool_RBTC_before.gt(toBN('0')))
-      assert.isTrue(activePool_RawEther_before.eq(activePool_RBTC_before))
+      assert.isTrue(activePool_RawBitcoin_before.eq(activePool_RBTC_before))
 
       // to compensate borrowing fees
       await bpdToken.transfer(alice, await bpdToken.balanceOf(dennis), { from: dennis })
@@ -2836,9 +2836,9 @@ contract('BorrowerOperations', async accounts => {
 
       // Check after
       const activePool_RBTC_After = await activePool.getRBTC()
-      const activePool_RawEther_After = toBN(await web3.eth.getBalance(activePool.address))
+      const activePool_RawBitcoin_After = toBN(await web3.eth.getBalance(activePool.address))
       assert.isTrue(activePool_RBTC_After.eq(dennisColl))
-      assert.isTrue(activePool_RawEther_After.eq(dennisColl))
+      assert.isTrue(activePool_RawBitcoin_After.eq(dennisColl))
     })
 
     it("closeVault(): reduces ActivePool debt by correct amount", async () => {
@@ -3761,17 +3761,17 @@ contract('BorrowerOperations', async accounts => {
 
     it("openVault(): Increases the activePool RBTC and raw ether balance by correct amount", async () => {
       const activePool_RBTC_Before = await activePool.getRBTC()
-      const activePool_RawEther_Before = await web3.eth.getBalance(activePool.address)
+      const activePool_RawBitcoin_Before = await web3.eth.getBalance(activePool.address)
       assert.equal(activePool_RBTC_Before, 0)
-      assert.equal(activePool_RawEther_Before, 0)
+      assert.equal(activePool_RawBitcoin_Before, 0)
 
       await openVault({ extraBPDAmount: toBN(dec(5000, 18)), ICR: toBN(dec(2, 18)), extraParams: { from: alice } })
       const aliceCollAfter = await getVaultEntireColl(alice)
 
       const activePool_RBTC_After = await activePool.getRBTC()
-      const activePool_RawEther_After = toBN(await web3.eth.getBalance(activePool.address))
+      const activePool_RawBitcoin_After = toBN(await web3.eth.getBalance(activePool.address))
       assert.isTrue(activePool_RBTC_After.eq(aliceCollAfter))
-      assert.isTrue(activePool_RawEther_After.eq(aliceCollAfter))
+      assert.isTrue(activePool_RawBitcoin_After.eq(aliceCollAfter))
     })
 
     it("openVault(): records up-to-date initial snapshots of B_RBTC and B_BPDDebt", async () => {

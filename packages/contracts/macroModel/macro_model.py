@@ -123,7 +123,7 @@ Liquidate Vaults
 """
 
 def liquidate_vaults(vaults, index, data):
-  vaults['CR_current'] = vaults['Ether_Price']*vaults['Ether_Quantity']/vaults['Supply']
+  vaults['CR_current'] = vaults['Bitcoin_Price']*vaults['Bitcoin_Quantity']/vaults['Supply']
   price_BPD_previous = data.loc[index-1,'Price_BPD']
   price_MP_previous = data.loc[index-1,'price_MP']
   stability_pool_previous = data.loc[index-1, 'stability']
@@ -131,7 +131,7 @@ def liquidate_vaults(vaults, index, data):
   vaults_liquidated = vaults[vaults.CR_current < 1.1]
   vaults = vaults[vaults.CR_current >= 1.1]
   debt_liquidated = vaults_liquidated['Supply'].sum()
-  ether_liquidated = vaults_liquidated['Ether_Quantity'].sum()
+  ether_liquidated = vaults_liquidated['Bitcoin_Quantity'].sum()
   n_liquidate = vaults_liquidated.shape[0]
   vaults = vaults.reset_index(drop = True)
 
@@ -190,14 +190,14 @@ def adjust_vaults(vaults, index):
   #A part of the vaults are adjusted by adjusting debt
     if p >= ratio:
       if check<-1:
-        working_vault['Supply'] = working_vault['Ether_Price']*working_vault['Ether_Quantity']/working_vault['CR_initial']
+        working_vault['Supply'] = working_vault['Bitcoin_Price']*working_vault['Bitcoin_Quantity']/working_vault['CR_initial']
       if check>2:
-        supply_new = working_vault['Ether_Price']*working_vault['Ether_Quantity']/working_vault['CR_initial']
+        supply_new = working_vault['Bitcoin_Price']*working_vault['Bitcoin_Quantity']/working_vault['CR_initial']
         issuance_BPD_adjust = issuance_BPD_adjust + rate_issuance * (supply_new - working_vault['Supply'])
         working_vault['Supply'] = supply_new
   #Another part of the vaults are adjusted by adjusting collaterals
     if p < ratio and (check < -1 or check > 2):
-      working_vault['Ether_Quantity'] = working_vault['CR_initial']*working_vault['Supply']/working_vault['Ether_Price']
+      working_vault['Bitcoin_Quantity'] = working_vault['CR_initial']*working_vault['Supply']/working_vault['Bitcoin_Price']
     
     vaults.loc[i] = working_vault
   return[vaults, issuance_BPD_adjust]
@@ -234,7 +234,7 @@ def open_vaults(vaults, index1, price_BPD_previous):
     supply_vault = price_ether_current * quantity_ether / CR_ratio
     issuance_BPD_open = issuance_BPD_open + rate_issuance * supply_vault
 
-    new_row = {"Ether_Price": price_ether_current, "Ether_Quantity": quantity_ether, 
+    new_row = {"Bitcoin_Price": price_ether_current, "Bitcoin_Quantity": quantity_ether, 
                "CR_initial": CR_ratio, "Supply": supply_vault, 
                "Rational_inattention": rational_inattention, "CR_current": CR_ratio}
     vaults = vaults.append(new_row, ignore_index=True)
@@ -288,7 +288,7 @@ def price_stabilizer(vaults, index, data, stability_pool, n_open):
     quantity_ether = supply_vault * CR_ratio / price_ether_current
     issuance_BPD_stabilizer = rate_issuance * supply_vault
 
-    new_row = {"Ether_Price": price_ether_current, "Ether_Quantity": quantity_ether, "CR_initial": CR_ratio,
+    new_row = {"Bitcoin_Price": price_ether_current, "Bitcoin_Quantity": quantity_ether, "CR_initial": CR_ratio,
                "Supply": supply_vault, "Rational_inattention": rational_inattention, "CR_current": CR_ratio}
     vaults = vaults.append(new_row, ignore_index=True)
     price_BPD_current = 1.1 + rate_issuance
@@ -330,8 +330,8 @@ def price_stabilizer(vaults, index, data, stability_pool, n_open):
     residual = redemption_pool - redempted
     wk = vaults.index[0]
     vaults['Supply'][wk] = vaults['Supply'][wk] - residual
-    vaults['Ether_Quantity'][wk] = vaults['Ether_Quantity'][wk] - residual/price_ether_current
-    vaults['CR_current'][wk] = price_ether_current * vaults['Ether_Quantity'][wk] / vaults['Supply'][wk]
+    vaults['Bitcoin_Quantity'][wk] = vaults['Bitcoin_Quantity'][wk] - residual/price_ether_current
+    vaults['CR_current'][wk] = price_ether_current * vaults['Bitcoin_Quantity'][wk] / vaults['Supply'][wk]
 
     #Redemption Fee
     redemption_fee = rate_redemption * redemption_pool
@@ -364,12 +364,12 @@ def MP_market(index, data):
 """# Simulation Program"""
 
 #Defining Initials
-initials = {"Price_BPD":[1.00], "Price_Ether":[price_ether_initial], "n_open":[initial_open], "n_close":[0], "n_liquidate": [0], "n_redempt":[0], 
+initials = {"Price_BPD":[1.00], "Price_Bitcoin":[price_ether_initial], "n_open":[initial_open], "n_close":[0], "n_liquidate": [0], "n_redempt":[0], 
             "n_vaults":[initial_open], "stability":[0], "liquidity":[0], "redemption_pool":[0],
             "supply_BPD":[0],  "return_stability":[initial_return], "airdrop_gain":[0], "liquidation_gain":[0],  "issuance_fee":[0], "redemption_fee":[0],
             "price_MP":[price_MP_initial], "MC_MP":[0], "annualized_earning":[0]}
 data = pd.DataFrame(initials)
-vaults= pd.DataFrame({"Ether_Price":[], "Ether_Quantity":[], "CR_initial":[], 
+vaults= pd.DataFrame({"Bitcoin_Price":[], "Bitcoin_Quantity":[], "CR_initial":[], 
               "Supply":[], "Rational_inattention":[], "CR_current":[]})
 result_open = open_vaults(vaults, 0, data['Price_BPD'][0])
 vaults = result_open[0]
@@ -383,7 +383,7 @@ data.loc[0,'stability'] = 0.5*vaults["Supply"].sum()
 for index in range(1, n_sim):
 #exogenous ether price input
   price_ether_current = price_ether[index]
-  vaults['Ether_Price'] = price_ether_current
+  vaults['Bitcoin_Price'] = price_ether_current
   price_BPD_previous = data.loc[index-1,'Price_BPD']
   price_MP_previous = data.loc[index-1,'price_MP']
 
@@ -444,7 +444,7 @@ for index in range(1, n_sim):
   if index >= month:
     price_MP.append(price_MP_current)
 
-  new_row = {"Price_BPD":float(price_BPD_current), "Price_Ether":float(price_ether_current), "n_open":float(n_open), "n_close":float(n_close), 
+  new_row = {"Price_BPD":float(price_BPD_current), "Price_Bitcoin":float(price_ether_current), "n_open":float(n_open), "n_close":float(n_close), 
              "n_liquidate":float(n_liquidate), "n_redempt": float(n_redempt), "n_vaults":float(n_vaults),
               "stability":float(stability_pool), "liquidity":float(liquidity_pool), "redemption_pool":float(redemption_pool), "supply_BPD":float(supply_BPD),
              "issuance_fee":float(issuance_fee), "redemption_fee":float(redemption_fee),
@@ -469,7 +469,7 @@ fig.add_trace(
     secondary_y=False,
 )
 fig.add_trace(
-    go.Scatter(x=data.index/720, y=data['Price_Ether'], name="Bitcoin Price"),
+    go.Scatter(x=data.index/720, y=data['Price_Bitcoin'], name="Bitcoin Price"),
     secondary_y=True,
 )
 fig.update_layout(
@@ -615,14 +615,14 @@ def vault_histogram(measure):
 
 vaults
 
-vault_histogram('Ether_Quantity')
+vault_histogram('Bitcoin_Quantity')
 vault_histogram('CR_initial')
 vault_histogram('Supply')
 vault_histogram('Rational_inattention')
 vault_histogram('CR_current')
 
 import matplotlib.pyplot as plt
-plt.plot(vaults["Ether_Quantity"])
+plt.plot(vaults["Bitcoin_Quantity"])
 plt.show()
 
 plt.plot(vaults["CR_initial"])
@@ -644,12 +644,12 @@ issuance fee = redemption fee = base rate
 """
 
 #Defining Initials
-initials = {"Price_BPD":[1.00], "Price_Ether":[price_ether_initial], "n_open":[initial_open], "n_close":[0], "n_liquidate": [0], "n_redempt":[0], 
+initials = {"Price_BPD":[1.00], "Price_Bitcoin":[price_ether_initial], "n_open":[initial_open], "n_close":[0], "n_liquidate": [0], "n_redempt":[0], 
             "n_vaults":[initial_open], "stability":[0], "liquidity":[0], "redemption_pool":[0],
             "supply_BPD":[0],  "return_stability":[initial_return], "airdrop_gain":[0], "liquidation_gain":[0],  "issuance_fee":[0], "redemption_fee":[0],
             "price_MP":[price_MP_initial], "MC_MP":[0], "annualized_earning":[0], "base_rate":[base_rate_initial]}
 data2 = pd.DataFrame(initials)
-vaults2= pd.DataFrame({"Ether_Price":[], "Ether_Quantity":[], "CR_initial":[], 
+vaults2= pd.DataFrame({"Bitcoin_Price":[], "Bitcoin_Quantity":[], "CR_initial":[], 
               "Supply":[], "Rational_inattention":[], "CR_current":[]})
 result_open = open_vaults(vaults2, 0, data2['Price_BPD'][0])
 vaults2 = result_open[0]
@@ -663,7 +663,7 @@ data2.loc[0,'stability'] = 0.5*vaults2["Supply"].sum()
 for index in range(1, n_sim):
 #exogenous ether price input
   price_ether_current = price_ether[index]
-  vaults2['Ether_Price'] = price_ether_current
+  vaults2['Bitcoin_Price'] = price_ether_current
   price_BPD_previous = data2.loc[index-1,'Price_BPD']
   price_MP_previous = data2.loc[index-1,'price_MP']
 
@@ -729,7 +729,7 @@ for index in range(1, n_sim):
   if index >= month:
     price_MP.append(price_MP_current)
 
-  new_row = {"Price_BPD":float(price_BPD_current), "Price_Ether":float(price_ether_current), "n_open":float(n_open), "n_close":float(n_close), 
+  new_row = {"Price_BPD":float(price_BPD_current), "Price_Bitcoin":float(price_ether_current), "n_open":float(n_open), "n_close":float(n_close), 
              "n_liquidate":float(n_liquidate), "n_redempt": float(n_redempt), "n_vaults":float(n_vaults),
               "stability":float(stability_pool), "liquidity":float(liquidity_pool), "redemption_pool":float(redemption_pool), "supply_BPD":float(supply_BPD),
              "issuance_fee":float(issuance_fee), "redemption_fee":float(redemption_fee),
@@ -750,7 +750,7 @@ fig.add_trace(
     secondary_y=False,
 )
 fig.add_trace(
-    go.Scatter(x=data.index/720, y=data['Price_Ether'], name="Bitcoin Price"),
+    go.Scatter(x=data.index/720, y=data['Price_Bitcoin'], name="Bitcoin Price"),
     secondary_y=True,
 )
 fig.add_trace(
@@ -1000,7 +1000,7 @@ def vault2_histogram(measure):
   fig = px.histogram(vaults2, x=measure, title='Distribution of '+measure, nbins=25)
   fig.show()
 
-vault2_histogram('Ether_Quantity')
+vault2_histogram('Bitcoin_Quantity')
 vault2_histogram('CR_initial')
 vault2_histogram('Supply')
 vault2_histogram('Rational_inattention')

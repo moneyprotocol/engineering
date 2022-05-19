@@ -127,11 +127,11 @@ contract('VaultManager', async accounts => {
 
     // check ActivePool RBTC and BPD debt before
     const activePool_RBTC_Before = (await activePool.getRBTC()).toString()
-    const activePool_RawEther_Before = (await web3.eth.getBalance(activePool.address)).toString()
+    const activePool_RawBitcoin_Before = (await web3.eth.getBalance(activePool.address)).toString()
     const activePool_BPDDebt_Before = (await activePool.getBPDDebt()).toString()
 
     assert.equal(activePool_RBTC_Before, A_collateral.add(B_collateral))
-    assert.equal(activePool_RawEther_Before, A_collateral.add(B_collateral))
+    assert.equal(activePool_RawBitcoin_Before, A_collateral.add(B_collateral))
     th.assertIsApproximatelyEqual(activePool_BPDDebt_Before, A_totalDebt.add(B_totalDebt))
 
     // price drops to 1RBTC:100BPD, reducing Bob's ICR below MCR
@@ -146,11 +146,11 @@ contract('VaultManager', async accounts => {
 
     // check ActivePool RBTC and BPD debt 
     const activePool_RBTC_After = (await activePool.getRBTC()).toString()
-    const activePool_RawEther_After = (await web3.eth.getBalance(activePool.address)).toString()
+    const activePool_RawBitcoin_After = (await web3.eth.getBalance(activePool.address)).toString()
     const activePool_BPDDebt_After = (await activePool.getBPDDebt()).toString()
 
     assert.equal(activePool_RBTC_After, A_collateral)
-    assert.equal(activePool_RawEther_After, A_collateral)
+    assert.equal(activePool_RawBitcoin_After, A_collateral)
     th.assertIsApproximatelyEqual(activePool_BPDDebt_After, A_totalDebt)
   })
 
@@ -163,11 +163,11 @@ contract('VaultManager', async accounts => {
 
     // check DefaultPool RBTC and BPD debt before
     const defaultPool_RBTC_Before = (await defaultPool.getRBTC())
-    const defaultPool_RawEther_Before = (await web3.eth.getBalance(defaultPool.address)).toString()
+    const defaultPool_RawBitcoin_Before = (await web3.eth.getBalance(defaultPool.address)).toString()
     const defaultPool_BPDDebt_Before = (await defaultPool.getBPDDebt()).toString()
 
     assert.equal(defaultPool_RBTC_Before, '0')
-    assert.equal(defaultPool_RawEther_Before, '0')
+    assert.equal(defaultPool_RawBitcoin_Before, '0')
     assert.equal(defaultPool_BPDDebt_Before, '0')
 
     // price drops to 1RBTC:100BPD, reducing Bob's ICR below MCR
@@ -181,12 +181,12 @@ contract('VaultManager', async accounts => {
 
     // check after
     const defaultPool_RBTC_After = (await defaultPool.getRBTC()).toString()
-    const defaultPool_RawEther_After = (await web3.eth.getBalance(defaultPool.address)).toString()
+    const defaultPool_RawBitcoin_After = (await web3.eth.getBalance(defaultPool.address)).toString()
     const defaultPool_BPDDebt_After = (await defaultPool.getBPDDebt()).toString()
 
     const defaultPooB_RBTC = th.applyLiquidationFee(B_collateral)
     assert.equal(defaultPool_RBTC_After, defaultPooB_RBTC)
-    assert.equal(defaultPool_RawEther_After, defaultPooB_RBTC)
+    assert.equal(defaultPool_RawBitcoin_After, defaultPooB_RBTC)
     th.assertIsApproximatelyEqual(defaultPool_BPDDebt_After, B_totalDebt)
   })
 

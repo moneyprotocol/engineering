@@ -1,6 +1,6 @@
 Loading previous deployment...
 deployer address: 0xF8e5C47a6866e97F5D561982Ff80D39c436E573E
-deployerETHBalance before: 18189725977000000000
+deployerRBTCBalance before: 18189725977000000000
 Uniswp addr: 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f
 Uniswap Factory number of pairs: 31974
 deployer's RBTC balance before deployments: 18189725977000000000

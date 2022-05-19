@@ -556,7 +556,7 @@ contract('VaultManager - Redistribution reward calculations', async accounts => 
     assert.isTrue(txA.receipt.status)
     assert.isFalse(await sortedVaults.contains(alice))
 
-    // Expect Bob now holds all Ether and BPDDebt in the system: 2 + 0.4975+0.4975*0.995+0.995 Ether and 110*3 BPD (10 each for gas compensation)
+    // Expect Bob now holds all Bitcoin and BPDDebt in the system: 2 + 0.4975+0.4975*0.995+0.995 Bitcoin and 110*3 BPD (10 each for gas compensation)
     const bob_Coll = ((await vaultManager.Vaults(bob))[1]
       .add(await vaultManager.getPendingRBTCReward(bob)))
       .toString()
@@ -661,11 +661,11 @@ contract('VaultManager - Redistribution reward calculations', async accounts => 
   })
 
   it("redistribution: Vault with the majority stake tops up. A,B,C, D open. Liq(D). C tops up. E Enters, Liq(E). Distributes correct rewards", async () => {
-    const _998_Ether = toBN('998000000000000000000')
+    const _998_Bitcoin = toBN('998000000000000000000')
     // A, B, C, D open vaults
     const { collateral: A_coll } = await openVault({ ICR: toBN(dec(400, 16)), extraParams: { from: alice } })
     const { collateral: B_coll } = await openVault({ ICR: toBN(dec(400, 16)), extraBPDAmount: dec(110, 18), extraParams: { from: bob } })
-    const { collateral: C_coll } = await openVault({ extraBPDAmount: dec(110, 18), extraParams: { from: carol, value: _998_Ether } })
+    const { collateral: C_coll } = await openVault({ extraBPDAmount: dec(110, 18), extraParams: { from: carol, value: _998_Bitcoin } })
     const { collateral: D_coll } = await openVault({ ICR: toBN(dec(200, 16)), extraBPDAmount: dec(110, 18), extraParams: { from: dennis, value: dec(1000, 'ether') } })
 
     // Price drops to 100 $/E
@@ -759,11 +759,11 @@ contract('VaultManager - Redistribution reward calculations', async accounts => 
   })
 
   it("redistribution: Vault with the majority stake tops up. A,B,C, D open. Liq(D). A, B, C top up. E Enters, Liq(E). Distributes correct rewards", async () => {
-    const _998_Ether = toBN('998000000000000000000')
+    const _998_Bitcoin = toBN('998000000000000000000')
     // A, B, C open vaults
     const { collateral: A_coll } = await openVault({ ICR: toBN(dec(400, 16)), extraParams: { from: alice } })
     const { collateral: B_coll } = await openVault({ ICR: toBN(dec(400, 16)), extraBPDAmount: dec(110, 18), extraParams: { from: bob } })
-    const { collateral: C_coll } = await openVault({ extraBPDAmount: dec(110, 18), extraParams: { from: carol, value: _998_Ether } })
+    const { collateral: C_coll } = await openVault({ extraBPDAmount: dec(110, 18), extraParams: { from: carol, value: _998_Bitcoin } })
     const { collateral: D_coll } = await openVault({ ICR: toBN(dec(200, 16)), extraBPDAmount: dec(110, 18), extraParams: { from: dennis, value: dec(1000, 'ether') } })
 
     // Price drops to 100 $/E
@@ -894,7 +894,7 @@ contract('VaultManager - Redistribution reward calculations', async accounts => 
     assert.isTrue(txA.receipt.status)
     assert.isFalse(await sortedVaults.contains(alice))
 
-    // Expect Bob now holds all Ether and BPDDebt in the system: 2.5 Ether and 300 BPD
+    // Expect Bob now holds all Bitcoin and BPDDebt in the system: 2.5 Bitcoin and 300 BPD
     // 1 + 0.995/2 - 0.5 + 1.4975*0.995
     const bob_Coll = ((await vaultManager.Vaults(bob))[1]
       .add(await vaultManager.getPendingRBTCReward(bob)))
@@ -1008,11 +1008,11 @@ contract('VaultManager - Redistribution reward calculations', async accounts => 
   })
 
   it("redistribution: Vault with the majority stake withdraws. A,B,C,D open. Liq(D). C withdraws some coll. E Enters, Liq(E). Distributes correct rewards", async () => {
-    const _998_Ether = toBN('998000000000000000000')
+    const _998_Bitcoin = toBN('998000000000000000000')
     // A, B, C, D open vaults
     const { collateral: A_coll } = await openVault({ ICR: toBN(dec(400, 16)), extraParams: { from: alice } })
     const { collateral: B_coll } = await openVault({ ICR: toBN(dec(400, 16)), extraBPDAmount: dec(110, 18), extraParams: { from: bob } })
-    const { collateral: C_coll } = await openVault({ extraBPDAmount: dec(110, 18), extraParams: { from: carol, value: _998_Ether } })
+    const { collateral: C_coll } = await openVault({ extraBPDAmount: dec(110, 18), extraParams: { from: carol, value: _998_Bitcoin } })
     const { collateral: D_coll } = await openVault({ ICR: toBN(dec(200, 16)), extraBPDAmount: dec(110, 18), extraParams: { from: dennis, value: dec(1000, 'ether') } })
 
     // Price drops to 100 $/E
@@ -1106,11 +1106,11 @@ contract('VaultManager - Redistribution reward calculations', async accounts => 
   })
 
   it("redistribution: Vault with the majority stake withdraws. A,B,C,D open. Liq(D). A, B, C withdraw. E Enters, Liq(E). Distributes correct rewards", async () => {
-    const _998_Ether = toBN('998000000000000000000')
+    const _998_Bitcoin = toBN('998000000000000000000')
     // A, B, C, D open vaults
     const { collateral: A_coll } = await openVault({ ICR: toBN(dec(400, 16)), extraParams: { from: alice } })
     const { collateral: B_coll } = await openVault({ ICR: toBN(dec(400, 16)), extraBPDAmount: dec(110, 18), extraParams: { from: bob } })
-    const { collateral: C_coll } = await openVault({ extraBPDAmount: dec(110, 18), extraParams: { from: carol, value: _998_Ether } })
+    const { collateral: C_coll } = await openVault({ extraBPDAmount: dec(110, 18), extraParams: { from: carol, value: _998_Bitcoin } })
     const { collateral: D_coll } = await openVault({ ICR: toBN(dec(200, 16)), extraBPDAmount: dec(110, 18), extraParams: { from: dennis, value: dec(1000, 'ether') } })
 
     // Price drops to 100 $/E

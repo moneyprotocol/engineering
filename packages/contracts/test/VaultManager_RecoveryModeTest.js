@@ -12,18 +12,18 @@ const VaultManagerTester = artifacts.require("./VaultManagerTester")
 const BPDToken = artifacts.require("./BPDToken.sol")
 
 contract('VaultManager - in Recovery Mode', async accounts => {
-  const _1_Ether = web3.utils.toWei('1', 'ether')
-  const _2_Ether = web3.utils.toWei('2', 'ether')
-  const _3_Ether = web3.utils.toWei('3', 'ether')
-  const _3pt5_Ether = web3.utils.toWei('3.5', 'ether')
-  const _6_Ether = web3.utils.toWei('6', 'ether')
-  const _10_Ether = web3.utils.toWei('10', 'ether')
-  const _20_Ether = web3.utils.toWei('20', 'ether')
-  const _21_Ether = web3.utils.toWei('21', 'ether')
-  const _22_Ether = web3.utils.toWei('22', 'ether')
-  const _24_Ether = web3.utils.toWei('24', 'ether')
-  const _25_Ether = web3.utils.toWei('25', 'ether')
-  const _30_Ether = web3.utils.toWei('30', 'ether')
+  const _1_Bitcoin = web3.utils.toWei('1', 'ether')
+  const _2_Bitcoin = web3.utils.toWei('2', 'ether')
+  const _3_Bitcoin = web3.utils.toWei('3', 'ether')
+  const _3pt5_Bitcoin = web3.utils.toWei('3.5', 'ether')
+  const _6_Bitcoin = web3.utils.toWei('6', 'ether')
+  const _10_Bitcoin = web3.utils.toWei('10', 'ether')
+  const _20_Bitcoin = web3.utils.toWei('20', 'ether')
+  const _21_Bitcoin = web3.utils.toWei('21', 'ether')
+  const _22_Bitcoin = web3.utils.toWei('22', 'ether')
+  const _24_Bitcoin = web3.utils.toWei('24', 'ether')
+  const _25_Bitcoin = web3.utils.toWei('25', 'ether')
+  const _30_Bitcoin = web3.utils.toWei('30', 'ether')
 
   const ZERO_ADDRESS = th.ZERO_ADDRESS
   const [
@@ -132,7 +132,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     const recoveryMode_Before = await th.checkRecoveryMode(contracts);
     assert.isFalse(recoveryMode_Before)
 
-    await borrowerOperations.withdrawColl(_1_Ether, alice, alice, { from: alice })
+    await borrowerOperations.withdrawColl(_1_Bitcoin, alice, alice, { from: alice })
 
     const recoveryMode_After = await th.checkRecoveryMode(contracts);
     assert.isFalse(recoveryMode_After)
@@ -1669,7 +1669,7 @@ contract('VaultManager - in Recovery Mode', async accounts => {
     th.assertIsApproximatelyEqual(bob_balanceAfter, bob_balanceBefore.add(bob_surplus))
 
     // Bob re-opens the vault, price 200, total debt 250 BPD, ICR = 240% (lowest one)
-    const { collateral: B_coll_2, totalDebt: B_totalDebt_2 } = await openVault({ ICR: toBN(dec(240, 16)), extraParams: { from: bob, value: _3_Ether } })
+    const { collateral: B_coll_2, totalDebt: B_totalDebt_2 } = await openVault({ ICR: toBN(dec(240, 16)), extraParams: { from: bob, value: _3_Bitcoin } })
     // Alice deposits BPD in the Stability Pool
     await openVault({ ICR: toBN(dec(266, 16)), extraBPDAmount: B_totalDebt_2, extraParams: { from: alice } })
     await stabilityPool.provideToSP(B_totalDebt_2, ZERO_ADDRESS, { from: alice })

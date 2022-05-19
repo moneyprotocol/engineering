@@ -20,8 +20,8 @@ async function mainnetDeploy(configParams) {
   console.log(`deployer address: ${deployerWallet.address}`)
   assert.equal(deployerWallet.address, configParams.moneypAddrs.DEPLOYER)
   assert.equal(account2Wallet.address, configParams.beneficiaries.ACCOUNT_2)
-  let deployerETHBalance = await ethers.provider.getBalance(deployerWallet.address)
-  console.log(`deployerETHBalance before: ${deployerETHBalance}`)
+  let deployerRBTCBalance = await ethers.provider.getBalance(deployerWallet.address)
+  console.log(`deployerRBTCBalance before: ${deployerRBTCBalance}`)
 
   // Get UniswaV2Factory instance at its deployed address
   const uniswapV2Factory = new ethers.Contract(
@@ -34,33 +34,33 @@ async function mainnetDeploy(configParams) {
   const uniAllPairsLength = await uniswapV2Factory.allPairsLength()
   console.log(`Uniswap Factory number of pairs: ${uniAllPairsLength}`)
 
-  deployerETHBalance = await ethers.provider.getBalance(deployerWallet.address)
-  console.log(`deployer's RBTC balance before deployments: ${deployerETHBalance}`)
+  deployerRBTCBalance = await ethers.provider.getBalance(deployerWallet.address)
+  console.log(`deployer's RBTC balance before deployments: ${deployerRBTCBalance}`)
 
   // Deploy core logic contracts
   const moneypCore = await mdh.deployMoneypCoreMainnet(configParams.externalAddrs.TELLOR_MASTER, deploymentState)
   await mdh.logContractObjects(moneypCore)
 
   // Check Uniswap Pair BPD-RBTC pair before pair creation
-  let BPDWETHPairAddr = await uniswapV2Factory.getPair(moneypCore.bpdToken.address, configParams.externalAddrs.ETH_ERC20)
-  let WETHBPDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.ETH_ERC20, moneypCore.bpdToken.address)
-  assert.equal(BPDWETHPairAddr, WETHBPDPairAddr)
+  let BPDWRBTCPairAddr = await uniswapV2Factory.getPair(moneypCore.bpdToken.address, configParams.externalAddrs.RBTC_ERC20)
+  let WRBTCBPDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.RBTC_ERC20, moneypCore.bpdToken.address)
+  assert.equal(BPDWRBTCPairAddr, WRBTCBPDPairAddr)
 
 
-  if (BPDWETHPairAddr == th.ZERO_ADDRESS) {
-    // Deploy Unipool for BPD-WETH
+  if (BPDWRBTCPairAddr == th.ZERO_ADDRESS) {
+    // Deploy Unipool for BPD-WRBTC
     await mdh.sendAndWaitForTransaction(uniswapV2Factory.createPair(
-      configParams.externalAddrs.ETH_ERC20,
+      configParams.externalAddrs.RBTC_ERC20,
       moneypCore.bpdToken.address,
       { gasPrice }
     ))
 
-    // Check Uniswap Pair BPD-WETH pair after pair creation (forwards and backwards should have same address)
-    BPDWETHPairAddr = await uniswapV2Factory.getPair(moneypCore.bpdToken.address, configParams.externalAddrs.ETH_ERC20)
-    assert.notEqual(BPDWETHPairAddr, th.ZERO_ADDRESS)
-    WETHBPDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.ETH_ERC20, moneypCore.bpdToken.address)
-    console.log(`BPD-WETH pair contract address after Uniswap pair creation: ${BPDWETHPairAddr}`)
-    assert.equal(WETHBPDPairAddr, BPDWETHPairAddr)
+    // Check Uniswap Pair BPD-WRBTC pair after pair creation (forwards and backwards should have same address)
+    BPDWRBTCPairAddr = await uniswapV2Factory.getPair(moneypCore.bpdToken.address, configParams.externalAddrs.RBTC_ERC20)
+    assert.notEqual(BPDWRBTCPairAddr, th.ZERO_ADDRESS)
+    WRBTCBPDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.RBTC_ERC20, moneypCore.bpdToken.address)
+    console.log(`BPD-WRBTC pair contract address after Uniswap pair creation: ${BPDWRBTCPairAddr}`)
+    assert.equal(WRBTCBPDPairAddr, BPDWRBTCPairAddr)
   }
 
   // Deploy Unipool
@@ -75,16 +75,16 @@ async function mainnetDeploy(configParams) {
   )
 
   // Connect all core contracts up
-  await mdh.connectCoreContractsMainnet(moneypCore, MPContracts, configParams.externalAddrs.CHAINLINK_ETHUSD_PROXY)
+  await mdh.connectCoreContractsMainnet(moneypCore, MPContracts, configParams.externalAddrs.CHAINLINK_RBTCUSD_PROXY)
   await mdh.connectMPContractsMainnet(MPContracts)
   await mdh.connectMPContractsToCoreMainnet(MPContracts, moneypCore)
 
   // Deploy a read-only multi-vault getter
   const multiVaultGetter = await mdh.deployMultiVaultGetterMainnet(moneypCore, deploymentState)
 
-  // Connect Unipool to MPToken and the BPD-WETH pair address, with a 6 week duration
+  // Connect Unipool to MPToken and the BPD-WRBTC pair address, with a 6 week duration
   const LPRewardsDuration = timeVals.SECONDS_IN_SIX_WEEKS
-  await mdh.connectUnipoolMainnet(unipool, MPContracts, BPDWETHPairAddr, LPRewardsDuration)
+  await mdh.connectUnipoolMainnet(unipool, MPContracts, BPDWRBTCPairAddr, LPRewardsDuration)
 
   // Log MP and Unipool addresses
   await mdh.logContractObjects(MPContracts)
@@ -101,12 +101,12 @@ async function mainnetDeploy(configParams) {
   const lockupContracts = {}
 
   for (const [investor, investorAddr] of Object.entries(configParams.beneficiaries)) {
-    const lockupContractEthersFactory = await ethers.getContractFactory("LockupContract", deployerWallet)
+    const lockupContractBitcoinsFactory = await ethers.getContractFactory("LockupContract", deployerWallet)
     if (deploymentState[investor] && deploymentState[investor].address) {
       console.log(`Using previously deployed ${investor} lockup contract at address ${deploymentState[investor].address}`)
       lockupContracts[investor] = new ethers.Contract(
         deploymentState[investor].address,
-        lockupContractEthersFactory.interface,
+        lockupContractBitcoinsFactory.interface,
         deployerWallet
       )
     } else {
@@ -115,7 +115,7 @@ async function mainnetDeploy(configParams) {
       const address = await txReceipt.logs[0].address // The deployment event emitted from the LC itself is is the first of two events, so this is its address 
       lockupContracts[investor] = new ethers.Contract(
         address,
-        lockupContractEthersFactory.interface,
+        lockupContractBitcoinsFactory.interface,
         deployerWallet
       )
 
@@ -138,7 +138,7 @@ async function mainnetDeploy(configParams) {
   // Check chainlink proxy price ---
 
   const chainlinkProxy = new ethers.Contract(
-    configParams.externalAddrs.CHAINLINK_ETHUSD_PROXY,
+    configParams.externalAddrs.CHAINLINK_RBTCUSD_PROXY,
     ChainlinkAggregatorV3Interface,
     deployerWallet
   )
@@ -210,7 +210,7 @@ async function mainnetDeploy(configParams) {
   // Check PriceFeed's & TellorCaller's stored addresses
   const priceFeedCLAddress = await moneypCore.priceFeed.priceAggregator()
   const priceFeedTellorCallerAddress = await moneypCore.priceFeed.tellorCaller()
-  assert.equal(priceFeedCLAddress, configParams.externalAddrs.CHAINLINK_ETHUSD_PROXY)
+  assert.equal(priceFeedCLAddress, configParams.externalAddrs.CHAINLINK_RBTCUSD_PROXY)
   assert.equal(priceFeedTellorCallerAddress, moneypCore.tellorCaller.address)
 
   // Check Tellor address
@@ -244,7 +244,7 @@ async function mainnetDeploy(configParams) {
   const vaultStatus = await moneypCore.vaultManager.getVaultStatus(deployerWallet.address)
   if (vaultStatus.toString() != '1') {
     let _3kBPDWithdrawal = th.dec(3000, 18) // 3000 BPD
-    let _3ETHcoll = th.dec(3, 'ether') // 3 RBTC
+    let _3RBTCcoll = th.dec(3, 'ether') // 3 RBTC
     console.log('Opening vault...')
     await mdh.sendAndWaitForTransaction(
       moneypCore.borrowerOperations.openVault(
@@ -252,7 +252,7 @@ async function mainnetDeploy(configParams) {
         _3kBPDWithdrawal,
         th.ZERO_ADDRESS,
         th.ZERO_ADDRESS,
-        { value: _3ETHcoll, gasPrice }
+        { value: _3RBTCcoll, gasPrice }
       )
     )
   } else {
@@ -272,22 +272,22 @@ async function mainnetDeploy(configParams) {
   let deployerBPDBal = await moneypCore.bpdToken.balanceOf(deployerWallet.address)
   th.logBN("deployer's BPD balance", deployerBPDBal)
 
-  // Check Uniswap pool has BPD and WETH tokens
-  const BPDETHPair = await new ethers.Contract(
-    BPDWETHPairAddr,
+  // Check Uniswap pool has BPD and WRBTC tokens
+  const BPDRBTCPair = await new ethers.Contract(
+    BPDWRBTCPairAddr,
     UniswapV2Pair.abi,
     deployerWallet
   )
 
-  const token0Addr = await BPDETHPair.token0()
-  const token1Addr = await BPDETHPair.token1()
+  const token0Addr = await BPDRBTCPair.token0()
+  const token1Addr = await BPDRBTCPair.token1()
   console.log(`BPD-RBTC Pair token 0: ${th.squeezeAddr(token0Addr)},
         BPDToken contract addr: ${th.squeezeAddr(moneypCore.bpdToken.address)}`)
   console.log(`BPD-RBTC Pair token 1: ${th.squeezeAddr(token1Addr)},
-        WETH ERC20 contract addr: ${th.squeezeAddr(configParams.externalAddrs.ETH_ERC20)}`)
+        WRBTC ERC20 contract addr: ${th.squeezeAddr(configParams.externalAddrs.RBTC_ERC20)}`)
 
   // Check initial BPD-RBTC pair reserves before provision
-  let reserves = await BPDETHPair.getReserves()
+  let reserves = await BPDRBTCPair.getReserves()
   th.logBN("BPD-RBTC Pair's BPD reserves before provision", reserves[0])
   th.logBN("BPD-RBTC Pair's RBTC reserves before provision", reserves[1])
 
@@ -299,7 +299,7 @@ async function mainnetDeploy(configParams) {
   )
 
   // --- Provide liquidity to BPD-RBTC pair if not yet done so ---
-  let deployerLPTokenBal = await BPDETHPair.balanceOf(deployerWallet.address)
+  let deployerLPTokenBal = await BPDRBTCPair.balanceOf(deployerWallet.address)
   if (deployerLPTokenBal.toString() == '0') {
     console.log('Providing liquidity to Uniswap...')
     // Give router an allowance for BPD
@@ -310,12 +310,12 @@ async function mainnetDeploy(configParams) {
     th.logBN("router's spending allowance for deployer's BPD", routerBPDAllowanceFromDeployer)
 
     // Get amounts for liquidity provision
-    const LP_ETH = dec(1, 'ether')
+    const LP_RBTC = dec(1, 'ether')
 
     // Convert 8-digit CL price to 18 and multiply by RBTC amount
     const BPDAmount = toBigNum(price)
       .mul(toBigNum(dec(1, 10)))
-      .mul(toBigNum(LP_ETH))
+      .mul(toBigNum(LP_RBTC))
       .div(toBigNum(dec(1, 18)))
 
     const minBPDAmount = BPDAmount.sub(toBigNum(dec(100, 18)))
@@ -326,11 +326,11 @@ async function mainnetDeploy(configParams) {
 
     // Provide liquidity to BPD-RBTC pair
     await mdh.sendAndWaitForTransaction(
-      uniswapV2Router02.addLiquidityETH(
+      uniswapV2Router02.addLiquidityRBTC(
         moneypCore.bpdToken.address, // address of BPD token
         BPDAmount, // BPD provision
         minBPDAmount, // minimum BPD provision
-        LP_ETH, // minimum RBTC provision
+        LP_RBTC, // minimum RBTC provision
         deployerWallet.address, // address to send LP tokens to
         tenMinsFromNow, // deadline for this tx
         {
@@ -344,7 +344,7 @@ async function mainnetDeploy(configParams) {
     console.log('Liquidity already provided to Uniswap')
   }
   // Check BPD-RBTC reserves after liquidity provision:
-  reserves = await BPDETHPair.getReserves()
+  reserves = await BPDRBTCPair.getReserves()
   th.logBN("BPD-RBTC Pair's BPD reserves after provision", reserves[0])
   th.logBN("BPD-RBTC Pair's RBTC reserves after provision", reserves[1])
 
@@ -354,11 +354,11 @@ async function mainnetDeploy(configParams) {
   console.log("CHECK LP STAKING EARNS MP")
 
   // Check deployer's LP tokens
-  deployerLPTokenBal = await BPDETHPair.balanceOf(deployerWallet.address)
+  deployerLPTokenBal = await BPDRBTCPair.balanceOf(deployerWallet.address)
   th.logBN("deployer's LP token balance", deployerLPTokenBal)
 
   // Stake LP tokens in Unipool
-  console.log(`BPDETHPair addr: ${BPDETHPair.address}`)
+  console.log(`BPDRBTCPair addr: ${BPDRBTCPair.address}`)
   console.log(`Pair addr stored in Unipool: ${await unipool.uniToken()}`)
 
   earnedMP = await unipool.earned(deployerWallet.address)
@@ -369,7 +369,7 @@ async function mainnetDeploy(configParams) {
     console.log('Staking to Unipool...')
     // Deployer approves Unipool
     await mdh.sendAndWaitForTransaction(
-      BPDETHPair.approve(unipool.address, deployerLPTokenBal, { gasPrice })
+      BPDRBTCPair.approve(unipool.address, deployerLPTokenBal, { gasPrice })
     )
 
     await mdh.sendAndWaitForTransaction(unipool.stake(1, { gasPrice }))
@@ -473,11 +473,11 @@ async function mainnetDeploy(configParams) {
   if (vault2Status.toString() != '1') {
     console.log("Acct 2 opens a vault ...")
     let _2kBPDWithdrawal = th.dec(2000, 18) // 2000 BPD
-    let _1pt5_ETHcoll = th.dec(15, 17) // 1.5 RBTC
-    const borrowerOpsEthersFactory = await ethers.getContractFactory("BorrowerOperations", account2Wallet)
-    const borrowerOpsAcct2 = await new ethers.Contract(moneypCore.borrowerOperations.address, borrowerOpsEthersFactory.interface, account2Wallet)
+    let _1pt5_RBTCcoll = th.dec(15, 17) // 1.5 RBTC
+    const borrowerOpsBitcoinsFactory = await ethers.getContractFactory("BorrowerOperations", account2Wallet)
+    const borrowerOpsAcct2 = await new ethers.Contract(moneypCore.borrowerOperations.address, borrowerOpsBitcoinsFactory.interface, account2Wallet)
 
-    await mdh.sendAndWaitForTransaction(borrowerOpsAcct2.openVault(th._100pct, _2kBPDWithdrawal, th.ZERO_ADDRESS, th.ZERO_ADDRESS, { value: _1pt5_ETHcoll, gasPrice, gasLimit: 1000000 }))
+    await mdh.sendAndWaitForTransaction(borrowerOpsAcct2.openVault(th._100pct, _2kBPDWithdrawal, th.ZERO_ADDRESS, th.ZERO_ADDRESS, { value: _1pt5_RBTCcoll, gasPrice, gasLimit: 1000000 }))
   } else {
     console.log('Acct 2 already has an active vault')
   }
@@ -510,7 +510,7 @@ async function mainnetDeploy(configParams) {
   // --- System stats  ---
 
   // Uniswap BPD-RBTC pool size
-  reserves = await BPDETHPair.getReserves()
+  reserves = await BPDRBTCPair.getReserves()
   th.logBN("BPD-RBTC Pair's current BPD reserves", reserves[0])
   th.logBN("BPD-RBTC Pair's current RBTC reserves", reserves[1])
 
@@ -611,8 +611,8 @@ async function mainnetDeploy(configParams) {
   // // General Safe MP bal before:
   // const realGeneralSafeAddr = "0xF06016D822943C42e3Cb7FC3a6A3B1889C1045f8"
 
-  //   const MPToken2EthersFactory = await ethers.getContractFactory("MPToken2", deployerWallet)
-  //   const mpToken2 = await MPToken2EthersFactory.deploy( 
+  //   const MPToken2BitcoinsFactory = await ethers.getContractFactory("MPToken2", deployerWallet)
+  //   const mpToken2 = await MPToken2BitcoinsFactory.deploy( 
   //     "0xF41E0DD45d411102ed74c047BdA544396cB71E27",  // CI param: LC1 
   //     "0x9694a04263593AC6b895Fc01Df5929E1FC7495fA", // MP Staking param: LC2
   //     "0x98f95E112da23c7b753D8AE39515A585be6Fb5Ef", // LCF param: LC3
@@ -634,10 +634,10 @@ async function mainnetDeploy(configParams) {
 
   // now = (await ethers.provider.getBlock(latestBlock)).timestamp
 
-  // const LCShortTermEthersFactory = await ethers.getContractFactory("LockupContractShortTerm", deployerWallet)
+  // const LCShortTermBitcoinsFactory = await ethers.getContractFactory("LockupContractShortTerm", deployerWallet)
 
   // new deployment
-  // const LCshortTerm = await LCShortTermEthersFactory.deploy(
+  // const LCshortTerm = await LCShortTermBitcoinsFactory.deploy(
   //   MPContracts.mpToken.address,
   //   deployerWallet.address,
   //   now, 
@@ -649,7 +649,7 @@ async function mainnetDeploy(configParams) {
   // existing deployment
   // const deployedShortTermLC = await new ethers.Contract(
   //   "0xbA8c3C09e9f55dA98c5cF0C28d15Acb927792dC7", 
-  //   LCShortTermEthersFactory.interface,
+  //   LCShortTermBitcoinsFactory.interface,
   //   deployerWallet
   // )
 

@@ -288,7 +288,7 @@ def liquidate_vaults(accounts, contracts, active_accounts, inactive_accounts, pr
         return [0, 0]
 
     stability_pool_previous = contracts.stabilityPool.getTotalBPDDeposits() / 1e18
-    stability_pool_eth_previous = contracts.stabilityPool.getETH() / 1e18
+    stability_pool_eth_previous = contracts.stabilityPool.getRBTC() / 1e18
 
     while pending_liquidations(contracts, price_ether_current):
         tx = contracts.vaultManager.liquidateVaults(NUM_LIQUIDATIONS, { 'from': accounts[0] })
@@ -296,7 +296,7 @@ def liquidate_vaults(accounts, contracts, active_accounts, inactive_accounts, pr
         remove_accounts_from_events(accounts, active_accounts, inactive_accounts, tx.events['VaultLiquidated'], '_borrower')
 
     stability_pool_current = contracts.stabilityPool.getTotalBPDDeposits() / 1e18
-    stability_pool_eth_current = contracts.stabilityPool.getETH() / 1e18
+    stability_pool_eth_current = contracts.stabilityPool.getRBTC() / 1e18
 
     debt_liquidated = stability_pool_current - stability_pool_previous
     ether_liquidated = stability_pool_eth_current - stability_pool_eth_previous
