@@ -3,26 +3,26 @@ import { describe, it } from "mocha";
 import fc from "fast-check";
 
 import {
-  LUSD_LIQUIDATION_RESERVE,
-  LUSD_MINIMUM_DEBT,
+  BPD_LIQUIDATION_RESERVE,
+  BPD_MINIMUM_DEBT,
   MAXIMUM_BORROWING_RATE
 } from "../src/constants";
 
 import { Decimal, Difference } from "../src/Decimal";
-import { Trove, _emptyTrove } from "../src/Trove";
+import { Vault, _emptyVault } from "../src/Vault";
 
-const liquidationReserve = Number(LUSD_LIQUIDATION_RESERVE);
+const liquidationReserve = Number(BPD_LIQUIDATION_RESERVE);
 const maximumBorrowingRate = Number(MAXIMUM_BORROWING_RATE);
 
-const maxDebt = 10 * Number(LUSD_MINIMUM_DEBT);
+const maxDebt = 10 * Number(BPD_MINIMUM_DEBT);
 
-const trove = ({ collateral = 0, debt = 0 }) =>
-  new Trove(Decimal.from(collateral), Decimal.from(debt));
+const vault = ({ collateral = 0, debt = 0 }) =>
+  new Vault(Decimal.from(collateral), Decimal.from(debt));
 
-const onlyCollateral = () => fc.record({ collateral: fc.float({ min: 0.1 }) }).map(trove);
+const onlyCollateral = () => fc.record({ collateral: fc.float({ min: 0.1 }) }).map(vault);
 
 const onlyDebt = () =>
-  fc.record({ debt: fc.float({ min: liquidationReserve, max: maxDebt }) }).map(trove);
+  fc.record({ debt: fc.float({ min: liquidationReserve, max: maxDebt }) }).map(vault);
 
 const bothCollateralAndDebt = () =>
   fc
@@ -30,31 +30,31 @@ const bothCollateralAndDebt = () =>
       collateral: fc.float({ min: 0.1 }),
       debt: fc.float({ min: liquidationReserve, max: maxDebt })
     })
-    .map(trove);
+    .map(vault);
 
-const arbitraryTrove = () => fc.record({ collateral: fc.float(), debt: fc.float() }).map(trove);
+const arbitraryVault = () => fc.record({ collateral: fc.float(), debt: fc.float() }).map(vault);
 
-const validTrove = () =>
+const validVault = () =>
   fc
     .record({ collateral: fc.float(), debt: fc.float({ min: liquidationReserve, max: maxDebt }) })
-    .map(trove);
+    .map(vault);
 
-const validNonEmptyTrove = () => validTrove().filter(t => !t.isEmpty);
+const validNonEmptyVault = () => validVault().filter(t => !t.isEmpty);
 
-const roughlyEqual = (a: Trove, b: Trove) =>
+const roughlyEqual = (a: Vault, b: Vault) =>
   a.collateral.eq(b.collateral) && !!Difference.between(a.debt, b.debt).absoluteValue?.lt(1e-9);
 
-describe("Trove", () => {
-  it("applying undefined diff should yield the same Trove", () => {
-    const trove = new Trove(Decimal.from(1), Decimal.from(111));
+describe("Vault", () => {
+  it("applying undefined diff should yield the same Vault", () => {
+    const vault = new Vault(Decimal.from(1), Decimal.from(111));
 
-    assert(trove.apply(undefined) === trove);
+    assert(vault.apply(undefined) === vault);
   });
 
   it("applying diff of empty from `b` to `a` should yield empty", () => {
     fc.assert(
-      fc.property(validNonEmptyTrove(), validNonEmptyTrove(), (a, b) =>
-        a.apply(b.whatChanged(_emptyTrove)).equals(_emptyTrove)
+      fc.property(validNonEmptyVault(), validNonEmptyVault(), (a, b) =>
+        a.apply(b.whatChanged(_emptyVault)).equals(_emptyVault)
       )
     );
   });
@@ -62,7 +62,7 @@ describe("Trove", () => {
   it("applying what changed should preserve zeroings", () => {
     fc.assert(
       fc.property(
-        arbitraryTrove(),
+        arbitraryVault(),
         bothCollateralAndDebt(),
         onlyCollateral(),
         (a, b, c) => a.apply(b.whatChanged(c)).debt.isZero
@@ -71,7 +71,7 @@ describe("Trove", () => {
 
     fc.assert(
       fc.property(
-        arbitraryTrove(),
+        arbitraryVault(),
         bothCollateralAndDebt(),
         onlyDebt(),
         (a, b, c) => a.apply(b.whatChanged(c)).collateral.isZero
@@ -81,7 +81,7 @@ describe("Trove", () => {
 
   it("applying diff of `b` from `a` to `a` should yield `b` when borrowing rate is 0", () => {
     fc.assert(
-      fc.property(validTrove(), arbitraryTrove(), (a, b) =>
+      fc.property(validVault(), arbitraryVault(), (a, b) =>
         a.apply(a.whatChanged(b, 0), 0).equals(b)
       )
     );
@@ -89,7 +89,7 @@ describe("Trove", () => {
 
   it("applying diff of `b` from `a` to `a` should roughly yield `b` when borrowing rate is non-0", () => {
     fc.assert(
-      fc.property(validTrove(), arbitraryTrove(), fc.float({ max: 0.5 }), (a, b, c) =>
+      fc.property(validVault(), arbitraryVault(), fc.float({ max: 0.5 }), (a, b, c) =>
         roughlyEqual(a.apply(a.whatChanged(b, c), c), b)
       )
     );
@@ -97,7 +97,7 @@ describe("Trove", () => {
 
   it("applying an adjustment should never throw", () => {
     fc.assert(
-      fc.property(validNonEmptyTrove(), validNonEmptyTrove(), validNonEmptyTrove(), (a, b, c) => {
+      fc.property(validNonEmptyVault(), validNonEmptyVault(), validNonEmptyVault(), (a, b, c) => {
         a.apply(b.whatChanged(c));
       })
     );
@@ -106,7 +106,7 @@ describe("Trove", () => {
   describe("whatChanged()", () => {
     it("should not define zeros on adjustment", () => {
       fc.assert(
-        fc.property(validNonEmptyTrove(), validNonEmptyTrove(), (a, b) => {
+        fc.property(validNonEmptyVault(), validNonEmptyVault(), (a, b) => {
           const change = a.whatChanged(b);
 
           return (
@@ -114,25 +114,25 @@ describe("Trove", () => {
             (change.type === "adjustment" &&
               !change.params.depositCollateral?.isZero &&
               !change.params.withdrawCollateral?.isZero &&
-              !change.params.borrowLUSD?.isZero &&
-              !change.params.repayLUSD?.isZero)
+              !change.params.borrowBPD?.isZero &&
+              !change.params.repayBPD?.isZero)
           );
         })
       );
     });
 
-    it("should recreate a Trove with minimum debt at any borrowing rate", () => {
+    it("should recreate a Vault with minimum debt at any borrowing rate", () => {
       fc.assert(
         fc.property(fc.float({ max: maximumBorrowingRate }), borrowingRate => {
-          const withMinimumDebt = Trove.recreate(
-            new Trove(Decimal.ONE, LUSD_MINIMUM_DEBT),
+          const withMinimumDebt = Vault.recreate(
+            new Vault(Decimal.ONE, BPD_MINIMUM_DEBT),
             borrowingRate
           );
 
-          const ret = Trove.create(withMinimumDebt, borrowingRate).debt.gte(LUSD_MINIMUM_DEBT);
+          const ret = Vault.create(withMinimumDebt, borrowingRate).debt.gte(BPD_MINIMUM_DEBT);
 
           if (!ret) {
-            console.log(`${Trove.create(withMinimumDebt, borrowingRate).debt}`);
+            console.log(`${Vault.create(withMinimumDebt, borrowingRate).debt}`);
           }
 
           return ret;

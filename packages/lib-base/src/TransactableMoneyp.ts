@@ -1,10 +1,10 @@
 import { Decimal, Decimalish } from "./Decimal";
-import { Trove, TroveAdjustmentParams, TroveClosureParams, TroveCreationParams } from "./Trove";
+import { Vault, VaultAdjustmentParams, VaultClosureParams, VaultCreationParams } from "./Vault";
 import { StabilityDepositChange } from "./StabilityDeposit";
-import { FailedReceipt } from "./SendableLiquity";
+import { FailedReceipt } from "./SendableMoneyp";
 
 /**
- * Thrown by {@link TransactableLiquity} functions in case of transaction failure.
+ * Thrown by {@link TransactableMoneyp} functions in case of transaction failure.
  *
  * @public
  */
@@ -20,88 +20,88 @@ export class TransactionFailedError<T extends FailedReceipt = FailedReceipt> ext
 }
 
 /**
- * Details of an {@link TransactableLiquity.openTrove | openTrove()} transaction.
+ * Details of an {@link TransactableMoneyp.openVault | openVault()} transaction.
  *
  * @public
  */
-export interface TroveCreationDetails {
+export interface VaultCreationDetails {
   /** How much was deposited and borrowed. */
-  params: TroveCreationParams<Decimal>;
+  params: VaultCreationParams<Decimal>;
 
-  /** The Trove that was created by the transaction. */
-  newTrove: Trove;
+  /** The Vault that was created by the transaction. */
+  newVault: Vault;
 
-  /** Amount of LUSD added to the Trove's debt as borrowing fee. */
+  /** Amount of BPD added to the Vault's debt as borrowing fee. */
   fee: Decimal;
 }
 
 /**
- * Details of an {@link TransactableLiquity.adjustTrove | adjustTrove()} transaction.
+ * Details of an {@link TransactableMoneyp.adjustVault | adjustVault()} transaction.
  *
  * @public
  */
-export interface TroveAdjustmentDetails {
+export interface VaultAdjustmentDetails {
   /** Parameters of the adjustment. */
-  params: TroveAdjustmentParams<Decimal>;
+  params: VaultAdjustmentParams<Decimal>;
 
-  /** New state of the adjusted Trove directly after the transaction. */
-  newTrove: Trove;
+  /** New state of the adjusted Vault directly after the transaction. */
+  newVault: Vault;
 
-  /** Amount of LUSD added to the Trove's debt as borrowing fee. */
+  /** Amount of BPD added to the Vault's debt as borrowing fee. */
   fee: Decimal;
 }
 
 /**
- * Details of a {@link TransactableLiquity.closeTrove | closeTrove()} transaction.
+ * Details of a {@link TransactableMoneyp.closeVault | closeVault()} transaction.
  *
  * @public
  */
-export interface TroveClosureDetails {
+export interface VaultClosureDetails {
   /** How much was withdrawn and repaid. */
-  params: TroveClosureParams<Decimal>;
+  params: VaultClosureParams<Decimal>;
 }
 
 /**
- * Details of a {@link TransactableLiquity.liquidate | liquidate()} or
- * {@link TransactableLiquity.liquidateUpTo | liquidateUpTo()} transaction.
+ * Details of a {@link TransactableMoneyp.liquidate | liquidate()} or
+ * {@link TransactableMoneyp.liquidateUpTo | liquidateUpTo()} transaction.
  *
  * @public
  */
 export interface LiquidationDetails {
-  /** Addresses whose Troves were liquidated by the transaction. */
+  /** Addresses whose Vaults were liquidated by the transaction. */
   liquidatedAddresses: string[];
 
   /** Total collateral liquidated and debt cleared by the transaction. */
-  totalLiquidated: Trove;
+  totalLiquidated: Vault;
 
-  /** Amount of LUSD paid to the liquidator as gas compensation. */
-  lusdGasCompensation: Decimal;
+  /** Amount of BPD paid to the liquidator as gas compensation. */
+  bpdGasCompensation: Decimal;
 
   /** Amount of native currency (e.g. Ether) paid to the liquidator as gas compensation. */
   collateralGasCompensation: Decimal;
 }
 
 /**
- * Details of a {@link TransactableLiquity.redeemLUSD | redeemLUSD()} transaction.
+ * Details of a {@link TransactableMoneyp.redeemBPD | redeemBPD()} transaction.
  *
  * @public
  */
 export interface RedemptionDetails {
-  /** Amount of LUSD the redeemer tried to redeem. */
-  attemptedLUSDAmount: Decimal;
+  /** Amount of BPD the redeemer tried to redeem. */
+  attemptedBPDAmount: Decimal;
 
   /**
-   * Amount of LUSD that was actually redeemed by the transaction.
+   * Amount of BPD that was actually redeemed by the transaction.
    *
    * @remarks
-   * This can end up being lower than `attemptedLUSDAmount` due to interference from another
-   * transaction that modifies the list of Troves.
+   * This can end up being lower than `attemptedBPDAmount` due to interference from another
+   * transaction that modifies the list of Vaults.
    *
    * @public
    */
-  actualLUSDAmount: Decimal;
+  actualBPDAmount: Decimal;
 
-  /** Amount of collateral (e.g. Ether) taken from Troves by the transaction. */
+  /** Amount of collateral (e.g. Ether) taken from Vaults by the transaction. */
   collateralTaken: Decimal;
 
   /** Amount of native currency (e.g. Ether) deducted as fee from collateral taken. */
@@ -110,29 +110,29 @@ export interface RedemptionDetails {
 
 /**
  * Details of a
- * {@link TransactableLiquity.withdrawGainsFromStabilityPool | withdrawGainsFromStabilityPool()}
+ * {@link TransactableMoneyp.withdrawGainsFromStabilityPool | withdrawGainsFromStabilityPool()}
  * transaction.
  *
  * @public
  */
 export interface StabilityPoolGainsWithdrawalDetails {
-  /** Amount of LUSD burned from the deposit by liquidations since the last modification. */
-  lusdLoss: Decimal;
+  /** Amount of BPD burned from the deposit by liquidations since the last modification. */
+  bpdLoss: Decimal;
 
-  /** Amount of LUSD in the deposit directly after this transaction. */
-  newLUSDDeposit: Decimal;
+  /** Amount of BPD in the deposit directly after this transaction. */
+  newBPDDeposit: Decimal;
 
   /** Amount of native currency (e.g. Ether) paid out to the depositor in this transaction. */
   collateralGain: Decimal;
 
-  /** Amount of LQTY rewarded to the depositor in this transaction. */
-  lqtyReward: Decimal;
+  /** Amount of MP rewarded to the depositor in this transaction. */
+  mpReward: Decimal;
 }
 
 /**
  * Details of a
- * {@link TransactableLiquity.depositLUSDInStabilityPool | depositLUSDInStabilityPool()} or
- * {@link TransactableLiquity.withdrawLUSDFromStabilityPool | withdrawLUSDFromStabilityPool()}
+ * {@link TransactableMoneyp.depositBPDInStabilityPool | depositBPDInStabilityPool()} or
+ * {@link TransactableMoneyp.withdrawBPDFromStabilityPool | withdrawBPDFromStabilityPool()}
  * transaction.
  *
  * @public
@@ -144,30 +144,30 @@ export interface StabilityDepositChangeDetails extends StabilityPoolGainsWithdra
 
 /**
  * Details of a
- * {@link TransactableLiquity.transferCollateralGainToTrove | transferCollateralGainToTrove()}
+ * {@link TransactableMoneyp.transferCollateralGainToVault | transferCollateralGainToVault()}
  * transaction.
  *
  * @public
  */
 export interface CollateralGainTransferDetails extends StabilityPoolGainsWithdrawalDetails {
-  /** New state of the depositor's Trove directly after the transaction. */
-  newTrove: Trove;
+  /** New state of the depositor's Vault directly after the transaction. */
+  newVault: Vault;
 }
 
 /**
- * Send Liquity transactions and wait for them to succeed.
+ * Send Moneyp transactions and wait for them to succeed.
  *
  * @remarks
  * The functions return the details of the transaction (if any), or throw an implementation-specific
  * subclass of {@link TransactionFailedError} in case of transaction failure.
  *
- * Implemented by {@link @liquity/lib-ethers#EthersLiquity}.
+ * Implemented by {@link @liquity/lib-ethers#EthersMoneyp}.
  *
  * @public
  */
-export interface TransactableLiquity {
+export interface TransactableMoneyp {
   /**
-   * Open a new Trove by depositing collateral and borrowing LUSD.
+   * Open a new Vault by depositing collateral and borrowing BPD.
    *
    * @param params - How much to deposit and borrow.
    * @param maxBorrowingRate - Maximum acceptable
@@ -180,46 +180,46 @@ export interface TransactableLiquity {
    * If `maxBorrowingRate` is omitted, the current borrowing rate plus 0.5% is used as maximum
    * acceptable rate.
    */
-  openTrove(
-    params: TroveCreationParams<Decimalish>,
+  openVault(
+    params: VaultCreationParams<Decimalish>,
     maxBorrowingRate?: Decimalish
-  ): Promise<TroveCreationDetails>;
+  ): Promise<VaultCreationDetails>;
 
   /**
-   * Close existing Trove by repaying all debt and withdrawing all collateral.
+   * Close existing Vault by repaying all debt and withdrawing all collateral.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
    */
-  closeTrove(): Promise<TroveClosureDetails>;
+  closeVault(): Promise<VaultClosureDetails>;
 
   /**
-   * Adjust existing Trove by changing its collateral, debt, or both.
+   * Adjust existing Vault by changing its collateral, debt, or both.
    *
    * @param params - Parameters of the adjustment.
    * @param maxBorrowingRate - Maximum acceptable
    *                           {@link @liquity/lib-base#Fees.borrowingRate | borrowing rate} if
-   *                           `params` includes `borrowLUSD`.
+   *                           `params` includes `borrowBPD`.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
    *
    * @remarks
-   * The transaction will fail if the Trove's debt would fall below
-   * {@link @liquity/lib-base#LUSD_MINIMUM_DEBT}.
+   * The transaction will fail if the Vault's debt would fall below
+   * {@link @liquity/lib-base#BPD_MINIMUM_DEBT}.
    *
    * If `maxBorrowingRate` is omitted, the current borrowing rate plus 0.5% is used as maximum
    * acceptable rate.
    */
-  adjustTrove(
-    params: TroveAdjustmentParams<Decimalish>,
+  adjustVault(
+    params: VaultAdjustmentParams<Decimalish>,
     maxBorrowingRate?: Decimalish
-  ): Promise<TroveAdjustmentDetails>;
+  ): Promise<VaultAdjustmentDetails>;
 
   /**
-   * Adjust existing Trove by depositing more collateral.
+   * Adjust existing Vault by depositing more collateral.
    *
-   * @param amount - The amount of collateral to add to the Trove's existing collateral.
+   * @param amount - The amount of collateral to add to the Vault's existing collateral.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -228,15 +228,15 @@ export interface TransactableLiquity {
    * Equivalent to:
    *
    * ```typescript
-   * adjustTrove({ depositCollateral: amount })
+   * adjustVault({ depositCollateral: amount })
    * ```
    */
-  depositCollateral(amount: Decimalish): Promise<TroveAdjustmentDetails>;
+  depositCollateral(amount: Decimalish): Promise<VaultAdjustmentDetails>;
 
   /**
-   * Adjust existing Trove by withdrawing some of its collateral.
+   * Adjust existing Vault by withdrawing some of its collateral.
    *
-   * @param amount - The amount of collateral to withdraw from the Trove.
+   * @param amount - The amount of collateral to withdraw from the Vault.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -245,15 +245,15 @@ export interface TransactableLiquity {
    * Equivalent to:
    *
    * ```typescript
-   * adjustTrove({ withdrawCollateral: amount })
+   * adjustVault({ withdrawCollateral: amount })
    * ```
    */
-  withdrawCollateral(amount: Decimalish): Promise<TroveAdjustmentDetails>;
+  withdrawCollateral(amount: Decimalish): Promise<VaultAdjustmentDetails>;
 
   /**
-   * Adjust existing Trove by borrowing more LUSD.
+   * Adjust existing Vault by borrowing more BPD.
    *
-   * @param amount - The amount of LUSD to borrow.
+   * @param amount - The amount of BPD to borrow.
    * @param maxBorrowingRate - Maximum acceptable
    *                           {@link @liquity/lib-base#Fees.borrowingRate | borrowing rate}.
    *
@@ -264,15 +264,15 @@ export interface TransactableLiquity {
    * Equivalent to:
    *
    * ```typescript
-   * adjustTrove({ borrowLUSD: amount }, maxBorrowingRate)
+   * adjustVault({ borrowBPD: amount }, maxBorrowingRate)
    * ```
    */
-  borrowLUSD(amount: Decimalish, maxBorrowingRate?: Decimalish): Promise<TroveAdjustmentDetails>;
+  borrowBPD(amount: Decimalish, maxBorrowingRate?: Decimalish): Promise<VaultAdjustmentDetails>;
 
   /**
-   * Adjust existing Trove by repaying some of its debt.
+   * Adjust existing Vault by repaying some of its debt.
    *
-   * @param amount - The amount of LUSD to repay.
+   * @param amount - The amount of BPD to repay.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -281,18 +281,18 @@ export interface TransactableLiquity {
    * Equivalent to:
    *
    * ```typescript
-   * adjustTrove({ repayLUSD: amount })
+   * adjustVault({ repayBPD: amount })
    * ```
    */
-  repayLUSD(amount: Decimalish): Promise<TroveAdjustmentDetails>;
+  repayBPD(amount: Decimalish): Promise<VaultAdjustmentDetails>;
 
   /** @internal */
   setPrice(price: Decimalish): Promise<void>;
 
   /**
-   * Liquidate one or more undercollateralized Troves.
+   * Liquidate one or more undercollateralized Vaults.
    *
-   * @param address - Address or array of addresses whose Troves to liquidate.
+   * @param address - Address or array of addresses whose Vaults to liquidate.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -300,20 +300,20 @@ export interface TransactableLiquity {
   liquidate(address: string | string[]): Promise<LiquidationDetails>;
 
   /**
-   * Liquidate the least collateralized Troves up to a maximum number.
+   * Liquidate the least collateralized Vaults up to a maximum number.
    *
-   * @param maximumNumberOfTrovesToLiquidate - Stop after liquidating this many Troves.
+   * @param maximumNumberOfVaultsToLiquidate - Stop after liquidating this many Vaults.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
    */
-  liquidateUpTo(maximumNumberOfTrovesToLiquidate: number): Promise<LiquidationDetails>;
+  liquidateUpTo(maximumNumberOfVaultsToLiquidate: number): Promise<LiquidationDetails>;
 
   /**
    * Make a new Stability Deposit, or top up existing one.
    *
-   * @param amount - Amount of LUSD to add to new or existing deposit.
-   * @param frontendTag - Address that should receive a share of this deposit's LQTY rewards.
+   * @param amount - Amount of BPD to add to new or existing deposit.
+   * @param frontendTag - Address that should receive a share of this deposit's MP rewards.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -323,17 +323,17 @@ export interface TransactableLiquity {
    *
    * As a side-effect, the transaction will also pay out an existing Stability Deposit's
    * {@link @liquity/lib-base#StabilityDeposit.collateralGain | collateral gain} and
-   * {@link @liquity/lib-base#StabilityDeposit.lqtyReward | LQTY reward}.
+   * {@link @liquity/lib-base#StabilityDeposit.mpReward | MP reward}.
    */
-  depositLUSDInStabilityPool(
+  depositBPDInStabilityPool(
     amount: Decimalish,
     frontendTag?: string
   ): Promise<StabilityDepositChangeDetails>;
 
   /**
-   * Withdraw LUSD from Stability Deposit.
+   * Withdraw BPD from Stability Deposit.
    *
-   * @param amount - Amount of LUSD to withdraw.
+   * @param amount - Amount of BPD to withdraw.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -341,13 +341,13 @@ export interface TransactableLiquity {
    * @remarks
    * As a side-effect, the transaction will also pay out the Stability Deposit's
    * {@link @liquity/lib-base#StabilityDeposit.collateralGain | collateral gain} and
-   * {@link @liquity/lib-base#StabilityDeposit.lqtyReward | LQTY reward}.
+   * {@link @liquity/lib-base#StabilityDeposit.mpReward | MP reward}.
    */
-  withdrawLUSDFromStabilityPool(amount: Decimalish): Promise<StabilityDepositChangeDetails>;
+  withdrawBPDFromStabilityPool(amount: Decimalish): Promise<StabilityDepositChangeDetails>;
 
   /**
    * Withdraw {@link @liquity/lib-base#StabilityDeposit.collateralGain | collateral gain} and
-   * {@link @liquity/lib-base#StabilityDeposit.lqtyReward | LQTY reward} from Stability Deposit.
+   * {@link @liquity/lib-base#StabilityDeposit.mpReward | MP reward} from Stability Deposit.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -356,45 +356,45 @@ export interface TransactableLiquity {
 
   /**
    * Transfer {@link @liquity/lib-base#StabilityDeposit.collateralGain | collateral gain} from
-   * Stability Deposit to Trove.
+   * Stability Deposit to Vault.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
    *
    * @remarks
-   * The collateral gain is transfered to the Trove as additional collateral.
+   * The collateral gain is transfered to the Vault as additional collateral.
    *
    * As a side-effect, the transaction will also pay out the Stability Deposit's
-   * {@link @liquity/lib-base#StabilityDeposit.lqtyReward | LQTY reward}.
+   * {@link @liquity/lib-base#StabilityDeposit.mpReward | MP reward}.
    */
-  transferCollateralGainToTrove(): Promise<CollateralGainTransferDetails>;
+  transferCollateralGainToVault(): Promise<CollateralGainTransferDetails>;
 
   /**
-   * Send LUSD tokens to an address.
+   * Send BPD tokens to an address.
    *
    * @param toAddress - Address of receipient.
-   * @param amount - Amount of LUSD to send.
+   * @param amount - Amount of BPD to send.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
    */
-  sendLUSD(toAddress: string, amount: Decimalish): Promise<void>;
+  sendBPD(toAddress: string, amount: Decimalish): Promise<void>;
 
   /**
-   * Send LQTY tokens to an address.
+   * Send MP tokens to an address.
    *
    * @param toAddress - Address of receipient.
-   * @param amount - Amount of LQTY to send.
+   * @param amount - Amount of MP to send.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
    */
-  sendLQTY(toAddress: string, amount: Decimalish): Promise<void>;
+  sendMP(toAddress: string, amount: Decimalish): Promise<void>;
 
   /**
-   * Redeem LUSD to native currency (e.g. Ether) at face value.
+   * Redeem BPD to native currency (e.g. Ether) at face value.
    *
-   * @param amount - Amount of LUSD to be redeemed.
+   * @param amount - Amount of BPD to be redeemed.
    * @param maxRedemptionRate - Maximum acceptable
    *                            {@link @liquity/lib-base#Fees.redemptionRate | redemption rate}.
    *
@@ -405,13 +405,13 @@ export interface TransactableLiquity {
    * If `maxRedemptionRate` is omitted, the current redemption rate (based on `amount`) plus 0.1%
    * is used as maximum acceptable rate.
    */
-  redeemLUSD(amount: Decimalish, maxRedemptionRate?: Decimalish): Promise<RedemptionDetails>;
+  redeemBPD(amount: Decimalish, maxRedemptionRate?: Decimalish): Promise<RedemptionDetails>;
 
   /**
    * Claim leftover collateral after a liquidation or redemption.
    *
    * @remarks
-   * Use {@link @liquity/lib-base#ReadableLiquity.getCollateralSurplusBalance | getCollateralSurplusBalance()}
+   * Use {@link @liquity/lib-base#ReadableMoneyp.getCollateralSurplusBalance | getCollateralSurplusBalance()}
    * to check the amount of collateral available for withdrawal.
    *
    * @throws
@@ -420,38 +420,38 @@ export interface TransactableLiquity {
   claimCollateralSurplus(): Promise<void>;
 
   /**
-   * Stake LQTY to start earning fee revenue or increase existing stake.
+   * Stake MP to start earning fee revenue or increase existing stake.
    *
-   * @param amount - Amount of LQTY to add to new or existing stake.
-   *
-   * @throws
-   * Throws {@link TransactionFailedError} in case of transaction failure.
-   *
-   * @remarks
-   * As a side-effect, the transaction will also pay out an existing LQTY stake's
-   * {@link @liquity/lib-base#LQTYStake.collateralGain | collateral gain} and
-   * {@link @liquity/lib-base#LQTYStake.lusdGain | LUSD gain}.
-   */
-  stakeLQTY(amount: Decimalish): Promise<void>;
-
-  /**
-   * Withdraw LQTY from staking.
-   *
-   * @param amount - Amount of LQTY to withdraw.
+   * @param amount - Amount of MP to add to new or existing stake.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
    *
    * @remarks
-   * As a side-effect, the transaction will also pay out the LQTY stake's
-   * {@link @liquity/lib-base#LQTYStake.collateralGain | collateral gain} and
-   * {@link @liquity/lib-base#LQTYStake.lusdGain | LUSD gain}.
+   * As a side-effect, the transaction will also pay out an existing MP stake's
+   * {@link @liquity/lib-base#MPStake.collateralGain | collateral gain} and
+   * {@link @liquity/lib-base#MPStake.bpdGain | BPD gain}.
    */
-  unstakeLQTY(amount: Decimalish): Promise<void>;
+  stakeMP(amount: Decimalish): Promise<void>;
 
   /**
-   * Withdraw {@link @liquity/lib-base#LQTYStake.collateralGain | collateral gain} and
-   * {@link @liquity/lib-base#LQTYStake.lusdGain | LUSD gain} from LQTY stake.
+   * Withdraw MP from staking.
+   *
+   * @param amount - Amount of MP to withdraw.
+   *
+   * @throws
+   * Throws {@link TransactionFailedError} in case of transaction failure.
+   *
+   * @remarks
+   * As a side-effect, the transaction will also pay out the MP stake's
+   * {@link @liquity/lib-base#MPStake.collateralGain | collateral gain} and
+   * {@link @liquity/lib-base#MPStake.bpdGain | BPD gain}.
+   */
+  unstakeMP(amount: Decimalish): Promise<void>;
+
+  /**
+   * Withdraw {@link @liquity/lib-base#MPStake.collateralGain | collateral gain} and
+   * {@link @liquity/lib-base#MPStake.bpdGain | BPD gain} from MP stake.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -459,15 +459,15 @@ export interface TransactableLiquity {
   withdrawGainsFromStaking(): Promise<void>;
 
   /**
-   * Allow the liquidity mining contract to use Uniswap ETH/LUSD LP tokens for
-   * {@link @liquity/lib-base#TransactableLiquity.stakeUniTokens | staking}.
+   * Allow the liquidity mining contract to use Uniswap RBTC/BPD LP tokens for
+   * {@link @liquity/lib-base#TransactableMoneyp.stakeUniTokens | staking}.
    *
    * @param allowance - Maximum amount of LP tokens that will be transferrable to liquidity mining
    *                    (`2^256 - 1` by default).
    *
    * @remarks
    * Must be performed before calling
-   * {@link @liquity/lib-base#TransactableLiquity.stakeUniTokens | stakeUniTokens()}.
+   * {@link @liquity/lib-base#TransactableMoneyp.stakeUniTokens | stakeUniTokens()}.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -475,7 +475,7 @@ export interface TransactableLiquity {
   approveUniTokens(allowance?: Decimalish): Promise<void>;
 
   /**
-   * Stake Uniswap ETH/LUSD LP tokens to participate in liquidity mining and earn LQTY.
+   * Stake Uniswap RBTC/BPD LP tokens to participate in liquidity mining and earn MP.
    *
    * @param amount - Amount of LP tokens to add to new or existing stake.
    *
@@ -485,7 +485,7 @@ export interface TransactableLiquity {
   stakeUniTokens(amount: Decimalish): Promise<void>;
 
   /**
-   * Withdraw Uniswap ETH/LUSD LP tokens from liquidity mining.
+   * Withdraw Uniswap RBTC/BPD LP tokens from liquidity mining.
    *
    * @param amount - Amount of LP tokens to withdraw.
    *
@@ -495,12 +495,12 @@ export interface TransactableLiquity {
   unstakeUniTokens(amount: Decimalish): Promise<void>;
 
   /**
-   * Withdraw LQTY that has been earned by mining liquidity.
+   * Withdraw MP that has been earned by mining liquidity.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
    */
-  withdrawLQTYRewardFromLiquidityMining(): Promise<void>;
+  withdrawMPRewardFromLiquidityMining(): Promise<void>;
 
   /**
    * Withdraw all staked LP tokens from liquidity mining and claim reward.
@@ -511,9 +511,9 @@ export interface TransactableLiquity {
   exitLiquidityMining(): Promise<void>;
 
   /**
-   * Register current wallet address as a Liquity frontend.
+   * Register current wallet address as a Moneyp frontend.
    *
-   * @param kickbackRate - The portion of LQTY rewards to pass onto users of the frontend
+   * @param kickbackRate - The portion of MP rewards to pass onto users of the frontend
    *                       (between 0 and 1).
    *
    * @throws

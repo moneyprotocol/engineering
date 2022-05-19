@@ -2,58 +2,58 @@ import assert from "assert";
 
 import { Decimal } from "./Decimal";
 import { StabilityDeposit } from "./StabilityDeposit";
-import { Trove, TroveWithPendingRedistribution, UserTrove } from "./Trove";
+import { Vault, VaultWithPendingRedistribution, UserVault } from "./Vault";
 import { Fees } from "./Fees";
-import { LQTYStake } from "./LQTYStake";
-import { FrontendStatus } from "./ReadableLiquity";
+import { MPStake } from "./MPStake";
+import { FrontendStatus } from "./ReadableMoneyp";
 
 /**
  * State variables read from the blockchain.
  *
  * @public
  */
-export interface LiquityStoreBaseState {
+export interface MoneypStoreBaseState {
   /** Status of currently used frontend. */
   frontend: FrontendStatus;
 
   /** Status of user's own frontend. */
   ownFrontend: FrontendStatus;
 
-  /** Number of Troves that are currently open. */
-  numberOfTroves: number;
+  /** Number of Vaults that are currently open. */
+  numberOfVaults: number;
 
   /** User's native currency balance (e.g. Ether). */
   accountBalance: Decimal;
 
-  /** User's LUSD token balance. */
-  lusdBalance: Decimal;
+  /** User's BPD token balance. */
+  bpdBalance: Decimal;
 
-  /** User's LQTY token balance. */
-  lqtyBalance: Decimal;
+  /** User's MP token balance. */
+  mpBalance: Decimal;
 
-  /** User's Uniswap ETH/LUSD LP token balance. */
+  /** User's Uniswap RBTC/BPD LP token balance. */
   uniTokenBalance: Decimal;
 
-  /** The liquidity mining contract's allowance of user's Uniswap ETH/LUSD LP tokens. */
+  /** The liquidity mining contract's allowance of user's Uniswap RBTC/BPD LP tokens. */
   uniTokenAllowance: Decimal;
 
-  /** Remaining LQTY that will be collectively rewarded to liquidity miners. */
-  remainingLiquidityMiningLQTYReward: Decimal;
+  /** Remaining MP that will be collectively rewarded to liquidity miners. */
+  remainingLiquidityMiningMPReward: Decimal;
 
-  /** Amount of Uniswap ETH/LUSD LP tokens the user has staked in liquidity mining. */
+  /** Amount of Uniswap RBTC/BPD LP tokens the user has staked in liquidity mining. */
   liquidityMiningStake: Decimal;
 
-  /** Total amount of Uniswap ETH/LUSD LP tokens currently staked in liquidity mining. */
+  /** Total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. */
   totalStakedUniTokens: Decimal;
 
-  /** Amount of LQTY the user has earned through mining liquidity. */
-  liquidityMiningLQTYReward: Decimal;
+  /** Amount of MP the user has earned through mining liquidity. */
+  liquidityMiningMPReward: Decimal;
 
   /**
    * Amount of leftover collateral available for withdrawal to the user.
    *
    * @remarks
-   * See {@link ReadableLiquity.getCollateralSurplusBalance | getCollateralSurplusBalance()} for
+   * See {@link ReadableMoneyp.getCollateralSurplusBalance | getCollateralSurplusBalance()} for
    * more information.
    */
   collateralSurplusBalance: Decimal;
@@ -61,56 +61,56 @@ export interface LiquityStoreBaseState {
   /** Current price of the native currency (e.g. Ether) in USD. */
   price: Decimal;
 
-  /** Total amount of LUSD currently deposited in the Stability Pool. */
-  lusdInStabilityPool: Decimal;
+  /** Total amount of BPD currently deposited in the Stability Pool. */
+  bpdInStabilityPool: Decimal;
 
-  /** Total collateral and debt in the Liquity system. */
-  total: Trove;
+  /** Total collateral and debt in the Moneyp system. */
+  total: Vault;
 
   /**
    * Total collateral and debt per stake that has been liquidated through redistribution.
    *
    * @remarks
-   * Needed when dealing with instances of {@link TroveWithPendingRedistribution}.
+   * Needed when dealing with instances of {@link VaultWithPendingRedistribution}.
    */
-  totalRedistributed: Trove;
+  totalRedistributed: Vault;
 
   /**
-   * User's Trove in its state after the last direct modification.
+   * User's Vault in its state after the last direct modification.
    *
    * @remarks
-   * The current state of the user's Trove can be found as
-   * {@link LiquityStoreDerivedState.trove | trove}.
+   * The current state of the user's Vault can be found as
+   * {@link MoneypStoreDerivedState.vault | vault}.
    */
-  troveBeforeRedistribution: TroveWithPendingRedistribution;
+  vaultBeforeRedistribution: VaultWithPendingRedistribution;
 
   /** User's stability deposit. */
   stabilityDeposit: StabilityDeposit;
 
-  /** Remaining LQTY that will be collectively rewarded to stability depositors. */
-  remainingStabilityPoolLQTYReward: Decimal;
+  /** Remaining MP that will be collectively rewarded to stability depositors. */
+  remainingStabilityPoolMPReward: Decimal;
 
   /** @internal */
   _feesInNormalMode: Fees;
 
-  /** User's LQTY stake. */
-  lqtyStake: LQTYStake;
+  /** User's MP stake. */
+  mpStake: MPStake;
 
-  /** Total amount of LQTY currently staked. */
-  totalStakedLQTY: Decimal;
+  /** Total amount of MP currently staked. */
+  totalStakedMP: Decimal;
 
   /** @internal */
-  _riskiestTroveBeforeRedistribution: TroveWithPendingRedistribution;
+  _riskiestVaultBeforeRedistribution: VaultWithPendingRedistribution;
 }
 
 /**
- * State variables derived from {@link LiquityStoreBaseState}.
+ * State variables derived from {@link MoneypStoreBaseState}.
  *
  * @public
  */
-export interface LiquityStoreDerivedState {
-  /** Current state of user's Trove */
-  trove: UserTrove;
+export interface MoneypStoreDerivedState {
+  /** Current state of user's Vault */
+  vault: UserVault;
 
   /** Calculator for current fees. */
   fees: Fees;
@@ -130,7 +130,7 @@ export interface LiquityStoreDerivedState {
    * Current redemption rate.
    *
    * @remarks
-   * Note that the actual rate paid by a redemption transaction will depend on the amount of LUSD
+   * Note that the actual rate paid by a redemption transaction will depend on the amount of BPD
    * being redeemed.
    *
    * Use {@link Fees.redemptionRate} to calculate a precise redemption rate.
@@ -138,42 +138,42 @@ export interface LiquityStoreDerivedState {
   redemptionRate: Decimal;
 
   /**
-   * Whether there are any Troves with collateral ratio below the
+   * Whether there are any Vaults with collateral ratio below the
    * {@link MINIMUM_COLLATERAL_RATIO | minimum}.
    */
-  haveUndercollateralizedTroves: boolean;
+  haveUndercollateralizedVaults: boolean;
 }
 
 /**
- * Type of {@link LiquityStore}'s {@link LiquityStore.state | state}.
+ * Type of {@link MoneypStore}'s {@link MoneypStore.state | state}.
  *
  * @remarks
- * It combines all properties of {@link LiquityStoreBaseState} and {@link LiquityStoreDerivedState}
- * with optional extra state added by the particular `LiquityStore` implementation.
+ * It combines all properties of {@link MoneypStoreBaseState} and {@link MoneypStoreDerivedState}
+ * with optional extra state added by the particular `MoneypStore` implementation.
  *
  * The type parameter `T` may be used to type the extra state.
  *
  * @public
  */
-export type LiquityStoreState<T = unknown> = LiquityStoreBaseState & LiquityStoreDerivedState & T;
+export type MoneypStoreState<T = unknown> = MoneypStoreBaseState & MoneypStoreDerivedState & T;
 
 /**
- * Parameters passed to {@link LiquityStore} listeners.
+ * Parameters passed to {@link MoneypStore} listeners.
  *
  * @remarks
- * Use the {@link LiquityStore.subscribe | subscribe()} function to register a listener.
+ * Use the {@link MoneypStore.subscribe | subscribe()} function to register a listener.
 
  * @public
  */
-export interface LiquityStoreListenerParams<T = unknown> {
+export interface MoneypStoreListenerParams<T = unknown> {
   /** The entire previous state. */
-  newState: LiquityStoreState<T>;
+  newState: MoneypStoreState<T>;
 
   /** The entire new state. */
-  oldState: LiquityStoreState<T>;
+  oldState: MoneypStoreState<T>;
 
   /** Only the state variables that have changed. */
-  stateChange: Partial<LiquityStoreState<T>>;
+  stateChange: Partial<MoneypStoreState<T>>;
 }
 
 const strictEquals = <T>(a: T, b: T) => a === b;
@@ -198,17 +198,17 @@ const difference = <T>(a: T, b: T) =>
   ) as Partial<T>;
 
 /**
- * Abstract base class of Liquity data store implementations.
+ * Abstract base class of Moneyp data store implementations.
  *
  * @remarks
- * The type parameter `T` may be used to type extra state added to {@link LiquityStoreState} by the
+ * The type parameter `T` may be used to type extra state added to {@link MoneypStoreState} by the
  * subclass.
  *
- * Implemented by {@link @liquity/lib-ethers#BlockPolledLiquityStore}.
+ * Implemented by {@link @liquity/lib-ethers#BlockPolledMoneypStore}.
  *
  * @public
  */
-export abstract class LiquityStore<T = unknown> {
+export abstract class MoneypStore<T = unknown> {
   /** Turn console logging on/off. */
   logging = false;
 
@@ -216,30 +216,30 @@ export abstract class LiquityStore<T = unknown> {
    * Called after the state is fetched for the first time.
    *
    * @remarks
-   * See {@link LiquityStore.start | start()}.
+   * See {@link MoneypStore.start | start()}.
    */
   onLoaded?: () => void;
 
   /** @internal */
   protected _loaded = false;
 
-  private _baseState?: LiquityStoreBaseState;
-  private _derivedState?: LiquityStoreDerivedState;
+  private _baseState?: MoneypStoreBaseState;
+  private _derivedState?: MoneypStoreDerivedState;
   private _extraState?: T;
 
   private _updateTimeoutId: ReturnType<typeof setTimeout> | undefined;
-  private _listeners = new Set<(params: LiquityStoreListenerParams<T>) => void>();
+  private _listeners = new Set<(params: MoneypStoreListenerParams<T>) => void>();
 
   /**
    * The current store state.
    *
    * @remarks
    * Should not be accessed before the store is loaded. Assign a function to
-   * {@link LiquityStore.onLoaded | onLoaded} to get a callback when this happens.
+   * {@link MoneypStore.onLoaded | onLoaded} to get a callback when this happens.
    *
-   * See {@link LiquityStoreState} for the list of properties returned.
+   * See {@link MoneypStoreState} for the list of properties returned.
    */
-  get state(): LiquityStoreState<T> {
+  get state(): MoneypStoreState<T> {
     return Object.assign({}, this._baseState, this._derivedState, this._extraState);
   }
 
@@ -247,13 +247,13 @@ export abstract class LiquityStore<T = unknown> {
   protected abstract _doStart(): () => void;
 
   /**
-   * Start monitoring the blockchain for Liquity state changes.
+   * Start monitoring the blockchain for Moneyp state changes.
    *
    * @remarks
-   * The {@link LiquityStore.onLoaded | onLoaded} callback will be called after the state is fetched
+   * The {@link MoneypStore.onLoaded | onLoaded} callback will be called after the state is fetched
    * for the first time.
    *
-   * Use the {@link LiquityStore.subscribe | subscribe()} function to register listeners.
+   * Use the {@link MoneypStore.subscribe | subscribe()} function to register listeners.
    *
    * @returns Function to stop the monitoring.
    */
@@ -318,9 +318,9 @@ export abstract class LiquityStore<T = unknown> {
   }
 
   private _reduce(
-    baseState: LiquityStoreBaseState,
-    baseStateUpdate: Partial<LiquityStoreBaseState>
-  ): LiquityStoreBaseState {
+    baseState: MoneypStoreBaseState,
+    baseStateUpdate: Partial<MoneypStoreBaseState>
+  ): MoneypStoreBaseState {
     return {
       frontend: this._updateIfChanged(
         frontendStatusEquals,
@@ -338,11 +338,11 @@ export abstract class LiquityStore<T = unknown> {
         showFrontendStatus
       ),
 
-      numberOfTroves: this._updateIfChanged(
+      numberOfVaults: this._updateIfChanged(
         strictEquals,
-        "numberOfTroves",
-        baseState.numberOfTroves,
-        baseStateUpdate.numberOfTroves
+        "numberOfVaults",
+        baseState.numberOfVaults,
+        baseStateUpdate.numberOfVaults
       ),
 
       accountBalance: this._updateIfChanged(
@@ -352,18 +352,18 @@ export abstract class LiquityStore<T = unknown> {
         baseStateUpdate.accountBalance
       ),
 
-      lusdBalance: this._updateIfChanged(
+      bpdBalance: this._updateIfChanged(
         eq,
-        "lusdBalance",
-        baseState.lusdBalance,
-        baseStateUpdate.lusdBalance
+        "bpdBalance",
+        baseState.bpdBalance,
+        baseStateUpdate.bpdBalance
       ),
 
-      lqtyBalance: this._updateIfChanged(
+      mpBalance: this._updateIfChanged(
         eq,
-        "lqtyBalance",
-        baseState.lqtyBalance,
-        baseStateUpdate.lqtyBalance
+        "mpBalance",
+        baseState.mpBalance,
+        baseStateUpdate.mpBalance
       ),
 
       uniTokenBalance: this._updateIfChanged(
@@ -380,10 +380,10 @@ export abstract class LiquityStore<T = unknown> {
         baseStateUpdate.uniTokenAllowance
       ),
 
-      remainingLiquidityMiningLQTYReward: this._silentlyUpdateIfChanged(
+      remainingLiquidityMiningMPReward: this._silentlyUpdateIfChanged(
         eq,
-        baseState.remainingLiquidityMiningLQTYReward,
-        baseStateUpdate.remainingLiquidityMiningLQTYReward
+        baseState.remainingLiquidityMiningMPReward,
+        baseStateUpdate.remainingLiquidityMiningMPReward
       ),
 
       liquidityMiningStake: this._updateIfChanged(
@@ -400,10 +400,10 @@ export abstract class LiquityStore<T = unknown> {
         baseStateUpdate.totalStakedUniTokens
       ),
 
-      liquidityMiningLQTYReward: this._silentlyUpdateIfChanged(
+      liquidityMiningMPReward: this._silentlyUpdateIfChanged(
         eq,
-        baseState.liquidityMiningLQTYReward,
-        baseStateUpdate.liquidityMiningLQTYReward
+        baseState.liquidityMiningMPReward,
+        baseStateUpdate.liquidityMiningMPReward
       ),
 
       collateralSurplusBalance: this._updateIfChanged(
@@ -415,11 +415,11 @@ export abstract class LiquityStore<T = unknown> {
 
       price: this._updateIfChanged(eq, "price", baseState.price, baseStateUpdate.price),
 
-      lusdInStabilityPool: this._updateIfChanged(
+      bpdInStabilityPool: this._updateIfChanged(
         eq,
-        "lusdInStabilityPool",
-        baseState.lusdInStabilityPool,
-        baseStateUpdate.lusdInStabilityPool
+        "bpdInStabilityPool",
+        baseState.bpdInStabilityPool,
+        baseStateUpdate.bpdInStabilityPool
       ),
 
       total: this._updateIfChanged(equals, "total", baseState.total, baseStateUpdate.total),
@@ -431,11 +431,11 @@ export abstract class LiquityStore<T = unknown> {
         baseStateUpdate.totalRedistributed
       ),
 
-      troveBeforeRedistribution: this._updateIfChanged(
+      vaultBeforeRedistribution: this._updateIfChanged(
         equals,
-        "troveBeforeRedistribution",
-        baseState.troveBeforeRedistribution,
-        baseStateUpdate.troveBeforeRedistribution
+        "vaultBeforeRedistribution",
+        baseState.vaultBeforeRedistribution,
+        baseStateUpdate.vaultBeforeRedistribution
       ),
 
       stabilityDeposit: this._updateIfChanged(
@@ -445,10 +445,10 @@ export abstract class LiquityStore<T = unknown> {
         baseStateUpdate.stabilityDeposit
       ),
 
-      remainingStabilityPoolLQTYReward: this._silentlyUpdateIfChanged(
+      remainingStabilityPoolMPReward: this._silentlyUpdateIfChanged(
         eq,
-        baseState.remainingStabilityPoolLQTYReward,
-        baseStateUpdate.remainingStabilityPoolLQTYReward
+        baseState.remainingStabilityPoolMPReward,
+        baseStateUpdate.remainingStabilityPoolMPReward
       ),
 
       _feesInNormalMode: this._silentlyUpdateIfChanged(
@@ -457,57 +457,57 @@ export abstract class LiquityStore<T = unknown> {
         baseStateUpdate._feesInNormalMode
       ),
 
-      lqtyStake: this._updateIfChanged(
+      mpStake: this._updateIfChanged(
         equals,
-        "lqtyStake",
-        baseState.lqtyStake,
-        baseStateUpdate.lqtyStake
+        "mpStake",
+        baseState.mpStake,
+        baseStateUpdate.mpStake
       ),
 
-      totalStakedLQTY: this._updateIfChanged(
+      totalStakedMP: this._updateIfChanged(
         eq,
-        "totalStakedLQTY",
-        baseState.totalStakedLQTY,
-        baseStateUpdate.totalStakedLQTY
+        "totalStakedMP",
+        baseState.totalStakedMP,
+        baseStateUpdate.totalStakedMP
       ),
 
-      _riskiestTroveBeforeRedistribution: this._silentlyUpdateIfChanged(
+      _riskiestVaultBeforeRedistribution: this._silentlyUpdateIfChanged(
         equals,
-        baseState._riskiestTroveBeforeRedistribution,
-        baseStateUpdate._riskiestTroveBeforeRedistribution
+        baseState._riskiestVaultBeforeRedistribution,
+        baseStateUpdate._riskiestVaultBeforeRedistribution
       )
     };
   }
 
   private _derive({
-    troveBeforeRedistribution,
+    vaultBeforeRedistribution,
     totalRedistributed,
     _feesInNormalMode,
     total,
     price,
-    _riskiestTroveBeforeRedistribution
-  }: LiquityStoreBaseState): LiquityStoreDerivedState {
+    _riskiestVaultBeforeRedistribution
+  }: MoneypStoreBaseState): MoneypStoreDerivedState {
     const fees = _feesInNormalMode._setRecoveryMode(total.collateralRatioIsBelowCritical(price));
 
     return {
-      trove: troveBeforeRedistribution.applyRedistribution(totalRedistributed),
+      vault: vaultBeforeRedistribution.applyRedistribution(totalRedistributed),
       fees,
       borrowingRate: fees.borrowingRate(),
       redemptionRate: fees.redemptionRate(),
-      haveUndercollateralizedTroves: _riskiestTroveBeforeRedistribution
+      haveUndercollateralizedVaults: _riskiestVaultBeforeRedistribution
         .applyRedistribution(totalRedistributed)
         .collateralRatioIsBelowMinimum(price)
     };
   }
 
   private _reduceDerived(
-    derivedState: LiquityStoreDerivedState,
-    derivedStateUpdate: LiquityStoreDerivedState
-  ): LiquityStoreDerivedState {
+    derivedState: MoneypStoreDerivedState,
+    derivedStateUpdate: MoneypStoreDerivedState
+  ): MoneypStoreDerivedState {
     return {
       fees: this._updateFees("fees", derivedState.fees, derivedStateUpdate.fees),
 
-      trove: this._updateIfChanged(equals, "trove", derivedState.trove, derivedStateUpdate.trove),
+      vault: this._updateIfChanged(equals, "vault", derivedState.vault, derivedStateUpdate.vault),
 
       borrowingRate: this._silentlyUpdateIfChanged(
         eq,
@@ -521,11 +521,11 @@ export abstract class LiquityStore<T = unknown> {
         derivedStateUpdate.redemptionRate
       ),
 
-      haveUndercollateralizedTroves: this._updateIfChanged(
+      haveUndercollateralizedVaults: this._updateIfChanged(
         strictEquals,
-        "haveUndercollateralizedTroves",
-        derivedState.haveUndercollateralizedTroves,
-        derivedStateUpdate.haveUndercollateralizedTroves
+        "haveUndercollateralizedVaults",
+        derivedState.haveUndercollateralizedVaults,
+        derivedStateUpdate.haveUndercollateralizedVaults
       )
     };
   }
@@ -533,7 +533,7 @@ export abstract class LiquityStore<T = unknown> {
   /** @internal */
   protected abstract _reduceExtra(extraState: T, extraStateUpdate: Partial<T>): T;
 
-  private _notify(params: LiquityStoreListenerParams<T>) {
+  private _notify(params: MoneypStoreListenerParams<T>) {
     // Iterate on a copy of `_listeners`, to avoid notifying any new listeners subscribed by
     // existing listeners, as that could result in infinite loops.
     //
@@ -553,7 +553,7 @@ export abstract class LiquityStore<T = unknown> {
    * @param listener - Function that will be called whenever state changes.
    * @returns Function to unregister this listener.
    */
-  subscribe(listener: (params: LiquityStoreListenerParams<T>) => void): () => void {
+  subscribe(listener: (params: MoneypStoreListenerParams<T>) => void): () => void {
     const uniqueListener = wrap(listener);
 
     this._listeners.add(uniqueListener);
@@ -564,7 +564,7 @@ export abstract class LiquityStore<T = unknown> {
   }
 
   /** @internal */
-  protected _load(baseState: LiquityStoreBaseState, extraState?: T): void {
+  protected _load(baseState: MoneypStoreBaseState, extraState?: T): void {
     assert(!this._loaded);
 
     this._baseState = baseState;
@@ -581,7 +581,7 @@ export abstract class LiquityStore<T = unknown> {
 
   /** @internal */
   protected _update(
-    baseStateUpdate?: Partial<LiquityStoreBaseState>,
+    baseStateUpdate?: Partial<MoneypStoreBaseState>,
     extraStateUpdate?: Partial<T>
   ): void {
     assert(this._baseState && this._derivedState);

@@ -8,39 +8,39 @@ import { Decimal } from "./Decimal";
 export const CRITICAL_COLLATERAL_RATIO = Decimal.from(1.5);
 
 /**
- * Collateral ratio below which a Trove can be liquidated in normal mode.
+ * Collateral ratio below which a Vault can be liquidated in normal mode.
  *
  * @public
  */
 export const MINIMUM_COLLATERAL_RATIO = Decimal.from(1.1);
 
 /**
- * Amount of LUSD that's reserved for compensating the liquidator of a Trove.
+ * Amount of BPD that's reserved for compensating the liquidator of a Vault.
  *
  * @public
  */
-export const LUSD_LIQUIDATION_RESERVE = Decimal.from(200);
+export const BPD_LIQUIDATION_RESERVE = Decimal.from(200);
 
 /**
- * A Trove must always have at least this much debt on top of the
- * {@link LUSD_LIQUIDATION_RESERVE | liquidation reserve}.
+ * A Vault must always have at least this much debt on top of the
+ * {@link BPD_LIQUIDATION_RESERVE | liquidation reserve}.
  *
  * @remarks
- * Any transaction that would result in a Trove with less net debt than this will be reverted.
+ * Any transaction that would result in a Vault with less net debt than this will be reverted.
  *
  * @public
  */
-export const LUSD_MINIMUM_NET_DEBT = Decimal.from(1800);
+export const BPD_MINIMUM_NET_DEBT = Decimal.from(1800);
 
 /**
- * A Trove must always have at least this much debt.
+ * A Vault must always have at least this much debt.
  *
  * @remarks
- * Any transaction that would result in a Trove with less debt than this will be reverted.
+ * Any transaction that would result in a Vault with less debt than this will be reverted.
  *
  * @public
  */
-export const LUSD_MINIMUM_DEBT = LUSD_LIQUIDATION_RESERVE.add(LUSD_MINIMUM_NET_DEBT);
+export const BPD_MINIMUM_DEBT = BPD_LIQUIDATION_RESERVE.add(BPD_MINIMUM_NET_DEBT);
 
 /**
  * Value that the {@link Fees.borrowingRate | borrowing rate} will never decay below.
