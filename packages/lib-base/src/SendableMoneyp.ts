@@ -17,7 +17,7 @@ import {
  * A transaction that has already been sent.
  *
  * @remarks
- * Implemented by {@link @liquity/lib-ethers#SentEthersMoneypTransaction}.
+ * Implemented by {@link @liquity/lib-ethers#SentBitcoinsMoneypTransaction}.
  *
  * @public
  */
@@ -136,7 +136,7 @@ export type _SendableFrom<T, R, S> = {
  * The functions return an object implementing {@link SentMoneypTransaction}, which can be used
  * to monitor the transaction and get its details when it succeeds.
  *
- * Implemented by {@link @liquity/lib-ethers#SendableEthersMoneyp}.
+ * Implemented by {@link @liquity/lib-ethers#SendableBitcoinsMoneyp}.
  *
  * @public
  */

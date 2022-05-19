@@ -48,7 +48,7 @@ export interface VaultListingParams {
  * Read the state of the Moneyp protocol.
  *
  * @remarks
- * Implemented by {@link @liquity/lib-ethers#EthersMoneyp}.
+ * Implemented by {@link @liquity/lib-ethers#BitcoinsMoneyp}.
  *
  * @public
  */
