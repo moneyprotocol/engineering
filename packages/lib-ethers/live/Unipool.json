@@ -9,11 +9,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_lqtyTokenAddress",
+          "name": "_mpTokenAddress",
           "type": "address"
         }
       ],
-      "name": "LQTYTokenAddressChanged",
+      "name": "MPTokenAddressChanged",
       "type": "event"
     },
     {
@@ -230,10 +230,10 @@
     },
     {
       "inputs": [],
-      "name": "lqtyToken",
+      "name": "mpToken",
       "outputs": [
         {
-          "internalType": "contract ILQTYToken",
+          "internalType": "contract IMPToken",
           "name": "",
           "type": "address"
         }
@@ -329,7 +329,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_lqtyTokenAddress",
+          "name": "_mpTokenAddress",
           "type": "address"
         },
         {

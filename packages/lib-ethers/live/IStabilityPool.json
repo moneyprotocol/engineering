@@ -104,7 +104,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LUSDLoss",
+          "name": "_BPDLoss",
           "type": "uint256"
         }
       ],
@@ -268,11 +268,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LQTY",
+          "name": "_MP",
           "type": "uint256"
         }
       ],
-      "name": "LQTYPaidToDepositor",
+      "name": "MPPaidToDepositor",
       "type": "event"
     },
     {
@@ -287,11 +287,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LQTY",
+          "name": "_MP",
           "type": "uint256"
         }
       ],
-      "name": "LQTYPaidToFrontEnd",
+      "name": "MPPaidToFrontEnd",
       "type": "event"
     },
     {
@@ -300,11 +300,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_newLUSDTokenAddress",
+          "name": "_newBPDTokenAddress",
           "type": "address"
         }
       ],
-      "name": "LUSDTokenAddressChanged",
+      "name": "BPDTokenAddressChanged",
       "type": "event"
     },
     {
@@ -377,11 +377,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_newSortedTrovesAddress",
+          "name": "_newSortedVaultsAddress",
           "type": "address"
         }
       ],
-      "name": "SortedTrovesAddressChanged",
+      "name": "SortedVaultsAddressChanged",
       "type": "event"
     },
     {
@@ -407,7 +407,7 @@
           "type": "uint256"
         }
       ],
-      "name": "StabilityPoolLUSDBalanceUpdated",
+      "name": "StabilityPoolBPDBalanceUpdated",
       "type": "event"
     },
     {
@@ -416,11 +416,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_newTroveManagerAddress",
+          "name": "_newVaultManagerAddress",
           "type": "address"
         }
       ],
-      "name": "TroveManagerAddressChanged",
+      "name": "VaultManagerAddressChanged",
       "type": "event"
     },
     {
@@ -469,7 +469,7 @@
           "type": "address"
         }
       ],
-      "name": "getCompoundedLUSDDeposit",
+      "name": "getCompoundedBPDDeposit",
       "outputs": [
         {
           "internalType": "uint256",
@@ -507,7 +507,7 @@
           "type": "address"
         }
       ],
-      "name": "getDepositorLQTYGain",
+      "name": "getDepositorMPGain",
       "outputs": [
         {
           "internalType": "uint256",
@@ -539,7 +539,7 @@
           "type": "address"
         }
       ],
-      "name": "getFrontEndLQTYGain",
+      "name": "getFrontEndMPGain",
       "outputs": [
         {
           "internalType": "uint256",
@@ -552,7 +552,7 @@
     },
     {
       "inputs": [],
-      "name": "getTotalLUSDDeposits",
+      "name": "getTotalBPDDeposits",
       "outputs": [
         {
           "internalType": "uint256",
@@ -621,7 +621,7 @@
         },
         {
           "internalType": "address",
-          "name": "_troveManagerAddress",
+          "name": "_vaultManagerAddress",
           "type": "address"
         },
         {
@@ -631,12 +631,12 @@
         },
         {
           "internalType": "address",
-          "name": "_lusdTokenAddress",
+          "name": "_bpdTokenAddress",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "_sortedTrovesAddress",
+          "name": "_sortedVaultsAddress",
           "type": "address"
         },
         {
@@ -668,7 +668,7 @@
           "type": "address"
         }
       ],
-      "name": "withdrawETHGainToTrove",
+      "name": "withdrawETHGainToVault",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

@@ -61,11 +61,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_lqtyStakingAddress",
+          "name": "_mpStakingAddress",
           "type": "address"
         }
       ],
-      "name": "LQTYStakingAddressChanged",
+      "name": "MPStakingAddressChanged",
       "type": "event"
     },
     {
@@ -80,11 +80,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LUSDFee",
+          "name": "_BPDFee",
           "type": "uint256"
         }
       ],
-      "name": "LUSDBorrowingFeePaid",
+      "name": "BPDBorrowingFeePaid",
       "type": "event"
     },
     {
@@ -93,11 +93,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_lusdTokenAddress",
+          "name": "_bpdTokenAddress",
           "type": "address"
         }
       ],
-      "name": "LUSDTokenAddressChanged",
+      "name": "BPDTokenAddressChanged",
       "type": "event"
     },
     {
@@ -119,11 +119,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_sortedTrovesAddress",
+          "name": "_sortedVaultsAddress",
           "type": "address"
         }
       ],
-      "name": "SortedTrovesAddressChanged",
+      "name": "SortedVaultsAddressChanged",
       "type": "event"
     },
     {
@@ -155,7 +155,7 @@
           "type": "uint256"
         }
       ],
-      "name": "TroveCreated",
+      "name": "VaultCreated",
       "type": "event"
     },
     {
@@ -164,11 +164,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_newTroveManagerAddress",
+          "name": "_newVaultManagerAddress",
           "type": "address"
         }
       ],
-      "name": "TroveManagerAddressChanged",
+      "name": "VaultManagerAddressChanged",
       "type": "event"
     },
     {
@@ -205,7 +205,7 @@
           "type": "uint8"
         }
       ],
-      "name": "TroveUpdated",
+      "name": "VaultUpdated",
       "type": "event"
     },
     {
@@ -259,7 +259,7 @@
           "type": "address"
         }
       ],
-      "name": "adjustTrove",
+      "name": "adjustVault",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -273,7 +273,7 @@
     },
     {
       "inputs": [],
-      "name": "closeTrove",
+      "name": "closeVault",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -315,7 +315,7 @@
           "type": "address"
         }
       ],
-      "name": "moveETHGainToTrove",
+      "name": "moveETHGainToVault",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -329,7 +329,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_BPDAmount",
           "type": "uint256"
         },
         {
@@ -343,7 +343,7 @@
           "type": "address"
         }
       ],
-      "name": "openTrove",
+      "name": "openVault",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -366,7 +366,7 @@
           "type": "address"
         }
       ],
-      "name": "repayLUSD",
+      "name": "repayBPD",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -375,7 +375,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_troveManagerAddress",
+          "name": "_vaultManagerAddress",
           "type": "address"
         },
         {
@@ -410,17 +410,17 @@
         },
         {
           "internalType": "address",
-          "name": "_sortedTrovesAddress",
+          "name": "_sortedVaultsAddress",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "_lusdTokenAddress",
+          "name": "_bpdTokenAddress",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "_lqtyStakingAddress",
+          "name": "_mpStakingAddress",
           "type": "address"
         }
       ],
@@ -475,7 +475,7 @@
           "type": "address"
         }
       ],
-      "name": "withdrawLUSD",
+      "name": "withdrawBPD",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

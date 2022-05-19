@@ -9,11 +9,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_lqtyTokenAddress",
+          "name": "_mpTokenAddress",
           "type": "address"
         }
       ],
-      "name": "LQTYTokenAddressSet",
+      "name": "MPTokenAddressSet",
       "type": "event"
     },
     {
@@ -54,11 +54,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_totalLQTYIssued",
+          "name": "_totalMPIssued",
           "type": "uint256"
         }
       ],
-      "name": "TotalLQTYIssuedUpdated",
+      "name": "TotalMPIssuedUpdated",
       "type": "event"
     },
     {
@@ -89,7 +89,7 @@
     },
     {
       "inputs": [],
-      "name": "LQTYSupplyCap",
+      "name": "MPSupplyCap",
       "outputs": [
         {
           "internalType": "uint256",
@@ -167,7 +167,7 @@
     },
     {
       "inputs": [],
-      "name": "issueLQTY",
+      "name": "issueMP",
       "outputs": [
         {
           "internalType": "uint256",
@@ -180,10 +180,10 @@
     },
     {
       "inputs": [],
-      "name": "lqtyToken",
+      "name": "mpToken",
       "outputs": [
         {
-          "internalType": "contract ILQTYToken",
+          "internalType": "contract IMPToken",
           "name": "",
           "type": "address"
         }
@@ -199,7 +199,7 @@
           "type": "uint256"
         }
       ],
-      "name": "obtainLQTY",
+      "name": "obtainMP",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -226,11 +226,11 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LQTYamount",
+          "name": "_MPamount",
           "type": "uint256"
         }
       ],
-      "name": "sendLQTY",
+      "name": "sendMP",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -239,7 +239,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_lqtyTokenAddress",
+          "name": "_mpTokenAddress",
           "type": "address"
         },
         {
@@ -268,7 +268,7 @@
     },
     {
       "inputs": [],
-      "name": "totalLQTYIssued",
+      "name": "totalMPIssued",
       "outputs": [
         {
           "internalType": "uint256",
@@ -281,7 +281,7 @@
     },
     {
       "inputs": [],
-      "name": "unprotectedIssueLQTY",
+      "name": "unprotectedIssueMP",
       "outputs": [
         {
           "internalType": "uint256",

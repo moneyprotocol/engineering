@@ -104,7 +104,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LUSDLoss",
+          "name": "_BPDLoss",
           "type": "uint256"
         }
       ],
@@ -268,11 +268,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LQTY",
+          "name": "_MP",
           "type": "uint256"
         }
       ],
-      "name": "LQTYPaidToDepositor",
+      "name": "MPPaidToDepositor",
       "type": "event"
     },
     {
@@ -287,11 +287,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LQTY",
+          "name": "_MP",
           "type": "uint256"
         }
       ],
-      "name": "LQTYPaidToFrontEnd",
+      "name": "MPPaidToFrontEnd",
       "type": "event"
     },
     {
@@ -300,11 +300,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_newLUSDTokenAddress",
+          "name": "_newBPDTokenAddress",
           "type": "address"
         }
       ],
-      "name": "LUSDTokenAddressChanged",
+      "name": "BPDTokenAddressChanged",
       "type": "event"
     },
     {
@@ -396,11 +396,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_newSortedTrovesAddress",
+          "name": "_newSortedVaultsAddress",
           "type": "address"
         }
       ],
-      "name": "SortedTrovesAddressChanged",
+      "name": "SortedVaultsAddressChanged",
       "type": "event"
     },
     {
@@ -426,7 +426,7 @@
           "type": "uint256"
         }
       ],
-      "name": "StabilityPoolLUSDBalanceUpdated",
+      "name": "StabilityPoolBPDBalanceUpdated",
       "type": "event"
     },
     {
@@ -435,11 +435,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_newTroveManagerAddress",
+          "name": "_newVaultManagerAddress",
           "type": "address"
         }
       ],
-      "name": "TroveManagerAddressChanged",
+      "name": "VaultManagerAddressChanged",
       "type": "event"
     },
     {
@@ -502,7 +502,7 @@
     },
     {
       "inputs": [],
-      "name": "LUSD_GAS_COMPENSATION",
+      "name": "BPD_GAS_COMPENSATION",
       "outputs": [
         {
           "internalType": "uint256",
@@ -902,7 +902,7 @@
           "type": "address"
         }
       ],
-      "name": "getCompoundedLUSDDeposit",
+      "name": "getCompoundedBPDDeposit",
       "outputs": [
         {
           "internalType": "uint256",
@@ -940,7 +940,7 @@
           "type": "address"
         }
       ],
-      "name": "getDepositorLQTYGain",
+      "name": "getDepositorMPGain",
       "outputs": [
         {
           "internalType": "uint256",
@@ -998,7 +998,7 @@
           "type": "address"
         }
       ],
-      "name": "getFrontEndLQTYGain",
+      "name": "getFrontEndMPGain",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1011,7 +1011,7 @@
     },
     {
       "inputs": [],
-      "name": "getTotalLUSDDeposits",
+      "name": "getTotalBPDDeposits",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1050,7 +1050,7 @@
     },
     {
       "inputs": [],
-      "name": "lastLQTYError",
+      "name": "lastMPError",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1063,7 +1063,7 @@
     },
     {
       "inputs": [],
-      "name": "lastLUSDLossError_Offset",
+      "name": "lastBPDLossError_Offset",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1076,10 +1076,10 @@
     },
     {
       "inputs": [],
-      "name": "lusdToken",
+      "name": "bpdToken",
       "outputs": [
         {
-          "internalType": "contract ILUSDToken",
+          "internalType": "contract IBPDToken",
           "name": "",
           "type": "address"
         }
@@ -1171,7 +1171,7 @@
         },
         {
           "internalType": "address",
-          "name": "_troveManagerAddress",
+          "name": "_vaultManagerAddress",
           "type": "address"
         },
         {
@@ -1181,12 +1181,12 @@
         },
         {
           "internalType": "address",
-          "name": "_lusdTokenAddress",
+          "name": "_bpdTokenAddress",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "_sortedTrovesAddress",
+          "name": "_sortedVaultsAddress",
           "type": "address"
         },
         {
@@ -1207,10 +1207,10 @@
     },
     {
       "inputs": [],
-      "name": "sortedTroves",
+      "name": "sortedVaults",
       "outputs": [
         {
-          "internalType": "contract ISortedTroves",
+          "internalType": "contract ISortedVaults",
           "name": "",
           "type": "address"
         }
@@ -1220,10 +1220,10 @@
     },
     {
       "inputs": [],
-      "name": "troveManager",
+      "name": "vaultManager",
       "outputs": [
         {
-          "internalType": "contract ITroveManager",
+          "internalType": "contract IVaultManager",
           "name": "",
           "type": "address"
         }
@@ -1251,7 +1251,7 @@
           "type": "address"
         }
       ],
-      "name": "withdrawETHGainToTrove",
+      "name": "withdrawETHGainToVault",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

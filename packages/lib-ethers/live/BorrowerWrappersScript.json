@@ -12,12 +12,12 @@
         },
         {
           "internalType": "address",
-          "name": "_troveManagerAddress",
+          "name": "_vaultManagerAddress",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "_lqtyStakingAddress",
+          "name": "_mpStakingAddress",
           "type": "address"
         }
       ],
@@ -88,7 +88,7 @@
           "type": "address"
         }
       ],
-      "name": "adjustTrove",
+      "name": "adjustVault",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -109,7 +109,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_BPDAmount",
           "type": "uint256"
         },
         {
@@ -123,7 +123,7 @@
           "type": "address"
         }
       ],
-      "name": "claimCollateralAndOpenTrove",
+      "name": "claimCollateralAndOpenVault",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -176,7 +176,7 @@
     },
     {
       "inputs": [],
-      "name": "closeTrove",
+      "name": "closeVault",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -190,7 +190,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_BPDAmount",
           "type": "uint256"
         },
         {
@@ -204,7 +204,7 @@
           "type": "address"
         }
       ],
-      "name": "openTrove",
+      "name": "openVault",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -227,7 +227,7 @@
           "type": "address"
         }
       ],
-      "name": "repayLUSD",
+      "name": "repayBPD",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -236,7 +236,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_LQTYamount",
+          "name": "_MPamount",
           "type": "uint256"
         }
       ],
@@ -315,7 +315,7 @@
           "type": "address"
         }
       ],
-      "name": "withdrawLUSD",
+      "name": "withdrawBPD",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

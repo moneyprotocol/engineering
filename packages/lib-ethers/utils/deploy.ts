@@ -5,9 +5,9 @@ import { Wallet } from "@ethersproject/wallet";
 import { Decimal } from "@liquity/lib-base";
 
 import {
-  _LiquityContractAddresses,
-  _LiquityContracts,
-  _LiquityDeploymentJSON,
+  _MoneypContractAddresses,
+  _MoneypContracts,
+  _MoneypDeploymentJSON,
   _connectToContracts
 } from "../src/contracts";
 
@@ -53,13 +53,13 @@ const deployContracts = async (
   getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
   priceFeedIsTestnet = true,
   overrides?: Overrides
-): Promise<Omit<_LiquityContractAddresses, "uniToken">> => {
+): Promise<Omit<_MoneypContractAddresses, "uniToken">> => {
   const addresses = {
     activePool: await deployContract(deployer, getContractFactory, "ActivePool", { ...overrides }),
     borrowerOperations: await deployContract(deployer, getContractFactory, "BorrowerOperations", {
       ...overrides
     }),
-    troveManager: await deployContract(deployer, getContractFactory, "TroveManager", {
+    vaultManager: await deployContract(deployer, getContractFactory, "VaultManager", {
       ...overrides
     }),
     collSurplusPool: await deployContract(deployer, getContractFactory, "CollSurplusPool", {
@@ -76,14 +76,14 @@ const deployContracts = async (
       "LockupContractFactory",
       { ...overrides }
     ),
-    lqtyStaking: await deployContract(deployer, getContractFactory, "LQTYStaking", { ...overrides }),
+    mpStaking: await deployContract(deployer, getContractFactory, "MPStaking", { ...overrides }),
     priceFeed: await deployContract(
       deployer,
       getContractFactory,
       priceFeedIsTestnet ? "PriceFeedTestnet" : "PriceFeed",
       { ...overrides }
     ),
-    sortedTroves: await deployContract(deployer, getContractFactory, "SortedTroves", {
+    sortedVaults: await deployContract(deployer, getContractFactory, "SortedVaults", {
       ...overrides
     }),
     stabilityPool: await deployContract(deployer, getContractFactory, "StabilityPool", {
@@ -97,22 +97,22 @@ const deployContracts = async (
 
   return {
     ...addresses,
-    lusdToken: await deployContract(
+    bpdToken: await deployContract(
       deployer,
       getContractFactory,
-      "LUSDToken",
-      addresses.troveManager,
+      "BPDToken",
+      addresses.vaultManager,
       addresses.stabilityPool,
       addresses.borrowerOperations,
       { ...overrides }
     ),
 
-    lqtyToken: await deployContract(
+    mpToken: await deployContract(
       deployer,
       getContractFactory,
-      "LQTYToken",
+      "MPToken",
       addresses.communityIssuance,
-      addresses.lqtyStaking,
+      addresses.mpStaking,
       addresses.lockupContractFactory,
       Wallet.createRandom().address, // _bountyAddress (TODO: parameterize this)
       addresses.unipool, // _lpRewardsAddress
@@ -120,12 +120,12 @@ const deployContracts = async (
       { ...overrides }
     ),
 
-    multiTroveGetter: await deployContract(
+    multiVaultGetter: await deployContract(
       deployer,
       getContractFactory,
-      "MultiTroveGetter",
-      addresses.troveManager,
-      addresses.sortedTroves,
+      "MultiVaultGetter",
+      addresses.vaultManager,
+      addresses.sortedVaults,
       { ...overrides }
     )
   };
@@ -143,22 +143,22 @@ const connectContracts = async (
   {
     activePool,
     borrowerOperations,
-    troveManager,
-    lusdToken,
+    vaultManager,
+    bpdToken,
     collSurplusPool,
     communityIssuance,
     defaultPool,
-    lqtyToken,
+    mpToken,
     hintHelpers,
     lockupContractFactory,
-    lqtyStaking,
+    mpStaking,
     priceFeed,
-    sortedTroves,
+    sortedVaults,
     stabilityPool,
     gasPool,
     unipool,
     uniToken
-  }: _LiquityContracts,
+  }: _MoneypContracts,
   deployer: Signer,
   overrides?: Overrides
 ) => {
@@ -170,13 +170,13 @@ const connectContracts = async (
 
   const connections: ((nonce: number) => Promise<ContractTransaction>)[] = [
     nonce =>
-      sortedTroves.setParams(1e6, troveManager.address, borrowerOperations.address, {
+      sortedVaults.setParams(1e6, vaultManager.address, borrowerOperations.address, {
         ...overrides,
         nonce
       }),
 
     nonce =>
-      troveManager.setAddresses(
+      vaultManager.setAddresses(
         borrowerOperations.address,
         activePool.address,
         defaultPool.address,
@@ -184,35 +184,35 @@ const connectContracts = async (
         gasPool.address,
         collSurplusPool.address,
         priceFeed.address,
-        lusdToken.address,
-        sortedTroves.address,
-        lqtyToken.address,
-        lqtyStaking.address,
+        bpdToken.address,
+        sortedVaults.address,
+        mpToken.address,
+        mpStaking.address,
         { ...overrides, nonce }
       ),
 
     nonce =>
       borrowerOperations.setAddresses(
-        troveManager.address,
+        vaultManager.address,
         activePool.address,
         defaultPool.address,
         stabilityPool.address,
         gasPool.address,
         collSurplusPool.address,
         priceFeed.address,
-        sortedTroves.address,
-        lusdToken.address,
-        lqtyStaking.address,
+        sortedVaults.address,
+        bpdToken.address,
+        mpStaking.address,
         { ...overrides, nonce }
       ),
 
     nonce =>
       stabilityPool.setAddresses(
         borrowerOperations.address,
-        troveManager.address,
+        vaultManager.address,
         activePool.address,
-        lusdToken.address,
-        sortedTroves.address,
+        bpdToken.address,
+        sortedVaults.address,
         priceFeed.address,
         communityIssuance.address,
         { ...overrides, nonce }
@@ -221,14 +221,14 @@ const connectContracts = async (
     nonce =>
       activePool.setAddresses(
         borrowerOperations.address,
-        troveManager.address,
+        vaultManager.address,
         stabilityPool.address,
         defaultPool.address,
         { ...overrides, nonce }
       ),
 
     nonce =>
-      defaultPool.setAddresses(troveManager.address, activePool.address, {
+      defaultPool.setAddresses(vaultManager.address, activePool.address, {
         ...overrides,
         nonce
       }),
@@ -236,41 +236,41 @@ const connectContracts = async (
     nonce =>
       collSurplusPool.setAddresses(
         borrowerOperations.address,
-        troveManager.address,
+        vaultManager.address,
         activePool.address,
         { ...overrides, nonce }
       ),
 
     nonce =>
-      hintHelpers.setAddresses(sortedTroves.address, troveManager.address, {
+      hintHelpers.setAddresses(sortedVaults.address, vaultManager.address, {
         ...overrides,
         nonce
       }),
 
     nonce =>
-      lqtyStaking.setAddresses(
-        lqtyToken.address,
-        lusdToken.address,
-        troveManager.address,
+      mpStaking.setAddresses(
+        mpToken.address,
+        bpdToken.address,
+        vaultManager.address,
         borrowerOperations.address,
         activePool.address,
         { ...overrides, nonce }
       ),
 
     nonce =>
-      lockupContractFactory.setLQTYTokenAddress(lqtyToken.address, {
+      lockupContractFactory.setMPTokenAddress(mpToken.address, {
         ...overrides,
         nonce
       }),
 
     nonce =>
-      communityIssuance.setAddresses(lqtyToken.address, stabilityPool.address, {
+      communityIssuance.setAddresses(mpToken.address, stabilityPool.address, {
         ...overrides,
         nonce
       }),
 
     nonce =>
-      unipool.setParams(lqtyToken.address, uniToken.address, 2 * 30 * 24 * 60 * 60, {
+      unipool.setParams(mpToken.address, uniToken.address, 2 * 30 * 24 * 60 * 60, {
         ...overrides,
         nonce
       })
@@ -305,7 +305,7 @@ export const deployAndSetupContracts = async (
   _isDev = true,
   wethAddress?: string,
   overrides?: Overrides
-): Promise<_LiquityDeploymentJSON> => {
+): Promise<_MoneypDeploymentJSON> => {
   if (!deployer.provider) {
     throw new Error("Signer must have a provider.");
   }
@@ -313,12 +313,12 @@ export const deployAndSetupContracts = async (
   log("Deploying contracts...");
   log();
 
-  const deployment: _LiquityDeploymentJSON = {
+  const deployment: _MoneypDeploymentJSON = {
     chainId: await deployer.getChainId(),
     version: "unknown",
     deploymentDate: new Date().getTime(),
     bootstrapPeriod: 0,
-    totalStabilityPoolLQTYReward: "0",
+    totalStabilityPoolMPReward: "0",
     _priceFeedIsTestnet,
     _uniTokenIsMock: !wethAddress,
     _isDev,
@@ -332,15 +332,15 @@ export const deployAndSetupContracts = async (
       ...addresses,
 
       uniToken: await (wethAddress
-        ? createUniswapV2Pair(deployer, wethAddress, addresses.lusdToken)
+        ? createUniswapV2Pair(deployer, wethAddress, addresses.bpdToken)
         : deployMockUniToken(deployer, getContractFactory, overrides))
     }))
   };
 
   const contracts = _connectToContracts(deployer, deployment);
-  const lqtyTokenDeploymentTime = await contracts.lqtyToken.getDeploymentStartTime();
-  const bootstrapPeriod = await contracts.troveManager.BOOTSTRAP_PERIOD();
-  const totalStabilityPoolLQTYReward = await contracts.communityIssuance.LQTYSupplyCap();
+  const mpTokenDeploymentTime = await contracts.mpToken.getDeploymentStartTime();
+  const bootstrapPeriod = await contracts.vaultManager.BOOTSTRAP_PERIOD();
+  const totalStabilityPoolMPReward = await contracts.communityIssuance.MPSupplyCap();
 
   log("Connecting contracts...");
 
@@ -348,10 +348,10 @@ export const deployAndSetupContracts = async (
 
   return {
     ...deployment,
-    deploymentDate: lqtyTokenDeploymentTime.toNumber() * 1000,
+    deploymentDate: mpTokenDeploymentTime.toNumber() * 1000,
     bootstrapPeriod: bootstrapPeriod.toNumber(),
-    totalStabilityPoolLQTYReward: `${Decimal.fromBigNumberString(
-      totalStabilityPoolLQTYReward.toHexString()
+    totalStabilityPoolMPReward: `${Decimal.fromBigNumberString(
+      totalStabilityPoolMPReward.toHexString()
     )}`
   };
 };

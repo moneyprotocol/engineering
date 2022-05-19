@@ -18,6 +18,38 @@
       {
         "indexed": false,
         "internalType": "address",
+        "name": "_newBPDTokenAddress",
+        "type": "address"
+      }
+    ],
+    "name": "BPDTokenAddressChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "BitcoinSent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "_newBorrowerOperationsAddress",
         "type": "address"
       }
@@ -86,31 +118,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "_depositor",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_ETH",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_LUSDLoss",
-        "type": "uint256"
-      }
-    ],
-    "name": "ETHGainWithdrawn",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": false,
         "internalType": "uint128",
         "name": "_currentEpoch",
@@ -118,25 +125,6 @@
       }
     ],
     "name": "EpochUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "EtherSent",
     "type": "event"
   },
   {
@@ -264,11 +252,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_LQTY",
+        "name": "_MP",
         "type": "uint256"
       }
     ],
-    "name": "LQTYPaidToDepositor",
+    "name": "MPPaidToDepositor",
     "type": "event"
   },
   {
@@ -283,24 +271,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_LQTY",
+        "name": "_MP",
         "type": "uint256"
       }
     ],
-    "name": "LQTYPaidToFrontEnd",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_newLUSDTokenAddress",
-        "type": "address"
-      }
-    ],
-    "name": "LUSDTokenAddressChanged",
+    "name": "MPPaidToFrontEnd",
     "type": "event"
   },
   {
@@ -352,6 +327,31 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_depositor",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_RBTC",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_BPDLoss",
+        "type": "uint256"
+      }
+    ],
+    "name": "RBTCGainWithdrawn",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "uint256",
         "name": "_S",
@@ -392,11 +392,11 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_newSortedTrovesAddress",
+        "name": "_newSortedVaultsAddress",
         "type": "address"
       }
     ],
-    "name": "SortedTrovesAddressChanged",
+    "name": "SortedVaultsAddressChanged",
     "type": "event"
   },
   {
@@ -409,7 +409,7 @@
         "type": "uint256"
       }
     ],
-    "name": "StabilityPoolETHBalanceUpdated",
+    "name": "StabilityPoolBPDBalanceUpdated",
     "type": "event"
   },
   {
@@ -422,20 +422,7 @@
         "type": "uint256"
       }
     ],
-    "name": "StabilityPoolLUSDBalanceUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_newTroveManagerAddress",
-        "type": "address"
-      }
-    ],
-    "name": "TroveManagerAddressChanged",
+    "name": "StabilityPoolRBTCBalanceUpdated",
     "type": "event"
   },
   {
@@ -458,8 +445,34 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_newVaultManagerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "VaultManagerAddressChanged",
+    "type": "event"
+  },
+  {
     "inputs": [],
     "name": "BORROWING_FEE_FLOOR",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "BPD_GAS_COMPENSATION",
     "outputs": [
       {
         "internalType": "uint256",
@@ -486,19 +499,6 @@
   {
     "inputs": [],
     "name": "DECIMAL_PRECISION",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "LUSD_GAS_COMPENSATION",
     "outputs": [
       {
         "internalType": "uint256",
@@ -619,6 +619,19 @@
     "outputs": [
       {
         "internalType": "contract IBorrowerOperations",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "bpdToken",
+    "outputs": [
+      {
+        "internalType": "contract IBPDToken",
         "name": "",
         "type": "address"
       }
@@ -875,6 +888,25 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_depositor",
+        "type": "address"
+      }
+    ],
+    "name": "getCompoundedBPDDeposit",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_frontEnd",
         "type": "address"
       }
@@ -898,7 +930,7 @@
         "type": "address"
       }
     ],
-    "name": "getCompoundedLUSDDeposit",
+    "name": "getDepositorMPGain",
     "outputs": [
       {
         "internalType": "uint256",
@@ -917,39 +949,7 @@
         "type": "address"
       }
     ],
-    "name": "getDepositorETHGain",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_depositor",
-        "type": "address"
-      }
-    ],
-    "name": "getDepositorLQTYGain",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getETH",
+    "name": "getDepositorRBTCGain",
     "outputs": [
       {
         "internalType": "uint256",
@@ -994,7 +994,7 @@
         "type": "address"
       }
     ],
-    "name": "getFrontEndLQTYGain",
+    "name": "getFrontEndMPGain",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1007,7 +1007,20 @@
   },
   {
     "inputs": [],
-    "name": "getTotalLUSDDeposits",
+    "name": "getRBTC",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalBPDDeposits",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1033,7 +1046,7 @@
   },
   {
     "inputs": [],
-    "name": "lastETHError_Offset",
+    "name": "lastBPDLossError_Offset",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1046,7 +1059,7 @@
   },
   {
     "inputs": [],
-    "name": "lastLQTYError",
+    "name": "lastMPError",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1059,25 +1072,12 @@
   },
   {
     "inputs": [],
-    "name": "lastLUSDLossError_Offset",
+    "name": "lastRBTCError_Offset",
     "outputs": [
       {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "lusdToken",
-    "outputs": [
-      {
-        "internalType": "contract ILUSDToken",
-        "name": "",
-        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -1167,7 +1167,7 @@
       },
       {
         "internalType": "address",
-        "name": "_troveManagerAddress",
+        "name": "_vaultManagerAddress",
         "type": "address"
       },
       {
@@ -1177,12 +1177,12 @@
       },
       {
         "internalType": "address",
-        "name": "_lusdTokenAddress",
+        "name": "_bpdTokenAddress",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_sortedTrovesAddress",
+        "name": "_sortedVaultsAddress",
         "type": "address"
       },
       {
@@ -1203,10 +1203,10 @@
   },
   {
     "inputs": [],
-    "name": "sortedTroves",
+    "name": "sortedVaults",
     "outputs": [
       {
-        "internalType": "contract ISortedTroves",
+        "internalType": "contract ISortedVaults",
         "name": "",
         "type": "address"
       }
@@ -1216,15 +1216,28 @@
   },
   {
     "inputs": [],
-    "name": "troveManager",
+    "name": "vaultManager",
     "outputs": [
       {
-        "internalType": "contract ITroveManager",
+        "internalType": "contract IVaultManager",
         "name": "",
         "type": "address"
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdrawFromSP",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1240,20 +1253,7 @@
         "type": "address"
       }
     ],
-    "name": "withdrawETHGainToTrove",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "withdrawFromSP",
+    "name": "withdrawRBTCGainToVault",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

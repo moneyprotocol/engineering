@@ -35,11 +35,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LUSDDebt",
+          "name": "_BPDDebt",
           "type": "uint256"
         }
       ],
-      "name": "ActivePoolLUSDDebtUpdated",
+      "name": "ActivePoolBPDDebtUpdated",
       "type": "event"
     },
     {
@@ -110,7 +110,7 @@
           "type": "uint256"
         }
       ],
-      "name": "LUSDBalanceUpdated",
+      "name": "BPDBalanceUpdated",
       "type": "event"
     },
     {
@@ -132,11 +132,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_newTroveManagerAddress",
+          "name": "_newVaultManagerAddress",
           "type": "address"
         }
       ],
-      "name": "TroveManagerAddressChanged",
+      "name": "VaultManagerAddressChanged",
       "type": "event"
     },
     {
@@ -147,7 +147,7 @@
           "type": "uint256"
         }
       ],
-      "name": "decreaseLUSDDebt",
+      "name": "decreaseBPDDebt",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -167,7 +167,7 @@
     },
     {
       "inputs": [],
-      "name": "getLUSDDebt",
+      "name": "getBPDDebt",
       "outputs": [
         {
           "internalType": "uint256",
@@ -186,7 +186,7 @@
           "type": "uint256"
         }
       ],
-      "name": "increaseLUSDDebt",
+      "name": "increaseBPDDebt",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

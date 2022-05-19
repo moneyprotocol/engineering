@@ -65,7 +65,7 @@
           "type": "address"
         }
       ],
-      "name": "adjustTrove",
+      "name": "adjustVault",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -79,7 +79,7 @@
     },
     {
       "inputs": [],
-      "name": "closeTrove",
+      "name": "closeVault",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -93,7 +93,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_BPDAmount",
           "type": "uint256"
         },
         {
@@ -107,7 +107,7 @@
           "type": "address"
         }
       ],
-      "name": "openTrove",
+      "name": "openVault",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -130,7 +130,7 @@
           "type": "address"
         }
       ],
-      "name": "repayLUSD",
+      "name": "repayBPD",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -181,7 +181,7 @@
           "type": "address"
         }
       ],
-      "name": "withdrawLUSD",
+      "name": "withdrawBPD",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

@@ -17,51 +17,12 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "_newDefaultPoolAddress",
-        "type": "address"
-      }
-    ],
-    "name": "DefaultPoolAddressChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_ETH",
-        "type": "uint256"
-      }
-    ],
-    "name": "DefaultPoolETHBalanceUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_LUSDDebt",
-        "type": "uint256"
-      }
-    ],
-    "name": "DefaultPoolLUSDDebtUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
         "internalType": "uint256",
         "name": "_newBalance",
         "type": "uint256"
       }
     ],
-    "name": "ETHBalanceUpdated",
+    "name": "BPDBalanceUpdated",
     "type": "event"
   },
   {
@@ -80,7 +41,20 @@
         "type": "uint256"
       }
     ],
-    "name": "EtherSent",
+    "name": "BitcoinSent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_newDefaultPoolAddress",
+        "type": "address"
+      }
+    ],
+    "name": "DefaultPoolAddressChanged",
     "type": "event"
   },
   {
@@ -89,11 +63,24 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_newBalance",
+        "name": "_BPDDebt",
         "type": "uint256"
       }
     ],
-    "name": "LUSDBalanceUpdated",
+    "name": "DefaultPoolBPDDebtUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_RBTC",
+        "type": "uint256"
+      }
+    ],
+    "name": "DefaultPoolRBTCBalanceUpdated",
     "type": "event"
   },
   {
@@ -120,6 +107,19 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "_newBalance",
+        "type": "uint256"
+      }
+    ],
+    "name": "RBTCBalanceUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "_newStabilityPoolAddress",
         "type": "address"
@@ -134,11 +134,11 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_newTroveManagerAddress",
+        "name": "_newVaultManagerAddress",
         "type": "address"
       }
     ],
-    "name": "TroveManagerAddressChanged",
+    "name": "VaultManagerAddressChanged",
     "type": "event"
   },
   {
@@ -175,14 +175,14 @@
         "type": "uint256"
       }
     ],
-    "name": "decreaseLUSDDebt",
+    "name": "decreaseBPDDebt",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "getETH",
+    "name": "getBPDDebt",
     "outputs": [
       {
         "internalType": "uint256",
@@ -195,7 +195,7 @@
   },
   {
     "inputs": [],
-    "name": "getLUSDDebt",
+    "name": "getRBTC",
     "outputs": [
       {
         "internalType": "uint256",
@@ -214,7 +214,7 @@
         "type": "uint256"
       }
     ],
-    "name": "increaseLUSDDebt",
+    "name": "increaseBPDDebt",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -253,7 +253,7 @@
         "type": "uint256"
       }
     ],
-    "name": "sendETHToActivePool",
+    "name": "sendRBTCToActivePool",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -262,7 +262,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_troveManagerAddress",
+        "name": "_vaultManagerAddress",
         "type": "address"
       },
       {
@@ -278,7 +278,7 @@
   },
   {
     "inputs": [],
-    "name": "troveManagerAddress",
+    "name": "vaultManagerAddress",
     "outputs": [
       {
         "internalType": "address",

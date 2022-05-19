@@ -58,7 +58,7 @@
           "type": "address"
         }
       ],
-      "name": "withdrawETHGainToTrove",
+      "name": "withdrawETHGainToVault",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

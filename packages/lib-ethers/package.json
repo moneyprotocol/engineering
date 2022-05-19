@@ -1,19 +1,19 @@
 {
   "name": "@liquity/lib-ethers",
   "version": "0.0.0-semantic-release",
-  "description": "Liquity SDK Ethers-based implementation",
+  "description": "Moneyp SDK Ethers-based implementation",
   "keywords": [
-    "Liquity",
+    "Moneyp",
     "protocol",
     "DeFi",
     "Ethereum"
   ],
-  "homepage": "https://github.com/liquity/liquity#readme",
+  "homepage": "https://github.com/moneyp/moneyp#readme",
   "license": "MIT",
   "author": "Daniel Simon <dani@liquity.org>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "repository": "https://github.com/liquity/dev",
+  "repository": "https://github.com/moneyp/dev",
   "scripts": {
     "hardhat": "hardhat",
     "check-live-version": "ts-node scripts/check-live-version.ts",

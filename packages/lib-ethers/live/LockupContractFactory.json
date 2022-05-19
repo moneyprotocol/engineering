@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
   "contractName": "LockupContractFactory",
-  "sourceName": "contracts/LQTY/LockupContractFactory.sol",
+  "sourceName": "contracts/MP/LockupContractFactory.sol",
   "abi": [
     {
       "anonymous": false,
@@ -9,11 +9,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_lqtyTokenAddress",
+          "name": "_mpTokenAddress",
           "type": "address"
         }
       ],
-      "name": "LQTYTokenAddressSet",
+      "name": "MPTokenAddressSet",
       "type": "event"
     },
     {
@@ -163,7 +163,7 @@
     },
     {
       "inputs": [],
-      "name": "lqtyTokenAddress",
+      "name": "mpTokenAddress",
       "outputs": [
         {
           "internalType": "address",
@@ -191,11 +191,11 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_lqtyTokenAddress",
+          "name": "_mpTokenAddress",
           "type": "address"
         }
       ],
-      "name": "setLQTYTokenAddress",
+      "name": "setMPTokenAddress",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

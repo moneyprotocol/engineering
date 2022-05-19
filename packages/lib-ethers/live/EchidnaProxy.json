@@ -6,8 +6,8 @@
     {
       "inputs": [
         {
-          "internalType": "contract TroveManager",
-          "name": "_troveManager",
+          "internalType": "contract VaultManager",
+          "name": "_vaultManager",
           "type": "address"
         },
         {
@@ -21,8 +21,8 @@
           "type": "address"
         },
         {
-          "internalType": "contract LUSDToken",
-          "name": "_lusdToken",
+          "internalType": "contract BPDToken",
+          "name": "_bpdToken",
           "type": "address"
         }
       ],
@@ -90,7 +90,7 @@
           "type": "uint256"
         }
       ],
-      "name": "adjustTrovePrx",
+      "name": "adjustVaultPrx",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -123,18 +123,18 @@
       "inputs": [
         {
           "internalType": "address[]",
-          "name": "_troveArray",
+          "name": "_vaultArray",
           "type": "address[]"
         }
       ],
-      "name": "batchLiquidateTrovesPrx",
+      "name": "batchLiquidateVaultsPrx",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [],
-      "name": "closeTrovePrx",
+      "name": "closeVaultPrx",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -208,7 +208,7 @@
           "type": "uint256"
         }
       ],
-      "name": "liquidateTrovesPrx",
+      "name": "liquidateVaultsPrx",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -222,7 +222,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_BPDAmount",
           "type": "uint256"
         },
         {
@@ -241,7 +241,7 @@
           "type": "uint256"
         }
       ],
-      "name": "openTrovePrx",
+      "name": "openVaultPrx",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -268,7 +268,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_BPDAmount",
           "type": "uint256"
         },
         {
@@ -325,7 +325,7 @@
           "type": "address"
         }
       ],
-      "name": "repayLUSDPrx",
+      "name": "repayBPDPrx",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -442,7 +442,7 @@
           "type": "uint256"
         }
       ],
-      "name": "withdrawLUSDPrx",
+      "name": "withdrawBPDPrx",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

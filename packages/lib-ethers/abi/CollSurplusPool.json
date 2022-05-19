@@ -18,6 +18,25 @@
       {
         "indexed": false,
         "internalType": "address",
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "BitcoinSent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "_newBorrowerOperationsAddress",
         "type": "address"
       }
@@ -48,25 +67,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "EtherSent",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": true,
         "internalType": "address",
         "name": "previousOwner",
@@ -88,11 +88,11 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_newTroveManagerAddress",
+        "name": "_newVaultManagerAddress",
         "type": "address"
       }
     ],
-    "name": "TroveManagerAddressChanged",
+    "name": "VaultManagerAddressChanged",
     "type": "event"
   },
   {
@@ -186,7 +186,7 @@
   },
   {
     "inputs": [],
-    "name": "getETH",
+    "name": "getRBTC",
     "outputs": [
       {
         "internalType": "uint256",
@@ -232,7 +232,7 @@
       },
       {
         "internalType": "address",
-        "name": "_troveManagerAddress",
+        "name": "_vaultManagerAddress",
         "type": "address"
       },
       {
@@ -248,7 +248,7 @@
   },
   {
     "inputs": [],
-    "name": "troveManagerAddress",
+    "name": "vaultManagerAddress",
     "outputs": [
       {
         "internalType": "address",

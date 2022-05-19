@@ -9,11 +9,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_lqtyTokenAddress",
+          "name": "_mpTokenAddress",
           "type": "address"
         }
       ],
-      "name": "LQTYTokenAddressSet",
+      "name": "MPTokenAddressSet",
       "type": "event"
     },
     {
@@ -88,11 +88,11 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_lqtyTokenAddress",
+          "name": "_mpTokenAddress",
           "type": "address"
         }
       ],
-      "name": "setLQTYTokenAddress",
+      "name": "setMPTokenAddress",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

@@ -95,7 +95,7 @@
           "type": "bool"
         }
       ],
-      "name": "adjustTroveExt",
+      "name": "adjustVaultExt",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -143,7 +143,7 @@
           "type": "uint256"
         }
       ],
-      "name": "adjustTroveRawExt",
+      "name": "adjustVaultRawExt",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -186,11 +186,11 @@
         },
         {
           "internalType": "address[]",
-          "name": "_troveArray",
+          "name": "_vaultArray",
           "type": "address[]"
         }
       ],
-      "name": "batchLiquidateTrovesExt",
+      "name": "batchLiquidateVaultsExt",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -216,7 +216,7 @@
           "type": "uint256"
         }
       ],
-      "name": "closeTroveExt",
+      "name": "closeVaultExt",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -310,7 +310,7 @@
     },
     {
       "inputs": [],
-      "name": "echidna_LUSD_global_balances",
+      "name": "echidna_BPD_global_balances",
       "outputs": [
         {
           "internalType": "bool",
@@ -336,7 +336,7 @@
     },
     {
       "inputs": [],
-      "name": "echidna_canary_number_of_troves",
+      "name": "echidna_canary_number_of_vaults",
       "outputs": [
         {
           "internalType": "bool",
@@ -362,7 +362,7 @@
     },
     {
       "inputs": [],
-      "name": "echidna_trove_properties",
+      "name": "echidna_vault_properties",
       "outputs": [
         {
           "internalType": "bool",
@@ -375,7 +375,7 @@
     },
     {
       "inputs": [],
-      "name": "echidna_troves_order",
+      "name": "echidna_vaults_order",
       "outputs": [
         {
           "internalType": "bool",
@@ -459,17 +459,17 @@
           "type": "uint256"
         }
       ],
-      "name": "liquidateTrovesExt",
+      "name": "liquidateVaultsExt",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [],
-      "name": "lusdToken",
+      "name": "bpdToken",
       "outputs": [
         {
-          "internalType": "contract LUSDToken",
+          "internalType": "contract BPDToken",
           "name": "",
           "type": "address"
         }
@@ -491,11 +491,11 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_BPDAmount",
           "type": "uint256"
         }
       ],
-      "name": "openTroveExt",
+      "name": "openVaultExt",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -514,7 +514,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_BPDAmount",
           "type": "uint256"
         },
         {
@@ -533,7 +533,7 @@
           "type": "uint256"
         }
       ],
-      "name": "openTroveRawExt",
+      "name": "openVaultRawExt",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -570,7 +570,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_BPDAmount",
           "type": "uint256"
         },
         {
@@ -622,7 +622,7 @@
           "type": "address"
         }
       ],
-      "name": "repayLUSDExt",
+      "name": "repayBPDExt",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -718,10 +718,10 @@
     },
     {
       "inputs": [],
-      "name": "troveManager",
+      "name": "vaultManager",
       "outputs": [
         {
-          "internalType": "contract TroveManager",
+          "internalType": "contract VaultManager",
           "name": "",
           "type": "address"
         }
@@ -803,7 +803,7 @@
           "type": "uint256"
         }
       ],
-      "name": "withdrawLUSDExt",
+      "name": "withdrawBPDExt",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
