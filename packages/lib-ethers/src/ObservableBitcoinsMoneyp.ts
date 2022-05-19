@@ -9,8 +9,8 @@ import {
   VaultWithPendingRedistribution
 } from "@liquity/lib-base";
 
-import { _getContracts, _requireAddress } from "./EthersMoneypConnection";
-import { ReadableEthersMoneyp } from "./ReadableEthersMoneyp";
+import { _getContracts, _requireAddress } from "./BitcoinsMoneypConnection";
+import { ReadableBitcoinsMoneyp } from "./ReadableBitcoinsMoneyp";
 
 const debouncingDelayMs = 50;
 
@@ -37,10 +37,10 @@ const debounce = (listener: (latestBlock: number) => void) => {
 };
 
 /** @alpha */
-export class ObservableEthersMoneyp implements ObservableMoneyp {
-  private readonly _readable: ReadableEthersMoneyp;
+export class ObservableBitcoinsMoneyp implements ObservableMoneyp {
+  private readonly _readable: ReadableBitcoinsMoneyp;
 
-  constructor(readable: ReadableEthersMoneyp) {
+  constructor(readable: ReadableBitcoinsMoneyp) {
     this._readable = readable;
   }
 
@@ -48,7 +48,7 @@ export class ObservableEthersMoneyp implements ObservableMoneyp {
     onTotalRedistributedChanged: (totalRedistributed: Vault) => void
   ): () => void {
     const { activePool, defaultPool } = _getContracts(this._readable.connection);
-    const etherSent = activePool.filters.EtherSent();
+    const etherSent = activePool.filters.BitcoinSent();
 
     const redistributionListener = debounce((blockTag: number) => {
       this._readable.getTotalRedistributed({ blockTag }).then(onTotalRedistributedChanged);
@@ -138,10 +138,10 @@ export class ObservableEthersMoneyp implements ObservableMoneyp {
 
     const { activePool, stabilityPool } = _getContracts(this._readable.connection);
     const { UserDepositChanged } = stabilityPool.filters;
-    const { EtherSent } = activePool.filters;
+    const { BitcoinSent } = activePool.filters;
 
     const userDepositChanged = UserDepositChanged(address);
-    const etherSent = EtherSent();
+    const etherSent = BitcoinSent();
 
     const depositListener = debounce((blockTag: number) => {
       this._readable.getStabilityDeposit(address, { blockTag }).then(onStabilityDepositChanged);

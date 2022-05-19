@@ -13,11 +13,11 @@ import { FailedReceipt } from '@liquity/lib-base';
 import { Fees } from '@liquity/lib-base';
 import { FrontendStatus } from '@liquity/lib-base';
 import { LiquidationDetails } from '@liquity/lib-base';
+import { MinedReceipt } from '@liquity/lib-base';
 import { MoneypReceipt } from '@liquity/lib-base';
 import { MoneypStore } from '@liquity/lib-base';
 import { MoneypStoreState } from '@liquity/lib-base';
 import { MPStake } from '@liquity/lib-base';
-import { MinedReceipt } from '@liquity/lib-base';
 import { ObservableMoneyp } from '@liquity/lib-base';
 import { PopulatableMoneyp } from '@liquity/lib-base';
 import { PopulatedMoneypTransaction } from '@liquity/lib-base';
@@ -36,6 +36,7 @@ import { TransactableMoneyp } from '@liquity/lib-base';
 import { TransactionFailedError } from '@liquity/lib-base';
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
+import { UserVault } from '@liquity/lib-base';
 import { Vault } from '@liquity/lib-base';
 import { VaultAdjustmentDetails } from '@liquity/lib-base';
 import { VaultAdjustmentParams } from '@liquity/lib-base';
@@ -44,13 +45,219 @@ import { VaultCreationDetails } from '@liquity/lib-base';
 import { VaultCreationParams } from '@liquity/lib-base';
 import { VaultListingParams } from '@liquity/lib-base';
 import { VaultWithPendingRedistribution } from '@liquity/lib-base';
-import { UserVault } from '@liquity/lib-base';
+
+// @public
+export interface BitcoinsCallOverrides {
+    // (undocumented)
+    blockTag?: BlockTag;
+}
+
+// @public
+export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoneyp {
+    // @internal
+    constructor(readable: ReadableBitcoinsMoneyp);
+    // (undocumented)
+    adjustVault(params: VaultAdjustmentParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<VaultAdjustmentDetails>;
+    // (undocumented)
+    approveUniTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // (undocumented)
+    borrowBPD(amount: Decimalish, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<VaultAdjustmentDetails>;
+    // (undocumented)
+    claimCollateralSurplus(overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // (undocumented)
+    closeVault(overrides?: BitcoinsTransactionOverrides): Promise<VaultClosureDetails>;
+    // @internal (undocumented)
+    static connect(signerOrProvider: BitcoinsSigner | BitcoinsProvider, optionalParams: BitcoinsMoneypConnectionOptionalParams & {
+        useStore: "blockPolled";
+    }): Promise<BitcoinsMoneypWithStore<BlockPolledMoneypStore>>;
+    static connect(signerOrProvider: BitcoinsSigner | BitcoinsProvider, optionalParams?: BitcoinsMoneypConnectionOptionalParams): Promise<BitcoinsMoneyp>;
+    readonly connection: BitcoinsMoneypConnection;
+    // (undocumented)
+    depositBPDInStabilityPool(amount: Decimalish, frontendTag?: string, overrides?: BitcoinsTransactionOverrides): Promise<StabilityDepositChangeDetails>;
+    // (undocumented)
+    depositCollateral(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<VaultAdjustmentDetails>;
+    // (undocumented)
+    exitLiquidityMining(overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // @internal (undocumented)
+    static _from(connection: BitcoinsMoneypConnection & {
+        useStore: "blockPolled";
+    }): BitcoinsMoneypWithStore<BlockPolledMoneypStore>;
+    // @internal (undocumented)
+    static _from(connection: BitcoinsMoneypConnection): BitcoinsMoneyp;
+    // @internal (undocumented)
+    _getActivePool(overrides?: BitcoinsCallOverrides): Promise<Vault>;
+    // (undocumented)
+    getBPDBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getBPDInStabilityPool(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getCollateralSurplusBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // @internal (undocumented)
+    _getDefaultPool(overrides?: BitcoinsCallOverrides): Promise<Vault>;
+    // (undocumented)
+    getFees(overrides?: BitcoinsCallOverrides): Promise<Fees>;
+    // @internal (undocumented)
+    _getFeesFactory(overrides?: BitcoinsCallOverrides): Promise<(blockTimestamp: number, recoveryMode: boolean) => Fees>;
+    // (undocumented)
+    getFrontendStatus(address?: string, overrides?: BitcoinsCallOverrides): Promise<FrontendStatus>;
+    // (undocumented)
+    getLiquidityMiningMPReward(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getLiquidityMiningStake(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getMPBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getMPStake(address?: string, overrides?: BitcoinsCallOverrides): Promise<MPStake>;
+    // (undocumented)
+    getNumberOfVaults(overrides?: BitcoinsCallOverrides): Promise<number>;
+    // (undocumented)
+    getPrice(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getRemainingLiquidityMiningMPReward(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // @internal (undocumented)
+    _getRemainingLiquidityMiningMPRewardCalculator(overrides?: BitcoinsCallOverrides): Promise<(blockTimestamp: number) => Decimal>;
+    // (undocumented)
+    getRemainingStabilityPoolMPReward(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getStabilityDeposit(address?: string, overrides?: BitcoinsCallOverrides): Promise<StabilityDeposit>;
+    // (undocumented)
+    getTotal(overrides?: BitcoinsCallOverrides): Promise<Vault>;
+    // (undocumented)
+    getTotalRedistributed(overrides?: BitcoinsCallOverrides): Promise<Vault>;
+    // (undocumented)
+    getTotalStakedMP(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getTotalStakedUniTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getUniTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getUniTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getVault(address?: string, overrides?: BitcoinsCallOverrides): Promise<UserVault>;
+    // (undocumented)
+    getVaultBeforeRedistribution(address?: string, overrides?: BitcoinsCallOverrides): Promise<VaultWithPendingRedistribution>;
+    // @internal (undocumented)
+    getVaults(params: VaultListingParams & {
+        beforeRedistribution: true;
+    }, overrides?: BitcoinsCallOverrides): Promise<VaultWithPendingRedistribution[]>;
+    // (undocumented)
+    getVaults(params: VaultListingParams, overrides?: BitcoinsCallOverrides): Promise<UserVault[]>;
+    hasStore(): this is BitcoinsMoneypWithStore;
+    hasStore(store: "blockPolled"): this is BitcoinsMoneypWithStore<BlockPolledMoneypStore>;
+    // (undocumented)
+    liquidate(address: string | string[], overrides?: BitcoinsTransactionOverrides): Promise<LiquidationDetails>;
+    // (undocumented)
+    liquidateUpTo(maximumNumberOfVaultsToLiquidate: number, overrides?: BitcoinsTransactionOverrides): Promise<LiquidationDetails>;
+    // @internal (undocumented)
+    _mintUniToken(amount: Decimalish, address?: string, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // (undocumented)
+    openVault(params: VaultCreationParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<VaultCreationDetails>;
+    readonly populate: PopulatableBitcoinsMoneyp;
+    // (undocumented)
+    redeemBPD(amount: Decimalish, maxRedemptionRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<RedemptionDetails>;
+    // (undocumented)
+    registerFrontend(kickbackRate: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // (undocumented)
+    repayBPD(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<VaultAdjustmentDetails>;
+    readonly send: SendableBitcoinsMoneyp;
+    // (undocumented)
+    sendBPD(toAddress: string, amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // (undocumented)
+    sendMP(toAddress: string, amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // @internal (undocumented)
+    setPrice(price: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // (undocumented)
+    stakeMP(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // (undocumented)
+    stakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // (undocumented)
+    transferCollateralGainToVault(overrides?: BitcoinsTransactionOverrides): Promise<CollateralGainTransferDetails>;
+    // (undocumented)
+    unstakeMP(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // (undocumented)
+    unstakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // (undocumented)
+    withdrawBPDFromStabilityPool(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<StabilityDepositChangeDetails>;
+    // (undocumented)
+    withdrawCollateral(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<VaultAdjustmentDetails>;
+    // (undocumented)
+    withdrawGainsFromStabilityPool(overrides?: BitcoinsTransactionOverrides): Promise<StabilityPoolGainsWithdrawalDetails>;
+    // (undocumented)
+    withdrawGainsFromStaking(overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    // (undocumented)
+    withdrawMPRewardFromLiquidityMining(overrides?: BitcoinsTransactionOverrides): Promise<void>;
+}
+
+// @public
+export interface BitcoinsMoneypConnection extends BitcoinsMoneypConnectionOptionalParams {
+    // @internal (undocumented)
+    readonly [brand]: unique symbol;
+    readonly addresses: Record<string, string>;
+    readonly bootstrapPeriod: number;
+    readonly chainId: number;
+    readonly deploymentDate: Date;
+    // @internal (undocumented)
+    readonly _isDev: boolean;
+    // @internal (undocumented)
+    readonly _priceFeedIsTestnet: boolean;
+    readonly provider: BitcoinsProvider;
+    readonly signer?: BitcoinsSigner;
+    readonly totalStabilityPoolMPReward: Decimal;
+    readonly version: string;
+}
+
+// @public
+export interface BitcoinsMoneypConnectionOptionalParams {
+    readonly frontendTag?: string;
+    readonly userAddress?: string;
+    readonly useStore?: BitcoinsMoneypStoreOption;
+}
+
+// @public
+export type BitcoinsMoneypStoreOption = "blockPolled";
+
+// @public
+export interface BitcoinsMoneypWithStore<T extends MoneypStore = MoneypStore> extends BitcoinsMoneyp {
+    readonly store: T;
+}
+
+// @public
+export type BitcoinsPopulatedTransaction = PopulatedTransaction;
+
+// @public
+export type BitcoinsProvider = Provider;
+
+// @public
+export type BitcoinsSigner = Signer;
+
+// @public
+export class BitcoinsTransactionFailedError extends TransactionFailedError<FailedReceipt<BitcoinsTransactionReceipt>> {
+    constructor(message: string, failedReceipt: FailedReceipt<BitcoinsTransactionReceipt>);
+}
+
+// @public
+export interface BitcoinsTransactionOverrides {
+    // (undocumented)
+    from?: string;
+    // (undocumented)
+    gasLimit?: BigNumberish;
+    // (undocumented)
+    gasPrice?: BigNumberish;
+    // (undocumented)
+    nonce?: BigNumberish;
+}
+
+// @public
+export type BitcoinsTransactionReceipt = TransactionReceipt;
+
+// @public
+export type BitcoinsTransactionResponse = TransactionResponse;
 
 // @public
 export class BlockPolledMoneypStore extends MoneypStore<BlockPolledMoneypStoreExtraState> {
-    constructor(readable: ReadableEthersMoneyp);
+    constructor(readable: ReadableBitcoinsMoneyp);
     // (undocumented)
-    readonly connection: EthersMoneypConnection;
+    readonly connection: BitcoinsMoneypConnection;
     // @internal @override (undocumented)
     protected _doStart(): () => void;
     // @internal @override (undocumented)
@@ -67,225 +274,18 @@ export interface BlockPolledMoneypStoreExtraState {
 export type BlockPolledMoneypStoreState = MoneypStoreState<BlockPolledMoneypStoreExtraState>;
 
 // @internal (undocumented)
-export function _connectByChainId<T>(provider: EthersProvider, signer: EthersSigner | undefined, chainId: number, optionalParams: EthersMoneypConnectionOptionalParams & {
+export function _connectByChainId<T>(provider: BitcoinsProvider, signer: BitcoinsSigner | undefined, chainId: number, optionalParams: BitcoinsMoneypConnectionOptionalParams & {
     useStore: T;
-}): EthersMoneypConnection & {
+}): BitcoinsMoneypConnection & {
     useStore: T;
 };
 
 // @internal (undocumented)
-export function _connectByChainId(provider: EthersProvider, signer: EthersSigner | undefined, chainId: number, optionalParams?: EthersMoneypConnectionOptionalParams): EthersMoneypConnection;
-
-// @public
-export interface EthersCallOverrides {
-    // (undocumented)
-    blockTag?: BlockTag;
-}
-
-// @public
-export class EthersMoneyp implements ReadableEthersMoneyp, TransactableMoneyp {
-    // @internal
-    constructor(readable: ReadableEthersMoneyp);
-    // (undocumented)
-    adjustVault(params: VaultAdjustmentParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: EthersTransactionOverrides): Promise<VaultAdjustmentDetails>;
-    // (undocumented)
-    approveUniTokens(allowance?: Decimalish, overrides?: EthersTransactionOverrides): Promise<void>;
-    // (undocumented)
-    borrowBPD(amount: Decimalish, maxBorrowingRate?: Decimalish, overrides?: EthersTransactionOverrides): Promise<VaultAdjustmentDetails>;
-    // (undocumented)
-    claimCollateralSurplus(overrides?: EthersTransactionOverrides): Promise<void>;
-    // (undocumented)
-    closeVault(overrides?: EthersTransactionOverrides): Promise<VaultClosureDetails>;
-    // @internal (undocumented)
-    static connect(signerOrProvider: EthersSigner | EthersProvider, optionalParams: EthersMoneypConnectionOptionalParams & {
-        useStore: "blockPolled";
-    }): Promise<EthersMoneypWithStore<BlockPolledMoneypStore>>;
-    static connect(signerOrProvider: EthersSigner | EthersProvider, optionalParams?: EthersMoneypConnectionOptionalParams): Promise<EthersMoneyp>;
-    readonly connection: EthersMoneypConnection;
-    // (undocumented)
-    depositCollateral(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<VaultAdjustmentDetails>;
-    // (undocumented)
-    depositBPDInStabilityPool(amount: Decimalish, frontendTag?: string, overrides?: EthersTransactionOverrides): Promise<StabilityDepositChangeDetails>;
-    // (undocumented)
-    exitLiquidityMining(overrides?: EthersTransactionOverrides): Promise<void>;
-    // @internal (undocumented)
-    static _from(connection: EthersMoneypConnection & {
-        useStore: "blockPolled";
-    }): EthersMoneypWithStore<BlockPolledMoneypStore>;
-    // @internal (undocumented)
-    static _from(connection: EthersMoneypConnection): EthersMoneyp;
-    // @internal (undocumented)
-    _getActivePool(overrides?: EthersCallOverrides): Promise<Vault>;
-    // (undocumented)
-    getCollateralSurplusBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
-    // @internal (undocumented)
-    _getDefaultPool(overrides?: EthersCallOverrides): Promise<Vault>;
-    // (undocumented)
-    getFees(overrides?: EthersCallOverrides): Promise<Fees>;
-    // @internal (undocumented)
-    _getFeesFactory(overrides?: EthersCallOverrides): Promise<(blockTimestamp: number, recoveryMode: boolean) => Fees>;
-    // (undocumented)
-    getFrontendStatus(address?: string, overrides?: EthersCallOverrides): Promise<FrontendStatus>;
-    // (undocumented)
-    getLiquidityMiningMPReward(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getLiquidityMiningStake(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getMPBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getMPStake(address?: string, overrides?: EthersCallOverrides): Promise<MPStake>;
-    // (undocumented)
-    getBPDBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getBPDInStabilityPool(overrides?: EthersCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getNumberOfVaults(overrides?: EthersCallOverrides): Promise<number>;
-    // (undocumented)
-    getPrice(overrides?: EthersCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getRemainingLiquidityMiningMPReward(overrides?: EthersCallOverrides): Promise<Decimal>;
-    // @internal (undocumented)
-    _getRemainingLiquidityMiningMPRewardCalculator(overrides?: EthersCallOverrides): Promise<(blockTimestamp: number) => Decimal>;
-    // (undocumented)
-    getRemainingStabilityPoolMPReward(overrides?: EthersCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getStabilityDeposit(address?: string, overrides?: EthersCallOverrides): Promise<StabilityDeposit>;
-    // (undocumented)
-    getTotal(overrides?: EthersCallOverrides): Promise<Vault>;
-    // (undocumented)
-    getTotalRedistributed(overrides?: EthersCallOverrides): Promise<Vault>;
-    // (undocumented)
-    getTotalStakedMP(overrides?: EthersCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getTotalStakedUniTokens(overrides?: EthersCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getVault(address?: string, overrides?: EthersCallOverrides): Promise<UserVault>;
-    // (undocumented)
-    getVaultBeforeRedistribution(address?: string, overrides?: EthersCallOverrides): Promise<VaultWithPendingRedistribution>;
-    // @internal (undocumented)
-    getVaults(params: VaultListingParams & {
-        beforeRedistribution: true;
-    }, overrides?: EthersCallOverrides): Promise<VaultWithPendingRedistribution[]>;
-    // (undocumented)
-    getVaults(params: VaultListingParams, overrides?: EthersCallOverrides): Promise<UserVault[]>;
-    // (undocumented)
-    getUniTokenAllowance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getUniTokenBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
-    hasStore(): this is EthersMoneypWithStore;
-    hasStore(store: "blockPolled"): this is EthersMoneypWithStore<BlockPolledMoneypStore>;
-    // (undocumented)
-    liquidate(address: string | string[], overrides?: EthersTransactionOverrides): Promise<LiquidationDetails>;
-    // (undocumented)
-    liquidateUpTo(maximumNumberOfVaultsToLiquidate: number, overrides?: EthersTransactionOverrides): Promise<LiquidationDetails>;
-    // @internal (undocumented)
-    _mintUniToken(amount: Decimalish, address?: string, overrides?: EthersTransactionOverrides): Promise<void>;
-    // (undocumented)
-    openVault(params: VaultCreationParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: EthersTransactionOverrides): Promise<VaultCreationDetails>;
-    readonly populate: PopulatableEthersMoneyp;
-    // (undocumented)
-    redeemBPD(amount: Decimalish, maxRedemptionRate?: Decimalish, overrides?: EthersTransactionOverrides): Promise<RedemptionDetails>;
-    // (undocumented)
-    registerFrontend(kickbackRate: Decimalish, overrides?: EthersTransactionOverrides): Promise<void>;
-    // (undocumented)
-    repayBPD(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<VaultAdjustmentDetails>;
-    readonly send: SendableEthersMoneyp;
-    // (undocumented)
-    sendMP(toAddress: string, amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void>;
-    // (undocumented)
-    sendBPD(toAddress: string, amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void>;
-    // @internal (undocumented)
-    setPrice(price: Decimalish, overrides?: EthersTransactionOverrides): Promise<void>;
-    // (undocumented)
-    stakeMP(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void>;
-    // (undocumented)
-    stakeUniTokens(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void>;
-    // (undocumented)
-    transferCollateralGainToVault(overrides?: EthersTransactionOverrides): Promise<CollateralGainTransferDetails>;
-    // (undocumented)
-    unstakeMP(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void>;
-    // (undocumented)
-    unstakeUniTokens(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void>;
-    // (undocumented)
-    withdrawCollateral(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<VaultAdjustmentDetails>;
-    // (undocumented)
-    withdrawGainsFromStabilityPool(overrides?: EthersTransactionOverrides): Promise<StabilityPoolGainsWithdrawalDetails>;
-    // (undocumented)
-    withdrawGainsFromStaking(overrides?: EthersTransactionOverrides): Promise<void>;
-    // (undocumented)
-    withdrawMPRewardFromLiquidityMining(overrides?: EthersTransactionOverrides): Promise<void>;
-    // (undocumented)
-    withdrawBPDFromStabilityPool(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<StabilityDepositChangeDetails>;
-}
-
-// @public
-export interface EthersMoneypConnection extends EthersMoneypConnectionOptionalParams {
-    // @internal (undocumented)
-    readonly [brand]: unique symbol;
-    readonly addresses: Record<string, string>;
-    readonly bootstrapPeriod: number;
-    readonly chainId: number;
-    readonly deploymentDate: Date;
-    // @internal (undocumented)
-    readonly _isDev: boolean;
-    // @internal (undocumented)
-    readonly _priceFeedIsTestnet: boolean;
-    readonly provider: EthersProvider;
-    readonly signer?: EthersSigner;
-    readonly totalStabilityPoolMPReward: Decimal;
-    readonly version: string;
-}
-
-// @public
-export interface EthersMoneypConnectionOptionalParams {
-    readonly frontendTag?: string;
-    readonly userAddress?: string;
-    readonly useStore?: EthersMoneypStoreOption;
-}
-
-// @public
-export type EthersMoneypStoreOption = "blockPolled";
-
-// @public
-export interface EthersMoneypWithStore<T extends MoneypStore = MoneypStore> extends EthersMoneyp {
-    readonly store: T;
-}
-
-// @public
-export type EthersPopulatedTransaction = PopulatedTransaction;
-
-// @public
-export type EthersProvider = Provider;
-
-// @public
-export type EthersSigner = Signer;
-
-// @public
-export class EthersTransactionFailedError extends TransactionFailedError<FailedReceipt<EthersTransactionReceipt>> {
-    constructor(message: string, failedReceipt: FailedReceipt<EthersTransactionReceipt>);
-}
-
-// @public
-export interface EthersTransactionOverrides {
-    // (undocumented)
-    from?: string;
-    // (undocumented)
-    gasLimit?: BigNumberish;
-    // (undocumented)
-    gasPrice?: BigNumberish;
-    // (undocumented)
-    nonce?: BigNumberish;
-}
-
-// @public
-export type EthersTransactionReceipt = TransactionReceipt;
-
-// @public
-export type EthersTransactionResponse = TransactionResponse;
+export function _connectByChainId(provider: BitcoinsProvider, signer: BitcoinsSigner | undefined, chainId: number, optionalParams?: BitcoinsMoneypConnectionOptionalParams): BitcoinsMoneypConnection;
 
 // @alpha (undocumented)
-export class ObservableEthersMoneyp implements ObservableMoneyp {
-    constructor(readable: ReadableEthersMoneyp);
+export class ObservableBitcoinsMoneyp implements ObservableMoneyp {
+    constructor(readable: ReadableBitcoinsMoneyp);
     // (undocumented)
     watchBPDBalance(onBPDBalanceChanged: (balance: Decimal) => void, address?: string): () => void;
     // (undocumented)
@@ -305,83 +305,83 @@ export class ObservableEthersMoneyp implements ObservableMoneyp {
 }
 
 // @public
-export class PopulatableEthersMoneyp implements PopulatableMoneyp<EthersTransactionReceipt, EthersTransactionResponse, EthersPopulatedTransaction> {
-    constructor(readable: ReadableEthersMoneyp);
+export class PopulatableBitcoinsMoneyp implements PopulatableMoneyp<BitcoinsTransactionReceipt, BitcoinsTransactionResponse, BitcoinsPopulatedTransaction> {
+    constructor(readable: ReadableBitcoinsMoneyp);
     // (undocumented)
-    adjustVault(params: VaultAdjustmentParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<VaultAdjustmentDetails>>;
+    adjustVault(params: VaultAdjustmentParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
-    approveUniTokens(allowance?: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    approveUniTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    borrowBPD(amount: Decimalish, maxBorrowingRate?: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<VaultAdjustmentDetails>>;
+    borrowBPD(amount: Decimalish, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
-    claimCollateralSurplus(overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    claimCollateralSurplus(overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    closeVault(overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<VaultClosureDetails>>;
+    closeVault(overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<VaultClosureDetails>>;
     // (undocumented)
-    depositCollateral(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<VaultAdjustmentDetails>>;
+    depositBPDInStabilityPool(amount: Decimalish, frontendTag?: string, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<StabilityDepositChangeDetails>>;
     // (undocumented)
-    depositBPDInStabilityPool(amount: Decimalish, frontendTag?: string, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<StabilityDepositChangeDetails>>;
+    depositCollateral(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
-    exitLiquidityMining(overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    exitLiquidityMining(overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    liquidate(address: string | string[], overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<LiquidationDetails>>;
+    liquidate(address: string | string[], overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<LiquidationDetails>>;
     // (undocumented)
-    liquidateUpTo(maximumNumberOfVaultsToLiquidate: number, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<LiquidationDetails>>;
+    liquidateUpTo(maximumNumberOfVaultsToLiquidate: number, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<LiquidationDetails>>;
     // @internal (undocumented)
-    _mintUniToken(amount: Decimalish, address?: string, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    _mintUniToken(amount: Decimalish, address?: string, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    openVault(params: VaultCreationParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<VaultCreationDetails>>;
+    openVault(params: VaultCreationParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<VaultCreationDetails>>;
     // (undocumented)
-    redeemBPD(amount: Decimalish, maxRedemptionRate?: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersRedemption>;
+    redeemBPD(amount: Decimalish, maxRedemptionRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsRedemption>;
     // (undocumented)
-    registerFrontend(kickbackRate: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    registerFrontend(kickbackRate: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    repayBPD(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<VaultAdjustmentDetails>>;
+    repayBPD(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
-    sendMP(toAddress: string, amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    sendBPD(toAddress: string, amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    sendBPD(toAddress: string, amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    sendMP(toAddress: string, amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // @internal (undocumented)
-    setPrice(price: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    setPrice(price: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    stakeMP(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    stakeMP(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    stakeUniTokens(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    stakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    transferCollateralGainToVault(overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<CollateralGainTransferDetails>>;
+    transferCollateralGainToVault(overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<CollateralGainTransferDetails>>;
     // (undocumented)
-    unstakeMP(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    unstakeMP(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    unstakeUniTokens(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    unstakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    withdrawCollateral(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<VaultAdjustmentDetails>>;
+    withdrawBPDFromStabilityPool(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<StabilityDepositChangeDetails>>;
     // (undocumented)
-    withdrawGainsFromStabilityPool(overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<StabilityPoolGainsWithdrawalDetails>>;
+    withdrawCollateral(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
-    withdrawGainsFromStaking(overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    withdrawGainsFromStabilityPool(overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<StabilityPoolGainsWithdrawalDetails>>;
     // (undocumented)
-    withdrawMPRewardFromLiquidityMining(overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<void>>;
+    withdrawGainsFromStaking(overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    withdrawBPDFromStabilityPool(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersMoneypTransaction<StabilityDepositChangeDetails>>;
+    withdrawMPRewardFromLiquidityMining(overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     }
 
 // @public
-export class PopulatedEthersMoneypTransaction<T = unknown> implements PopulatedMoneypTransaction<EthersPopulatedTransaction, SentEthersMoneypTransaction<T>> {
+export class PopulatedBitcoinsMoneypTransaction<T = unknown> implements PopulatedMoneypTransaction<BitcoinsPopulatedTransaction, SentBitcoinsMoneypTransaction<T>> {
     // @internal
-    constructor(rawPopulatedTransaction: EthersPopulatedTransaction, connection: EthersMoneypConnection, parse: (rawReceipt: EthersTransactionReceipt) => T);
-    readonly rawPopulatedTransaction: EthersPopulatedTransaction;
+    constructor(rawPopulatedTransaction: BitcoinsPopulatedTransaction, connection: BitcoinsMoneypConnection, parse: (rawReceipt: BitcoinsTransactionReceipt) => T);
+    readonly rawPopulatedTransaction: BitcoinsPopulatedTransaction;
     // (undocumented)
-    send(): Promise<SentEthersMoneypTransaction<T>>;
+    send(): Promise<SentBitcoinsMoneypTransaction<T>>;
 }
 
 // @public (undocumented)
-export class PopulatedEthersRedemption extends PopulatedEthersMoneypTransaction<RedemptionDetails> implements PopulatedRedemption<EthersPopulatedTransaction, EthersTransactionResponse, EthersTransactionReceipt> {
+export class PopulatedBitcoinsRedemption extends PopulatedBitcoinsMoneypTransaction<RedemptionDetails> implements PopulatedRedemption<BitcoinsPopulatedTransaction, BitcoinsTransactionResponse, BitcoinsTransactionReceipt> {
     // @internal
-    constructor(rawPopulatedTransaction: EthersPopulatedTransaction, connection: EthersMoneypConnection, attemptedBPDAmount: Decimal, redeemableBPDAmount: Decimal, increaseAmountByMinimumNetDebt?: (maxRedemptionRate?: Decimalish) => Promise<PopulatedEthersRedemption>);
+    constructor(rawPopulatedTransaction: BitcoinsPopulatedTransaction, connection: BitcoinsMoneypConnection, attemptedBPDAmount: Decimal, redeemableBPDAmount: Decimal, increaseAmountByMinimumNetDebt?: (maxRedemptionRate?: Decimalish) => Promise<PopulatedBitcoinsRedemption>);
     // (undocumented)
     readonly attemptedBPDAmount: Decimal;
     // (undocumented)
-    increaseAmountByMinimumNetDebt(maxRedemptionRate?: Decimalish): Promise<PopulatedEthersRedemption>;
+    increaseAmountByMinimumNetDebt(maxRedemptionRate?: Decimalish): Promise<PopulatedBitcoinsRedemption>;
     // (undocumented)
     readonly isTruncated: boolean;
     // (undocumented)
@@ -389,87 +389,87 @@ export class PopulatedEthersRedemption extends PopulatedEthersMoneypTransaction<
 }
 
 // @public
-export class ReadableEthersMoneyp implements ReadableMoneyp {
+export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     // @internal
-    constructor(connection: EthersMoneypConnection);
+    constructor(connection: BitcoinsMoneypConnection);
     // @internal (undocumented)
-    static connect(signerOrProvider: EthersSigner | EthersProvider, optionalParams: EthersMoneypConnectionOptionalParams & {
+    static connect(signerOrProvider: BitcoinsSigner | BitcoinsProvider, optionalParams: BitcoinsMoneypConnectionOptionalParams & {
         useStore: "blockPolled";
-    }): Promise<ReadableEthersMoneypWithStore<BlockPolledMoneypStore>>;
+    }): Promise<ReadableBitcoinsMoneypWithStore<BlockPolledMoneypStore>>;
     // (undocumented)
-    static connect(signerOrProvider: EthersSigner | EthersProvider, optionalParams?: EthersMoneypConnectionOptionalParams): Promise<ReadableEthersMoneyp>;
+    static connect(signerOrProvider: BitcoinsSigner | BitcoinsProvider, optionalParams?: BitcoinsMoneypConnectionOptionalParams): Promise<ReadableBitcoinsMoneyp>;
     // (undocumented)
-    readonly connection: EthersMoneypConnection;
+    readonly connection: BitcoinsMoneypConnection;
     // @internal (undocumented)
-    static _from(connection: EthersMoneypConnection & {
+    static _from(connection: BitcoinsMoneypConnection & {
         useStore: "blockPolled";
-    }): ReadableEthersMoneypWithStore<BlockPolledMoneypStore>;
+    }): ReadableBitcoinsMoneypWithStore<BlockPolledMoneypStore>;
     // @internal (undocumented)
-    static _from(connection: EthersMoneypConnection): ReadableEthersMoneyp;
+    static _from(connection: BitcoinsMoneypConnection): ReadableBitcoinsMoneyp;
     // @internal (undocumented)
-    _getActivePool(overrides?: EthersCallOverrides): Promise<Vault>;
+    _getActivePool(overrides?: BitcoinsCallOverrides): Promise<Vault>;
     // (undocumented)
-    getCollateralSurplusBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
+    getBPDBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getBPDInStabilityPool(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getCollateralSurplusBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // @internal (undocumented)
-    _getDefaultPool(overrides?: EthersCallOverrides): Promise<Vault>;
+    _getDefaultPool(overrides?: BitcoinsCallOverrides): Promise<Vault>;
     // (undocumented)
-    getFees(overrides?: EthersCallOverrides): Promise<Fees>;
+    getFees(overrides?: BitcoinsCallOverrides): Promise<Fees>;
     // @internal (undocumented)
-    _getFeesFactory(overrides?: EthersCallOverrides): Promise<(blockTimestamp: number, recoveryMode: boolean) => Fees>;
+    _getFeesFactory(overrides?: BitcoinsCallOverrides): Promise<(blockTimestamp: number, recoveryMode: boolean) => Fees>;
     // (undocumented)
-    getFrontendStatus(address?: string, overrides?: EthersCallOverrides): Promise<FrontendStatus>;
+    getFrontendStatus(address?: string, overrides?: BitcoinsCallOverrides): Promise<FrontendStatus>;
     // (undocumented)
-    getLiquidityMiningMPReward(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
+    getLiquidityMiningMPReward(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getLiquidityMiningStake(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
+    getLiquidityMiningStake(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getMPBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
+    getMPBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getMPStake(address?: string, overrides?: EthersCallOverrides): Promise<MPStake>;
+    getMPStake(address?: string, overrides?: BitcoinsCallOverrides): Promise<MPStake>;
     // (undocumented)
-    getBPDBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
+    getNumberOfVaults(overrides?: BitcoinsCallOverrides): Promise<number>;
     // (undocumented)
-    getBPDInStabilityPool(overrides?: EthersCallOverrides): Promise<Decimal>;
+    getPrice(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getNumberOfVaults(overrides?: EthersCallOverrides): Promise<number>;
-    // (undocumented)
-    getPrice(overrides?: EthersCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getRemainingLiquidityMiningMPReward(overrides?: EthersCallOverrides): Promise<Decimal>;
+    getRemainingLiquidityMiningMPReward(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // @internal (undocumented)
-    _getRemainingLiquidityMiningMPRewardCalculator(overrides?: EthersCallOverrides): Promise<(blockTimestamp: number) => Decimal>;
+    _getRemainingLiquidityMiningMPRewardCalculator(overrides?: BitcoinsCallOverrides): Promise<(blockTimestamp: number) => Decimal>;
     // (undocumented)
-    getRemainingStabilityPoolMPReward(overrides?: EthersCallOverrides): Promise<Decimal>;
+    getRemainingStabilityPoolMPReward(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getStabilityDeposit(address?: string, overrides?: EthersCallOverrides): Promise<StabilityDeposit>;
+    getStabilityDeposit(address?: string, overrides?: BitcoinsCallOverrides): Promise<StabilityDeposit>;
     // (undocumented)
-    getTotal(overrides?: EthersCallOverrides): Promise<Vault>;
+    getTotal(overrides?: BitcoinsCallOverrides): Promise<Vault>;
     // (undocumented)
-    getTotalRedistributed(overrides?: EthersCallOverrides): Promise<Vault>;
+    getTotalRedistributed(overrides?: BitcoinsCallOverrides): Promise<Vault>;
     // (undocumented)
-    getTotalStakedMP(overrides?: EthersCallOverrides): Promise<Decimal>;
+    getTotalStakedMP(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getTotalStakedUniTokens(overrides?: EthersCallOverrides): Promise<Decimal>;
+    getTotalStakedUniTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getVault(address?: string, overrides?: EthersCallOverrides): Promise<UserVault>;
+    getUniTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getVaultBeforeRedistribution(address?: string, overrides?: EthersCallOverrides): Promise<VaultWithPendingRedistribution>;
+    getUniTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getVault(address?: string, overrides?: BitcoinsCallOverrides): Promise<UserVault>;
+    // (undocumented)
+    getVaultBeforeRedistribution(address?: string, overrides?: BitcoinsCallOverrides): Promise<VaultWithPendingRedistribution>;
     // @internal (undocumented)
     getVaults(params: VaultListingParams & {
         beforeRedistribution: true;
-    }, overrides?: EthersCallOverrides): Promise<VaultWithPendingRedistribution[]>;
+    }, overrides?: BitcoinsCallOverrides): Promise<VaultWithPendingRedistribution[]>;
     // (undocumented)
-    getVaults(params: VaultListingParams, overrides?: EthersCallOverrides): Promise<UserVault[]>;
-    // (undocumented)
-    getUniTokenAllowance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getUniTokenBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal>;
-    hasStore(): this is ReadableEthersMoneypWithStore;
-    hasStore(store: "blockPolled"): this is ReadableEthersMoneypWithStore<BlockPolledMoneypStore>;
+    getVaults(params: VaultListingParams, overrides?: BitcoinsCallOverrides): Promise<UserVault[]>;
+    hasStore(): this is ReadableBitcoinsMoneypWithStore;
+    hasStore(store: "blockPolled"): this is ReadableBitcoinsMoneypWithStore<BlockPolledMoneypStore>;
 }
 
 // @public
-export interface ReadableEthersMoneypWithStore<T extends MoneypStore = MoneypStore> extends ReadableEthersMoneyp {
+export interface ReadableBitcoinsMoneypWithStore<T extends MoneypStore = MoneypStore> extends ReadableBitcoinsMoneyp {
     readonly store: T;
 }
 
@@ -477,75 +477,82 @@ export interface ReadableEthersMoneypWithStore<T extends MoneypStore = MoneypSto
 export const _redeemMaxIterations = 70;
 
 // @public
-export class SendableEthersMoneyp implements SendableMoneyp<EthersTransactionReceipt, EthersTransactionResponse> {
-    constructor(populatable: PopulatableEthersMoneyp);
+export class SendableBitcoinsMoneyp implements SendableMoneyp<BitcoinsTransactionReceipt, BitcoinsTransactionResponse> {
+    constructor(populatable: PopulatableBitcoinsMoneyp);
     // (undocumented)
-    adjustVault(params: VaultAdjustmentParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<VaultAdjustmentDetails>>;
+    adjustVault(params: VaultAdjustmentParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
-    approveUniTokens(allowance?: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    approveUniTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    borrowBPD(amount: Decimalish, maxBorrowingRate?: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<VaultAdjustmentDetails>>;
+    borrowBPD(amount: Decimalish, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
-    claimCollateralSurplus(overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    claimCollateralSurplus(overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    closeVault(overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<VaultClosureDetails>>;
+    closeVault(overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<VaultClosureDetails>>;
     // (undocumented)
-    depositCollateral(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<VaultAdjustmentDetails>>;
+    depositBPDInStabilityPool(amount: Decimalish, frontendTag?: string, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<StabilityDepositChangeDetails>>;
     // (undocumented)
-    depositBPDInStabilityPool(amount: Decimalish, frontendTag?: string, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<StabilityDepositChangeDetails>>;
+    depositCollateral(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
-    exitLiquidityMining(overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    exitLiquidityMining(overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    liquidate(address: string | string[], overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<LiquidationDetails>>;
+    liquidate(address: string | string[], overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<LiquidationDetails>>;
     // (undocumented)
-    liquidateUpTo(maximumNumberOfVaultsToLiquidate: number, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<LiquidationDetails>>;
+    liquidateUpTo(maximumNumberOfVaultsToLiquidate: number, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<LiquidationDetails>>;
     // @internal (undocumented)
-    _mintUniToken(amount: Decimalish, address?: string, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    _mintUniToken(amount: Decimalish, address?: string, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    openVault(params: VaultCreationParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<VaultCreationDetails>>;
+    openVault(params: VaultCreationParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<VaultCreationDetails>>;
     // (undocumented)
-    redeemBPD(amount: Decimalish, maxRedemptionRate?: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<RedemptionDetails>>;
+    redeemBPD(amount: Decimalish, maxRedemptionRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<RedemptionDetails>>;
     // (undocumented)
-    registerFrontend(kickbackRate: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    registerFrontend(kickbackRate: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    repayBPD(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<VaultAdjustmentDetails>>;
+    repayBPD(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
-    sendMP(toAddress: string, amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    sendBPD(toAddress: string, amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    sendBPD(toAddress: string, amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    sendMP(toAddress: string, amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // @internal (undocumented)
-    setPrice(price: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    setPrice(price: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    stakeMP(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    stakeMP(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    stakeUniTokens(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    stakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    transferCollateralGainToVault(overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<CollateralGainTransferDetails>>;
+    transferCollateralGainToVault(overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<CollateralGainTransferDetails>>;
     // (undocumented)
-    unstakeMP(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    unstakeMP(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    unstakeUniTokens(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    unstakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    withdrawCollateral(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<VaultAdjustmentDetails>>;
+    withdrawBPDFromStabilityPool(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<StabilityDepositChangeDetails>>;
     // (undocumented)
-    withdrawGainsFromStabilityPool(overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<StabilityPoolGainsWithdrawalDetails>>;
+    withdrawCollateral(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
-    withdrawGainsFromStaking(overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    withdrawGainsFromStabilityPool(overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<StabilityPoolGainsWithdrawalDetails>>;
     // (undocumented)
-    withdrawMPRewardFromLiquidityMining(overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<void>>;
+    withdrawGainsFromStaking(overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    withdrawBPDFromStabilityPool(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<SentEthersMoneypTransaction<StabilityDepositChangeDetails>>;
+    withdrawMPRewardFromLiquidityMining(overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
 }
 
 // @public
-export class SentEthersMoneypTransaction<T = unknown> implements SentMoneypTransaction<EthersTransactionResponse, MoneypReceipt<EthersTransactionReceipt, T>> {
+export class SentBitcoinsMoneypTransaction<T = unknown> implements SentMoneypTransaction<BitcoinsTransactionResponse, MoneypReceipt<BitcoinsTransactionReceipt, T>> {
     // @internal
-    constructor(rawSentTransaction: EthersTransactionResponse, connection: EthersMoneypConnection, parse: (rawReceipt: EthersTransactionReceipt) => T);
+    constructor(rawSentTransaction: BitcoinsTransactionResponse, connection: BitcoinsMoneypConnection, parse: (rawReceipt: BitcoinsTransactionReceipt) => T);
     // (undocumented)
-    getReceipt(): Promise<MoneypReceipt<EthersTransactionReceipt, T>>;
-    readonly rawSentTransaction: EthersTransactionResponse;
+    getReceipt(): Promise<MoneypReceipt<BitcoinsTransactionReceipt, T>>;
+    readonly rawSentTransaction: BitcoinsTransactionResponse;
     // (undocumented)
-    waitForReceipt(): Promise<MinedReceipt<EthersTransactionReceipt, T>>;
+    waitForReceipt(): Promise<MinedReceipt<BitcoinsTransactionReceipt, T>>;
+}
+
+// @public
+export class UnsupportedNetworkError extends Error {
+    // @internal
+    constructor(chainId: number);
+    readonly chainId: number;
 }
 
 // @internal (undocumented)
@@ -556,13 +563,6 @@ export interface _VaultChangeWithFees<T> {
     newVault: Vault;
     // (undocumented)
     params: T;
-}
-
-// @public
-export class UnsupportedNetworkError extends Error {
-    // @internal
-    constructor(chainId: number);
-    readonly chainId: number;
 }
 
 

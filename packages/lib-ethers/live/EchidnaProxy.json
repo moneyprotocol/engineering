@@ -33,7 +33,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_RBTC",
           "type": "uint256"
         },
         {
@@ -56,7 +56,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_RBTC",
           "type": "uint256"
         },
         {
@@ -217,7 +217,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_RBTC",
           "type": "uint256"
         },
         {

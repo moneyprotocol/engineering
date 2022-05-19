@@ -10,7 +10,7 @@ import kovan from "../deployments/kovan.json";
 import rinkeby from "../deployments/rinkeby.json";
 import ropsten from "../deployments/ropsten.json";
 
-import { EthersProvider, EthersSigner } from "./types";
+import { BitcoinsProvider, BitcoinsSigner } from "./types";
 
 import {
   _connectToContracts,
@@ -44,16 +44,16 @@ const branded = <T>(t: Omit<T, typeof brand>): T => t as T;
  * @remarks
  * Provided for debugging / informational purposes.
  *
- * Exposed through {@link ReadableEthersMoneyp.connection} and {@link EthersMoneyp.connection}.
+ * Exposed through {@link ReadableBitcoinsMoneyp.connection} and {@link BitcoinsMoneyp.connection}.
  *
  * @public
  */
-export interface EthersMoneypConnection extends EthersMoneypConnectionOptionalParams {
-  /** Ethers `Provider` used for connecting to the network. */
-  readonly provider: EthersProvider;
+export interface BitcoinsMoneypConnection extends BitcoinsMoneypConnectionOptionalParams {
+  /** Bitcoins `Provider` used for connecting to the network. */
+  readonly provider: BitcoinsProvider;
 
-  /** Ethers `Signer` used for sending transactions. */
-  readonly signer?: EthersSigner;
+  /** Bitcoins `Signer` used for sending transactions. */
+  readonly signer?: BitcoinsSigner;
 
   /** Chain ID of the connected network. */
   readonly chainId: number;
@@ -84,20 +84,20 @@ export interface EthersMoneypConnection extends EthersMoneypConnectionOptionalPa
 }
 
 /** @internal */
-export interface _InternalEthersMoneypConnection extends EthersMoneypConnection {
+export interface _InternalBitcoinsMoneypConnection extends BitcoinsMoneypConnection {
   readonly addresses: _MoneypContractAddresses;
   readonly _contracts: _MoneypContracts;
   readonly _multicall?: _Multicall;
 }
 
 const connectionFrom = (
-  provider: EthersProvider,
-  signer: EthersSigner | undefined,
+  provider: BitcoinsProvider,
+  signer: BitcoinsSigner | undefined,
   _contracts: _MoneypContracts,
   _multicall: _Multicall | undefined,
   { deploymentDate, totalStabilityPoolMPReward, ...deployment }: _MoneypDeploymentJSON,
-  optionalParams?: EthersMoneypConnectionOptionalParams
-): _InternalEthersMoneypConnection => {
+  optionalParams?: BitcoinsMoneypConnectionOptionalParams
+): _InternalBitcoinsMoneypConnection => {
   if (
     optionalParams &&
     optionalParams.useStore !== undefined &&
@@ -119,11 +119,11 @@ const connectionFrom = (
 };
 
 /** @internal */
-export const _getContracts = (connection: EthersMoneypConnection): _MoneypContracts =>
-  (connection as _InternalEthersMoneypConnection)._contracts;
+export const _getContracts = (connection: BitcoinsMoneypConnection): _MoneypContracts =>
+  (connection as _InternalBitcoinsMoneypConnection)._contracts;
 
-const getMulticall = (connection: EthersMoneypConnection): _Multicall | undefined =>
-  (connection as _InternalEthersMoneypConnection)._multicall;
+const getMulticall = (connection: BitcoinsMoneypConnection): _Multicall | undefined =>
+  (connection as _InternalBitcoinsMoneypConnection)._multicall;
 
 const numberify = (bigNumber: BigNumber) => bigNumber.toNumber();
 
@@ -131,7 +131,7 @@ const getTimestampFromBlock = ({ timestamp }: Block) => timestamp;
 
 /** @internal */
 export const _getBlockTimestamp = (
-  connection: EthersMoneypConnection,
+  connection: BitcoinsMoneypConnection,
   blockTag: BlockTag = "latest"
 ): Promise<number> =>
   // Get the timestamp via a contract call whenever possible, to make it batchable with other calls
@@ -143,36 +143,36 @@ const panic = <T>(e: unknown): T => {
 };
 
 /** @internal */
-export const _requireSigner = (connection: EthersMoneypConnection): EthersSigner =>
+export const _requireSigner = (connection: BitcoinsMoneypConnection): BitcoinsSigner =>
   connection.signer ?? panic(new Error("Must be connected through a Signer"));
 
 /** @internal */
-export const _getProvider = (connection: EthersMoneypConnection): EthersProvider =>
+export const _getProvider = (connection: BitcoinsMoneypConnection): BitcoinsProvider =>
   connection.provider;
 
 // TODO parameterize error message?
 /** @internal */
 export const _requireAddress = (
-  connection: EthersMoneypConnection,
+  connection: BitcoinsMoneypConnection,
   overrides?: { from?: string }
 ): string =>
   overrides?.from ?? connection.userAddress ?? panic(new Error("A user address is required"));
 
 /** @internal */
-export const _requireFrontendAddress = (connection: EthersMoneypConnection): string =>
+export const _requireFrontendAddress = (connection: BitcoinsMoneypConnection): string =>
   connection.frontendTag ?? panic(new Error("A frontend address is required"));
 
 /** @internal */
 export const _usingStore = (
-  connection: EthersMoneypConnection
-): connection is EthersMoneypConnection & { useStore: EthersMoneypStoreOption } =>
+  connection: BitcoinsMoneypConnection
+): connection is BitcoinsMoneypConnection & { useStore: BitcoinsMoneypStoreOption } =>
   connection.useStore !== undefined;
 
 /**
  * Thrown when trying to connect to a network where Moneyp is not deployed.
  *
  * @remarks
- * Thrown by {@link ReadableEthersMoneyp.(connect:2)} and {@link EthersMoneyp.(connect:2)}.
+ * Thrown by {@link ReadableBitcoinsMoneyp.(connect:2)} and {@link BitcoinsMoneyp.(connect:2)}.
  *
  * @public
  */
@@ -189,9 +189,9 @@ export class UnsupportedNetworkError extends Error {
 }
 
 const getProviderAndSigner = (
-  signerOrProvider: EthersSigner | EthersProvider
-): [provider: EthersProvider, signer: EthersSigner | undefined] => {
-  const provider: EthersProvider = Signer.isSigner(signerOrProvider)
+  signerOrProvider: BitcoinsSigner | BitcoinsProvider
+): [provider: BitcoinsProvider, signer: BitcoinsSigner | undefined] => {
+  const provider: BitcoinsProvider = Signer.isSigner(signerOrProvider)
     ? signerOrProvider.provider ?? panic(new Error("Signer must have a Provider"))
     : signerOrProvider;
 
@@ -203,9 +203,9 @@ const getProviderAndSigner = (
 /** @internal */
 export const _connectToDeployment = (
   deployment: _MoneypDeploymentJSON,
-  signerOrProvider: EthersSigner | EthersProvider,
-  optionalParams?: EthersMoneypConnectionOptionalParams
-): EthersMoneypConnection =>
+  signerOrProvider: BitcoinsSigner | BitcoinsProvider,
+  optionalParams?: BitcoinsMoneypConnectionOptionalParams
+): BitcoinsMoneypConnection =>
   connectionFrom(
     ...getProviderAndSigner(signerOrProvider),
     _connectToContracts(signerOrProvider, deployment),
@@ -216,7 +216,7 @@ export const _connectToDeployment = (
 
 /**
  * Possible values for the optional
- * {@link EthersMoneypConnectionOptionalParams.useStore | useStore}
+ * {@link BitcoinsMoneypConnectionOptionalParams.useStore | useStore}
  * connection parameter.
  *
  * @remarks
@@ -225,25 +225,25 @@ export const _connectToDeployment = (
  *
  * @public
  */
-export type EthersMoneypStoreOption = "blockPolled";
+export type BitcoinsMoneypStoreOption = "blockPolled";
 
 const validStoreOptions = ["blockPolled"];
 
 /**
- * Optional parameters of {@link ReadableEthersMoneyp.(connect:2)} and
- * {@link EthersMoneyp.(connect:2)}.
+ * Optional parameters of {@link ReadableBitcoinsMoneyp.(connect:2)} and
+ * {@link BitcoinsMoneyp.(connect:2)}.
  *
  * @public
  */
-export interface EthersMoneypConnectionOptionalParams {
+export interface BitcoinsMoneypConnectionOptionalParams {
   /**
    * Address whose Vault, Stability Deposit, MP Stake and balances will be read by default.
    *
    * @remarks
-   * For example {@link EthersMoneyp.getVault | getVault(address?)} will return the Vault owned by
+   * For example {@link BitcoinsMoneyp.getVault | getVault(address?)} will return the Vault owned by
    * `userAddress` when the `address` parameter is omitted.
    *
-   * Should be omitted when connecting through a {@link EthersSigner | Signer}. Instead `userAddress`
+   * Should be omitted when connecting through a {@link BitcoinsSigner | Signer}. Instead `userAddress`
    * will be automatically determined from the `Signer`.
    */
   readonly userAddress?: string;
@@ -253,7 +253,7 @@ export interface EthersMoneypConnectionOptionalParams {
    *
    * @remarks
    * For example
-   * {@link EthersMoneyp.depositBPDInStabilityPool | depositBPDInStabilityPool(amount, frontendTag?)}
+   * {@link BitcoinsMoneyp.depositBPDInStabilityPool | depositBPDInStabilityPool(amount, frontendTag?)}
    * will tag newly made Stability Deposits with this address when its `frontendTag` parameter is
    * omitted.
    */
@@ -263,41 +263,41 @@ export interface EthersMoneypConnectionOptionalParams {
    * Create a {@link @liquity/lib-base#MoneypStore} and expose it as the `store` property.
    *
    * @remarks
-   * When set to one of the available {@link EthersMoneypStoreOption | options},
-   * {@link ReadableEthersMoneyp.(connect:2) | ReadableEthersMoneyp.connect()} will return a
-   * {@link ReadableEthersMoneypWithStore}, while
-   * {@link EthersMoneyp.(connect:2) | EthersMoneyp.connect()} will return an
-   * {@link EthersMoneypWithStore}.
+   * When set to one of the available {@link BitcoinsMoneypStoreOption | options},
+   * {@link ReadableBitcoinsMoneyp.(connect:2) | ReadableBitcoinsMoneyp.connect()} will return a
+   * {@link ReadableBitcoinsMoneypWithStore}, while
+   * {@link BitcoinsMoneyp.(connect:2) | BitcoinsMoneyp.connect()} will return an
+   * {@link BitcoinsMoneypWithStore}.
    *
    * Note that the store won't start monitoring the blockchain until its
    * {@link @liquity/lib-base#MoneypStore.start | start()} function is called.
    */
-  readonly useStore?: EthersMoneypStoreOption;
+  readonly useStore?: BitcoinsMoneypStoreOption;
 }
 
 /** @internal */
 export function _connectByChainId<T>(
-  provider: EthersProvider,
-  signer: EthersSigner | undefined,
+  provider: BitcoinsProvider,
+  signer: BitcoinsSigner | undefined,
   chainId: number,
-  optionalParams: EthersMoneypConnectionOptionalParams & { useStore: T }
-): EthersMoneypConnection & { useStore: T };
+  optionalParams: BitcoinsMoneypConnectionOptionalParams & { useStore: T }
+): BitcoinsMoneypConnection & { useStore: T };
 
 /** @internal */
 export function _connectByChainId(
-  provider: EthersProvider,
-  signer: EthersSigner | undefined,
+  provider: BitcoinsProvider,
+  signer: BitcoinsSigner | undefined,
   chainId: number,
-  optionalParams?: EthersMoneypConnectionOptionalParams
-): EthersMoneypConnection;
+  optionalParams?: BitcoinsMoneypConnectionOptionalParams
+): BitcoinsMoneypConnection;
 
 /** @internal */
 export function _connectByChainId(
-  provider: EthersProvider,
-  signer: EthersSigner | undefined,
+  provider: BitcoinsProvider,
+  signer: BitcoinsSigner | undefined,
   chainId: number,
-  optionalParams?: EthersMoneypConnectionOptionalParams
-): EthersMoneypConnection {
+  optionalParams?: BitcoinsMoneypConnectionOptionalParams
+): BitcoinsMoneypConnection {
   const deployment: _MoneypDeploymentJSON =
     deployments[chainId] ?? panic(new UnsupportedNetworkError(chainId));
 
@@ -313,9 +313,9 @@ export function _connectByChainId(
 
 /** @internal */
 export const _connect = async (
-  signerOrProvider: EthersSigner | EthersProvider,
-  optionalParams?: EthersMoneypConnectionOptionalParams
-): Promise<EthersMoneypConnection> => {
+  signerOrProvider: BitcoinsSigner | BitcoinsProvider,
+  optionalParams?: BitcoinsMoneypConnectionOptionalParams
+): Promise<BitcoinsMoneypConnection> => {
   const [provider, signer] = getProviderAndSigner(signerOrProvider);
 
   if (signer) {

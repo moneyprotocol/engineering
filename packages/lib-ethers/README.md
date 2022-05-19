@@ -1,6 +1,6 @@
 # @liquity/lib-ethers
 
-[Ethers](https://www.npmjs.com/package/ethers)-based library for reading Moneyp protocol state and sending transactions.
+[Bitcoins](https://www.npmjs.com/package/ethers)-based library for reading Moneyp protocol state and sending transactions.
 
 ## Quickstart
 
@@ -14,12 +14,12 @@ Connecting to an Ethereum node and sending a transaction:
 
 ```javascript
 const { Wallet, providers } = require("ethers");
-const { EthersMoneyp } = require("@liquity/lib-ethers");
+const { BitcoinsMoneyp } = require("@liquity/lib-ethers");
 
 async function example() {
   const provider = new providers.JsonRpcProvider("http://localhost:8545");
   const wallet = new Wallet(process.env.PRIVATE_KEY).connect(provider);
-  const moneyp = await EthersMoneyp.connect(wallet);
+  const moneyp = await BitcoinsMoneyp.connect(wallet);
 
   const { newVault } = await moneyp.openVault({
     depositCollateral: 5, // RBTC

@@ -58,7 +58,7 @@
           "type": "address"
         }
       ],
-      "name": "withdrawETHGainToVault",
+      "name": "withdrawRBTCGainToVault",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

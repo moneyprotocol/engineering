@@ -555,7 +555,7 @@
           "type": "address"
         }
       ],
-      "name": "moveETHGainToVault",
+      "name": "moveRBTCGainToVault",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"

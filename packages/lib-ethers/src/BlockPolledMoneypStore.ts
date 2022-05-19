@@ -11,13 +11,13 @@ import {
   MoneypStore
 } from "@liquity/lib-base";
 
-import { ReadableEthersMoneyp } from "./ReadableEthersMoneyp";
+import { ReadableBitcoinsMoneyp } from "./ReadableBitcoinsMoneyp";
 import {
-  EthersMoneypConnection,
+  BitcoinsMoneypConnection,
   _getBlockTimestamp,
   _getProvider
-} from "./EthersMoneypConnection";
-import { EthersCallOverrides, EthersProvider } from "./types";
+} from "./BitcoinsMoneypConnection";
+import { BitcoinsCallOverrides, BitcoinsProvider } from "./types";
 
 /**
  * Extra state added to {@link @liquity/lib-base#MoneypStoreState} by
@@ -62,18 +62,18 @@ const promiseAllValues = <T>(object: T) => {
 const decimalify = (bigNumber: BigNumber) => Decimal.fromBigNumberString(bigNumber.toHexString());
 
 /**
- * Ethers-based {@link @liquity/lib-base#MoneypStore} that updates state whenever there's a new
+ * Bitcoins-based {@link @liquity/lib-base#MoneypStore} that updates state whenever there's a new
  * block.
  *
  * @public
  */
 export class BlockPolledMoneypStore extends MoneypStore<BlockPolledMoneypStoreExtraState> {
-  readonly connection: EthersMoneypConnection;
+  readonly connection: BitcoinsMoneypConnection;
 
-  private readonly _readable: ReadableEthersMoneyp;
-  private readonly _provider: EthersProvider;
+  private readonly _readable: ReadableBitcoinsMoneyp;
+  private readonly _provider: BitcoinsProvider;
 
-  constructor(readable: ReadableEthersMoneyp) {
+  constructor(readable: ReadableBitcoinsMoneyp) {
     super();
 
     this.connection = readable.connection;
@@ -82,7 +82,7 @@ export class BlockPolledMoneypStore extends MoneypStore<BlockPolledMoneypStoreEx
   }
 
   private async _getRiskiestVaultBeforeRedistribution(
-    overrides?: EthersCallOverrides
+    overrides?: BitcoinsCallOverrides
   ): Promise<VaultWithPendingRedistribution> {
     const riskiestVaults = await this._readable.getVaults(
       { first: 1, sortedBy: "ascendingCollateralRatio", beforeRedistribution: true },

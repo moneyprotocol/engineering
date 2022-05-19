@@ -22,11 +22,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_RBTC",
           "type": "uint256"
         }
       ],
-      "name": "ActivePoolETHBalanceUpdated",
+      "name": "ActivePoolRBTCBalanceUpdated",
       "type": "event"
     },
     {
@@ -78,7 +78,7 @@
           "type": "uint256"
         }
       ],
-      "name": "ETHBalanceUpdated",
+      "name": "RBTCBalanceUpdated",
       "type": "event"
     },
     {
@@ -97,7 +97,7 @@
           "type": "uint256"
         }
       ],
-      "name": "EtherSent",
+      "name": "BitcoinSent",
       "type": "event"
     },
     {
@@ -212,7 +212,7 @@
     },
     {
       "inputs": [],
-      "name": "getETH",
+      "name": "getRBTC",
       "outputs": [
         {
           "internalType": "uint256",
@@ -288,7 +288,7 @@
           "type": "uint256"
         }
       ],
-      "name": "sendETH",
+      "name": "sendRBTC",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

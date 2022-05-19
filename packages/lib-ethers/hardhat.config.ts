@@ -101,7 +101,7 @@ const config: HardhatUserConfig = {
       gas: 12e6, // tx gas limit
       blockGasLimit: 12e6,
 
-      // Let Ethers throw instead of Buidler EVM
+      // Let Bitcoins throw instead of Buidler EVM
       // This is closer to what will happen in production
       throwOnCallFailures: false,
       throwOnTransactionFailures: false

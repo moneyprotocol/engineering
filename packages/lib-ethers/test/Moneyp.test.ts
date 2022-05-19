@@ -26,15 +26,15 @@ import {
 import { HintHelpers } from "../types";
 
 import {
-  PopulatableEthersMoneyp,
-  PopulatedEthersMoneypTransaction,
+  PopulatableBitcoinsMoneyp,
+  PopulatedBitcoinsMoneypTransaction,
   _redeemMaxIterations
-} from "../src/PopulatableEthersMoneyp";
+} from "../src/PopulatableBitcoinsMoneyp";
 
 import { _MoneypDeploymentJSON } from "../src/contracts";
-import { _connectToDeployment } from "../src/EthersMoneypConnection";
-import { EthersMoneyp } from "../src/EthersMoneyp";
-import { ReadableEthersMoneyp } from "../src/ReadableEthersMoneyp";
+import { _connectToDeployment } from "../src/BitcoinsMoneypConnection";
+import { BitcoinsMoneyp } from "../src/BitcoinsMoneyp";
+import { ReadableBitcoinsMoneyp } from "../src/ReadableBitcoinsMoneyp";
 
 const provider = ethers.provider;
 
@@ -46,7 +46,7 @@ const connectToDeployment = async (
   signer: Signer,
   frontendTag?: string
 ) =>
-  EthersMoneyp._from(
+  BitcoinsMoneyp._from(
     _connectToDeployment(deployment, signer, {
       userAddress: await signer.getAddress(),
       frontendTag
@@ -80,7 +80,7 @@ const waitForSuccess = async <T extends MoneypReceipt>(
 
 // TODO make the testcases isolated
 
-describe("EthersMoneyp", () => {
+describe("BitcoinsMoneyp", () => {
   let deployer: Signer;
   let funder: Signer;
   let user: Signer;
@@ -88,9 +88,9 @@ describe("EthersMoneyp", () => {
 
   let deployment: _MoneypDeploymentJSON;
 
-  let deployerMoneyp: EthersMoneyp;
-  let moneyp: EthersMoneyp;
-  let otherLiquities: EthersMoneyp[];
+  let deployerMoneyp: BitcoinsMoneyp;
+  let moneyp: BitcoinsMoneyp;
+  let otherLiquities: BitcoinsMoneyp[];
 
   const connectUsers = (users: Signer[]) =>
     Promise.all(users.map(user => connectToDeployment(deployment, user)));
@@ -127,7 +127,7 @@ describe("EthersMoneyp", () => {
     deployment = await deployMoneyp(deployer);
 
     moneyp = await connectToDeployment(deployment, user);
-    expect(moneyp).to.be.an.instanceOf(EthersMoneyp);
+    expect(moneyp).to.be.an.instanceOf(BitcoinsMoneyp);
   });
 
   // Always setup same initial balance for user
@@ -188,7 +188,7 @@ describe("EthersMoneyp", () => {
         findInsertPosition: () => Promise.resolve(["fake insert position"])
       });
 
-      const fakeMoneyp = new PopulatableEthersMoneyp(({
+      const fakeMoneyp = new PopulatableBitcoinsMoneyp(({
         getNumberOfVaults: () => Promise.resolve(1000000),
         getFees: () => Promise.resolve(new Fees(0, 0.99, 1, new Date(), new Date(), false)),
 
@@ -200,7 +200,7 @@ describe("EthersMoneyp", () => {
             sortedVaults
           }
         }
-      } as unknown) as ReadableEthersMoneyp);
+      } as unknown) as ReadableBitcoinsMoneyp);
 
       const nominalCollateralRatio = Decimal.from(0.05);
 
@@ -354,7 +354,7 @@ describe("EthersMoneyp", () => {
     });
   });
 
-  describe("SendableEthersMoneyp", () => {
+  describe("SendableBitcoinsMoneyp", () => {
     it("should parse failed transactions without throwing", async () => {
       // By passing a gasLimit, we avoid automatic use of estimateGas which would throw
       const tx = await moneyp.send.openVault(
@@ -986,7 +986,7 @@ describe("EthersMoneyp", () => {
 
     let rudeUser: Signer;
     let fiveOtherUsers: Signer[];
-    let rudeMoneyp: EthersMoneyp;
+    let rudeMoneyp: BitcoinsMoneyp;
 
     before(async function () {
       if (network.name !== "hardhat") {
@@ -1098,7 +1098,7 @@ describe("EthersMoneyp", () => {
   });
 
   describe("Gas estimation (MP issuance)", () => {
-    const estimate = (tx: PopulatedEthersMoneypTransaction) =>
+    const estimate = (tx: PopulatedBitcoinsMoneypTransaction) =>
       provider.estimateGas(tx.rawPopulatedTransaction);
 
     before(async function () {

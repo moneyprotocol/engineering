@@ -34,23 +34,23 @@ import {
 } from "@liquity/lib-base";
 
 import {
-  EthersPopulatedTransaction,
-  EthersTransactionOverrides,
-  EthersTransactionReceipt,
-  EthersTransactionResponse
+  BitcoinsPopulatedTransaction,
+  BitcoinsTransactionOverrides,
+  BitcoinsTransactionReceipt,
+  BitcoinsTransactionResponse
 } from "./types";
 
 import {
-  EthersMoneypConnection,
+  BitcoinsMoneypConnection,
   _getContracts,
   _getProvider,
   _requireAddress,
   _requireSigner
-} from "./EthersMoneypConnection";
+} from "./BitcoinsMoneypConnection";
 
 import { _priceFeedIsTestnet, _uniTokenIsMock } from "./contracts";
 import { logsToString } from "./parseLogs";
-import { ReadableEthersMoneyp } from "./ReadableEthersMoneyp";
+import { ReadableBitcoinsMoneyp } from "./ReadableBitcoinsMoneyp";
 
 const decimalify = (bigNumber: BigNumber) => Decimal.fromBigNumberString(bigNumber.toHexString());
 
@@ -115,31 +115,31 @@ function* generateTrials(totalNumberOfTrials: number) {
  * A transaction that has already been sent.
  *
  * @remarks
- * Returned by {@link SendableEthersMoneyp} functions.
+ * Returned by {@link SendableBitcoinsMoneyp} functions.
  *
  * @public
  */
-export class SentEthersMoneypTransaction<T = unknown>
+export class SentBitcoinsMoneypTransaction<T = unknown>
   implements
-    SentMoneypTransaction<EthersTransactionResponse, MoneypReceipt<EthersTransactionReceipt, T>> {
-  /** Ethers' representation of a sent transaction. */
-  readonly rawSentTransaction: EthersTransactionResponse;
+    SentMoneypTransaction<BitcoinsTransactionResponse, MoneypReceipt<BitcoinsTransactionReceipt, T>> {
+  /** Bitcoins' representation of a sent transaction. */
+  readonly rawSentTransaction: BitcoinsTransactionResponse;
 
-  private readonly _connection: EthersMoneypConnection;
-  private readonly _parse: (rawReceipt: EthersTransactionReceipt) => T;
+  private readonly _connection: BitcoinsMoneypConnection;
+  private readonly _parse: (rawReceipt: BitcoinsTransactionReceipt) => T;
 
   /** @internal */
   constructor(
-    rawSentTransaction: EthersTransactionResponse,
-    connection: EthersMoneypConnection,
-    parse: (rawReceipt: EthersTransactionReceipt) => T
+    rawSentTransaction: BitcoinsTransactionResponse,
+    connection: BitcoinsMoneypConnection,
+    parse: (rawReceipt: BitcoinsTransactionReceipt) => T
   ) {
     this.rawSentTransaction = rawSentTransaction;
     this._connection = connection;
     this._parse = parse;
   }
 
-  private _receiptFrom(rawReceipt: EthersTransactionReceipt | null) {
+  private _receiptFrom(rawReceipt: BitcoinsTransactionReceipt | null) {
     return rawReceipt
       ? rawReceipt.status
         ? _successfulReceipt(rawReceipt, this._parse(rawReceipt), () =>
@@ -150,14 +150,14 @@ export class SentEthersMoneypTransaction<T = unknown>
   }
 
   /** {@inheritDoc @liquity/lib-base#SentMoneypTransaction.getReceipt} */
-  async getReceipt(): Promise<MoneypReceipt<EthersTransactionReceipt, T>> {
+  async getReceipt(): Promise<MoneypReceipt<BitcoinsTransactionReceipt, T>> {
     return this._receiptFrom(
       await _getProvider(this._connection).getTransactionReceipt(this.rawSentTransaction.hash)
     );
   }
 
   /** {@inheritDoc @liquity/lib-base#SentMoneypTransaction.waitForReceipt} */
-  async waitForReceipt(): Promise<MinedReceipt<EthersTransactionReceipt, T>> {
+  async waitForReceipt(): Promise<MinedReceipt<BitcoinsTransactionReceipt, T>> {
     const receipt = this._receiptFrom(
       await _getProvider(this._connection).waitForTransaction(this.rawSentTransaction.hash)
     );
@@ -171,24 +171,24 @@ export class SentEthersMoneypTransaction<T = unknown>
  * A transaction that has been prepared for sending.
  *
  * @remarks
- * Returned by {@link PopulatableEthersMoneyp} functions.
+ * Returned by {@link PopulatableBitcoinsMoneyp} functions.
  *
  * @public
  */
-export class PopulatedEthersMoneypTransaction<T = unknown>
+export class PopulatedBitcoinsMoneypTransaction<T = unknown>
   implements
-    PopulatedMoneypTransaction<EthersPopulatedTransaction, SentEthersMoneypTransaction<T>> {
-  /** Unsigned transaction object populated by Ethers. */
-  readonly rawPopulatedTransaction: EthersPopulatedTransaction;
+    PopulatedMoneypTransaction<BitcoinsPopulatedTransaction, SentBitcoinsMoneypTransaction<T>> {
+  /** Unsigned transaction object populated by Bitcoins. */
+  readonly rawPopulatedTransaction: BitcoinsPopulatedTransaction;
 
-  private readonly _connection: EthersMoneypConnection;
-  private readonly _parse: (rawReceipt: EthersTransactionReceipt) => T;
+  private readonly _connection: BitcoinsMoneypConnection;
+  private readonly _parse: (rawReceipt: BitcoinsTransactionReceipt) => T;
 
   /** @internal */
   constructor(
-    rawPopulatedTransaction: EthersPopulatedTransaction,
-    connection: EthersMoneypConnection,
-    parse: (rawReceipt: EthersTransactionReceipt) => T
+    rawPopulatedTransaction: BitcoinsPopulatedTransaction,
+    connection: BitcoinsMoneypConnection,
+    parse: (rawReceipt: BitcoinsTransactionReceipt) => T
   ) {
     this.rawPopulatedTransaction = rawPopulatedTransaction;
     this._connection = connection;
@@ -196,8 +196,8 @@ export class PopulatedEthersMoneypTransaction<T = unknown>
   }
 
   /** {@inheritDoc @liquity/lib-base#PopulatedMoneypTransaction.send} */
-  async send(): Promise<SentEthersMoneypTransaction<T>> {
-    return new SentEthersMoneypTransaction(
+  async send(): Promise<SentBitcoinsMoneypTransaction<T>> {
+    return new SentBitcoinsMoneypTransaction(
       await _requireSigner(this._connection).sendTransaction(this.rawPopulatedTransaction),
       this._connection,
       this._parse
@@ -210,13 +210,13 @@ export class PopulatedEthersMoneypTransaction<T = unknown>
  *
  * @public
  */
-export class PopulatedEthersRedemption
-  extends PopulatedEthersMoneypTransaction<RedemptionDetails>
+export class PopulatedBitcoinsRedemption
+  extends PopulatedBitcoinsMoneypTransaction<RedemptionDetails>
   implements
     PopulatedRedemption<
-      EthersPopulatedTransaction,
-      EthersTransactionResponse,
-      EthersTransactionReceipt
+      BitcoinsPopulatedTransaction,
+      BitcoinsTransactionResponse,
+      BitcoinsTransactionReceipt
     > {
   /** {@inheritDoc @liquity/lib-base#PopulatedRedemption.attemptedBPDAmount} */
   readonly attemptedBPDAmount: Decimal;
@@ -229,17 +229,17 @@ export class PopulatedEthersRedemption
 
   private readonly _increaseAmountByMinimumNetDebt?: (
     maxRedemptionRate?: Decimalish
-  ) => Promise<PopulatedEthersRedemption>;
+  ) => Promise<PopulatedBitcoinsRedemption>;
 
   /** @internal */
   constructor(
-    rawPopulatedTransaction: EthersPopulatedTransaction,
-    connection: EthersMoneypConnection,
+    rawPopulatedTransaction: BitcoinsPopulatedTransaction,
+    connection: BitcoinsMoneypConnection,
     attemptedBPDAmount: Decimal,
     redeemableBPDAmount: Decimal,
     increaseAmountByMinimumNetDebt?: (
       maxRedemptionRate?: Decimalish
-    ) => Promise<PopulatedEthersRedemption>
+    ) => Promise<PopulatedBitcoinsRedemption>
   ) {
     const { vaultManager } = _getContracts(connection);
 
@@ -250,11 +250,11 @@ export class PopulatedEthersRedemption
       ({ logs }) =>
         vaultManager
           .extractEvents(logs, "Redemption")
-          .map(({ args: { _ETHSent, _ETHFee, _actualBPDAmount, _attemptedBPDAmount } }) => ({
+          .map(({ args: { _RBTCSent, _RBTCFee, _actualBPDAmount, _attemptedBPDAmount } }) => ({
             attemptedBPDAmount: decimalify(_attemptedBPDAmount),
             actualBPDAmount: decimalify(_actualBPDAmount),
-            collateralTaken: decimalify(_ETHSent),
-            fee: decimalify(_ETHFee)
+            collateralTaken: decimalify(_RBTCSent),
+            fee: decimalify(_RBTCFee)
           }))[0]
     );
 
@@ -267,10 +267,10 @@ export class PopulatedEthersRedemption
   /** {@inheritDoc @liquity/lib-base#PopulatedRedemption.increaseAmountByMinimumNetDebt} */
   increaseAmountByMinimumNetDebt(
     maxRedemptionRate?: Decimalish
-  ): Promise<PopulatedEthersRedemption> {
+  ): Promise<PopulatedBitcoinsRedemption> {
     if (!this._increaseAmountByMinimumNetDebt) {
       throw new Error(
-        "PopulatedEthersRedemption: increaseAmountByMinimumNetDebt() can " +
+        "PopulatedBitcoinsRedemption: increaseAmountByMinimumNetDebt() can " +
           "only be called when amount is truncated"
       );
     }
@@ -287,27 +287,27 @@ export interface _VaultChangeWithFees<T> {
 }
 
 /**
- * Ethers-based implementation of {@link @liquity/lib-base#PopulatableMoneyp}.
+ * Bitcoins-based implementation of {@link @liquity/lib-base#PopulatableMoneyp}.
  *
  * @public
  */
-export class PopulatableEthersMoneyp
+export class PopulatableBitcoinsMoneyp
   implements
     PopulatableMoneyp<
-      EthersTransactionReceipt,
-      EthersTransactionResponse,
-      EthersPopulatedTransaction
+      BitcoinsTransactionReceipt,
+      BitcoinsTransactionResponse,
+      BitcoinsPopulatedTransaction
     > {
-  private readonly _readable: ReadableEthersMoneyp;
+  private readonly _readable: ReadableBitcoinsMoneyp;
 
-  constructor(readable: ReadableEthersMoneyp) {
+  constructor(readable: ReadableBitcoinsMoneyp) {
     this._readable = readable;
   }
 
   private _wrapSimpleTransaction(
-    rawPopulatedTransaction: EthersPopulatedTransaction
-  ): PopulatedEthersMoneypTransaction<void> {
-    return new PopulatedEthersMoneypTransaction(
+    rawPopulatedTransaction: BitcoinsPopulatedTransaction
+  ): PopulatedBitcoinsMoneypTransaction<void> {
+    return new PopulatedBitcoinsMoneypTransaction(
       rawPopulatedTransaction,
       this._readable.connection,
       noDetails
@@ -316,11 +316,11 @@ export class PopulatableEthersMoneyp
 
   private _wrapVaultChangeWithFees<T>(
     params: T,
-    rawPopulatedTransaction: EthersPopulatedTransaction
-  ): PopulatedEthersMoneypTransaction<_VaultChangeWithFees<T>> {
+    rawPopulatedTransaction: BitcoinsPopulatedTransaction
+  ): PopulatedBitcoinsMoneypTransaction<_VaultChangeWithFees<T>> {
     const { borrowerOperations } = _getContracts(this._readable.connection);
 
-    return new PopulatedEthersMoneypTransaction(
+    return new PopulatedBitcoinsMoneypTransaction(
       rawPopulatedTransaction,
       this._readable.connection,
 
@@ -343,11 +343,11 @@ export class PopulatableEthersMoneyp
   }
 
   private async _wrapVaultClosure(
-    rawPopulatedTransaction: EthersPopulatedTransaction
-  ): Promise<PopulatedEthersMoneypTransaction<VaultClosureDetails>> {
+    rawPopulatedTransaction: BitcoinsPopulatedTransaction
+  ): Promise<PopulatedBitcoinsMoneypTransaction<VaultClosureDetails>> {
     const { activePool, bpdToken } = _getContracts(this._readable.connection);
 
-    return new PopulatedEthersMoneypTransaction(
+    return new PopulatedBitcoinsMoneypTransaction(
       rawPopulatedTransaction,
       this._readable.connection,
 
@@ -358,7 +358,7 @@ export class PopulatableEthersMoneyp
           .map(({ args: { value } }) => decimalify(value));
 
         const [withdrawCollateral] = activePool
-          .extractEvents(logs, "EtherSent")
+          .extractEvents(logs, "BitcoinSent")
           .filter(({ args: { _to } }) => _to === userAddress)
           .map(({ args: { _amount } }) => decimalify(_amount));
 
@@ -370,11 +370,11 @@ export class PopulatableEthersMoneyp
   }
 
   private _wrapLiquidation(
-    rawPopulatedTransaction: EthersPopulatedTransaction
-  ): PopulatedEthersMoneypTransaction<LiquidationDetails> {
+    rawPopulatedTransaction: BitcoinsPopulatedTransaction
+  ): PopulatedBitcoinsMoneypTransaction<LiquidationDetails> {
     const { vaultManager } = _getContracts(this._readable.connection);
 
-    return new PopulatedEthersMoneypTransaction(
+    return new PopulatedBitcoinsMoneypTransaction(
       rawPopulatedTransaction,
       this._readable.connection,
 
@@ -413,8 +413,8 @@ export class PopulatableEthersMoneyp
       .map(({ args: { _newDeposit } }) => decimalify(_newDeposit));
 
     const [[collateralGain, bpdLoss]] = stabilityPool
-      .extractEvents(logs, "ETHGainWithdrawn")
-      .map(({ args: { _ETH, _BPDLoss } }) => [decimalify(_ETH), decimalify(_BPDLoss)]);
+      .extractEvents(logs, "RBTCGainWithdrawn")
+      .map(({ args: { _RBTC, _BPDLoss } }) => [decimalify(_RBTC), decimalify(_BPDLoss)]);
 
     const [mpReward] = stabilityPool
       .extractEvents(logs, "MPPaidToDepositor")
@@ -429,9 +429,9 @@ export class PopulatableEthersMoneyp
   }
 
   private _wrapStabilityPoolGainsWithdrawal(
-    rawPopulatedTransaction: EthersPopulatedTransaction
-  ): PopulatedEthersMoneypTransaction<StabilityPoolGainsWithdrawalDetails> {
-    return new PopulatedEthersMoneypTransaction(
+    rawPopulatedTransaction: BitcoinsPopulatedTransaction
+  ): PopulatedBitcoinsMoneypTransaction<StabilityPoolGainsWithdrawalDetails> {
+    return new PopulatedBitcoinsMoneypTransaction(
       rawPopulatedTransaction,
       this._readable.connection,
       ({ logs }) => this._extractStabilityPoolGainsWithdrawalDetails(logs)
@@ -440,9 +440,9 @@ export class PopulatableEthersMoneyp
 
   private _wrapStabilityDepositTopup(
     change: { depositBPD: Decimal },
-    rawPopulatedTransaction: EthersPopulatedTransaction
-  ): PopulatedEthersMoneypTransaction<StabilityDepositChangeDetails> {
-    return new PopulatedEthersMoneypTransaction(
+    rawPopulatedTransaction: BitcoinsPopulatedTransaction
+  ): PopulatedBitcoinsMoneypTransaction<StabilityDepositChangeDetails> {
+    return new PopulatedBitcoinsMoneypTransaction(
       rawPopulatedTransaction,
       this._readable.connection,
 
@@ -454,11 +454,11 @@ export class PopulatableEthersMoneyp
   }
 
   private async _wrapStabilityDepositWithdrawal(
-    rawPopulatedTransaction: EthersPopulatedTransaction
-  ): Promise<PopulatedEthersMoneypTransaction<StabilityDepositChangeDetails>> {
+    rawPopulatedTransaction: BitcoinsPopulatedTransaction
+  ): Promise<PopulatedBitcoinsMoneypTransaction<StabilityDepositChangeDetails>> {
     const { stabilityPool, bpdToken } = _getContracts(this._readable.connection);
 
-    return new PopulatedEthersMoneypTransaction(
+    return new PopulatedBitcoinsMoneypTransaction(
       rawPopulatedTransaction,
       this._readable.connection,
 
@@ -479,11 +479,11 @@ export class PopulatableEthersMoneyp
   }
 
   private _wrapCollateralGainTransfer(
-    rawPopulatedTransaction: EthersPopulatedTransaction
-  ): PopulatedEthersMoneypTransaction<CollateralGainTransferDetails> {
+    rawPopulatedTransaction: BitcoinsPopulatedTransaction
+  ): PopulatedBitcoinsMoneypTransaction<CollateralGainTransferDetails> {
     const { borrowerOperations } = _getContracts(this._readable.connection);
 
-    return new PopulatedEthersMoneypTransaction(
+    return new PopulatedBitcoinsMoneypTransaction(
       rawPopulatedTransaction,
       this._readable.connection,
 
@@ -592,8 +592,8 @@ export class PopulatableEthersMoneyp
   async openVault(
     params: VaultCreationParams<Decimalish>,
     maxBorrowingRate?: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<VaultCreationDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<VaultCreationDetails>> {
     const { borrowerOperations } = _getContracts(this._readable.connection);
 
     const normalized = _normalizeVaultCreation(params);
@@ -622,8 +622,8 @@ export class PopulatableEthersMoneyp
 
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.closeVault} */
   async closeVault(
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<VaultClosureDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<VaultClosureDetails>> {
     const { borrowerOperations } = _getContracts(this._readable.connection);
 
     return this._wrapVaultClosure(
@@ -634,16 +634,16 @@ export class PopulatableEthersMoneyp
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.depositCollateral} */
   depositCollateral(
     amount: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<VaultAdjustmentDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<VaultAdjustmentDetails>> {
     return this.adjustVault({ depositCollateral: amount }, undefined, overrides);
   }
 
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.withdrawCollateral} */
   withdrawCollateral(
     amount: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<VaultAdjustmentDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<VaultAdjustmentDetails>> {
     return this.adjustVault({ withdrawCollateral: amount }, undefined, overrides);
   }
 
@@ -651,16 +651,16 @@ export class PopulatableEthersMoneyp
   borrowBPD(
     amount: Decimalish,
     maxBorrowingRate?: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<VaultAdjustmentDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<VaultAdjustmentDetails>> {
     return this.adjustVault({ borrowBPD: amount }, maxBorrowingRate, overrides);
   }
 
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.repayBPD} */
   repayBPD(
     amount: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<VaultAdjustmentDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<VaultAdjustmentDetails>> {
     return this.adjustVault({ repayBPD: amount }, undefined, overrides);
   }
 
@@ -668,8 +668,8 @@ export class PopulatableEthersMoneyp
   async adjustVault(
     params: VaultAdjustmentParams<Decimalish>,
     maxBorrowingRate?: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<VaultAdjustmentDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<VaultAdjustmentDetails>> {
     const address = _requireAddress(this._readable.connection, overrides);
     const { borrowerOperations } = _getContracts(this._readable.connection);
 
@@ -708,8 +708,8 @@ export class PopulatableEthersMoneyp
 
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.claimCollateralSurplus} */
   async claimCollateralSurplus(
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     const { borrowerOperations } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
@@ -720,8 +720,8 @@ export class PopulatableEthersMoneyp
   /** @internal */
   async setPrice(
     price: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     const { priceFeed } = _getContracts(this._readable.connection);
 
     if (!_priceFeedIsTestnet(priceFeed)) {
@@ -736,8 +736,8 @@ export class PopulatableEthersMoneyp
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.liquidate} */
   async liquidate(
     address: string | string[],
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<LiquidationDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<LiquidationDetails>> {
     const { vaultManager } = _getContracts(this._readable.connection);
 
     if (Array.isArray(address)) {
@@ -762,8 +762,8 @@ export class PopulatableEthersMoneyp
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.liquidateUpTo} */
   async liquidateUpTo(
     maximumNumberOfVaultsToLiquidate: number,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<LiquidationDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<LiquidationDetails>> {
     const { vaultManager } = _getContracts(this._readable.connection);
 
     return this._wrapLiquidation(
@@ -779,8 +779,8 @@ export class PopulatableEthersMoneyp
   async depositBPDInStabilityPool(
     amount: Decimalish,
     frontendTag?: string,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<StabilityDepositChangeDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<StabilityDepositChangeDetails>> {
     const { stabilityPool } = _getContracts(this._readable.connection);
     const depositBPD = Decimal.from(amount);
 
@@ -798,8 +798,8 @@ export class PopulatableEthersMoneyp
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.withdrawBPDFromStabilityPool} */
   async withdrawBPDFromStabilityPool(
     amount: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<StabilityDepositChangeDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<StabilityDepositChangeDetails>> {
     const { stabilityPool } = _getContracts(this._readable.connection);
 
     return this._wrapStabilityDepositWithdrawal(
@@ -813,8 +813,8 @@ export class PopulatableEthersMoneyp
 
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.withdrawGainsFromStabilityPool} */
   async withdrawGainsFromStabilityPool(
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<StabilityPoolGainsWithdrawalDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<StabilityPoolGainsWithdrawalDetails>> {
     const { stabilityPool } = _getContracts(this._readable.connection);
 
     return this._wrapStabilityPoolGainsWithdrawal(
@@ -828,8 +828,8 @@ export class PopulatableEthersMoneyp
 
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.transferCollateralGainToVault} */
   async transferCollateralGainToVault(
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<CollateralGainTransferDetails>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<CollateralGainTransferDetails>> {
     const address = _requireAddress(this._readable.connection, overrides);
     const { stabilityPool } = _getContracts(this._readable.connection);
 
@@ -841,7 +841,7 @@ export class PopulatableEthersMoneyp
     const finalVault = initialVault.addCollateral(stabilityDeposit.collateralGain);
 
     return this._wrapCollateralGainTransfer(
-      await stabilityPool.estimateAndPopulate.withdrawETHGainToVault(
+      await stabilityPool.estimateAndPopulate.withdrawRBTCGainToVault(
         { ...overrides },
         compose(addGasForPotentialListTraversal, addGasForMPIssuance),
         ...(await this._findHints(finalVault))
@@ -853,8 +853,8 @@ export class PopulatableEthersMoneyp
   async sendBPD(
     toAddress: string,
     amount: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     const { bpdToken } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
@@ -871,8 +871,8 @@ export class PopulatableEthersMoneyp
   async sendMP(
     toAddress: string,
     amount: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     const { mpToken } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
@@ -889,8 +889,8 @@ export class PopulatableEthersMoneyp
   async redeemBPD(
     amount: Decimalish,
     maxRedemptionRate?: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersRedemption> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsRedemption> {
     const { vaultManager } = _getContracts(this._readable.connection);
     const attemptedBPDAmount = Decimal.from(amount);
 
@@ -921,13 +921,13 @@ export class PopulatableEthersMoneyp
       maxRedemptionRate?: Decimalish,
       truncatedAmount: Decimal = attemptedBPDAmount,
       partialHints: [string, string, BigNumberish] = [AddressZero, AddressZero, 0]
-    ): Promise<PopulatedEthersRedemption> => {
+    ): Promise<PopulatedBitcoinsRedemption> => {
       const maxRedemptionRateOrDefault =
         maxRedemptionRate !== undefined
           ? Decimal.from(maxRedemptionRate)
           : defaultMaxRedemptionRate(truncatedAmount);
 
-      return new PopulatedEthersRedemption(
+      return new PopulatedBitcoinsRedemption(
         await vaultManager.estimateAndPopulate.redeemCollateral(
           { ...overrides },
           addGasForPotentialLastFeeOperationTimeUpdate,
@@ -958,8 +958,8 @@ export class PopulatableEthersMoneyp
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.stakeMP} */
   async stakeMP(
     amount: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     const { mpStaking } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
@@ -970,8 +970,8 @@ export class PopulatableEthersMoneyp
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.unstakeMP} */
   async unstakeMP(
     amount: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     const { mpStaking } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
@@ -981,16 +981,16 @@ export class PopulatableEthersMoneyp
 
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.withdrawGainsFromStaking} */
   withdrawGainsFromStaking(
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     return this.unstakeMP(Decimal.ZERO, overrides);
   }
 
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.registerFrontend} */
   async registerFrontend(
     kickbackRate: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     const { stabilityPool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
@@ -1006,8 +1006,8 @@ export class PopulatableEthersMoneyp
   async _mintUniToken(
     amount: Decimalish,
     address?: string,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     address ??= _requireAddress(this._readable.connection, overrides);
     const { uniToken } = _getContracts(this._readable.connection);
 
@@ -1028,8 +1028,8 @@ export class PopulatableEthersMoneyp
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.approveUniTokens} */
   async approveUniTokens(
     allowance?: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     const { uniToken, unipool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
@@ -1045,8 +1045,8 @@ export class PopulatableEthersMoneyp
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.stakeUniTokens} */
   async stakeUniTokens(
     amount: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     const { unipool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
@@ -1061,8 +1061,8 @@ export class PopulatableEthersMoneyp
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.unstakeUniTokens} */
   async unstakeUniTokens(
     amount: Decimalish,
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     const { unipool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
@@ -1076,8 +1076,8 @@ export class PopulatableEthersMoneyp
 
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.withdrawMPRewardFromLiquidityMining} */
   async withdrawMPRewardFromLiquidityMining(
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     const { unipool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
@@ -1087,8 +1087,8 @@ export class PopulatableEthersMoneyp
 
   /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.exitLiquidityMining} */
   async exitLiquidityMining(
-    overrides?: EthersTransactionOverrides
-  ): Promise<PopulatedEthersMoneypTransaction<void>> {
+    overrides?: BitcoinsTransactionOverrides
+  ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     const { unipool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(

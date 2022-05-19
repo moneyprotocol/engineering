@@ -98,7 +98,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_RBTC",
           "type": "uint256"
         },
         {
@@ -108,7 +108,7 @@
           "type": "uint256"
         }
       ],
-      "name": "ETHGainWithdrawn",
+      "name": "RBTCGainWithdrawn",
       "type": "event"
     },
     {
@@ -140,7 +140,7 @@
           "type": "uint256"
         }
       ],
-      "name": "EtherSent",
+      "name": "BitcoinSent",
       "type": "event"
     },
     {
@@ -394,7 +394,7 @@
           "type": "uint256"
         }
       ],
-      "name": "StabilityPoolETHBalanceUpdated",
+      "name": "StabilityPoolRBTCBalanceUpdated",
       "type": "event"
     },
     {
@@ -488,7 +488,7 @@
           "type": "address"
         }
       ],
-      "name": "getDepositorETHGain",
+      "name": "getDepositorRBTCGain",
       "outputs": [
         {
           "internalType": "uint256",
@@ -520,7 +520,7 @@
     },
     {
       "inputs": [],
-      "name": "getETH",
+      "name": "getRBTC",
       "outputs": [
         {
           "internalType": "uint256",
@@ -668,7 +668,7 @@
           "type": "address"
         }
       ],
-      "name": "withdrawETHGainToVault",
+      "name": "withdrawRBTCGainToVault",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

@@ -30,7 +30,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_RBTC",
           "type": "uint256"
         }
       ],
@@ -48,7 +48,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_RBTC",
           "type": "uint256"
         },
         {
@@ -76,7 +76,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_RBTC",
           "type": "uint256"
         },
         {
@@ -109,7 +109,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_RBTC",
           "type": "uint256"
         },
         {
@@ -297,7 +297,7 @@
     },
     {
       "inputs": [],
-      "name": "echidna_ETH_balances",
+      "name": "echidna_RBTC_balances",
       "outputs": [
         {
           "internalType": "bool",
@@ -486,7 +486,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_RBTC",
           "type": "uint256"
         },
         {
@@ -509,7 +509,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_RBTC",
           "type": "uint256"
         },
         {

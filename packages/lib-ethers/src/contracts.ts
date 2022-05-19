@@ -56,7 +56,7 @@ import {
   IERC20
 } from "../types";
 
-import { EthersProvider, EthersSigner } from "./types";
+import { BitcoinsProvider, BitcoinsSigner } from "./types";
 
 export interface _TypedLogDescription<T> extends Omit<LogDescription, "args"> {
   args: T;
@@ -64,7 +64,7 @@ export interface _TypedLogDescription<T> extends Omit<LogDescription, "args"> {
 
 type BucketOfFunctions = Record<string, (...args: unknown[]) => never>;
 
-// Removes unsafe index signatures from an Ethers contract type
+// Removes unsafe index signatures from an Bitcoins contract type
 export type _TypeSafeContract<T> = Pick<
   T,
   {
@@ -132,7 +132,7 @@ export class _MoneypContract extends Contract {
   constructor(
     addressOrName: string,
     contractInterface: ContractInterface,
-    signerOrProvider?: EthersSigner | EthersProvider
+    signerOrProvider?: BitcoinsSigner | BitcoinsProvider
   ) {
     super(addressOrName, contractInterface, signerOrProvider);
 
@@ -233,7 +233,7 @@ export interface _MoneypDeploymentJSON {
 
 /** @internal */
 export const _connectToContracts = (
-  signerOrProvider: EthersSigner | EthersProvider,
+  signerOrProvider: BitcoinsSigner | BitcoinsProvider,
   { addresses, _priceFeedIsTestnet, _uniTokenIsMock }: _MoneypDeploymentJSON
 ): _MoneypContracts => {
   const abi = getAbi(_priceFeedIsTestnet, _uniTokenIsMock);

@@ -1,15 +1,15 @@
 export {
   _connectByChainId,
-  EthersMoneypConnection,
-  EthersMoneypConnectionOptionalParams,
-  EthersMoneypStoreOption,
+  BitcoinsMoneypConnection,
+  BitcoinsMoneypConnectionOptionalParams,
+  BitcoinsMoneypStoreOption,
   UnsupportedNetworkError
-} from "./src/EthersMoneypConnection";
+} from "./src/BitcoinsMoneypConnection";
 
 export * from "./src/types";
-export * from "./src/ReadableEthersMoneyp";
-export * from "./src/ObservableEthersMoneyp";
+export * from "./src/ReadableBitcoinsMoneyp";
+export * from "./src/ObservableBitcoinsMoneyp";
 export * from "./src/BlockPolledMoneypStore";
-export * from "./src/PopulatableEthersMoneyp";
-export * from "./src/SendableEthersMoneyp";
-export * from "./src/EthersMoneyp";
+export * from "./src/PopulatableBitcoinsMoneyp";
+export * from "./src/SendableBitcoinsMoneyp";
+export * from "./src/BitcoinsMoneyp";
