@@ -661,8 +661,8 @@ describe("BitcoinsMoneyp", () => {
     const someBPD = Decimal.from(4326.5);
 
     it("should redeem some BPD after the bootstrap phase", async () => {
-      // Fast-forward 15 days
-      increaseTime(60 * 60 * 24 * 15);
+      // Fast-forward 31 days
+      increaseTime(60 * 60 * 24 * 31);
 
       expect(`${await otherLiquities[0].getCollateralSurplusBalance()}`).to.equal("0");
       expect(`${await otherLiquities[1].getCollateralSurplusBalance()}`).to.equal("0");

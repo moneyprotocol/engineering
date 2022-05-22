@@ -57,7 +57,7 @@ contract('CollSurplusPool', async accounts => {
     await openVault({ extraBPDAmount: B_netDebt, extraParams: { from: A, value: dec(3000, 'ether') } })
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // At RBTC:USD = 100, this redemption should leave 1 ether of coll surplus
     await th.redeemCollateralAndGetTxObject(A, contracts, B_netDebt)
@@ -89,7 +89,7 @@ contract('CollSurplusPool', async accounts => {
     await openVault({ extraBPDAmount: B_netDebt, extraParams: { from: A, value: dec(3000, 'ether') } })
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // At RBTC:USD = 100, this redemption should leave 1 ether of coll surplus for B
     await th.redeemCollateralAndGetTxObject(A, contracts, B_netDebt)

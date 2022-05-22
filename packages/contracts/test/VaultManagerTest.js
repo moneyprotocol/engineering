@@ -2354,7 +2354,7 @@ contract('VaultManager', async accounts => {
     )
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // Dennis redeems 20 BPD
     // Don't pay for gas, as it makes it easier to calculate the received Bitcoin
@@ -2418,7 +2418,7 @@ contract('VaultManager', async accounts => {
     const { bpdAmount: F_bpdAmount } = await openVault({ ICR: toBN(dec(200, 18)), extraBPDAmount: redemptionAmount.mul(toBN(2)), extraParams: { from: flyn } })
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // Flyn redeems collateral
     await vaultManager.redeemCollateral(redemptionAmount, alice, alice, alice, 0, 0, th._100pct, { from: flyn })
@@ -2475,7 +2475,7 @@ contract('VaultManager', async accounts => {
     const { bpdAmount: F_bpdAmount } = await openVault({ ICR: toBN(dec(200, 18)), extraBPDAmount: redemptionAmount.mul(toBN(2)), extraParams: { from: flyn } })
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // Flyn redeems collateral with only two iterations
     await vaultManager.redeemCollateral(attemptedRedemptionAmount, alice, alice, alice, 0, 2, th._100pct, { from: flyn })
@@ -2514,7 +2514,7 @@ contract('VaultManager', async accounts => {
     await vaultManager.setBaseRate(0) 
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // BPD redemption is 55000 US
     const BPDRedemption = dec(55000, 18)
@@ -2542,7 +2542,7 @@ contract('VaultManager', async accounts => {
     await vaultManager.setBaseRate(0) 
 
     // Skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // BPD redemption is 55000 BPD
     const BPDRedemption = dec(55000, 18)
@@ -2606,7 +2606,7 @@ contract('VaultManager', async accounts => {
       )
 
       // skip bootstrapping phase
-      await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+      await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
       // Alice redeems 1 BPD from Carol's Vault
       await vaultManager.redeemCollateral(
@@ -2679,7 +2679,7 @@ contract('VaultManager', async accounts => {
     const caroB_RBTCBalance_Before = toBN(await web3.eth.getBalance(carol))
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     const redemptionTx = await vaultManager.redeemCollateral(
       amount,
@@ -2724,7 +2724,7 @@ contract('VaultManager', async accounts => {
     // --- TEST --- 
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     await vaultManager.redeemCollateral(
       A_debt,
@@ -2772,7 +2772,7 @@ contract('VaultManager', async accounts => {
     await openVault({ ICR: toBN(dec(100, 18)), extraBPDAmount: dec(10, 18), extraParams: { from: whale } })
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     const tx = await vaultManager.redeemCollateral(
       redemptionAmount,
@@ -2840,7 +2840,7 @@ contract('VaultManager', async accounts => {
     await openVault({ ICR: toBN(dec(400, 16)), extraBPDAmount: dec(40, 18), extraParams: { from: D } })
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     await assertRevert(th.redeemCollateralAndGetTxObject(A, contracts, dec(10, 18), dec(2, 18)), "Max fee percentage must be between 0.5% and 100%")
     await assertRevert(th.redeemCollateralAndGetTxObject(A, contracts, dec(10, 18), '1000000000000000001'), "Max fee percentage must be between 0.5% and 100%")
@@ -2853,7 +2853,7 @@ contract('VaultManager', async accounts => {
     await openVault({ ICR: toBN(dec(400, 16)), extraBPDAmount: dec(40, 18), extraParams: { from: D } })
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     await assertRevert(th.redeemCollateralAndGetTxObject(A, contracts, dec(10, 18), 0), "Max fee percentage must be between 0.5% and 100%")
     await assertRevert(th.redeemCollateralAndGetTxObject(A, contracts, dec(10, 18), 1), "Max fee percentage must be between 0.5% and 100%")
@@ -2873,7 +2873,7 @@ contract('VaultManager', async accounts => {
     await vaultManager.setBaseRate(0) 
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // BPD redemption is 27 USD: a redemption that incurs a fee of 27/(270 * 2) = 5%
     const attemptedBPDRedemption = expectedTotalSupply.div(toBN(10))
@@ -2911,7 +2911,7 @@ contract('VaultManager', async accounts => {
     await vaultManager.setBaseRate(0) 
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // BPD redemption fee with 10% of the supply will be 0.5% + 1/(10*2)
     const attemptedBPDRedemption = expectedTotalSupply.div(toBN(10))
@@ -3000,7 +3000,7 @@ contract('VaultManager', async accounts => {
     assert.isTrue(RBTCinSP.gte(mv._zeroBN))
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // Erin redeems BPD
     await th.redeemCollateral(erin, contracts, redemptionAmount, th._100pct)
@@ -3062,7 +3062,7 @@ contract('VaultManager', async accounts => {
     const price = await priceFeed.getPrice()
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // Erin attempts to redeem 400 BPD
     const {
@@ -3133,7 +3133,7 @@ contract('VaultManager', async accounts => {
     let partialRedemptionHintNICR
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // Erin tries to redeem 1000 BPD
     try {
@@ -3287,7 +3287,7 @@ contract('VaultManager', async accounts => {
     )
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     const redemption_1 = await vaultManager.redeemCollateral(
       _120_BPD,
@@ -3429,7 +3429,7 @@ contract('VaultManager', async accounts => {
     )
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // Bob attempts to redeem his ill-gotten 101 BPD, from a system that has 100 BPD outstanding debt
     try {
@@ -3458,7 +3458,7 @@ contract('VaultManager', async accounts => {
     assert.equal(await vaultManager.baseRate(), '0')
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     const A_balanceBefore = await bpdToken.balanceOf(A)
 
@@ -3524,7 +3524,7 @@ contract('VaultManager', async accounts => {
     await openVault({ ICR: toBN(dec(180, 16)), extraBPDAmount: dec(100, 18), extraParams: { from: C } })
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     const A_balanceBefore = await bpdToken.balanceOf(A)
 
@@ -3899,7 +3899,7 @@ contract('VaultManager', async accounts => {
     const redemptionAmount = A_netDebt.add(B_netDebt).add(C_netDebt).add(partialAmount)
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // whale redeems BPD.  Expect this to fully redeem A, B, C, and partially redeem 15 BPD from D.
     const redemptionTx = await th.redeemCollateralAndGetTxObject(whale, contracts, redemptionAmount, th._100pct, { gasPrice: 0 })
