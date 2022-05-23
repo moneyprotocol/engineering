@@ -4,7 +4,7 @@
 
 ## LiquidationDetails.liquidatedAddresses property
 
-Addresses whose Troves were liquidated by the transaction.
+Addresses whose Vaults were liquidated by the transaction.
 
 <b>Signature:</b>
 

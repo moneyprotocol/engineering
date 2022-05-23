@@ -4,7 +4,7 @@
 
 ## MINIMUM\_COLLATERAL\_RATIO variable
 
-Collateral ratio below which a Trove can be liquidated in normal mode.
+Collateral ratio below which a Vault can be liquidated in normal mode.
 
 <b>Signature:</b>
 

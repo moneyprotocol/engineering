@@ -4,7 +4,7 @@
 
 ## LiquidationDetails interface
 
-Details of a [liquidate()](./lib-base.transactableliquity.liquidate.md) or [liquidateUpTo()](./lib-base.transactableliquity.liquidateupto.md) transaction.
+Details of a [liquidate()](./lib-base.transactablemoneyp.liquidate.md) or [liquidateUpTo()](./lib-base.transactablemoneyp.liquidateupto.md) transaction.
 
 <b>Signature:</b>
 
@@ -16,8 +16,8 @@ export interface LiquidationDetails
 
 |  Property | Type | Description |
 |  --- | --- | --- |
+|  [bpdGasCompensation](./lib-base.liquidationdetails.bpdgascompensation.md) | [Decimal](./lib-base.decimal.md) | Amount of BPD paid to the liquidator as gas compensation. |
 |  [collateralGasCompensation](./lib-base.liquidationdetails.collateralgascompensation.md) | [Decimal](./lib-base.decimal.md) | Amount of native currency (e.g. Ether) paid to the liquidator as gas compensation. |
-|  [liquidatedAddresses](./lib-base.liquidationdetails.liquidatedaddresses.md) | string\[\] | Addresses whose Troves were liquidated by the transaction. |
-|  [lusdGasCompensation](./lib-base.liquidationdetails.lusdgascompensation.md) | [Decimal](./lib-base.decimal.md) | Amount of LUSD paid to the liquidator as gas compensation. |
-|  [totalLiquidated](./lib-base.liquidationdetails.totalliquidated.md) | [Trove](./lib-base.trove.md) | Total collateral liquidated and debt cleared by the transaction. |
+|  [liquidatedAddresses](./lib-base.liquidationdetails.liquidatedaddresses.md) | string\[\] | Addresses whose Vaults were liquidated by the transaction. |
+|  [totalLiquidated](./lib-base.liquidationdetails.totalliquidated.md) | [Vault](./lib-base.vault.md) | Total collateral liquidated and debt cleared by the transaction. |
 

@@ -4,7 +4,7 @@
 
 ## StabilityPoolGainsWithdrawalDetails interface
 
-Details of a [withdrawGainsFromStabilityPool()](./lib-base.transactableliquity.withdrawgainsfromstabilitypool.md) transaction.
+Details of a [withdrawGainsFromStabilityPool()](./lib-base.transactablemoneyp.withdrawgainsfromstabilitypool.md) transaction.
 
 <b>Signature:</b>
 
@@ -16,8 +16,8 @@ export interface StabilityPoolGainsWithdrawalDetails
 
 |  Property | Type | Description |
 |  --- | --- | --- |
+|  [bpdLoss](./lib-base.stabilitypoolgainswithdrawaldetails.bpdloss.md) | [Decimal](./lib-base.decimal.md) | Amount of BPD burned from the deposit by liquidations since the last modification. |
 |  [collateralGain](./lib-base.stabilitypoolgainswithdrawaldetails.collateralgain.md) | [Decimal](./lib-base.decimal.md) | Amount of native currency (e.g. Ether) paid out to the depositor in this transaction. |
-|  [lqtyReward](./lib-base.stabilitypoolgainswithdrawaldetails.lqtyreward.md) | [Decimal](./lib-base.decimal.md) | Amount of LQTY rewarded to the depositor in this transaction. |
-|  [lusdLoss](./lib-base.stabilitypoolgainswithdrawaldetails.lusdloss.md) | [Decimal](./lib-base.decimal.md) | Amount of LUSD burned from the deposit by liquidations since the last modification. |
-|  [newLUSDDeposit](./lib-base.stabilitypoolgainswithdrawaldetails.newlusddeposit.md) | [Decimal](./lib-base.decimal.md) | Amount of LUSD in the deposit directly after this transaction. |
+|  [mpReward](./lib-base.stabilitypoolgainswithdrawaldetails.mpreward.md) | [Decimal](./lib-base.decimal.md) | Amount of MP rewarded to the depositor in this transaction. |
+|  [newBPDDeposit](./lib-base.stabilitypoolgainswithdrawaldetails.newbpddeposit.md) | [Decimal](./lib-base.decimal.md) | Amount of BPD in the deposit directly after this transaction. |
 

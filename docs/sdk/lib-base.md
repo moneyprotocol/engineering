@@ -10,49 +10,49 @@
 |  --- | --- |
 |  [Decimal](./lib-base.decimal.md) | Fixed-point decimal bignumber with 18 digits of precision. |
 |  [Fees](./lib-base.fees.md) | Calculator for fees. |
-|  [LiquityStore](./lib-base.liquitystore.md) | Abstract base class of Liquity data store implementations. |
-|  [LQTYStake](./lib-base.lqtystake.md) | Represents a user's LQTY stake and accrued gains. |
+|  [MoneypStore](./lib-base.moneypstore.md) | Abstract base class of Moneyp data store implementations. |
+|  [MPStake](./lib-base.mpstake.md) | Represents a user's MP stake and accrued gains. |
 |  [StabilityDeposit](./lib-base.stabilitydeposit.md) | A Stability Deposit and its accrued gains. |
-|  [TransactionFailedError](./lib-base.transactionfailederror.md) | Thrown by [TransactableLiquity](./lib-base.transactableliquity.md) functions in case of transaction failure. |
-|  [Trove](./lib-base.trove.md) | A combination of collateral and debt. |
-|  [TroveWithPendingRedistribution](./lib-base.trovewithpendingredistribution.md) | A Trove in its state after the last direct modification. |
-|  [UserTrove](./lib-base.usertrove.md) | A Trove that is associated with a single owner. |
+|  [TransactionFailedError](./lib-base.transactionfailederror.md) | Thrown by [TransactableMoneyp](./lib-base.transactablemoneyp.md) functions in case of transaction failure. |
+|  [UserVault](./lib-base.uservault.md) | A Vault that is associated with a single owner. |
+|  [Vault](./lib-base.vault.md) | A combination of collateral and debt. |
+|  [VaultWithPendingRedistribution](./lib-base.vaultwithpendingredistribution.md) | A Vault in its state after the last direct modification. |
 
 ## Interfaces
 
 |  Interface | Description |
 |  --- | --- |
-|  [CollateralGainTransferDetails](./lib-base.collateralgaintransferdetails.md) | Details of a [transferCollateralGainToTrove()](./lib-base.transactableliquity.transfercollateralgaintotrove.md) transaction. |
-|  [LiquidationDetails](./lib-base.liquidationdetails.md) | Details of a [liquidate()](./lib-base.transactableliquity.liquidate.md) or [liquidateUpTo()](./lib-base.transactableliquity.liquidateupto.md) transaction. |
-|  [LiquityStoreBaseState](./lib-base.liquitystorebasestate.md) | State variables read from the blockchain. |
-|  [LiquityStoreDerivedState](./lib-base.liquitystorederivedstate.md) | State variables derived from [LiquityStoreBaseState](./lib-base.liquitystorebasestate.md)<!-- -->. |
-|  [LiquityStoreListenerParams](./lib-base.liquitystorelistenerparams.md) | Parameters passed to [LiquityStore](./lib-base.liquitystore.md) listeners. |
-|  [PopulatableLiquity](./lib-base.populatableliquity.md) | Prepare Liquity transactions for sending. |
-|  [PopulatedLiquityTransaction](./lib-base.populatedliquitytransaction.md) | A transaction that has been prepared for sending. |
+|  [CollateralGainTransferDetails](./lib-base.collateralgaintransferdetails.md) | Details of a [transferCollateralGainToVault()](./lib-base.transactablemoneyp.transfercollateralgaintovault.md) transaction. |
+|  [LiquidationDetails](./lib-base.liquidationdetails.md) | Details of a [liquidate()](./lib-base.transactablemoneyp.liquidate.md) or [liquidateUpTo()](./lib-base.transactablemoneyp.liquidateupto.md) transaction. |
+|  [MoneypStoreBaseState](./lib-base.moneypstorebasestate.md) | State variables read from the blockchain. |
+|  [MoneypStoreDerivedState](./lib-base.moneypstorederivedstate.md) | State variables derived from [MoneypStoreBaseState](./lib-base.moneypstorebasestate.md)<!-- -->. |
+|  [MoneypStoreListenerParams](./lib-base.moneypstorelistenerparams.md) | Parameters passed to [MoneypStore](./lib-base.moneypstore.md) listeners. |
+|  [PopulatableMoneyp](./lib-base.populatablemoneyp.md) | Prepare Moneyp transactions for sending. |
+|  [PopulatedMoneypTransaction](./lib-base.populatedmoneyptransaction.md) | A transaction that has been prepared for sending. |
 |  [PopulatedRedemption](./lib-base.populatedredemption.md) | A redemption transaction that has been prepared for sending. |
-|  [ReadableLiquity](./lib-base.readableliquity.md) | Read the state of the Liquity protocol. |
-|  [RedemptionDetails](./lib-base.redemptiondetails.md) | Details of a [redeemLUSD()](./lib-base.transactableliquity.redeemlusd.md) transaction. |
-|  [SendableLiquity](./lib-base.sendableliquity.md) | Send Liquity transactions. |
-|  [SentLiquityTransaction](./lib-base.sentliquitytransaction.md) | A transaction that has already been sent. |
-|  [StabilityDepositChangeDetails](./lib-base.stabilitydepositchangedetails.md) | Details of a [depositLUSDInStabilityPool()](./lib-base.transactableliquity.depositlusdinstabilitypool.md) or [withdrawLUSDFromStabilityPool()](./lib-base.transactableliquity.withdrawlusdfromstabilitypool.md) transaction. |
-|  [StabilityPoolGainsWithdrawalDetails](./lib-base.stabilitypoolgainswithdrawaldetails.md) | Details of a [withdrawGainsFromStabilityPool()](./lib-base.transactableliquity.withdrawgainsfromstabilitypool.md) transaction. |
-|  [TransactableLiquity](./lib-base.transactableliquity.md) | Send Liquity transactions and wait for them to succeed. |
-|  [TroveAdjustmentDetails](./lib-base.troveadjustmentdetails.md) | Details of an [adjustTrove()](./lib-base.transactableliquity.adjusttrove.md) transaction. |
-|  [TroveClosureDetails](./lib-base.troveclosuredetails.md) | Details of a [closeTrove()](./lib-base.transactableliquity.closetrove.md) transaction. |
-|  [TroveCreationDetails](./lib-base.trovecreationdetails.md) | Details of an [openTrove()](./lib-base.transactableliquity.opentrove.md) transaction. |
-|  [TroveListingParams](./lib-base.trovelistingparams.md) | Parameters of the [getTroves()](./lib-base.readableliquity.gettroves_1.md) function. |
+|  [ReadableMoneyp](./lib-base.readablemoneyp.md) | Read the state of the Moneyp protocol. |
+|  [RedemptionDetails](./lib-base.redemptiondetails.md) | Details of a [redeemBPD()](./lib-base.transactablemoneyp.redeembpd.md) transaction. |
+|  [SendableMoneyp](./lib-base.sendablemoneyp.md) | Send Moneyp transactions. |
+|  [SentMoneypTransaction](./lib-base.sentmoneyptransaction.md) | A transaction that has already been sent. |
+|  [StabilityDepositChangeDetails](./lib-base.stabilitydepositchangedetails.md) | Details of a [depositBPDInStabilityPool()](./lib-base.transactablemoneyp.depositbpdinstabilitypool.md) or [withdrawBPDFromStabilityPool()](./lib-base.transactablemoneyp.withdrawbpdfromstabilitypool.md) transaction. |
+|  [StabilityPoolGainsWithdrawalDetails](./lib-base.stabilitypoolgainswithdrawaldetails.md) | Details of a [withdrawGainsFromStabilityPool()](./lib-base.transactablemoneyp.withdrawgainsfromstabilitypool.md) transaction. |
+|  [TransactableMoneyp](./lib-base.transactablemoneyp.md) | Send Moneyp transactions and wait for them to succeed. |
+|  [VaultAdjustmentDetails](./lib-base.vaultadjustmentdetails.md) | Details of an [adjustVault()](./lib-base.transactablemoneyp.adjustvault.md) transaction. |
+|  [VaultClosureDetails](./lib-base.vaultclosuredetails.md) | Details of a [closeVault()](./lib-base.transactablemoneyp.closevault.md) transaction. |
+|  [VaultCreationDetails](./lib-base.vaultcreationdetails.md) | Details of an [openVault()](./lib-base.transactablemoneyp.openvault.md) transaction. |
+|  [VaultListingParams](./lib-base.vaultlistingparams.md) | Parameters of the [getVaults()](./lib-base.readablemoneyp.getvaults_1.md) function. |
 
 ## Variables
 
 |  Variable | Description |
 |  --- | --- |
+|  [BPD\_LIQUIDATION\_RESERVE](./lib-base.bpd_liquidation_reserve.md) | Amount of BPD that's reserved for compensating the liquidator of a Vault. |
+|  [BPD\_MINIMUM\_DEBT](./lib-base.bpd_minimum_debt.md) | A Vault must always have at least this much debt. |
+|  [BPD\_MINIMUM\_NET\_DEBT](./lib-base.bpd_minimum_net_debt.md) | A Vault must always have at least this much debt on top of the [liquidation reserve](./lib-base.bpd_liquidation_reserve.md)<!-- -->. |
 |  [CRITICAL\_COLLATERAL\_RATIO](./lib-base.critical_collateral_ratio.md) | Total collateral ratio below which recovery mode is triggered. |
-|  [LUSD\_LIQUIDATION\_RESERVE](./lib-base.lusd_liquidation_reserve.md) | Amount of LUSD that's reserved for compensating the liquidator of a Trove. |
-|  [LUSD\_MINIMUM\_DEBT](./lib-base.lusd_minimum_debt.md) | A Trove must always have at least this much debt. |
-|  [LUSD\_MINIMUM\_NET\_DEBT](./lib-base.lusd_minimum_net_debt.md) | A Trove must always have at least this much debt on top of the [liquidation reserve](./lib-base.lusd_liquidation_reserve.md)<!-- -->. |
 |  [MAXIMUM\_BORROWING\_RATE](./lib-base.maximum_borrowing_rate.md) | Value that the [borrowing rate](./lib-base.fees.borrowingrate.md) will never exceed. |
 |  [MINIMUM\_BORROWING\_RATE](./lib-base.minimum_borrowing_rate.md) | Value that the [borrowing rate](./lib-base.fees.borrowingrate.md) will never decay below. |
-|  [MINIMUM\_COLLATERAL\_RATIO](./lib-base.minimum_collateral_ratio.md) | Collateral ratio below which a Trove can be liquidated in normal mode. |
+|  [MINIMUM\_COLLATERAL\_RATIO](./lib-base.minimum_collateral_ratio.md) | Collateral ratio below which a Vault can be liquidated in normal mode. |
 |  [MINIMUM\_REDEMPTION\_RATE](./lib-base.minimum_redemption_rate.md) | Value that the [redemption rate](./lib-base.fees.redemptionrate.md) will never decay below. |
 
 ## Type Aliases
@@ -61,18 +61,18 @@
 |  --- | --- |
 |  [Decimalish](./lib-base.decimalish.md) | Types that can be converted into a Decimal. |
 |  [FailedReceipt](./lib-base.failedreceipt.md) | Indicates that the transaction has been mined, but it failed. |
-|  [FrontendStatus](./lib-base.frontendstatus.md) | Represents whether an address has been registered as a Liquity frontend. |
-|  [LiquityReceipt](./lib-base.liquityreceipt.md) | One of either a [PendingReceipt](./lib-base.pendingreceipt.md)<!-- -->, a [FailedReceipt](./lib-base.failedreceipt.md) or a [SuccessfulReceipt](./lib-base.successfulreceipt.md)<!-- -->. |
-|  [LiquityStoreState](./lib-base.liquitystorestate.md) | Type of [LiquityStore](./lib-base.liquitystore.md)<!-- -->'s [state](./lib-base.liquitystore.state.md)<!-- -->. |
-|  [LQTYStakeChange](./lib-base.lqtystakechange.md) | Represents the change between two states of an LQTY Stake. |
+|  [FrontendStatus](./lib-base.frontendstatus.md) | Represents whether an address has been registered as a Moneyp frontend. |
 |  [MinedReceipt](./lib-base.minedreceipt.md) | Either a [FailedReceipt](./lib-base.failedreceipt.md) or a [SuccessfulReceipt](./lib-base.successfulreceipt.md)<!-- -->. |
+|  [MoneypReceipt](./lib-base.moneypreceipt.md) | One of either a [PendingReceipt](./lib-base.pendingreceipt.md)<!-- -->, a [FailedReceipt](./lib-base.failedreceipt.md) or a [SuccessfulReceipt](./lib-base.successfulreceipt.md)<!-- -->. |
+|  [MoneypStoreState](./lib-base.moneypstorestate.md) | Type of [MoneypStore](./lib-base.moneypstore.md)<!-- -->'s [state](./lib-base.moneypstore.state.md)<!-- -->. |
+|  [MPStakeChange](./lib-base.mpstakechange.md) | Represents the change between two states of an MP Stake. |
 |  [PendingReceipt](./lib-base.pendingreceipt.md) | Indicates that the transaction hasn't been mined yet. |
 |  [StabilityDepositChange](./lib-base.stabilitydepositchange.md) | Represents the change between two Stability Deposit states. |
 |  [SuccessfulReceipt](./lib-base.successfulreceipt.md) | Indicates that the transaction has succeeded. |
-|  [TroveAdjustmentParams](./lib-base.troveadjustmentparams.md) | Parameters of an [adjustTrove()](./lib-base.transactableliquity.adjusttrove.md) transaction. |
-|  [TroveChange](./lib-base.trovechange.md) | Represents the change between two Trove states. |
-|  [TroveClosureParams](./lib-base.troveclosureparams.md) | Parameters of a [closeTrove()](./lib-base.transactableliquity.closetrove.md) transaction. |
-|  [TroveCreationError](./lib-base.trovecreationerror.md) | Describes why a Trove could not be created. |
-|  [TroveCreationParams](./lib-base.trovecreationparams.md) | Parameters of an [openTrove()](./lib-base.transactableliquity.opentrove.md) transaction. |
-|  [UserTroveStatus](./lib-base.usertrovestatus.md) | Represents whether a UserTrove is open or not, or why it was closed. |
+|  [UserVaultStatus](./lib-base.uservaultstatus.md) | Represents whether a UserVault is open or not, or why it was closed. |
+|  [VaultAdjustmentParams](./lib-base.vaultadjustmentparams.md) | Parameters of an [adjustVault()](./lib-base.transactablemoneyp.adjustvault.md) transaction. |
+|  [VaultChange](./lib-base.vaultchange.md) | Represents the change between two Vault states. |
+|  [VaultClosureParams](./lib-base.vaultclosureparams.md) | Parameters of a [closeVault()](./lib-base.transactablemoneyp.closevault.md) transaction. |
+|  [VaultCreationError](./lib-base.vaultcreationerror.md) | Describes why a Vault could not be created. |
+|  [VaultCreationParams](./lib-base.vaultcreationparams.md) | Parameters of an [openVault()](./lib-base.transactablemoneyp.openvault.md) transaction. |
 

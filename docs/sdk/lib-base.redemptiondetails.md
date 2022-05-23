@@ -4,7 +4,7 @@
 
 ## RedemptionDetails interface
 
-Details of a [redeemLUSD()](./lib-base.transactableliquity.redeemlusd.md) transaction.
+Details of a [redeemBPD()](./lib-base.transactablemoneyp.redeembpd.md) transaction.
 
 <b>Signature:</b>
 
@@ -16,8 +16,8 @@ export interface RedemptionDetails
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [actualLUSDAmount](./lib-base.redemptiondetails.actuallusdamount.md) | [Decimal](./lib-base.decimal.md) | Amount of LUSD that was actually redeemed by the transaction. |
-|  [attemptedLUSDAmount](./lib-base.redemptiondetails.attemptedlusdamount.md) | [Decimal](./lib-base.decimal.md) | Amount of LUSD the redeemer tried to redeem. |
-|  [collateralTaken](./lib-base.redemptiondetails.collateraltaken.md) | [Decimal](./lib-base.decimal.md) | Amount of collateral (e.g. Ether) taken from Troves by the transaction. |
+|  [actualBPDAmount](./lib-base.redemptiondetails.actualbpdamount.md) | [Decimal](./lib-base.decimal.md) | Amount of BPD that was actually redeemed by the transaction. |
+|  [attemptedBPDAmount](./lib-base.redemptiondetails.attemptedbpdamount.md) | [Decimal](./lib-base.decimal.md) | Amount of BPD the redeemer tried to redeem. |
+|  [collateralTaken](./lib-base.redemptiondetails.collateraltaken.md) | [Decimal](./lib-base.decimal.md) | Amount of collateral (e.g. Ether) taken from Vaults by the transaction. |
 |  [fee](./lib-base.redemptiondetails.fee.md) | [Decimal](./lib-base.decimal.md) | Amount of native currency (e.g. Ether) deducted as fee from collateral taken. |
 

@@ -8,38 +8,38 @@
 
 |  Class | Description |
 |  --- | --- |
-|  [BlockPolledLiquityStore](./lib-ethers.blockpolledliquitystore.md) | Ethers-based [LiquityStore](./lib-base.liquitystore.md) that updates state whenever there's a new block. |
-|  [EthersLiquity](./lib-ethers.ethersliquity.md) | Convenience class that combines multiple interfaces of the library in one object. |
-|  [EthersTransactionFailedError](./lib-ethers.etherstransactionfailederror.md) | Thrown by [EthersLiquity](./lib-ethers.ethersliquity.md) in case of transaction failure. |
-|  [PopulatableEthersLiquity](./lib-ethers.populatableethersliquity.md) | Ethers-based implementation of [PopulatableLiquity](./lib-base.populatableliquity.md)<!-- -->. |
-|  [PopulatedEthersLiquityTransaction](./lib-ethers.populatedethersliquitytransaction.md) | A transaction that has been prepared for sending. |
-|  [PopulatedEthersRedemption](./lib-ethers.populatedethersredemption.md) | A redemption transaction that has been prepared for sending. |
-|  [ReadableEthersLiquity](./lib-ethers.readableethersliquity.md) | Ethers-based implementation of [ReadableLiquity](./lib-base.readableliquity.md)<!-- -->. |
-|  [SendableEthersLiquity](./lib-ethers.sendableethersliquity.md) | Ethers-based implementation of [SendableLiquity](./lib-base.sendableliquity.md)<!-- -->. |
-|  [SentEthersLiquityTransaction](./lib-ethers.sentethersliquitytransaction.md) | A transaction that has already been sent. |
-|  [UnsupportedNetworkError](./lib-ethers.unsupportednetworkerror.md) | Thrown when trying to connect to a network where Liquity is not deployed. |
+|  [BitcoinsMoneyp](./lib-ethers.bitcoinsmoneyp.md) | Convenience class that combines multiple interfaces of the library in one object. |
+|  [BitcoinsTransactionFailedError](./lib-ethers.bitcoinstransactionfailederror.md) | Thrown by [BitcoinsMoneyp](./lib-ethers.bitcoinsmoneyp.md) in case of transaction failure. |
+|  [BlockPolledMoneypStore](./lib-ethers.blockpolledmoneypstore.md) | Bitcoins-based [MoneypStore](./lib-base.moneypstore.md) that updates state whenever there's a new block. |
+|  [PopulatableBitcoinsMoneyp](./lib-ethers.populatablebitcoinsmoneyp.md) | Bitcoins-based implementation of [PopulatableMoneyp](./lib-base.populatablemoneyp.md)<!-- -->. |
+|  [PopulatedBitcoinsMoneypTransaction](./lib-ethers.populatedbitcoinsmoneyptransaction.md) | A transaction that has been prepared for sending. |
+|  [PopulatedBitcoinsRedemption](./lib-ethers.populatedbitcoinsredemption.md) | A redemption transaction that has been prepared for sending. |
+|  [ReadableBitcoinsMoneyp](./lib-ethers.readablebitcoinsmoneyp.md) | Bitcoins-based implementation of [ReadableMoneyp](./lib-base.readablemoneyp.md)<!-- -->. |
+|  [SendableBitcoinsMoneyp](./lib-ethers.sendablebitcoinsmoneyp.md) | Bitcoins-based implementation of [SendableMoneyp](./lib-base.sendablemoneyp.md)<!-- -->. |
+|  [SentBitcoinsMoneypTransaction](./lib-ethers.sentbitcoinsmoneyptransaction.md) | A transaction that has already been sent. |
+|  [UnsupportedNetworkError](./lib-ethers.unsupportednetworkerror.md) | Thrown when trying to connect to a network where Moneyp is not deployed. |
 
 ## Interfaces
 
 |  Interface | Description |
 |  --- | --- |
-|  [BlockPolledLiquityStoreExtraState](./lib-ethers.blockpolledliquitystoreextrastate.md) | Extra state added to [LiquityStoreState](./lib-base.liquitystorestate.md) by [BlockPolledLiquityStore](./lib-ethers.blockpolledliquitystore.md)<!-- -->. |
-|  [EthersCallOverrides](./lib-ethers.etherscalloverrides.md) | Optional parameters taken by [ReadableEthersLiquity](./lib-ethers.readableethersliquity.md) functions. |
-|  [EthersLiquityConnection](./lib-ethers.ethersliquityconnection.md) | Information about a connection to the Liquity protocol. |
-|  [EthersLiquityConnectionOptionalParams](./lib-ethers.ethersliquityconnectionoptionalparams.md) | Optional parameters of [ReadableEthersLiquity.connect()](./lib-ethers.readableethersliquity.connect_1.md) and [EthersLiquity.connect()](./lib-ethers.ethersliquity.connect_1.md)<!-- -->. |
-|  [EthersLiquityWithStore](./lib-ethers.ethersliquitywithstore.md) | Variant of [EthersLiquity](./lib-ethers.ethersliquity.md) that exposes a [LiquityStore](./lib-base.liquitystore.md)<!-- -->. |
-|  [EthersTransactionOverrides](./lib-ethers.etherstransactionoverrides.md) | Optional parameters taken by [EthersLiquity](./lib-ethers.ethersliquity.md) transaction functions. |
-|  [ReadableEthersLiquityWithStore](./lib-ethers.readableethersliquitywithstore.md) | Variant of [ReadableEthersLiquity](./lib-ethers.readableethersliquity.md) that exposes a [LiquityStore](./lib-base.liquitystore.md)<!-- -->. |
+|  [BitcoinsCallOverrides](./lib-ethers.bitcoinscalloverrides.md) | Optional parameters taken by [ReadableBitcoinsMoneyp](./lib-ethers.readablebitcoinsmoneyp.md) functions. |
+|  [BitcoinsMoneypConnection](./lib-ethers.bitcoinsmoneypconnection.md) | Information about a connection to the Moneyp protocol. |
+|  [BitcoinsMoneypConnectionOptionalParams](./lib-ethers.bitcoinsmoneypconnectionoptionalparams.md) | Optional parameters of [ReadableBitcoinsMoneyp.connect()](./lib-ethers.readablebitcoinsmoneyp.connect_1.md) and [BitcoinsMoneyp.connect()](./lib-ethers.bitcoinsmoneyp.connect_1.md)<!-- -->. |
+|  [BitcoinsMoneypWithStore](./lib-ethers.bitcoinsmoneypwithstore.md) | Variant of [BitcoinsMoneyp](./lib-ethers.bitcoinsmoneyp.md) that exposes a [MoneypStore](./lib-base.moneypstore.md)<!-- -->. |
+|  [BitcoinsTransactionOverrides](./lib-ethers.bitcoinstransactionoverrides.md) | Optional parameters taken by [BitcoinsMoneyp](./lib-ethers.bitcoinsmoneyp.md) transaction functions. |
+|  [BlockPolledMoneypStoreExtraState](./lib-ethers.blockpolledmoneypstoreextrastate.md) | Extra state added to [MoneypStoreState](./lib-base.moneypstorestate.md) by [BlockPolledMoneypStore](./lib-ethers.blockpolledmoneypstore.md)<!-- -->. |
+|  [ReadableBitcoinsMoneypWithStore](./lib-ethers.readablebitcoinsmoneypwithstore.md) | Variant of [ReadableBitcoinsMoneyp](./lib-ethers.readablebitcoinsmoneyp.md) that exposes a [MoneypStore](./lib-base.moneypstore.md)<!-- -->. |
 
 ## Type Aliases
 
 |  Type Alias | Description |
 |  --- | --- |
-|  [BlockPolledLiquityStoreState](./lib-ethers.blockpolledliquitystorestate.md) | The type of [BlockPolledLiquityStore](./lib-ethers.blockpolledliquitystore.md)<!-- -->'s [state](./lib-base.liquitystore.state.md)<!-- -->. |
-|  [EthersLiquityStoreOption](./lib-ethers.ethersliquitystoreoption.md) | Possible values for the optional [useStore](./lib-ethers.ethersliquityconnectionoptionalparams.usestore.md) connection parameter. |
-|  [EthersPopulatedTransaction](./lib-ethers.etherspopulatedtransaction.md) | Alias of Ethers' <code>PopulatedTransaction</code> type, which implements [UnsignedTransaction](https://docs.ethers.io/v5/api/utils/transactions/#UnsignedTransaction)<!-- -->. |
-|  [EthersProvider](./lib-ethers.ethersprovider.md) | Alias of Ethers' abstract [Provider](https://docs.ethers.io/v5/api/providers/) type. |
-|  [EthersSigner](./lib-ethers.etherssigner.md) | Alias of Ethers' abstract [Signer](https://docs.ethers.io/v5/api/signer/) type. |
-|  [EthersTransactionReceipt](./lib-ethers.etherstransactionreceipt.md) | Alias of Ethers' [TransactionReceipt](https://docs.ethers.io/v5/api/providers/types/#providers-TransactionReceipt) type. |
-|  [EthersTransactionResponse](./lib-ethers.etherstransactionresponse.md) | Alias of Ethers' [TransactionResponse](https://docs.ethers.io/v5/api/providers/types/#providers-TransactionResponse) type. |
+|  [BitcoinsMoneypStoreOption](./lib-ethers.bitcoinsmoneypstoreoption.md) | Possible values for the optional [useStore](./lib-ethers.bitcoinsmoneypconnectionoptionalparams.usestore.md) connection parameter. |
+|  [BitcoinsPopulatedTransaction](./lib-ethers.bitcoinspopulatedtransaction.md) | Alias of Bitcoins' <code>PopulatedTransaction</code> type, which implements [UnsignedTransaction](https://docs.ethers.io/v5/api/utils/transactions/#UnsignedTransaction)<!-- -->. |
+|  [BitcoinsProvider](./lib-ethers.bitcoinsprovider.md) | Alias of Bitcoins' abstract [Provider](https://docs.ethers.io/v5/api/providers/) type. |
+|  [BitcoinsSigner](./lib-ethers.bitcoinssigner.md) | Alias of Bitcoins' abstract [Signer](https://docs.ethers.io/v5/api/signer/) type. |
+|  [BitcoinsTransactionReceipt](./lib-ethers.bitcoinstransactionreceipt.md) | Alias of Bitcoins' [TransactionReceipt](https://docs.ethers.io/v5/api/providers/types/#providers-TransactionReceipt) type. |
+|  [BitcoinsTransactionResponse](./lib-ethers.bitcoinstransactionresponse.md) | Alias of Bitcoins' [TransactionResponse](https://docs.ethers.io/v5/api/providers/types/#providers-TransactionResponse) type. |
+|  [BlockPolledMoneypStoreState](./lib-ethers.blockpolledmoneypstorestate.md) | The type of [BlockPolledMoneypStore](./lib-ethers.blockpolledmoneypstore.md)<!-- -->'s [state](./lib-base.moneypstore.state.md)<!-- -->. |
 
