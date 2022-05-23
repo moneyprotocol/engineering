@@ -12,7 +12,7 @@ export enum OrderDirection {
   desc = "desc",
 }
 
-export enum TroveStatus {
+export enum VaultStatus {
   closedByLiquidation = "closedByLiquidation",
   closedByOwner = "closedByOwner",
   closedByRedemption = "closedByRedemption",

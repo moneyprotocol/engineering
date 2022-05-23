@@ -25,7 +25,7 @@ export interface Global_global {
    * There should be only one System entity with an ID of 'only'
    */
   id: string;
-  numberOfOpenTroves: number;
+  numberOfOpenVaults: number;
   /**
    * Total redistributed per-stake collateral
    */

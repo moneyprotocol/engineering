@@ -3,13 +3,13 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { TroveStatus } from "./globalTypes";
+import { VaultStatus } from "./globalTypes";
 
 // ====================================================
-// GraphQL fragment: TroveRawFields
+// GraphQL fragment: VaultRawFields
 // ====================================================
 
-export interface TroveRawFields_owner {
+export interface VaultRawFields_owner {
   __typename: "User";
   /**
    * User's Ethereum address as a hex-string
@@ -17,10 +17,10 @@ export interface TroveRawFields_owner {
   id: string;
 }
 
-export interface TroveRawFields {
-  __typename: "Trove";
-  owner: TroveRawFields_owner;
-  status: TroveStatus;
+export interface VaultRawFields {
+  __typename: "Vault";
+  owner: VaultRawFields_owner;
+  status: VaultStatus;
   rawCollateral: any;
   rawDebt: any;
   rawStake: any;

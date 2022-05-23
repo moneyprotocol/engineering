@@ -3,13 +3,13 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { TroveStatus } from "./globalTypes";
+import { OrderDirection, VaultStatus } from "./globalTypes";
 
 // ====================================================
-// GraphQL query operation: TroveWithoutRewards
+// GraphQL query operation: Vaults
 // ====================================================
 
-export interface TroveWithoutRewards_user_currentTrove_owner {
+export interface Vaults_vaults_owner {
   __typename: "User";
   /**
    * User's Ethereum address as a hex-string
@@ -17,14 +17,14 @@ export interface TroveWithoutRewards_user_currentTrove_owner {
   id: string;
 }
 
-export interface TroveWithoutRewards_user_currentTrove {
-  __typename: "Trove";
+export interface Vaults_vaults {
+  __typename: "Vault";
   /**
    * Owner's ID + '-' + an incremented integer
    */
   id: string;
-  owner: TroveWithoutRewards_user_currentTrove_owner;
-  status: TroveStatus;
+  owner: Vaults_vaults_owner;
+  status: VaultStatus;
   rawCollateral: any;
   rawDebt: any;
   rawStake: any;
@@ -38,19 +38,12 @@ export interface TroveWithoutRewards_user_currentTrove {
   rawSnapshotOfTotalRedistributedDebt: any;
 }
 
-export interface TroveWithoutRewards_user {
-  __typename: "User";
-  /**
-   * User's Ethereum address as a hex-string
-   */
-  id: string;
-  currentTrove: TroveWithoutRewards_user_currentTrove | null;
+export interface Vaults {
+  vaults: Vaults_vaults[];
 }
 
-export interface TroveWithoutRewards {
-  user: TroveWithoutRewards_user | null;
-}
-
-export interface TroveWithoutRewardsVariables {
-  address: string;
+export interface VaultsVariables {
+  orderDirection: OrderDirection;
+  startingAt: number;
+  first: number;
 }
