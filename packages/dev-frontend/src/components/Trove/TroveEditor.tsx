@@ -6,11 +6,11 @@ import {
   Difference,
   Decimalish,
   Decimal,
-  Trove,
-  LiquityStoreState,
-  LUSD_LIQUIDATION_RESERVE
+  Vault,
+  MoneypStoreState,
+  BPD_LIQUIDATION_RESERVE
 } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { useMoneypSelector } from "@liquity/lib-react";
 
 import { COIN } from "../../strings";
 
@@ -20,11 +20,11 @@ import { LoadingOverlay } from "../LoadingOverlay";
 import { CollateralRatio } from "./CollateralRatio";
 import { InfoIcon } from "../InfoIcon";
 
-const gasRoomETH = Decimal.from(0.1);
+const gasRoomRBTC = Decimal.from(0.1);
 
-type TroveEditorProps = {
-  original: Trove;
-  edited: Trove;
+type VaultEditorProps = {
+  original: Vault;
+  edited: Vault;
   fee: Decimal;
   borrowingRate: Decimal;
   changePending: boolean;
@@ -33,9 +33,9 @@ type TroveEditorProps = {
   ) => void;
 };
 
-const select = ({ price, accountBalance }: LiquityStoreState) => ({ price, accountBalance });
+const select = ({ price, accountBalance }: MoneypStoreState) => ({ price, accountBalance });
 
-export const TroveEditor: React.FC<TroveEditorProps> = ({
+export const VaultEditor: React.FC<VaultEditorProps> = ({
   children,
   original,
   edited,
@@ -44,7 +44,7 @@ export const TroveEditor: React.FC<TroveEditorProps> = ({
   changePending,
   dispatch
 }) => {
-  const { price, accountBalance } = useLiquitySelector(select);
+  const { price, accountBalance } = useMoneypSelector(select);
 
   const editingState = useState<string>();
 
@@ -54,7 +54,7 @@ export const TroveEditor: React.FC<TroveEditorProps> = ({
   const collateralRatio = !edited.isEmpty ? edited.collateralRatio(price) : undefined;
   const collateralRatioChange = Difference.between(collateralRatio, originalCollateralRatio);
 
-  const maxEth = accountBalance.gt(gasRoomETH) ? accountBalance.sub(gasRoomETH) : Decimal.ZERO;
+  const maxEth = accountBalance.gt(gasRoomRBTC) ? accountBalance.sub(gasRoomRBTC) : Decimal.ZERO;
   const maxCollateral = original.collateral.add(maxEth);
   const collateralMaxedOut = edited.collateral.eq(maxCollateral);
 
@@ -63,7 +63,7 @@ export const TroveEditor: React.FC<TroveEditorProps> = ({
   return (
     <Card>
       <Heading>
-        Trove
+        Vault
         {dirty && !changePending && (
           <Button
             variant="titleIcon"
@@ -78,11 +78,11 @@ export const TroveEditor: React.FC<TroveEditorProps> = ({
       <Box sx={{ p: [2, 3] }}>
         <EditableRow
           label="Collateral"
-          inputId="trove-collateral"
+          inputId="vault-collateral"
           amount={edited.collateral.prettify(4)}
           maxAmount={maxCollateral.toString()}
           maxedOut={collateralMaxedOut}
-          unit="ETH"
+          unit="RBTC"
           {...{ editingState }}
           editedAmount={edited.collateral.toString(4)}
           setEditedAmount={(editedCollateral: string) =>
@@ -92,7 +92,7 @@ export const TroveEditor: React.FC<TroveEditorProps> = ({
 
         <EditableRow
           label="Debt"
-          inputId="trove-debt"
+          inputId="vault-debt"
           amount={edited.debt.prettify()}
           unit={COIN}
           {...{ editingState }}
@@ -105,14 +105,14 @@ export const TroveEditor: React.FC<TroveEditorProps> = ({
         {original.isEmpty && (
           <StaticRow
             label="Liquidation reserve"
-            inputId="trove-liquidation-reserve"
-            amount={`${LUSD_LIQUIDATION_RESERVE}`}
+            inputId="vault-liquidation-reserve"
+            amount={`${BPD_LIQUIDATION_RESERVE}`}
             unit={COIN}
             infoIcon={
               <InfoIcon
                 tooltip={
                   <Card variant="tooltip" sx={{ width: "200px" }}>
-                    This fee covers the gas cost a liquidator would pay to liquidate your Trove. You
+                    This fee covers the gas cost a liquidator would pay to liquidate your Vault. You
                     are refunded this fee when you repay your debt.
                   </Card>
                 }
@@ -123,7 +123,7 @@ export const TroveEditor: React.FC<TroveEditorProps> = ({
 
         <StaticRow
           label="Fee"
-          inputId="trove-borrowing-fee"
+          inputId="vault-borrowing-fee"
           amount={fee.toString(2)}
           pendingAmount={feePct.toString(2)}
           unit={COIN}

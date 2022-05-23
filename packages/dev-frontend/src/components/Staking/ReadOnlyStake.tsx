@@ -1,22 +1,22 @@
 import { Heading, Box, Card, Flex, Button } from "theme-ui";
 
-import { LiquityStoreState } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { MoneypStoreState } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 
 import { COIN, GT } from "../../strings";
 
-import { DisabledEditableRow, StaticRow } from "../Trove/Editor";
+import { DisabledEditableRow, StaticRow } from "../Vault/Editor";
 import { LoadingOverlay } from "../LoadingOverlay";
 import { Icon } from "../Icon";
 
 import { useStakingView } from "./context/StakingViewContext";
 import { StakingGainsAction } from "./StakingGainsAction";
 
-const selectLQTYStake = ({ lqtyStake }: LiquityStoreState) => lqtyStake;
+const selectMPStake = ({ mpStake }: MoneypStoreState) => mpStake;
 
 export const ReadOnlyStake: React.FC = () => {
   const { changePending, dispatch } = useStakingView();
-  const lqtyStake = useLiquitySelector(selectLQTYStake);
+  const mpStake = useMoneypSelector(selectMPStake);
 
   return (
     <Card>
@@ -25,24 +25,24 @@ export const ReadOnlyStake: React.FC = () => {
       <Box sx={{ p: [2, 3] }}>
         <DisabledEditableRow
           label="Stake"
-          inputId="stake-lqty"
-          amount={lqtyStake.stakedLQTY.prettify()}
+          inputId="stake-mp"
+          amount={mpStake.stakedMP.prettify()}
           unit={GT}
         />
 
         <StaticRow
           label="Redemption gain"
           inputId="stake-gain-eth"
-          amount={lqtyStake.collateralGain.prettify(4)}
-          color={lqtyStake.collateralGain.nonZero && "success"}
-          unit="ETH"
+          amount={mpStake.collateralGain.prettify(4)}
+          color={mpStake.collateralGain.nonZero && "success"}
+          unit="RBTC"
         />
 
         <StaticRow
           label="Issuance gain"
-          inputId="stake-gain-lusd"
-          amount={lqtyStake.lusdGain.prettify()}
-          color={lqtyStake.lusdGain.nonZero && "success"}
+          inputId="stake-gain-bpd"
+          amount={mpStake.bpdGain.prettify()}
+          color={mpStake.bpdGain.nonZero && "success"}
           unit={COIN}
         />
 

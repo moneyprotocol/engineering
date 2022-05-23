@@ -1,31 +1,31 @@
 import React from "react";
-import { LiquityStoreState } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { MoneypStoreState } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 import { Container, Flex, Box } from "theme-ui";
 import { AddressZero } from "@ethersproject/constants";
-import { useLiquity } from "../hooks/LiquityContext";
+import { useMoneyp } from "../hooks/MoneypContext";
 
-import { LiquityLogo } from "./LiquityLogo";
+import { MoneypLogo } from "./MoneypLogo";
 import { Nav } from "./Nav";
 import { SideNav } from "./SideNav";
 
 const logoHeight = "32px";
 
-const select = ({ frontend }: LiquityStoreState) => ({
+const select = ({ frontend }: MoneypStoreState) => ({
   frontend
 });
 
 export const Header: React.FC = ({ children }) => {
   const {
     config: { frontendTag }
-  } = useLiquity();
-  const { frontend } = useLiquitySelector(select);
+  } = useMoneyp();
+  const { frontend } = useMoneypSelector(select);
   const isFrontendRegistered = frontendTag === AddressZero || frontend.status === "registered";
 
   return (
     <Container variant="header">
       <Flex sx={{ alignItems: "center", flex: 1 }}>
-        <LiquityLogo height={logoHeight} />
+        <MoneypLogo height={logoHeight} />
 
         <Box
           sx={{

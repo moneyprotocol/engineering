@@ -1,20 +1,20 @@
 import React from "react";
 import { Card, Heading, Box, Flex } from "theme-ui";
-import { LiquityStoreState } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { MoneypStoreState } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 import { InfoMessage } from "../../../InfoMessage";
 import { UnstakeAndClaim } from "../UnstakeAndClaim";
-import { RemainingLQTY } from "../RemainingLQTY";
-import { StaticRow } from "../../../Trove/Editor";
+import { RemainingMP } from "../RemainingMP";
+import { StaticRow } from "../../../Vault/Editor";
 import { GT, LP } from "../../../../strings";
 
-const selector = ({ liquidityMiningStake, liquidityMiningLQTYReward }: LiquityStoreState) => ({
+const selector = ({ liquidityMiningStake, liquidityMiningMPReward }: MoneypStoreState) => ({
   liquidityMiningStake,
-  liquidityMiningLQTYReward
+  liquidityMiningMPReward
 });
 
 export const Disabled: React.FC = () => {
-  const { liquidityMiningStake, liquidityMiningLQTYReward } = useLiquitySelector(selector);
+  const { liquidityMiningStake, liquidityMiningMPReward } = useMoneypSelector(selector);
   const hasStake = !liquidityMiningStake.isZero;
 
   return (
@@ -22,12 +22,12 @@ export const Disabled: React.FC = () => {
       <Heading>
         Liquidity farm
         <Flex sx={{ justifyContent: "flex-end" }}>
-          <RemainingLQTY />
+          <RemainingMP />
         </Flex>
       </Heading>
       <Box sx={{ p: [2, 3] }}>
         <InfoMessage title="Liquidity farming period has finished">
-          <Flex>There are no more LQTY rewards left to farm</Flex>
+          <Flex>There are no more MP rewards left to farm</Flex>
         </InfoMessage>
         {hasStake && (
           <>
@@ -41,8 +41,8 @@ export const Disabled: React.FC = () => {
               <StaticRow
                 label="Reward"
                 inputId="farm-reward"
-                amount={liquidityMiningLQTYReward.prettify(4)}
-                color={liquidityMiningLQTYReward.nonZero && "success"}
+                amount={liquidityMiningMPReward.prettify(4)}
+                color={liquidityMiningMPReward.nonZero && "success"}
                 unit={GT}
               />
             </Box>

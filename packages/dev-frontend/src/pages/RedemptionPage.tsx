@@ -3,18 +3,18 @@ import { Box, Card, Container, Link, Paragraph } from "theme-ui";
 import { SystemStats } from "../components/SystemStats";
 import { Redemption } from "../components/Redemption/Redemption";
 import { InfoMessage } from "../components/InfoMessage";
-import { useLiquity } from "../hooks/LiquityContext";
+import { useMoneyp } from "../hooks/MoneypContext";
 import { Icon } from "../components/Icon";
 
-const uniLink = (lusdAddress: string) =>
-  `https://app.uniswap.org/#/swap?inputCurrency=${lusdAddress}&outputCurrency=ETH`;
+const uniLink = (bpdAddress: string) =>
+  `https://app.uniswap.org/#/swap?inputCurrency=${bpdAddress}&outputCurrency=RBTC`;
 
 export const RedemptionPage: React.FC = () => {
   const {
-    liquity: {
+    moneyp: {
       connection: { addresses }
     }
-  } = useLiquity();
+  } = useMoneyp();
 
   return (
     <Container variant="columns">
@@ -27,8 +27,8 @@ export const RedemptionPage: React.FC = () => {
                 emerge.
               </Paragraph>
               <Paragraph>
-                You will probably be able to get a better rate for converting LUSD to ETH on{" "}
-                <Link href={uniLink(addresses["lusdToken"])} target="_blank">
+                You will probably be able to get a better rate for converting BPD to RBTC on{" "}
+                <Link href={uniLink(addresses["bpdToken"])} target="_blank">
                   Uniswap <Icon name="external-link-alt" size="xs" />
                 </Link>
               </Paragraph>

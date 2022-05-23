@@ -6,14 +6,14 @@ import {
   Percent,
   MINIMUM_COLLATERAL_RATIO,
   CRITICAL_COLLATERAL_RATIO,
-  UserTrove,
+  UserVault,
   Decimal
 } from "@liquity/lib-base";
-import { BlockPolledLiquityStoreState } from "@liquity/lib-ethers";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { BlockPolledMoneypStoreState } from "@liquity/lib-ethers";
+import { useMoneypSelector } from "@liquity/lib-react";
 
 import { shortenAddress } from "../utils/shortenAddress";
-import { useLiquity } from "../hooks/LiquityContext";
+import { useMoneyp } from "../hooks/MoneypContext";
 import { COIN } from "../strings";
 
 import { Icon } from "./Icon";
@@ -24,65 +24,65 @@ import { Abbreviation } from "./Abbreviation";
 
 const rowHeight = "40px";
 
-const liquidatableInNormalMode = (trove: UserTrove, price: Decimal) =>
-  [trove.collateralRatioIsBelowMinimum(price), "Collateral ratio not low enough"] as const;
+const liquidatableInNormalMode = (vault: UserVault, price: Decimal) =>
+  [vault.collateralRatioIsBelowMinimum(price), "Collateral ratio not low enough"] as const;
 
 const liquidatableInRecoveryMode = (
-  trove: UserTrove,
+  vault: UserVault,
   price: Decimal,
   totalCollateralRatio: Decimal,
-  lusdInStabilityPool: Decimal
+  bpdInStabilityPool: Decimal
 ) => {
-  const collateralRatio = trove.collateralRatio(price);
+  const collateralRatio = vault.collateralRatio(price);
 
   if (collateralRatio.gte(MINIMUM_COLLATERAL_RATIO) && collateralRatio.lt(totalCollateralRatio)) {
     return [
-      trove.debt.lte(lusdInStabilityPool),
-      "There's not enough LUSD in the Stability pool to cover the debt"
+      vault.debt.lte(bpdInStabilityPool),
+      "There's not enough BPD in the Stability pool to cover the debt"
     ] as const;
   } else {
-    return liquidatableInNormalMode(trove, price);
+    return liquidatableInNormalMode(vault, price);
   }
 };
 
-type RiskiestTrovesProps = {
+type RiskiestVaultsProps = {
   pageSize: number;
 };
 
 const select = ({
-  numberOfTroves,
+  numberOfVaults,
   price,
   total,
-  lusdInStabilityPool,
+  bpdInStabilityPool,
   blockTag
-}: BlockPolledLiquityStoreState) => ({
-  numberOfTroves,
+}: BlockPolledMoneypStoreState) => ({
+  numberOfVaults,
   price,
   recoveryMode: total.collateralRatioIsBelowCritical(price),
   totalCollateralRatio: total.collateralRatio(price),
-  lusdInStabilityPool,
+  bpdInStabilityPool,
   blockTag
 });
 
-export const RiskiestTroves: React.FC<RiskiestTrovesProps> = ({ pageSize }) => {
+export const RiskiestVaults: React.FC<RiskiestVaultsProps> = ({ pageSize }) => {
   const {
     blockTag,
-    numberOfTroves,
+    numberOfVaults,
     recoveryMode,
     totalCollateralRatio,
-    lusdInStabilityPool,
+    bpdInStabilityPool,
     price
-  } = useLiquitySelector(select);
-  const { liquity } = useLiquity();
+  } = useMoneypSelector(select);
+  const { moneyp } = useMoneyp();
 
   const [loading, setLoading] = useState(true);
-  const [troves, setTroves] = useState<UserTrove[]>();
+  const [vaults, setVaults] = useState<UserVault[]>();
 
   const [reload, setReload] = useState({});
   const forceReload = useCallback(() => setReload({}), []);
 
   const [page, setPage] = useState(0);
-  const numberOfPages = Math.ceil(numberOfTroves / pageSize) || 1;
+  const numberOfPages = Math.ceil(numberOfVaults / pageSize) || 1;
   const clampedPage = Math.min(page, numberOfPages - 1);
 
   const nextPage = () => {
@@ -108,8 +108,8 @@ export const RiskiestTroves: React.FC<RiskiestTrovesProps> = ({ pageSize }) => {
 
     setLoading(true);
 
-    liquity
-      .getTroves(
+    moneyp
+      .getVaults(
         {
           first: pageSize,
           sortedBy: "ascendingCollateralRatio",
@@ -117,9 +117,9 @@ export const RiskiestTroves: React.FC<RiskiestTrovesProps> = ({ pageSize }) => {
         },
         { blockTag }
       )
-      .then(troves => {
+      .then(vaults => {
         if (mounted) {
-          setTroves(troves);
+          setVaults(vaults);
           setLoading(false);
         }
       });
@@ -129,11 +129,11 @@ export const RiskiestTroves: React.FC<RiskiestTrovesProps> = ({ pageSize }) => {
     };
     // Omit blockTag from deps on purpose
     // eslint-disable-next-line
-  }, [liquity, clampedPage, pageSize, reload]);
+  }, [moneyp, clampedPage, pageSize, reload]);
 
   useEffect(() => {
     forceReload();
-  }, [forceReload, numberOfTroves]);
+  }, [forceReload, numberOfVaults]);
 
   const [copied, setCopied] = useState<string>();
 
@@ -156,17 +156,17 @@ export const RiskiestTroves: React.FC<RiskiestTrovesProps> = ({ pageSize }) => {
   return (
     <Card sx={{ width: "100%" }}>
       <Heading>
-        <Abbreviation short="Troves">Riskiest Troves</Abbreviation>
+        <Abbreviation short="Vaults">Riskiest Vaults</Abbreviation>
 
         <Flex sx={{ alignItems: "center" }}>
-          {numberOfTroves !== 0 && (
+          {numberOfVaults !== 0 && (
             <>
               <Abbreviation
                 short={`page ${clampedPage + 1} / ${numberOfPages}`}
                 sx={{ mr: [0, 3], fontWeight: "body", fontSize: [1, 2], letterSpacing: [-1, 0] }}
               >
-                {clampedPage * pageSize + 1}-{Math.min((clampedPage + 1) * pageSize, numberOfTroves)}{" "}
-                of {numberOfTroves}
+                {clampedPage * pageSize + 1}-{Math.min((clampedPage + 1) * pageSize, numberOfVaults)}{" "}
+                of {numberOfVaults}
               </Abbreviation>
 
               <Button variant="titleIcon" onClick={previousPage} disabled={clampedPage <= 0}>
@@ -193,10 +193,10 @@ export const RiskiestTroves: React.FC<RiskiestTrovesProps> = ({ pageSize }) => {
         </Flex>
       </Heading>
 
-      {!troves || troves.length === 0 ? (
+      {!vaults || vaults.length === 0 ? (
         <Box sx={{ p: [2, 3] }}>
           <Box sx={{ p: 4, fontSize: 3, textAlign: "center" }}>
-            {!troves ? "Loading..." : "There are no Troves yet"}
+            {!vaults ? "Loading..." : "There are no Vaults yet"}
           </Box>
         </Box>
       ) : (
@@ -225,7 +225,7 @@ export const RiskiestTroves: React.FC<RiskiestTrovesProps> = ({ pageSize }) => {
                 <th>Owner</th>
                 <th>
                   <Abbreviation short="Coll.">Collateral</Abbreviation>
-                  <Box sx={{ fontSize: [0, 1], fontWeight: "body", opacity: 0.5 }}>ETH</Box>
+                  <Box sx={{ fontSize: [0, 1], fontWeight: "body", opacity: 0.5 }}>RBTC</Box>
                 </th>
                 <th>
                   Debt
@@ -241,11 +241,11 @@ export const RiskiestTroves: React.FC<RiskiestTrovesProps> = ({ pageSize }) => {
             </thead>
 
             <tbody>
-              {troves.map(
-                trove =>
-                  !trove.isEmpty && ( // making sure the Trove hasn't been liquidated
-                    // (TODO: remove check after we can fetch multiple Troves in one call)
-                    <tr key={trove.ownerAddress}>
+              {vaults.map(
+                vault =>
+                  !vault.isEmpty && ( // making sure the Vault hasn't been liquidated
+                    // (TODO: remove check after we can fetch multiple Vaults in one call)
+                    <tr key={vault.ownerAddress}>
                       <td
                         style={{
                           display: "flex",
@@ -253,7 +253,7 @@ export const RiskiestTroves: React.FC<RiskiestTrovesProps> = ({ pageSize }) => {
                           height: rowHeight
                         }}
                       >
-                        <Tooltip message={trove.ownerAddress} placement="top">
+                        <Tooltip message={vault.ownerAddress} placement="top">
                           <Text
                             variant="address"
                             sx={{
@@ -262,7 +262,7 @@ export const RiskiestTroves: React.FC<RiskiestTrovesProps> = ({ pageSize }) => {
                               position: "relative"
                             }}
                           >
-                            {shortenAddress(trove.ownerAddress)}
+                            {shortenAddress(vault.ownerAddress)}
                             <Box
                               sx={{
                                 display: ["block", "none"],
@@ -279,25 +279,25 @@ export const RiskiestTroves: React.FC<RiskiestTrovesProps> = ({ pageSize }) => {
                         </Tooltip>
 
                         <CopyToClipboard
-                          text={trove.ownerAddress}
-                          onCopy={() => setCopied(trove.ownerAddress)}
+                          text={vault.ownerAddress}
+                          onCopy={() => setCopied(vault.ownerAddress)}
                         >
                           <Button variant="icon" sx={{ width: "24px", height: "24px" }}>
                             <Icon
-                              name={copied === trove.ownerAddress ? "clipboard-check" : "clipboard"}
+                              name={copied === vault.ownerAddress ? "clipboard-check" : "clipboard"}
                               size="sm"
                             />
                           </Button>
                         </CopyToClipboard>
                       </td>
                       <td>
-                        <Abbreviation short={trove.collateral.shorten()}>
-                          {trove.collateral.prettify(4)}
+                        <Abbreviation short={vault.collateral.shorten()}>
+                          {vault.collateral.prettify(4)}
                         </Abbreviation>
                       </td>
                       <td>
-                        <Abbreviation short={trove.debt.shorten()}>
-                          {trove.debt.prettify()}
+                        <Abbreviation short={vault.debt.shorten()}>
+                          {vault.debt.prettify()}
                         </Abbreviation>
                       </td>
                       <td>
@@ -313,23 +313,23 @@ export const RiskiestTroves: React.FC<RiskiestTrovesProps> = ({ pageSize }) => {
                           >
                             {new Percent(collateralRatio).prettify()}
                           </Text>
-                        ))(trove.collateralRatio(price))}
+                        ))(vault.collateralRatio(price))}
                       </td>
                       <td>
                         <Transaction
-                          id={`liquidate-${trove.ownerAddress}`}
+                          id={`liquidate-${vault.ownerAddress}`}
                           tooltip="Liquidate"
                           requires={[
                             recoveryMode
                               ? liquidatableInRecoveryMode(
-                                  trove,
+                                  vault,
                                   price,
                                   totalCollateralRatio,
-                                  lusdInStabilityPool
+                                  bpdInStabilityPool
                                 )
-                              : liquidatableInNormalMode(trove, price)
+                              : liquidatableInNormalMode(vault, price)
                           ]}
-                          send={liquity.send.liquidate.bind(liquity.send, trove.ownerAddress)}
+                          send={moneyp.send.liquidate.bind(moneyp.send, vault.ownerAddress)}
                         >
                           <Button variant="dangerIcon">
                             <Icon name="trash" />

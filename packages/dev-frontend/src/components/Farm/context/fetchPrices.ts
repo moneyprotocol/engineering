@@ -6,7 +6,7 @@ type UniswapResponse = {
       ethPrice: string;
     } | null;
     token: {
-      derivedETH: string;
+      derivedRBTC: string;
     } | null;
     pair: {
       reserveUSD: string;
@@ -16,9 +16,9 @@ type UniswapResponse = {
   errors?: Array<{ message: string }>;
 };
 
-const uniswapQuery = (lqtyTokenAddress: string, uniTokenAddress: string) => `{
-  token(id: "${lqtyTokenAddress.toLowerCase()}") {
-    derivedETH
+const uniswapQuery = (mpTokenAddress: string, uniTokenAddress: string) => `{
+  token(id: "${mpTokenAddress.toLowerCase()}") {
+    derivedRBTC
   },
   bundle(id: 1) {
     ethPrice
@@ -29,14 +29,14 @@ const uniswapQuery = (lqtyTokenAddress: string, uniTokenAddress: string) => `{
   }
 }`;
 
-export async function fetchPrices(lqtyTokenAddress: string, uniTokenAddress: string) {
+export async function fetchPrices(mpTokenAddress: string, uniTokenAddress: string) {
   const response = await window.fetch("https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2", {
     method: "POST",
     headers: {
       "content-type": "application/json"
     },
     body: JSON.stringify({
-      query: uniswapQuery(lqtyTokenAddress, uniTokenAddress),
+      query: uniswapQuery(mpTokenAddress, uniTokenAddress),
       variables: null
     })
   });
@@ -52,18 +52,18 @@ export async function fetchPrices(lqtyTokenAddress: string, uniTokenAddress: str
   }
 
   if (
-    typeof data?.token?.derivedETH === "string" &&
+    typeof data?.token?.derivedRBTC === "string" &&
     typeof data?.pair?.reserveUSD === "string" &&
     typeof data?.pair?.totalSupply === "string" &&
     typeof data?.bundle?.ethPrice === "string"
   ) {
     const ethPriceUSD = Decimal.from(data.bundle.ethPrice);
-    const lqtyPriceUSD = Decimal.from(data.token.derivedETH).mul(ethPriceUSD);
+    const mpPriceUSD = Decimal.from(data.token.derivedRBTC).mul(ethPriceUSD);
     const uniLpPriceUSD = Decimal.from(data.pair.reserveUSD).div(
       Decimal.from(data.pair.totalSupply)
     );
 
-    return { lqtyPriceUSD, uniLpPriceUSD };
+    return { mpPriceUSD, uniLpPriceUSD };
   }
 
   return Promise.reject("Uniswap doesn't have the required data to calculate yield");

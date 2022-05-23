@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import { Heading, Box, Card, Button } from "theme-ui";
 
-import { Decimal, Decimalish, LiquityStoreState, LQTYStake } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { Decimal, Decimalish, MoneypStoreState, MPStake } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 
 import { COIN, GT } from "../../strings";
 
 import { Icon } from "../Icon";
-import { EditableRow, StaticRow } from "../Trove/Editor";
+import { EditableRow, StaticRow } from "../Vault/Editor";
 import { LoadingOverlay } from "../LoadingOverlay";
 
 import { useStakingView } from "./context/StakingViewContext";
 
-const selectLQTYBalance = ({ lqtyBalance }: LiquityStoreState) => lqtyBalance;
+const selectMPBalance = ({ mpBalance }: MoneypStoreState) => mpBalance;
 
 type StakingEditorProps = {
   title: string;
-  originalStake: LQTYStake;
-  editedLQTY: Decimal;
+  originalStake: MPStake;
+  editedMP: Decimal;
   dispatch: (action: { type: "setStake"; newValue: Decimalish } | { type: "revert" }) => void;
 };
 
@@ -25,17 +25,17 @@ export const StakingEditor: React.FC<StakingEditorProps> = ({
   children,
   title,
   originalStake,
-  editedLQTY,
+  editedMP,
   dispatch
 }) => {
-  const lqtyBalance = useLiquitySelector(selectLQTYBalance);
+  const mpBalance = useMoneypSelector(selectMPBalance);
   const { changePending } = useStakingView();
   const editingState = useState<string>();
 
-  const edited = !editedLQTY.eq(originalStake.stakedLQTY);
+  const edited = !editedMP.eq(originalStake.stakedMP);
 
-  const maxAmount = originalStake.stakedLQTY.add(lqtyBalance);
-  const maxedOut = editedLQTY.eq(maxAmount);
+  const maxAmount = originalStake.stakedMP.add(mpBalance);
+  const maxedOut = editedMP.eq(maxAmount);
 
   return (
     <Card>
@@ -55,13 +55,13 @@ export const StakingEditor: React.FC<StakingEditorProps> = ({
       <Box sx={{ p: [2, 3] }}>
         <EditableRow
           label="Stake"
-          inputId="stake-lqty"
-          amount={editedLQTY.prettify()}
+          inputId="stake-mp"
+          amount={editedMP.prettify()}
           maxAmount={maxAmount.toString()}
           maxedOut={maxedOut}
           unit={GT}
           {...{ editingState }}
-          editedAmount={editedLQTY.toString(2)}
+          editedAmount={editedMP.toString(2)}
           setEditedAmount={newValue => dispatch({ type: "setStake", newValue })}
         />
 
@@ -72,14 +72,14 @@ export const StakingEditor: React.FC<StakingEditorProps> = ({
               inputId="stake-gain-eth"
               amount={originalStake.collateralGain.prettify(4)}
               color={originalStake.collateralGain.nonZero && "success"}
-              unit="ETH"
+              unit="RBTC"
             />
 
             <StaticRow
               label="Issuance gain"
-              inputId="stake-gain-lusd"
-              amount={originalStake.lusdGain.prettify()}
-              color={originalStake.lusdGain.nonZero && "success"}
+              inputId="stake-gain-bpd"
+              amount={originalStake.bpdGain.prettify()}
+              color={originalStake.bpdGain.nonZero && "success"}
               unit={COIN}
             />
           </>

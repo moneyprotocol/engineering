@@ -1,33 +1,33 @@
 import React, { useCallback, useEffect } from "react";
 import { Card, Heading, Box, Flex, Button } from "theme-ui";
 
-import { LiquityStoreState } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { MoneypStoreState } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 
 import { COIN, GT } from "../../strings";
 import { Icon } from "../Icon";
 import { LoadingOverlay } from "../LoadingOverlay";
 import { useMyTransactionState } from "../Transaction";
-import { DisabledEditableRow, StaticRow } from "../Trove/Editor";
+import { DisabledEditableRow, StaticRow } from "../Vault/Editor";
 import { ClaimAndMove } from "./actions/ClaimAndMove";
 import { ClaimRewards } from "./actions/ClaimRewards";
 import { useStabilityView } from "./context/StabilityViewContext";
-import { RemainingLQTY } from "./RemainingLQTY";
+import { RemainingMP } from "./RemainingMP";
 import { Yield } from "./Yield";
 
-const selector = ({ stabilityDeposit, trove }: LiquityStoreState) => ({ stabilityDeposit, trove });
+const selector = ({ stabilityDeposit, vault }: MoneypStoreState) => ({ stabilityDeposit, vault });
 
 export const ActiveDeposit: React.FC = () => {
   const { dispatchEvent } = useStabilityView();
-  const { stabilityDeposit, trove } = useLiquitySelector(selector);
+  const { stabilityDeposit, vault } = useMoneypSelector(selector);
 
   const handleAdjustDeposit = useCallback(() => {
     dispatchEvent("ADJUST_DEPOSIT_PRESSED");
   }, [dispatchEvent]);
 
-  const hasReward = !stabilityDeposit.lqtyReward.isZero;
+  const hasReward = !stabilityDeposit.mpReward.isZero;
   const hasGain = !stabilityDeposit.collateralGain.isZero;
-  const hasTrove = !trove.isEmpty;
+  const hasVault = !vault.isEmpty;
 
   const transactionId = "stability-deposit";
   const transactionState = useMyTransactionState(transactionId);
@@ -47,7 +47,7 @@ export const ActiveDeposit: React.FC = () => {
         Stability Pool
         {!isWaitingForTransaction && (
           <Flex sx={{ justifyContent: "flex-end" }}>
-            <RemainingLQTY />
+            <RemainingMP />
           </Flex>
         )}
       </Heading>
@@ -55,8 +55,8 @@ export const ActiveDeposit: React.FC = () => {
         <Box>
           <DisabledEditableRow
             label="Deposit"
-            inputId="deposit-lusd"
-            amount={stabilityDeposit.currentLUSD.prettify()}
+            inputId="deposit-bpd"
+            amount={stabilityDeposit.currentBPD.prettify()}
             unit={COIN}
           />
 
@@ -65,15 +65,15 @@ export const ActiveDeposit: React.FC = () => {
             inputId="deposit-gain"
             amount={stabilityDeposit.collateralGain.prettify(4)}
             color={stabilityDeposit.collateralGain.nonZero && "success"}
-            unit="ETH"
+            unit="RBTC"
           />
 
           <Flex sx={{ alignItems: "center" }}>
             <StaticRow
               label="Reward"
               inputId="deposit-reward"
-              amount={stabilityDeposit.lqtyReward.prettify()}
-              color={stabilityDeposit.lqtyReward.nonZero && "success"}
+              amount={stabilityDeposit.mpReward.prettify()}
+              color={stabilityDeposit.mpReward.nonZero && "success"}
               unit={GT}
             />
             <Flex sx={{ justifyContent: "flex-end", flex: 1 }}>
@@ -88,12 +88,12 @@ export const ActiveDeposit: React.FC = () => {
             &nbsp;Adjust
           </Button>
 
-          <ClaimRewards disabled={!hasGain && !hasReward}>Claim ETH and LQTY</ClaimRewards>
+          <ClaimRewards disabled={!hasGain && !hasReward}>Claim RBTC and MP</ClaimRewards>
         </Flex>
 
-        {hasTrove && (
+        {hasVault && (
           <ClaimAndMove disabled={!hasGain && !hasReward}>
-            Claim LQTY and move ETH to Trove
+            Claim MP and move RBTC to Vault
           </ClaimAndMove>
         )}
       </Box>

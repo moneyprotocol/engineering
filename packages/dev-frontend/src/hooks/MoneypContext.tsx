@@ -6,24 +6,24 @@ import { useWeb3React } from "@web3-react/core";
 
 import { isBatchedProvider, isWebSocketAugmentedProvider } from "@liquity/providers";
 import {
-  BlockPolledLiquityStore,
-  EthersLiquity,
-  EthersLiquityWithStore,
+  BlockPolledMoneypStore,
+  BitcoinsMoneyp,
+  BitcoinsMoneypWithStore,
   _connectByChainId
 } from "@liquity/lib-ethers";
 
-import { LiquityFrontendConfig, getConfig } from "../config";
+import { MoneypFrontendConfig, getConfig } from "../config";
 
-type LiquityContextValue = {
-  config: LiquityFrontendConfig;
+type MoneypContextValue = {
+  config: MoneypFrontendConfig;
   account: string;
   provider: Provider;
-  liquity: EthersLiquityWithStore<BlockPolledLiquityStore>;
+  moneyp: BitcoinsMoneypWithStore<BlockPolledMoneypStore>;
 };
 
-const LiquityContext = createContext<LiquityContextValue | undefined>(undefined);
+const MoneypContext = createContext<MoneypContextValue | undefined>(undefined);
 
-type LiquityProviderProps = {
+type MoneypProviderProps = {
   loader?: React.ReactNode;
   unsupportedNetworkFallback?: (chainId: number) => React.ReactNode;
 };
@@ -35,13 +35,13 @@ const wsParams = (network: string, infuraApiKey: string): [string, string] => [
 
 const supportedNetworks = ["homestead", "kovan", "rinkeby", "ropsten", "goerli"];
 
-export const LiquityProvider: React.FC<LiquityProviderProps> = ({
+export const MoneypProvider: React.FC<MoneypProviderProps> = ({
   children,
   loader,
   unsupportedNetworkFallback
 }) => {
   const { library: provider, account, chainId } = useWeb3React<Web3Provider>();
-  const [config, setConfig] = useState<LiquityFrontendConfig>();
+  const [config, setConfig] = useState<MoneypFrontendConfig>();
 
   const connection = useMemo(() => {
     if (config && provider && account && chainId) {
@@ -91,22 +91,22 @@ export const LiquityProvider: React.FC<LiquityProviderProps> = ({
     return unsupportedNetworkFallback ? <>{unsupportedNetworkFallback(chainId)}</> : null;
   }
 
-  const liquity = EthersLiquity._from(connection);
-  liquity.store.logging = true;
+  const moneyp = BitcoinsMoneyp._from(connection);
+  moneyp.store.logging = true;
 
   return (
-    <LiquityContext.Provider value={{ config, account, provider, liquity }}>
+    <MoneypContext.Provider value={{ config, account, provider, moneyp }}>
       {children}
-    </LiquityContext.Provider>
+    </MoneypContext.Provider>
   );
 };
 
-export const useLiquity = () => {
-  const liquityContext = useContext(LiquityContext);
+export const useMoneyp = () => {
+  const moneypContext = useContext(MoneypContext);
 
-  if (!liquityContext) {
-    throw new Error("You must provide a LiquityContext via LiquityProvider");
+  if (!moneypContext) {
+    throw new Error("You must provide a MoneypContext via MoneypProvider");
   }
 
-  return liquityContext;
+  return moneypContext;
 };

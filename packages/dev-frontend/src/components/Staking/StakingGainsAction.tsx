@@ -1,24 +1,24 @@
 import { Button } from "theme-ui";
 
-import { LiquityStoreState } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { MoneypStoreState } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 
-import { useLiquity } from "../../hooks/LiquityContext";
+import { useMoneyp } from "../../hooks/MoneypContext";
 import { useTransactionFunction } from "../Transaction";
 
-const selectLQTYStake = ({ lqtyStake }: LiquityStoreState) => lqtyStake;
+const selectMPStake = ({ mpStake }: MoneypStoreState) => mpStake;
 
 export const StakingGainsAction: React.FC = () => {
-  const { liquity } = useLiquity();
-  const { collateralGain, lusdGain } = useLiquitySelector(selectLQTYStake);
+  const { moneyp } = useMoneyp();
+  const { collateralGain, bpdGain } = useMoneypSelector(selectMPStake);
 
   const [sendTransaction] = useTransactionFunction(
     "stake",
-    liquity.send.withdrawGainsFromStaking.bind(liquity.send)
+    moneyp.send.withdrawGainsFromStaking.bind(moneyp.send)
   );
 
   return (
-    <Button onClick={sendTransaction} disabled={collateralGain.isZero && lusdGain.isZero}>
+    <Button onClick={sendTransaction} disabled={collateralGain.isZero && bpdGain.isZero}>
       Claim gains
     </Button>
   );

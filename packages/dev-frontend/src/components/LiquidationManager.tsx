@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { Card, Box, Heading, Flex, Button, Label, Input } from "theme-ui";
 
-import { useLiquity } from "../hooks/LiquityContext";
+import { useMoneyp } from "../hooks/MoneypContext";
 
 import { Icon } from "./Icon";
 import { Transaction } from "./Transaction";
 
 export const LiquidationManager: React.FC = () => {
   const {
-    liquity: { send: liquity }
-  } = useLiquity();
-  const [numberOfTrovesToLiquidate, setNumberOfTrovesToLiquidate] = useState("40");
+    moneyp: { send: moneyp }
+  } = useMoneyp();
+  const [numberOfVaultsToLiquidate, setNumberOfVaultsToLiquidate] = useState("40");
 
   return (
     <Card>
@@ -24,11 +24,11 @@ export const LiquidationManager: React.FC = () => {
             type="number"
             min="1"
             step="1"
-            value={numberOfTrovesToLiquidate}
-            onChange={e => setNumberOfTrovesToLiquidate(e.target.value)}
+            value={numberOfVaultsToLiquidate}
+            onChange={e => setNumberOfVaultsToLiquidate(e.target.value)}
           />
 
-          <Label>Troves</Label>
+          <Label>Vaults</Label>
 
           <Flex sx={{ ml: 2, alignItems: "center" }}>
             <Transaction
@@ -36,10 +36,10 @@ export const LiquidationManager: React.FC = () => {
               tooltip="Liquidate"
               tooltipPlacement="bottom"
               send={overrides => {
-                if (!numberOfTrovesToLiquidate) {
+                if (!numberOfVaultsToLiquidate) {
                   throw new Error("Invalid number");
                 }
-                return liquity.liquidateUpTo(parseInt(numberOfTrovesToLiquidate, 10), overrides);
+                return moneyp.liquidateUpTo(parseInt(numberOfVaultsToLiquidate, 10), overrides);
               }}
             >
               <Button variant="dangerIcon">

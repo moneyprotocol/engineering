@@ -1,37 +1,37 @@
 import React, { useCallback, useEffect } from "react";
 import { Flex, Button } from "theme-ui";
 
-import { LiquityStoreState, Decimal, Trove, Decimalish, LUSD_MINIMUM_DEBT } from "@liquity/lib-base";
+import { MoneypStoreState, Decimal, Vault, Decimalish, BPD_MINIMUM_DEBT } from "@liquity/lib-base";
 
-import { LiquityStoreUpdate, useLiquityReducer, useLiquitySelector } from "@liquity/lib-react";
+import { MoneypStoreUpdate, useMoneypReducer, useMoneypSelector } from "@liquity/lib-react";
 
 import { ActionDescription } from "../ActionDescription";
 import { useMyTransactionState } from "../Transaction";
 
-import { TroveEditor } from "./TroveEditor";
-import { TroveAction } from "./TroveAction";
-import { useTroveView } from "./context/TroveViewContext";
+import { VaultEditor } from "./VaultEditor";
+import { VaultAction } from "./VaultAction";
+import { useVaultView } from "./context/VaultViewContext";
 
 import {
-  selectForTroveChangeValidation,
-  validateTroveChange
-} from "./validation/validateTroveChange";
+  selectForVaultChangeValidation,
+  validateVaultChange
+} from "./validation/validateVaultChange";
 
-const init = ({ trove }: LiquityStoreState) => ({
-  original: trove,
-  edited: new Trove(trove.collateral, trove.debt),
+const init = ({ vault }: MoneypStoreState) => ({
+  original: vault,
+  edited: new Vault(vault.collateral, vault.debt),
   changePending: false,
   debtDirty: false,
   addedMinimumDebt: false
 });
 
-type TroveManagerState = ReturnType<typeof init>;
-type TroveManagerAction =
-  | LiquityStoreUpdate
+type VaultManagerState = ReturnType<typeof init>;
+type VaultManagerAction =
+  | MoneypStoreUpdate
   | { type: "startChange" | "finishChange" | "revert" | "addMinimumDebt" | "removeMinimumDebt" }
   | { type: "setCollateral" | "setDebt"; newValue: Decimalish };
 
-const reduceWith = (action: TroveManagerAction) => (state: TroveManagerState): TroveManagerState =>
+const reduceWith = (action: VaultManagerAction) => (state: VaultManagerState): VaultManagerState =>
   reduce(state, action);
 
 const addMinimumDebt = reduceWith({ type: "addMinimumDebt" });
@@ -39,7 +39,7 @@ const removeMinimumDebt = reduceWith({ type: "removeMinimumDebt" });
 const finishChange = reduceWith({ type: "finishChange" });
 const revert = reduceWith({ type: "revert" });
 
-const reduce = (state: TroveManagerState, action: TroveManagerAction): TroveManagerState => {
+const reduce = (state: VaultManagerState, action: VaultManagerAction): VaultManagerState => {
   // console.log(state);
   // console.log(action);
 
@@ -84,7 +84,7 @@ const reduce = (state: TroveManagerState, action: TroveManagerAction): TroveMana
     case "addMinimumDebt":
       return {
         ...state,
-        edited: edited.setDebt(LUSD_MINIMUM_DEBT),
+        edited: edited.setDebt(BPD_MINIMUM_DEBT),
         addedMinimumDebt: true
       };
 
@@ -98,20 +98,20 @@ const reduce = (state: TroveManagerState, action: TroveManagerAction): TroveMana
     case "revert":
       return {
         ...state,
-        edited: new Trove(original.collateral, original.debt),
+        edited: new Vault(original.collateral, original.debt),
         debtDirty: false,
         addedMinimumDebt: false
       };
 
     case "updateStore": {
       const {
-        newState: { trove },
-        stateChange: { troveBeforeRedistribution: changeCommitted }
+        newState: { vault },
+        stateChange: { vaultBeforeRedistribution: changeCommitted }
       } = action;
 
       const newState = {
         ...state,
-        original: trove
+        original: vault
       };
 
       if (changePending && changeCommitted) {
@@ -121,42 +121,42 @@ const reduce = (state: TroveManagerState, action: TroveManagerAction): TroveMana
       const change = original.whatChanged(edited, 0);
 
       if (
-        (change?.type === "creation" && !trove.isEmpty) ||
-        (change?.type === "closure" && trove.isEmpty)
+        (change?.type === "creation" && !vault.isEmpty) ||
+        (change?.type === "closure" && vault.isEmpty)
       ) {
         return revert(newState);
       }
 
-      return { ...newState, edited: trove.apply(change, 0) };
+      return { ...newState, edited: vault.apply(change, 0) };
     }
   }
 };
 
-const feeFrom = (original: Trove, edited: Trove, borrowingRate: Decimal): Decimal => {
+const feeFrom = (original: Vault, edited: Vault, borrowingRate: Decimal): Decimal => {
   const change = original.whatChanged(edited, borrowingRate);
 
-  if (change && change.type !== "invalidCreation" && change.params.borrowLUSD) {
-    return change.params.borrowLUSD.mul(borrowingRate);
+  if (change && change.type !== "invalidCreation" && change.params.borrowBPD) {
+    return change.params.borrowBPD.mul(borrowingRate);
   } else {
     return Decimal.ZERO;
   }
 };
 
-const select = (state: LiquityStoreState) => ({
+const select = (state: MoneypStoreState) => ({
   fees: state.fees,
-  validationContext: selectForTroveChangeValidation(state)
+  validationContext: selectForVaultChangeValidation(state)
 });
 
-const transactionId = "trove";
+const transactionId = "vault";
 
-type TroveManagerProps = {
+type VaultManagerProps = {
   collateral?: Decimalish;
   debt?: Decimalish;
 };
 
-export const TroveManager: React.FC<TroveManagerProps> = ({ collateral, debt }) => {
-  const [{ original, edited, changePending }, dispatch] = useLiquityReducer(reduce, init);
-  const { fees, validationContext } = useLiquitySelector(select);
+export const VaultManager: React.FC<VaultManagerProps> = ({ collateral, debt }) => {
+  const [{ original, edited, changePending }, dispatch] = useMoneypReducer(reduce, init);
+  const { fees, validationContext } = useMoneypSelector(select);
 
   useEffect(() => {
     if (collateral !== undefined) {
@@ -170,21 +170,21 @@ export const TroveManager: React.FC<TroveManagerProps> = ({ collateral, debt }) 
   const borrowingRate = fees.borrowingRate();
   const maxBorrowingRate = borrowingRate.add(0.005); // TODO slippage tolerance
 
-  const [validChange, description] = validateTroveChange(
+  const [validChange, description] = validateVaultChange(
     original,
     edited,
     borrowingRate,
     validationContext
   );
 
-  // console.log("TroveManager render", { original, edited, change });
-  const { dispatchEvent } = useTroveView();
+  // console.log("VaultManager render", { original, edited, change });
+  const { dispatchEvent } = useVaultView();
 
   const handleCancel = useCallback(() => {
     dispatchEvent("CANCEL_ADJUST_TROVE_PRESSED");
   }, [dispatchEvent]);
 
-  const openingNewTrove = original.isEmpty;
+  const openingNewVault = original.isEmpty;
 
   const myTransactionState = useMyTransactionState(transactionId);
 
@@ -203,7 +203,7 @@ export const TroveManager: React.FC<TroveManagerProps> = ({ collateral, debt }) 
   }, [myTransactionState.type, dispatch, dispatchEvent, validChange?.type]);
 
   return (
-    <TroveEditor
+    <VaultEditor
       original={original}
       edited={edited}
       fee={feeFrom(original, edited, borrowingRate)}
@@ -212,13 +212,13 @@ export const TroveManager: React.FC<TroveManagerProps> = ({ collateral, debt }) 
       dispatch={dispatch}
     >
       {description ??
-        (openingNewTrove ? (
+        (openingNewVault ? (
           <ActionDescription>
-            Start by entering the amount of ETH you'd like to deposit as collateral.
+            Start by entering the amount of RBTC you'd like to deposit as collateral.
           </ActionDescription>
         ) : (
           <ActionDescription>
-            Adjust your Trove by modifying its collateral, debt, or both.
+            Adjust your Vault by modifying its collateral, debt, or both.
           </ActionDescription>
         ))}
 
@@ -228,17 +228,17 @@ export const TroveManager: React.FC<TroveManagerProps> = ({ collateral, debt }) 
         </Button>
 
         {validChange ? (
-          <TroveAction
+          <VaultAction
             transactionId={transactionId}
             change={validChange}
             maxBorrowingRate={maxBorrowingRate}
           >
             Confirm
-          </TroveAction>
+          </VaultAction>
         ) : (
           <Button disabled>Confirm</Button>
         )}
       </Flex>
-    </TroveEditor>
+    </VaultEditor>
   );
 };

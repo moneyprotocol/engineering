@@ -21,7 +21,7 @@ export const useStakingView = (): StakingViewContextType => {
   const context = useContext(StakingViewContext);
 
   if (context === null) {
-    throw new Error("You must add a <TroveViewProvider> into the React tree");
+    throw new Error("You must add a <VaultViewProvider> into the React tree");
   }
 
   return context;

@@ -1,31 +1,31 @@
 import React from "react";
 import { Card, Heading, Link, Box, Text } from "theme-ui";
 import { AddressZero } from "@ethersproject/constants";
-import { Decimal, Percent, LiquityStoreState } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { Decimal, Percent, MoneypStoreState } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 
-import { useLiquity } from "../hooks/LiquityContext";
+import { useMoneyp } from "../hooks/MoneypContext";
 import { COIN, GT } from "../strings";
 import { Statistic } from "./Statistic";
 
-const selectBalances = ({ accountBalance, lusdBalance, lqtyBalance }: LiquityStoreState) => ({
+const selectBalances = ({ accountBalance, bpdBalance, mpBalance }: MoneypStoreState) => ({
   accountBalance,
-  lusdBalance,
-  lqtyBalance
+  bpdBalance,
+  mpBalance
 });
 
 const Balances: React.FC = () => {
-  const { accountBalance, lusdBalance, lqtyBalance } = useLiquitySelector(selectBalances);
+  const { accountBalance, bpdBalance, mpBalance } = useMoneypSelector(selectBalances);
 
   return (
     <Box sx={{ mb: 3 }}>
       <Heading>My Account Balances</Heading>
-      <Box>ETH: {accountBalance.prettify(4)}</Box>
+      <Box>RBTC: {accountBalance.prettify(4)}</Box>
       <Box>
-        {COIN}: {lusdBalance.prettify()}
+        {COIN}: {bpdBalance.prettify()}
       </Box>
       <Box>
-        {GT}: {lqtyBalance.prettify()}
+        {GT}: {mpBalance.prettify()}
       </Box>
     </Box>
   );
@@ -33,7 +33,7 @@ const Balances: React.FC = () => {
 
 const GitHubCommit: React.FC<{ children?: string }> = ({ children }) =>
   children?.match(/[0-9a-f]{40}/) ? (
-    <Link href={`https://github.com/liquity/dev/commit/${children}`}>{children.substr(0, 7)}</Link>
+    <Link href={`https://github.com/moneyp/dev/commit/${children}`}>{children.substr(0, 7)}</Link>
   ) : (
     <>unknown</>
   );
@@ -44,45 +44,45 @@ type SystemStatsProps = {
 };
 
 const select = ({
-  numberOfTroves,
+  numberOfVaults,
   price,
   total,
-  lusdInStabilityPool,
+  bpdInStabilityPool,
   borrowingRate,
   redemptionRate,
-  totalStakedLQTY,
+  totalStakedMP,
   frontend
-}: LiquityStoreState) => ({
-  numberOfTroves,
+}: MoneypStoreState) => ({
+  numberOfVaults,
   price,
   total,
-  lusdInStabilityPool,
+  bpdInStabilityPool,
   borrowingRate,
   redemptionRate,
-  totalStakedLQTY,
+  totalStakedMP,
   kickbackRate: frontend.status === "registered" ? frontend.kickbackRate : null
 });
 
 export const SystemStats: React.FC<SystemStatsProps> = ({ variant = "info", showBalances }) => {
   const {
-    liquity: {
+    moneyp: {
       connection: { version: contractsVersion, deploymentDate, frontendTag }
     }
-  } = useLiquity();
+  } = useMoneyp();
 
   const {
-    numberOfTroves,
+    numberOfVaults,
     price,
-    lusdInStabilityPool,
+    bpdInStabilityPool,
     total,
     borrowingRate,
     redemptionRate,
-    totalStakedLQTY,
+    totalStakedMP,
     kickbackRate
-  } = useLiquitySelector(select);
+  } = useMoneypSelector(select);
 
-  const lusdInStabilityPoolPct =
-    total.debt.nonZero && new Percent(lusdInStabilityPool.div(total.debt));
+  const bpdInStabilityPoolPct =
+    total.debt.nonZero && new Percent(bpdInStabilityPool.div(total.debt));
   const totalCollateralRatioPct = new Percent(total.collateralRatio(price));
   const borrowingFeePct = new Percent(borrowingRate);
   const redemptionFeePct = new Percent(redemptionRate);
@@ -92,7 +92,7 @@ export const SystemStats: React.FC<SystemStatsProps> = ({ variant = "info", show
     <Card {...{ variant }}>
       {showBalances && <Balances />}
 
-      <Heading>Liquity statistics</Heading>
+      <Heading>Moneyp statistics</Heading>
 
       <Heading as="h2" sx={{ mt: 3, fontWeight: "body" }}>
         Protocol
@@ -106,25 +106,25 @@ export const SystemStats: React.FC<SystemStatsProps> = ({ variant = "info", show
       </Statistic>
 
       <Statistic name="TVL" tooltip="TBD">
-        {total.collateral.shorten()} ETH
+        {total.collateral.shorten()} RBTC
         <Text sx={{ fontSize: 1 }}>
           &nbsp;(${Decimal.from(total.collateral.mul(price)).shorten()})
         </Text>
       </Statistic>
-      <Statistic name="Troves" tooltip="TBD">
-        {Decimal.from(numberOfTroves).prettify(0)}
+      <Statistic name="Vaults" tooltip="TBD">
+        {Decimal.from(numberOfVaults).prettify(0)}
       </Statistic>
-      <Statistic name="LUSD" tooltip="TBD">
+      <Statistic name="BPD" tooltip="TBD">
         {total.debt.shorten()}
       </Statistic>
-      {lusdInStabilityPoolPct && (
-        <Statistic name="Stability Pool LUSD" tooltip="TBD">
-          {lusdInStabilityPool.shorten()}
-          <Text sx={{ fontSize: 1 }}>&nbsp;({lusdInStabilityPoolPct.toString(1)})</Text>
+      {bpdInStabilityPoolPct && (
+        <Statistic name="Stability Pool BPD" tooltip="TBD">
+          {bpdInStabilityPool.shorten()}
+          <Text sx={{ fontSize: 1 }}>&nbsp;({bpdInStabilityPoolPct.toString(1)})</Text>
         </Statistic>
       )}
-      <Statistic name="Staked LQTY" tooltip="TBD">
-        {totalStakedLQTY.shorten()}
+      <Statistic name="Staked MP" tooltip="TBD">
+        {totalStakedMP.shorten()}
       </Statistic>
       <Statistic name="Collateral ratio" tooltip="TBD">
         {totalCollateralRatioPct.prettify()}

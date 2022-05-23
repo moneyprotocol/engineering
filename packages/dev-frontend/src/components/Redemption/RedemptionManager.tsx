@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Button, Box, Flex, Card, Heading } from "theme-ui";
 
-import { Decimal, Percent, LiquityStoreState, MINIMUM_COLLATERAL_RATIO } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { Decimal, Percent, MoneypStoreState, MINIMUM_COLLATERAL_RATIO } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 
 import { COIN } from "../../strings";
 
 import { Icon } from "../Icon";
 import { LoadingOverlay } from "../LoadingOverlay";
-import { EditableRow, StaticRow } from "../Trove/Editor";
+import { EditableRow, StaticRow } from "../Vault/Editor";
 import { ActionDescription, Amount } from "../ActionDescription";
 import { ErrorDescription } from "../ErrorDescription";
 import { useMyTransactionState } from "../Transaction";
@@ -17,24 +17,24 @@ import { RedemptionAction } from "./RedemptionAction";
 
 const mcrPercent = new Percent(MINIMUM_COLLATERAL_RATIO).toString(0);
 
-const select = ({ price, fees, total, lusdBalance }: LiquityStoreState) => ({
+const select = ({ price, fees, total, bpdBalance }: MoneypStoreState) => ({
   price,
   fees,
   total,
-  lusdBalance
+  bpdBalance
 });
 
 const transactionId = "redemption";
 
 export const RedemptionManager: React.FC = () => {
-  const { price, fees, total, lusdBalance } = useLiquitySelector(select);
-  const [lusdAmount, setLUSDAmount] = useState(Decimal.ZERO);
+  const { price, fees, total, bpdBalance } = useMoneypSelector(select);
+  const [bpdAmount, setBPDAmount] = useState(Decimal.ZERO);
   const [changePending, setChangePending] = useState(false);
   const editingState = useState<string>();
 
-  const dirty = !lusdAmount.isZero;
-  const ethAmount = lusdAmount.div(price);
-  const redemptionRate = fees.redemptionRate(lusdAmount.div(total.debt));
+  const dirty = !bpdAmount.isZero;
+  const ethAmount = bpdAmount.div(price);
+  const redemptionRate = fees.redemptionRate(bpdAmount.div(total.debt));
   const feePct = new Percent(redemptionRate);
   const ethFee = ethAmount.mul(redemptionRate);
   const maxRedemptionRate = redemptionRate.add(0.001); // TODO slippage tolerance
@@ -47,26 +47,26 @@ export const RedemptionManager: React.FC = () => {
     } else if (myTransactionState.type === "failed" || myTransactionState.type === "cancelled") {
       setChangePending(false);
     } else if (myTransactionState.type === "confirmed") {
-      setLUSDAmount(Decimal.ZERO);
+      setBPDAmount(Decimal.ZERO);
       setChangePending(false);
     }
-  }, [myTransactionState.type, setChangePending, setLUSDAmount]);
+  }, [myTransactionState.type, setChangePending, setBPDAmount]);
 
   const [canRedeem, description] = total.collateralRatioIsBelowMinimum(price)
     ? [
         false,
         <ErrorDescription>
-          You can't redeem LUSD when the total collateral ratio is less than{" "}
+          You can't redeem BPD when the total collateral ratio is less than{" "}
           <Amount>{mcrPercent}</Amount>. Please try again later.
         </ErrorDescription>
       ]
-    : lusdAmount.gt(lusdBalance)
+    : bpdAmount.gt(bpdBalance)
     ? [
         false,
         <ErrorDescription>
           The amount you're trying to redeem exceeds your balance by{" "}
           <Amount>
-            {lusdAmount.sub(lusdBalance).prettify()} {COIN}
+            {bpdAmount.sub(bpdBalance).prettify()} {COIN}
           </Amount>
           .
         </ErrorDescription>
@@ -74,9 +74,9 @@ export const RedemptionManager: React.FC = () => {
     : [
         true,
         <ActionDescription>
-          You will receive <Amount>{ethAmount.sub(ethFee).prettify(4)} ETH</Amount> in exchange for{" "}
+          You will receive <Amount>{ethAmount.sub(ethFee).prettify(4)} RBTC</Amount> in exchange for{" "}
           <Amount>
-            {lusdAmount.prettify()} {COIN}
+            {bpdAmount.prettify()} {COIN}
           </Amount>
           .
         </ActionDescription>
@@ -90,7 +90,7 @@ export const RedemptionManager: React.FC = () => {
           <Button
             variant="titleIcon"
             sx={{ ":enabled:hover": { color: "danger" } }}
-            onClick={() => setLUSDAmount(Decimal.ZERO)}
+            onClick={() => setBPDAmount(Decimal.ZERO)}
           >
             <Icon name="history" size="lg" />
           </Button>
@@ -100,14 +100,14 @@ export const RedemptionManager: React.FC = () => {
       <Box sx={{ p: [2, 3] }}>
         <EditableRow
           label="Redeem"
-          inputId="redeem-lusd"
-          amount={lusdAmount.prettify()}
-          maxAmount={lusdBalance.toString()}
-          maxedOut={lusdAmount.eq(lusdBalance)}
+          inputId="redeem-bpd"
+          amount={bpdAmount.prettify()}
+          maxAmount={bpdBalance.toString()}
+          maxedOut={bpdAmount.eq(bpdBalance)}
           unit={COIN}
           {...{ editingState }}
-          editedAmount={lusdAmount.toString(2)}
-          setEditedAmount={amount => setLUSDAmount(Decimal.from(amount))}
+          editedAmount={bpdAmount.toString(2)}
+          setEditedAmount={amount => setBPDAmount(Decimal.from(amount))}
         />
 
         {dirty && (
@@ -116,7 +116,7 @@ export const RedemptionManager: React.FC = () => {
             inputId="redeem-fee"
             amount={ethFee.toString(4)}
             pendingAmount={feePct.toString(2)}
-            unit="ETH"
+            unit="RBTC"
           />
         )}
 
@@ -128,7 +128,7 @@ export const RedemptionManager: React.FC = () => {
           <RedemptionAction
             transactionId={transactionId}
             disabled={!dirty || !canRedeem}
-            lusdAmount={lusdAmount}
+            bpdAmount={bpdAmount}
             maxRedemptionRate={maxRedemptionRate}
           />
         </Flex>

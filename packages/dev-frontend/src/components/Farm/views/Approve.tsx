@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Button } from "theme-ui";
 import { Decimal } from "@liquity/lib-base";
-import { useLiquity } from "../../../hooks/LiquityContext";
+import { useMoneyp } from "../../../hooks/MoneypContext";
 import { Transaction, useMyTransactionState } from "../../Transaction";
 import { useFarmView } from "../context/FarmViewContext";
 import { useValidationState } from "../context/useValidationState";
@@ -15,8 +15,8 @@ const transactionId = "farm-approve";
 export const Approve: React.FC<ApproveProps> = ({ amount }) => {
   const { dispatchEvent } = useFarmView();
   const {
-    liquity: { send: liquity }
-  } = useLiquity();
+    moneyp: { send: moneyp }
+  } = useMoneyp();
 
   const { hasApproved } = useValidationState(amount);
   const transactionState = useMyTransactionState(transactionId);
@@ -34,7 +34,7 @@ export const Approve: React.FC<ApproveProps> = ({ amount }) => {
   return (
     <Transaction
       id={transactionId}
-      send={liquity.approveUniTokens.bind(liquity, undefined)}
+      send={moneyp.approveUniTokens.bind(moneyp, undefined)}
       showFailure="asTooltip"
       tooltipPlacement="bottom"
     >

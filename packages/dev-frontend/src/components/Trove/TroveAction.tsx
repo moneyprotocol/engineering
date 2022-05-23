@@ -1,31 +1,31 @@
 import { Button } from "theme-ui";
 
-import { Decimal, TroveChange } from "@liquity/lib-base";
+import { Decimal, VaultChange } from "@liquity/lib-base";
 
-import { useLiquity } from "../../hooks/LiquityContext";
+import { useMoneyp } from "../../hooks/MoneypContext";
 import { useTransactionFunction } from "../Transaction";
 
-type TroveActionProps = {
+type VaultActionProps = {
   transactionId: string;
-  change: Exclude<TroveChange<Decimal>, { type: "invalidCreation" }>;
+  change: Exclude<VaultChange<Decimal>, { type: "invalidCreation" }>;
   maxBorrowingRate: Decimal;
 };
 
-export const TroveAction: React.FC<TroveActionProps> = ({
+export const VaultAction: React.FC<VaultActionProps> = ({
   children,
   transactionId,
   change,
   maxBorrowingRate
 }) => {
-  const { liquity } = useLiquity();
+  const { moneyp } = useMoneyp();
 
   const [sendTransaction] = useTransactionFunction(
     transactionId,
     change.type === "creation"
-      ? liquity.send.openTrove.bind(liquity.send, change.params, maxBorrowingRate)
+      ? moneyp.send.openVault.bind(moneyp.send, change.params, maxBorrowingRate)
       : change.type === "closure"
-      ? liquity.send.closeTrove.bind(liquity.send)
-      : liquity.send.adjustTrove.bind(liquity.send, change.params, maxBorrowingRate)
+      ? moneyp.send.closeVault.bind(moneyp.send)
+      : moneyp.send.adjustVault.bind(moneyp.send, change.params, maxBorrowingRate)
   );
 
   return <Button onClick={sendTransaction}>{children}</Button>;

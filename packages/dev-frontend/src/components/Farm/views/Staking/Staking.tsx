@@ -3,7 +3,7 @@ import { Heading, Box, Flex, Card, Button } from "theme-ui";
 import { Decimal } from "@liquity/lib-base";
 import { LP } from "../../../../strings";
 import { Icon } from "../../../Icon";
-import { EditableRow } from "../../../Trove/Editor";
+import { EditableRow } from "../../../Vault/Editor";
 import { LoadingOverlay } from "../../../LoadingOverlay";
 import { useFarmView } from "../../context/FarmViewContext";
 import { useMyTransactionState } from "../../../Transaction";

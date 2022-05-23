@@ -1,18 +1,18 @@
 import { createContext, useContext } from "react";
-import type { TroveView, TroveEvent } from "./types";
+import type { VaultView, VaultEvent } from "./types";
 
-type TroveViewContextType = {
-  view: TroveView;
-  dispatchEvent: (event: TroveEvent) => void;
+type VaultViewContextType = {
+  view: VaultView;
+  dispatchEvent: (event: VaultEvent) => void;
 };
 
-export const TroveViewContext = createContext<TroveViewContextType | null>(null);
+export const VaultViewContext = createContext<VaultViewContextType | null>(null);
 
-export const useTroveView = (): TroveViewContextType => {
-  const context: TroveViewContextType | null = useContext(TroveViewContext);
+export const useVaultView = (): VaultViewContextType => {
+  const context: VaultViewContextType | null = useContext(VaultViewContext);
 
   if (context === null) {
-    throw new Error("You must add a <TroveViewProvider> into the React tree");
+    throw new Error("You must add a <VaultViewProvider> into the React tree");
   }
 
   return context;

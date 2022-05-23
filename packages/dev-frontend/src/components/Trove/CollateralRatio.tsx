@@ -31,7 +31,7 @@ export const CollateralRatio: React.FC<CollateralRatioProps> = ({ value, change 
 
       <StaticRow
         label="Collateral ratio"
-        inputId="trove-collateral-ratio"
+        inputId="vault-collateral-ratio"
         amount={collateralRatioPct.prettify()}
         color={
           value?.gt(CRITICAL_COLLATERAL_RATIO)

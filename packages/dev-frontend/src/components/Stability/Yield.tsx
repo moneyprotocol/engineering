@@ -2,73 +2,73 @@ import React, { useEffect, useState } from "react";
 import { Card, Paragraph, Text } from "theme-ui";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-import { Decimal, LiquityStoreState } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { Decimal, MoneypStoreState } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 import { InfoIcon } from "../InfoIcon";
-import { useLiquity } from "../../hooks/LiquityContext";
+import { useMoneyp } from "../../hooks/MoneypContext";
 import { Badge } from "../Badge";
 import { fetchLqtyPrice } from "./context/fetchLqtyPrice";
 
-const selector = ({ lusdInStabilityPool, remainingStabilityPoolLQTYReward }: LiquityStoreState) => ({
-  lusdInStabilityPool,
-  remainingStabilityPoolLQTYReward
+const selector = ({ bpdInStabilityPool, remainingStabilityPoolMPReward }: MoneypStoreState) => ({
+  bpdInStabilityPool,
+  remainingStabilityPoolMPReward
 });
 
 export const Yield: React.FC = () => {
   const {
-    liquity: {
+    moneyp: {
       connection: { addresses }
     }
-  } = useLiquity();
-  const { lusdInStabilityPool, remainingStabilityPoolLQTYReward } = useLiquitySelector(selector);
+  } = useMoneyp();
+  const { bpdInStabilityPool, remainingStabilityPoolMPReward } = useMoneypSelector(selector);
   const { chainId } = useWeb3React<Web3Provider>();
   const isMainnet = chainId === 1;
 
-  const [lqtyPrice, setLqtyPrice] = useState<Decimal | undefined>(undefined);
-  const hasZeroValue = remainingStabilityPoolLQTYReward.isZero || lusdInStabilityPool.isZero;
-  let lqtyTokenAddress = addresses["lqtyToken"];
+  const [mpPrice, setLqtyPrice] = useState<Decimal | undefined>(undefined);
+  const hasZeroValue = remainingStabilityPoolMPReward.isZero || bpdInStabilityPool.isZero;
+  let mpTokenAddress = addresses["mpToken"];
 
   // TODO: remove after Team has reviewed on /next
   if (!isMainnet) {
-    lqtyTokenAddress = "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2";
+    mpTokenAddress = "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2";
   }
 
   useEffect(() => {
     (async () => {
       try {
-        const { lqtyPriceUSD } = await fetchLqtyPrice(lqtyTokenAddress);
-        setLqtyPrice(lqtyPriceUSD);
+        const { mpPriceUSD } = await fetchLqtyPrice(mpTokenAddress);
+        setLqtyPrice(mpPriceUSD);
       } catch (error) {
         console.error(error);
       }
     })();
-  }, [lqtyTokenAddress]);
+  }, [mpTokenAddress]);
 
   // TODO: switch to this condition after team has reviewed on /next
-  // if (!isMainnet || hasZeroValue || lqtyPrice === undefined) return null;
-  if (hasZeroValue || lqtyPrice === undefined) return null;
-  const yearlyHalvingSchedule = 0.5; // 50% see LQTY distribution schedule for more info
-  const remainingLqtyOneYear = remainingStabilityPoolLQTYReward.mul(yearlyHalvingSchedule);
-  const remainingLqtyInUSD = remainingLqtyOneYear.mul(lqtyPrice);
-  const apyPercentage = remainingLqtyInUSD.div(lusdInStabilityPool).mul(100);
+  // if (!isMainnet || hasZeroValue || mpPrice === undefined) return null;
+  if (hasZeroValue || mpPrice === undefined) return null;
+  const yearlyHalvingSchedule = 0.5; // 50% see MP distribution schedule for more info
+  const remainingLqtyOneYear = remainingStabilityPoolMPReward.mul(yearlyHalvingSchedule);
+  const remainingLqtyInUSD = remainingLqtyOneYear.mul(mpPrice);
+  const apyPercentage = remainingLqtyInUSD.div(bpdInStabilityPool).mul(100);
 
   return (
     <Badge>
-      <Text>LQTY APY {apyPercentage.toString(2)}%</Text>
+      <Text>MP APY {apyPercentage.toString(2)}%</Text>
       <InfoIcon
         tooltip={
           <Card variant="tooltip" sx={{ width: ["220px", "506px"] }}>
             <Paragraph>
-              LQTY APY is an <Text sx={{ fontWeight: "bold" }}>estimate</Text> of the LQTY return on
-              deposited LUSD over the next year. This doesn't include the ETH gains.
+              MP APY is an <Text sx={{ fontWeight: "bold" }}>estimate</Text> of the MP return on
+              deposited BPD over the next year. This doesn't include the RBTC gains.
             </Paragraph>
             <Paragraph sx={{ fontSize: "12px", fontFamily: "monospace", mt: 2 }}>
-              ($LQTY_REWARDS * YEARLY_DISTRIBUTION% / STABILITY_LUSD) * 100 ={" "}
+              ($MP_REWARDS * YEARLY_DISTRIBUTION% / STABILITY_BPD) * 100 ={" "}
               <Text sx={{ fontWeight: "bold" }}> APY</Text>
             </Paragraph>
             <Paragraph sx={{ fontSize: "12px", fontFamily: "monospace" }}>
               ($
-              {remainingLqtyInUSD.shorten()} * 50% / ${lusdInStabilityPool.shorten()}) * 100 =
+              {remainingLqtyInUSD.shorten()} * 50% / ${bpdInStabilityPool.shorten()}) * 100 =
               <Text sx={{ fontWeight: "bold" }}> {apyPercentage.toString(2)}%</Text>
             </Paragraph>
           </Card>

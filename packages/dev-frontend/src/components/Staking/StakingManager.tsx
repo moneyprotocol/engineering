@@ -4,12 +4,12 @@ import { Button, Flex } from "theme-ui";
 import {
   Decimal,
   Decimalish,
-  LiquityStoreState,
-  LQTYStake,
-  LQTYStakeChange
+  MoneypStoreState,
+  MPStake,
+  MPStakeChange
 } from "@liquity/lib-base";
 
-import { LiquityStoreUpdate, useLiquityReducer, useLiquitySelector } from "@liquity/lib-react";
+import { MoneypStoreUpdate, useMoneypReducer, useMoneypSelector } from "@liquity/lib-react";
 
 import { GT, COIN } from "../../strings";
 
@@ -19,14 +19,14 @@ import { StakingManagerAction } from "./StakingManagerAction";
 import { ActionDescription, Amount } from "../ActionDescription";
 import { ErrorDescription } from "../ErrorDescription";
 
-const init = ({ lqtyStake }: LiquityStoreState) => ({
-  originalStake: lqtyStake,
-  editedLQTY: lqtyStake.stakedLQTY
+const init = ({ mpStake }: MoneypStoreState) => ({
+  originalStake: mpStake,
+  editedMP: mpStake.stakedMP
 });
 
 type StakeManagerState = ReturnType<typeof init>;
 type StakeManagerAction =
-  | LiquityStoreUpdate
+  | MoneypStoreUpdate
   | { type: "revert" }
   | { type: "setStake"; newValue: Decimalish };
 
@@ -34,24 +34,24 @@ const reduce = (state: StakeManagerState, action: StakeManagerAction): StakeMana
   // console.log(state);
   // console.log(action);
 
-  const { originalStake, editedLQTY } = state;
+  const { originalStake, editedMP } = state;
 
   switch (action.type) {
     case "setStake":
-      return { ...state, editedLQTY: Decimal.from(action.newValue) };
+      return { ...state, editedMP: Decimal.from(action.newValue) };
 
     case "revert":
-      return { ...state, editedLQTY: originalStake.stakedLQTY };
+      return { ...state, editedMP: originalStake.stakedMP };
 
     case "updateStore": {
       const {
-        stateChange: { lqtyStake: updatedStake }
+        stateChange: { mpStake: updatedStake }
       } = action;
 
       if (updatedStake) {
         return {
           originalStake: updatedStake,
-          editedLQTY: updatedStake.apply(originalStake.whatChanged(editedLQTY))
+          editedMP: updatedStake.apply(originalStake.whatChanged(editedMP))
         };
       }
     }
@@ -60,53 +60,53 @@ const reduce = (state: StakeManagerState, action: StakeManagerAction): StakeMana
   return state;
 };
 
-const selectLQTYBalance = ({ lqtyBalance }: LiquityStoreState) => lqtyBalance;
+const selectMPBalance = ({ mpBalance }: MoneypStoreState) => mpBalance;
 
 type StakingManagerActionDescriptionProps = {
-  originalStake: LQTYStake;
-  change: LQTYStakeChange<Decimal>;
+  originalStake: MPStake;
+  change: MPStakeChange<Decimal>;
 };
 
 const StakingManagerActionDescription: React.FC<StakingManagerActionDescriptionProps> = ({
   originalStake,
   change
 }) => {
-  const stakeLQTY = change.stakeLQTY?.prettify().concat(" ", GT);
-  const unstakeLQTY = change.unstakeLQTY?.prettify().concat(" ", GT);
-  const collateralGain = originalStake.collateralGain.nonZero?.prettify(4).concat(" ETH");
-  const lusdGain = originalStake.lusdGain.nonZero?.prettify().concat(" ", COIN);
+  const stakeMP = change.stakeMP?.prettify().concat(" ", GT);
+  const unstakeMP = change.unstakeMP?.prettify().concat(" ", GT);
+  const collateralGain = originalStake.collateralGain.nonZero?.prettify(4).concat(" RBTC");
+  const bpdGain = originalStake.bpdGain.nonZero?.prettify().concat(" ", COIN);
 
-  if (originalStake.isEmpty && stakeLQTY) {
+  if (originalStake.isEmpty && stakeMP) {
     return (
       <ActionDescription>
-        You are staking <Amount>{stakeLQTY}</Amount>.
+        You are staking <Amount>{stakeMP}</Amount>.
       </ActionDescription>
     );
   }
 
   return (
     <ActionDescription>
-      {stakeLQTY && (
+      {stakeMP && (
         <>
-          You are adding <Amount>{stakeLQTY}</Amount> to your stake
+          You are adding <Amount>{stakeMP}</Amount> to your stake
         </>
       )}
-      {unstakeLQTY && (
+      {unstakeMP && (
         <>
-          You are withdrawing <Amount>{unstakeLQTY}</Amount> to your wallet
+          You are withdrawing <Amount>{unstakeMP}</Amount> to your wallet
         </>
       )}
-      {(collateralGain || lusdGain) && (
+      {(collateralGain || bpdGain) && (
         <>
           {" "}
           and claiming{" "}
-          {collateralGain && lusdGain ? (
+          {collateralGain && bpdGain ? (
             <>
-              <Amount>{collateralGain}</Amount> and <Amount>{lusdGain}</Amount>
+              <Amount>{collateralGain}</Amount> and <Amount>{bpdGain}</Amount>
             </>
           ) : (
             <>
-              <Amount>{collateralGain ?? lusdGain}</Amount>
+              <Amount>{collateralGain ?? bpdGain}</Amount>
             </>
           )}
         </>
@@ -118,19 +118,19 @@ const StakingManagerActionDescription: React.FC<StakingManagerActionDescriptionP
 
 export const StakingManager: React.FC = () => {
   const { dispatch: dispatchStakingViewAction } = useStakingView();
-  const [{ originalStake, editedLQTY }, dispatch] = useLiquityReducer(reduce, init);
-  const lqtyBalance = useLiquitySelector(selectLQTYBalance);
+  const [{ originalStake, editedMP }, dispatch] = useMoneypReducer(reduce, init);
+  const mpBalance = useMoneypSelector(selectMPBalance);
 
-  const change = originalStake.whatChanged(editedLQTY);
+  const change = originalStake.whatChanged(editedMP);
   const [validChange, description] = !change
     ? [undefined, undefined]
-    : change.stakeLQTY?.gt(lqtyBalance)
+    : change.stakeMP?.gt(mpBalance)
     ? [
         undefined,
         <ErrorDescription>
           The amount you're trying to stake exceeds your balance by{" "}
           <Amount>
-            {change.stakeLQTY.sub(lqtyBalance).prettify()} {GT}
+            {change.stakeMP.sub(mpBalance).prettify()} {GT}
           </Amount>
           .
         </ErrorDescription>
@@ -140,7 +140,7 @@ export const StakingManager: React.FC = () => {
   const makingNewStake = originalStake.isEmpty;
 
   return (
-    <StakingEditor title={"Staking"} {...{ originalStake, editedLQTY, dispatch }}>
+    <StakingEditor title={"Staking"} {...{ originalStake, editedMP, dispatch }}>
       {description ??
         (makingNewStake ? (
           <ActionDescription>Enter the amount of {GT} you'd like to stake.</ActionDescription>

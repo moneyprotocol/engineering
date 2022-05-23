@@ -1,22 +1,22 @@
 import React, { useCallback } from "react";
 import { Card, Heading, Box, Flex, Button, Link, Paragraph } from "theme-ui";
-import { useLiquity } from "../../../../hooks/LiquityContext";
+import { useMoneyp } from "../../../../hooks/MoneypContext";
 import { Icon } from "../../../Icon";
 import { InfoMessage } from "../../../InfoMessage";
 import { useFarmView } from "../../context/FarmViewContext";
-import { RemainingLQTY } from "../RemainingLQTY";
+import { RemainingMP } from "../RemainingMP";
 import { Yield } from "../Yield";
 
-const uniLink = (lusdAddress: string) => `https://app.uniswap.org/#/add/ETH/${lusdAddress}`;
+const uniLink = (bpdAddress: string) => `https://app.uniswap.org/#/add/RBTC/${bpdAddress}`;
 
 export const Inactive: React.FC = () => {
   const { dispatchEvent } = useFarmView();
 
   const {
-    liquity: {
+    moneyp: {
       connection: { addresses }
     }
-  } = useLiquity();
+  } = useMoneyp();
 
   const handleStakePressed = useCallback(() => {
     dispatchEvent("STAKE_PRESSED");
@@ -27,17 +27,17 @@ export const Inactive: React.FC = () => {
       <Heading>
         Liquidity farm
         <Flex sx={{ justifyContent: "flex-end" }}>
-          <RemainingLQTY />
+          <RemainingMP />
         </Flex>
       </Heading>
       <Box sx={{ p: [2, 3] }}>
-        <InfoMessage title="You aren't farming LQTY.">
-          <Paragraph>You can farm LQTY by staking your Uniswap ETH/LUSD LP tokens.</Paragraph>
+        <InfoMessage title="You aren't farming MP.">
+          <Paragraph>You can farm MP by staking your Uniswap RBTC/BPD LP tokens.</Paragraph>
 
           <Paragraph sx={{ mt: 2 }}>
             You can obtain LP tokens by adding liquidity to the{" "}
-            <Link href={uniLink(addresses["lusdToken"])} target="_blank">
-              ETH/LUSD pool on Uniswap. <Icon name="external-link-alt" size="xs" />
+            <Link href={uniLink(addresses["bpdToken"])} target="_blank">
+              RBTC/BPD pool on Uniswap. <Icon name="external-link-alt" size="xs" />
             </Link>
           </Paragraph>
         </InfoMessage>

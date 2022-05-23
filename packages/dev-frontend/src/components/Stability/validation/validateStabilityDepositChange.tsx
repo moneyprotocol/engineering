@@ -1,6 +1,6 @@
 import {
   Decimal,
-  LiquityStoreState,
+  MoneypStoreState,
   StabilityDeposit,
   StabilityDepositChange
 } from "@liquity/lib-base";
@@ -11,15 +11,15 @@ import { ErrorDescription } from "../../ErrorDescription";
 import { StabilityActionDescription } from "../StabilityActionDescription";
 
 export const selectForStabilityDepositChangeValidation = ({
-  trove,
-  lusdBalance,
+  vault,
+  bpdBalance,
   ownFrontend,
-  haveUndercollateralizedTroves
-}: LiquityStoreState) => ({
-  trove,
-  lusdBalance,
+  haveUndercollateralizedVaults
+}: MoneypStoreState) => ({
+  vault,
+  bpdBalance,
   haveOwnFrontend: ownFrontend.status === "registered",
-  haveUndercollateralizedTroves
+  haveUndercollateralizedVaults
 });
 
 type StabilityDepositChangeValidationContext = ReturnType<
@@ -28,17 +28,17 @@ type StabilityDepositChangeValidationContext = ReturnType<
 
 export const validateStabilityDepositChange = (
   originalDeposit: StabilityDeposit,
-  editedLUSD: Decimal,
+  editedBPD: Decimal,
   {
-    lusdBalance,
+    bpdBalance,
     haveOwnFrontend,
-    haveUndercollateralizedTroves
+    haveUndercollateralizedVaults
   }: StabilityDepositChangeValidationContext
 ): [
   validChange: StabilityDepositChange<Decimal> | undefined,
   description: JSX.Element | undefined
 ] => {
-  const change = originalDeposit.whatChanged(editedLUSD);
+  const change = originalDeposit.whatChanged(editedBPD);
 
   if (haveOwnFrontend) {
     return [
@@ -53,25 +53,25 @@ export const validateStabilityDepositChange = (
     return [undefined, undefined];
   }
 
-  if (change.depositLUSD?.gt(lusdBalance)) {
+  if (change.depositBPD?.gt(bpdBalance)) {
     return [
       undefined,
       <ErrorDescription>
         The amount you're trying to deposit exceeds your balance by{" "}
         <Amount>
-          {change.depositLUSD.sub(lusdBalance).prettify()} {COIN}
+          {change.depositBPD.sub(bpdBalance).prettify()} {COIN}
         </Amount>
         .
       </ErrorDescription>
     ];
   }
 
-  if (change.withdrawLUSD && haveUndercollateralizedTroves) {
+  if (change.withdrawBPD && haveUndercollateralizedVaults) {
     return [
       undefined,
       <ErrorDescription>
-        You're not allowed to withdraw LUSD from your Stability Deposit when there are
-        undercollateralized Troves. Please liquidate those Troves or try again later.
+        You're not allowed to withdraw BPD from your Stability Deposit when there are
+        undercollateralized Vaults. Please liquidate those Vaults or try again later.
       </ErrorDescription>
     ];
   }

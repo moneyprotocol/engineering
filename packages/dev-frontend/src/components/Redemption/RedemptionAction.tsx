@@ -2,29 +2,29 @@ import { Button } from "theme-ui";
 
 import { Decimal } from "@liquity/lib-base";
 
-import { useLiquity } from "../../hooks/LiquityContext";
+import { useMoneyp } from "../../hooks/MoneypContext";
 import { useTransactionFunction } from "../Transaction";
 
 type RedemptionActionProps = {
   transactionId: string;
   disabled?: boolean;
-  lusdAmount: Decimal;
+  bpdAmount: Decimal;
   maxRedemptionRate: Decimal;
 };
 
 export const RedemptionAction: React.FC<RedemptionActionProps> = ({
   transactionId,
   disabled,
-  lusdAmount,
+  bpdAmount,
   maxRedemptionRate
 }) => {
   const {
-    liquity: { send: liquity }
-  } = useLiquity();
+    moneyp: { send: moneyp }
+  } = useMoneyp();
 
   const [sendTransaction] = useTransactionFunction(
     transactionId,
-    liquity.redeemLUSD.bind(liquity, lusdAmount, maxRedemptionRate)
+    moneyp.redeemBPD.bind(moneyp, bpdAmount, maxRedemptionRate)
   );
 
   return (

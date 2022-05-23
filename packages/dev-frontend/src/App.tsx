@@ -3,14 +3,14 @@ import { Web3ReactProvider } from "@web3-react/core";
 import { Flex, Spinner, Heading, ThemeProvider } from "theme-ui";
 
 import { BatchedWebSocketAugmentedWeb3Provider } from "@liquity/providers";
-import { LiquityProvider } from "./hooks/LiquityContext";
+import { MoneypProvider } from "./hooks/MoneypContext";
 import { WalletConnector } from "./components/WalletConnector";
 import { TransactionProvider } from "./components/Transaction";
 import { getConfig } from "./config";
 import theme from "./theme";
 
 import { DisposableWalletProvider } from "./testUtils/DisposableWalletProvider";
-import { LiquityFrontend } from "./LiquityFrontend";
+import { MoneypFrontend } from "./MoneypFrontend";
 
 if (window.ethereum) {
   // Silence MetaMask warning in console
@@ -33,7 +33,7 @@ getConfig().then(config => {
   Object.assign(window, { config });
 });
 
-const EthersWeb3ReactProvider: React.FC = ({ children }) => {
+const BitcoinsWeb3ReactProvider: React.FC = ({ children }) => {
   return (
     <Web3ReactProvider getLibrary={provider => new BatchedWebSocketAugmentedWeb3Provider(provider)}>
       {children}
@@ -60,24 +60,24 @@ const App = () => {
       }}
     >
       <Heading sx={{ mb: 3 }}>
-        Liquity is not yet deployed to {chainId === 1 ? "mainnet" : "this network"}.
+        Moneyp is not yet deployed to {chainId === 1 ? "mainnet" : "this network"}.
       </Heading>
       Please switch to Ropsten, Rinkeby, Kovan or Görli.
     </Flex>
   );
 
   return (
-    <EthersWeb3ReactProvider>
+    <BitcoinsWeb3ReactProvider>
       <ThemeProvider theme={theme}>
         <WalletConnector {...{ loader }}>
-          <LiquityProvider {...{ loader, unsupportedNetworkFallback }}>
+          <MoneypProvider {...{ loader, unsupportedNetworkFallback }}>
             <TransactionProvider>
-              <LiquityFrontend {...{ loader }} />
+              <MoneypFrontend {...{ loader }} />
             </TransactionProvider>
-          </LiquityProvider>
+          </MoneypProvider>
         </WalletConnector>
       </ThemeProvider>
-    </EthersWeb3ReactProvider>
+    </BitcoinsWeb3ReactProvider>
   );
 };
 

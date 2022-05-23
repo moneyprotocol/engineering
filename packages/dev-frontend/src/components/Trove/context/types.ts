@@ -6,7 +6,7 @@ type AdjustingView = "ADJUSTING";
 type ClosingView = "CLOSING";
 type ActiveView = "ACTIVE";
 
-export type TroveView =
+export type VaultView =
   | NoneView
   | LiquidatedView
   | RedeemedView
@@ -15,25 +15,25 @@ export type TroveView =
   | ClosingView
   | ActiveView;
 
-type OpenTrovePressedEvent = "OPEN_TROVE_PRESSED";
-type AdjustTrovePressedEvent = "ADJUST_TROVE_PRESSED";
-type CloseTrovePressedEvent = "CLOSE_TROVE_PRESSED";
-type CancelAdjustTrovePressed = "CANCEL_ADJUST_TROVE_PRESSED";
-type TroveAdjustedEvent = "TROVE_ADJUSTED";
-type TroveOpenedEvent = "TROVE_OPENED";
-type TroveClosedEvent = "TROVE_CLOSED";
-type TroveLiquidatedEvent = "TROVE_LIQUIDATED";
-type TroveRedeemedEvent = "TROVE_REDEEMED";
-type TroveSurplusCollateralClaimedEvent = "TROVE_SURPLUS_COLLATERAL_CLAIMED";
+type OpenVaultPressedEvent = "OPEN_TROVE_PRESSED";
+type AdjustVaultPressedEvent = "ADJUST_TROVE_PRESSED";
+type CloseVaultPressedEvent = "CLOSE_TROVE_PRESSED";
+type CancelAdjustVaultPressed = "CANCEL_ADJUST_TROVE_PRESSED";
+type VaultAdjustedEvent = "TROVE_ADJUSTED";
+type VaultOpenedEvent = "TROVE_OPENED";
+type VaultClosedEvent = "TROVE_CLOSED";
+type VaultLiquidatedEvent = "TROVE_LIQUIDATED";
+type VaultRedeemedEvent = "TROVE_REDEEMED";
+type VaultSurplusCollateralClaimedEvent = "TROVE_SURPLUS_COLLATERAL_CLAIMED";
 
-export type TroveEvent =
-  | OpenTrovePressedEvent
-  | AdjustTrovePressedEvent
-  | CloseTrovePressedEvent
-  | CancelAdjustTrovePressed
-  | TroveClosedEvent
-  | TroveLiquidatedEvent
-  | TroveRedeemedEvent
-  | TroveAdjustedEvent
-  | TroveSurplusCollateralClaimedEvent
-  | TroveOpenedEvent;
+export type VaultEvent =
+  | OpenVaultPressedEvent
+  | AdjustVaultPressedEvent
+  | CloseVaultPressedEvent
+  | CancelAdjustVaultPressed
+  | VaultClosedEvent
+  | VaultLiquidatedEvent
+  | VaultRedeemedEvent
+  | VaultAdjustedEvent
+  | VaultSurplusCollateralClaimedEvent
+  | VaultOpenedEvent;

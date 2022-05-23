@@ -1,27 +1,27 @@
 import React, { useCallback } from "react";
 import { Card, Heading, Box, Flex, Button } from "theme-ui";
 import { LP, GT } from "../../../../strings";
-import { LiquityStoreState } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { MoneypStoreState } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 import { Icon } from "../../../Icon";
 import { LoadingOverlay } from "../../../LoadingOverlay";
 import { useMyTransactionState } from "../../../Transaction";
-import { DisabledEditableRow, StaticRow } from "../../../Trove/Editor";
+import { DisabledEditableRow, StaticRow } from "../../../Vault/Editor";
 import { useFarmView } from "../../context/FarmViewContext";
-import { RemainingLQTY } from "../RemainingLQTY";
+import { RemainingMP } from "../RemainingMP";
 import { ClaimReward } from "./ClaimReward";
 import { UnstakeAndClaim } from "../UnstakeAndClaim";
 import { Yield } from "../Yield";
 
-const selector = ({ liquidityMiningStake, liquidityMiningLQTYReward }: LiquityStoreState) => ({
+const selector = ({ liquidityMiningStake, liquidityMiningMPReward }: MoneypStoreState) => ({
   liquidityMiningStake,
-  liquidityMiningLQTYReward
+  liquidityMiningMPReward
 });
 const transactionId = /farm-/i;
 
 export const Active: React.FC = () => {
   const { dispatchEvent } = useFarmView();
-  const { liquidityMiningStake, liquidityMiningLQTYReward } = useLiquitySelector(selector);
+  const { liquidityMiningStake, liquidityMiningMPReward } = useMoneypSelector(selector);
 
   const handleAdjustPressed = useCallback(() => {
     dispatchEvent("ADJUST_PRESSED");
@@ -38,7 +38,7 @@ export const Active: React.FC = () => {
         Liquidity farm
         {!isTransactionPending && (
           <Flex sx={{ justifyContent: "flex-end" }}>
-            <RemainingLQTY />
+            <RemainingMP />
           </Flex>
         )}
       </Heading>
@@ -54,8 +54,8 @@ export const Active: React.FC = () => {
             <StaticRow
               label="Reward"
               inputId="farm-reward"
-              amount={liquidityMiningLQTYReward.prettify(4)}
-              color={liquidityMiningLQTYReward.nonZero && "success"}
+              amount={liquidityMiningMPReward.prettify(4)}
+              color={liquidityMiningMPReward.nonZero && "success"}
               unit={GT}
             />
             <Flex sx={{ justifyContent: "flex-end", flex: 1 }}>

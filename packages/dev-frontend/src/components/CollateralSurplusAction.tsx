@@ -1,28 +1,28 @@
 import React, { useEffect } from "react";
 import { Button, Flex, Spinner } from "theme-ui";
 
-import { LiquityStoreState } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { MoneypStoreState } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 
-import { useLiquity } from "../hooks/LiquityContext";
+import { useMoneyp } from "../hooks/MoneypContext";
 
 import { Transaction, useMyTransactionState } from "./Transaction";
-import { useTroveView } from "./Trove/context/TroveViewContext";
+import { useVaultView } from "./Vault/context/VaultViewContext";
 
-const select = ({ collateralSurplusBalance }: LiquityStoreState) => ({
+const select = ({ collateralSurplusBalance }: MoneypStoreState) => ({
   collateralSurplusBalance
 });
 
 export const CollateralSurplusAction: React.FC = () => {
-  const { collateralSurplusBalance } = useLiquitySelector(select);
+  const { collateralSurplusBalance } = useMoneypSelector(select);
   const {
-    liquity: { send: liquity }
-  } = useLiquity();
+    moneyp: { send: moneyp }
+  } = useMoneyp();
 
   const myTransactionId = "claim-coll-surplus";
   const myTransactionState = useMyTransactionState(myTransactionId);
 
-  const { dispatchEvent } = useTroveView();
+  const { dispatchEvent } = useVaultView();
 
   useEffect(() => {
     if (myTransactionState.type === "confirmedOneShot") {
@@ -42,9 +42,9 @@ export const CollateralSurplusAction: React.FC = () => {
     <Flex variant="layout.actions">
       <Transaction
         id={myTransactionId}
-        send={liquity.claimCollateralSurplus.bind(liquity, undefined)}
+        send={moneyp.claimCollateralSurplus.bind(moneyp, undefined)}
       >
-        <Button sx={{ mx: 2 }}>Claim {collateralSurplusBalance.prettify()} ETH</Button>
+        <Button sx={{ mx: 2 }}>Claim {collateralSurplusBalance.prettify()} RBTC</Button>
       </Transaction>
     </Flex>
   ) : null;

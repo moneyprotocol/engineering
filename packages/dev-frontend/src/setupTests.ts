@@ -8,7 +8,7 @@ import { configure } from "@testing-library/dom";
 
 import { DisposableWalletProvider } from "./testUtils/DisposableWalletProvider";
 
-// Loading the Liquity store takes longer without Multicall
+// Loading the Moneyp store takes longer without Multicall
 configure({ asyncUtilTimeout: 2500 });
 
 const ethereum = new DisposableWalletProvider(

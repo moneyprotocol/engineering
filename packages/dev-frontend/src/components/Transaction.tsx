@@ -7,10 +7,10 @@ import { defaultAbiCoder } from "@ethersproject/abi";
 import { buildStyles, CircularProgressbarWithChildren } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-import { EthersTransactionOverrides } from "@liquity/lib-ethers";
-import { SentLiquityTransaction, LiquityReceipt } from "@liquity/lib-base";
+import { BitcoinsTransactionOverrides } from "@liquity/lib-ethers";
+import { SentMoneypTransaction, MoneypReceipt } from "@liquity/lib-base";
 
-import { useLiquity } from "../hooks/LiquityContext";
+import { useMoneyp } from "../hooks/MoneypContext";
 
 import { Icon } from "./Icon";
 import { Tooltip, TooltipProps, Hoverable } from "./Tooltip";
@@ -126,13 +126,13 @@ type ButtonlikeProps = {
   onClick?: () => void;
 };
 
-type SentTransaction = SentLiquityTransaction<
+type SentTransaction = SentMoneypTransaction<
   TransactionResponse,
-  LiquityReceipt<TransactionReceipt>
+  MoneypReceipt<TransactionReceipt>
 >;
 
 export type TransactionFunction = (
-  overrides?: EthersTransactionOverrides
+  overrides?: BitcoinsTransactionOverrides
 ) => Promise<SentTransaction>;
 
 type TransactionProps<C> = {
@@ -287,7 +287,7 @@ const TransactionProgressDonut: React.FC<TransactionProgressDonutProps> = ({ sta
 };
 
 export const TransactionMonitor: React.FC = () => {
-  const { provider } = useLiquity();
+  const { provider } = useMoneyp();
   const [transactionState, setTransactionState] = useTransactionState();
 
   const id = transactionState.type !== "idle" ? transactionState.id : undefined;

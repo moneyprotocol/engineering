@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Button } from "theme-ui";
 import { Decimal } from "@liquity/lib-base";
-import { useLiquity } from "../../../hooks/LiquityContext";
+import { useMoneyp } from "../../../hooks/MoneypContext";
 import { Transaction, useMyTransactionState } from "../../Transaction";
 import { useValidationState } from "../context/useValidationState";
 import { useFarmView } from "../context/FarmViewContext";
@@ -15,15 +15,15 @@ const transactionId = "farm-confirm";
 export const Confirm: React.FC<ConfirmProps> = ({ amount }) => {
   const { dispatchEvent } = useFarmView();
   const {
-    liquity: { send: liquity }
-  } = useLiquity();
+    moneyp: { send: moneyp }
+  } = useMoneyp();
 
   const transactionState = useMyTransactionState(transactionId);
   const { isValid, isWithdrawing, amountChanged } = useValidationState(amount);
 
   const transactionAction = isWithdrawing
-    ? liquity.unstakeUniTokens.bind(liquity, amountChanged)
-    : liquity.stakeUniTokens.bind(liquity, amountChanged);
+    ? moneyp.unstakeUniTokens.bind(moneyp, amountChanged)
+    : moneyp.stakeUniTokens.bind(moneyp, amountChanged);
 
   const shouldDisable = amountChanged.isZero || !isValid;
 

@@ -1,37 +1,37 @@
 import React from "react";
-import { TroveManager } from "./TroveManager";
-import { ReadOnlyTrove } from "./ReadOnlyTrove";
-import { NoTrove } from "./NoTrove";
-import { RedeemedTrove } from "./RedeemedTrove";
-import { useTroveView } from "./context/TroveViewContext";
-import { LiquidatedTrove } from "./LiquidatedTrove";
+import { VaultManager } from "./VaultManager";
+import { ReadOnlyVault } from "./ReadOnlyVault";
+import { NoVault } from "./NoVault";
+import { RedeemedVault } from "./RedeemedVault";
+import { useVaultView } from "./context/VaultViewContext";
+import { LiquidatedVault } from "./LiquidatedVault";
 import { Decimal } from "@liquity/lib-base";
 
-export const Trove: React.FC = props => {
-  const { view } = useTroveView();
+export const Vault: React.FC = props => {
+  const { view } = useVaultView();
 
   switch (view) {
-    // loading state not needed, as main app has a loading spinner that blocks render until the liquity backend data is available
+    // loading state not needed, as main app has a loading spinner that blocks render until the moneyp backend data is available
     case "ACTIVE": {
-      return <ReadOnlyTrove {...props} />;
+      return <ReadOnlyVault {...props} />;
     }
     case "ADJUSTING": {
-      return <TroveManager {...props} />;
+      return <VaultManager {...props} />;
     }
     case "CLOSING": {
-      return <TroveManager {...props} collateral={Decimal.ZERO} debt={Decimal.ZERO} />;
+      return <VaultManager {...props} collateral={Decimal.ZERO} debt={Decimal.ZERO} />;
     }
     case "OPENING": {
-      return <TroveManager {...props} />;
+      return <VaultManager {...props} />;
     }
     case "LIQUIDATED": {
-      return <LiquidatedTrove {...props} />;
+      return <LiquidatedVault {...props} />;
     }
     case "REDEEMED": {
-      return <RedeemedTrove {...props} />;
+      return <RedeemedVault {...props} />;
     }
     case "NONE": {
-      return <NoTrove {...props} />;
+      return <NoVault {...props} />;
     }
   }
 };

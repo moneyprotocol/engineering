@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { Heading, Box, Flex, Card, Button } from "theme-ui";
-import { Decimal, LiquityStoreState } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { Decimal, MoneypStoreState } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 
 import { LP, GT } from "../../../../strings";
 import { Icon } from "../../../Icon";
-import { EditableRow, StaticRow } from "../../../Trove/Editor";
+import { EditableRow, StaticRow } from "../../../Vault/Editor";
 import { LoadingOverlay } from "../../../LoadingOverlay";
 import { useFarmView } from "../../context/FarmViewContext";
 import { useMyTransactionState } from "../../../Transaction";
@@ -16,11 +16,11 @@ import { Validation } from "../Validation";
 
 const selector = ({
   liquidityMiningStake,
-  liquidityMiningLQTYReward,
+  liquidityMiningMPReward,
   uniTokenBalance
-}: LiquityStoreState) => ({
+}: MoneypStoreState) => ({
   liquidityMiningStake,
-  liquidityMiningLQTYReward,
+  liquidityMiningMPReward,
   uniTokenBalance
 });
 
@@ -28,7 +28,7 @@ const transactionId = /farm-/;
 
 export const Adjusting: React.FC = () => {
   const { dispatchEvent } = useFarmView();
-  const { liquidityMiningStake, liquidityMiningLQTYReward, uniTokenBalance } = useLiquitySelector(
+  const { liquidityMiningStake, liquidityMiningMPReward, uniTokenBalance } = useMoneypSelector(
     selector
   );
   const [amount, setAmount] = useState<Decimal>(liquidityMiningStake);
@@ -77,8 +77,8 @@ export const Adjusting: React.FC = () => {
         <StaticRow
           label="Reward"
           inputId="farm-reward-amount"
-          amount={liquidityMiningLQTYReward.prettify(4)}
-          color={liquidityMiningLQTYReward.nonZero && "success"}
+          amount={liquidityMiningMPReward.prettify(4)}
+          color={liquidityMiningMPReward.nonZero && "success"}
           unit={GT}
         />
 

@@ -1,12 +1,12 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { useLiquitySelector } from "@liquity/lib-react";
-import { LiquityStoreState, UserTroveStatus } from "@liquity/lib-base";
-import { TroveViewContext } from "./TroveViewContext";
-import type { TroveView, TroveEvent } from "./types";
+import { useMoneypSelector } from "@liquity/lib-react";
+import { MoneypStoreState, UserVaultStatus } from "@liquity/lib-base";
+import { VaultViewContext } from "./VaultViewContext";
+import type { VaultView, VaultEvent } from "./types";
 
-type TroveEventTransitions = Record<TroveView, Partial<Record<TroveEvent, TroveView>>>;
+type VaultEventTransitions = Record<VaultView, Partial<Record<VaultEvent, VaultView>>>;
 
-const transitions: TroveEventTransitions = {
+const transitions: VaultEventTransitions = {
   NONE: {
     OPEN_TROVE_PRESSED: "OPENING",
     TROVE_OPENED: "ACTIVE"
@@ -48,43 +48,43 @@ const transitions: TroveEventTransitions = {
   }
 };
 
-type TroveStateEvents = Partial<Record<UserTroveStatus, TroveEvent>>;
+type VaultStateEvents = Partial<Record<UserVaultStatus, VaultEvent>>;
 
-const troveStatusEvents: TroveStateEvents = {
+const vaultStatusEvents: VaultStateEvents = {
   open: "TROVE_OPENED",
   closedByOwner: "TROVE_CLOSED",
   closedByLiquidation: "TROVE_LIQUIDATED",
   closedByRedemption: "TROVE_REDEEMED"
 };
 
-const transition = (view: TroveView, event: TroveEvent): TroveView => {
+const transition = (view: VaultView, event: VaultEvent): VaultView => {
   const nextView = transitions[view][event] ?? view;
   return nextView;
 };
 
-const getInitialView = (troveStatus: UserTroveStatus): TroveView => {
-  if (troveStatus === "closedByLiquidation") {
+const getInitialView = (vaultStatus: UserVaultStatus): VaultView => {
+  if (vaultStatus === "closedByLiquidation") {
     return "LIQUIDATED";
   }
-  if (troveStatus === "closedByRedemption") {
+  if (vaultStatus === "closedByRedemption") {
     return "REDEEMED";
   }
-  if (troveStatus === "open") {
+  if (vaultStatus === "open") {
     return "ACTIVE";
   }
   return "NONE";
 };
 
-const select = ({ trove: { status } }: LiquityStoreState) => status;
+const select = ({ vault: { status } }: MoneypStoreState) => status;
 
-export const TroveViewProvider: React.FC = props => {
+export const VaultViewProvider: React.FC = props => {
   const { children } = props;
-  const troveStatus = useLiquitySelector(select);
+  const vaultStatus = useMoneypSelector(select);
 
-  const [view, setView] = useState<TroveView>(getInitialView(troveStatus));
-  const viewRef = useRef<TroveView>(view);
+  const [view, setView] = useState<VaultView>(getInitialView(vaultStatus));
+  const viewRef = useRef<VaultView>(view);
 
-  const dispatchEvent = useCallback((event: TroveEvent) => {
+  const dispatchEvent = useCallback((event: VaultEvent) => {
     const nextView = transition(viewRef.current, event);
 
     console.log(
@@ -101,15 +101,15 @@ export const TroveViewProvider: React.FC = props => {
   }, [view]);
 
   useEffect(() => {
-    const event = troveStatusEvents[troveStatus] ?? null;
+    const event = vaultStatusEvents[vaultStatus] ?? null;
     if (event !== null) {
       dispatchEvent(event);
     }
-  }, [troveStatus, dispatchEvent]);
+  }, [vaultStatus, dispatchEvent]);
 
   const provider = {
     view,
     dispatchEvent
   };
-  return <TroveViewContext.Provider value={provider}>{children}</TroveViewContext.Provider>;
+  return <VaultViewContext.Provider value={provider}>{children}</VaultViewContext.Provider>;
 };

@@ -1,13 +1,13 @@
 import {
   Decimal,
-  LUSD_MINIMUM_DEBT,
-  Trove,
-  TroveAdjustmentParams,
-  TroveChange,
+  BPD_MINIMUM_DEBT,
+  Vault,
+  VaultAdjustmentParams,
+  VaultChange,
   Percent,
   MINIMUM_COLLATERAL_RATIO,
   CRITICAL_COLLATERAL_RATIO,
-  LiquityStoreState
+  MoneypStoreState
 } from "@liquity/lib-base";
 
 import { COIN } from "../../../strings";
@@ -18,61 +18,61 @@ import { ErrorDescription } from "../../ErrorDescription";
 const mcrPercent = new Percent(MINIMUM_COLLATERAL_RATIO).toString(0);
 const ccrPercent = new Percent(CRITICAL_COLLATERAL_RATIO).toString(0);
 
-type TroveAdjustmentDescriptionParams = {
-  params: TroveAdjustmentParams<Decimal>;
+type VaultAdjustmentDescriptionParams = {
+  params: VaultAdjustmentParams<Decimal>;
 };
 
-const TroveAdjustmentDescription: React.FC<TroveAdjustmentDescriptionParams> = ({ params }) => (
+const VaultAdjustmentDescription: React.FC<VaultAdjustmentDescriptionParams> = ({ params }) => (
   <ActionDescription>
-    {params.depositCollateral && params.borrowLUSD ? (
+    {params.depositCollateral && params.borrowBPD ? (
       <>
-        You will deposit <Amount>{params.depositCollateral.prettify()} ETH</Amount> and receive{" "}
+        You will deposit <Amount>{params.depositCollateral.prettify()} RBTC</Amount> and receive{" "}
         <Amount>
-          {params.borrowLUSD.prettify()} {COIN}
+          {params.borrowBPD.prettify()} {COIN}
         </Amount>
       </>
-    ) : params.repayLUSD && params.withdrawCollateral ? (
+    ) : params.repayBPD && params.withdrawCollateral ? (
       <>
         You will pay{" "}
         <Amount>
-          {params.repayLUSD.prettify()} {COIN}
+          {params.repayBPD.prettify()} {COIN}
         </Amount>{" "}
-        and receive <Amount>{params.withdrawCollateral.prettify()} ETH</Amount>
+        and receive <Amount>{params.withdrawCollateral.prettify()} RBTC</Amount>
       </>
-    ) : params.depositCollateral && params.repayLUSD ? (
+    ) : params.depositCollateral && params.repayBPD ? (
       <>
-        You will deposit <Amount>{params.depositCollateral.prettify()} ETH</Amount> and pay{" "}
+        You will deposit <Amount>{params.depositCollateral.prettify()} RBTC</Amount> and pay{" "}
         <Amount>
-          {params.repayLUSD.prettify()} {COIN}
+          {params.repayBPD.prettify()} {COIN}
         </Amount>
       </>
-    ) : params.borrowLUSD && params.withdrawCollateral ? (
+    ) : params.borrowBPD && params.withdrawCollateral ? (
       <>
-        You will receive <Amount>{params.withdrawCollateral.prettify()} ETH</Amount> and{" "}
+        You will receive <Amount>{params.withdrawCollateral.prettify()} RBTC</Amount> and{" "}
         <Amount>
-          {params.borrowLUSD.prettify()} {COIN}
+          {params.borrowBPD.prettify()} {COIN}
         </Amount>
       </>
     ) : params.depositCollateral ? (
       <>
-        You will deposit <Amount>{params.depositCollateral.prettify()} ETH</Amount>
+        You will deposit <Amount>{params.depositCollateral.prettify()} RBTC</Amount>
       </>
     ) : params.withdrawCollateral ? (
       <>
-        You will receive <Amount>{params.withdrawCollateral.prettify()} ETH</Amount>
+        You will receive <Amount>{params.withdrawCollateral.prettify()} RBTC</Amount>
       </>
-    ) : params.borrowLUSD ? (
+    ) : params.borrowBPD ? (
       <>
         You will receive{" "}
         <Amount>
-          {params.borrowLUSD.prettify()} {COIN}
+          {params.borrowBPD.prettify()} {COIN}
         </Amount>
       </>
     ) : (
       <>
         You will pay{" "}
         <Amount>
-          {params.repayLUSD.prettify()} {COIN}
+          {params.repayBPD.prettify()} {COIN}
         </Amount>
       </>
     )}
@@ -80,26 +80,26 @@ const TroveAdjustmentDescription: React.FC<TroveAdjustmentDescriptionParams> = (
   </ActionDescription>
 );
 
-export const selectForTroveChangeValidation = ({
+export const selectForVaultChangeValidation = ({
   price,
   total,
-  lusdBalance,
-  numberOfTroves
-}: LiquityStoreState) => ({ price, total, lusdBalance, numberOfTroves });
+  bpdBalance,
+  numberOfVaults
+}: MoneypStoreState) => ({ price, total, bpdBalance, numberOfVaults });
 
-type TroveChangeValidationContext = ReturnType<typeof selectForTroveChangeValidation>;
+type VaultChangeValidationContext = ReturnType<typeof selectForVaultChangeValidation>;
 
-export const validateTroveChange = (
-  original: Trove,
-  edited: Trove,
+export const validateVaultChange = (
+  original: Vault,
+  edited: Vault,
   borrowingRate: Decimal,
-  { price, total, lusdBalance, numberOfTroves }: TroveChangeValidationContext
+  { price, total, bpdBalance, numberOfVaults }: VaultChangeValidationContext
 ): [
-  validChange: Exclude<TroveChange<Decimal>, { type: "invalidCreation" }> | undefined,
+  validChange: Exclude<VaultChange<Decimal>, { type: "invalidCreation" }> | undefined,
   description: JSX.Element | undefined
 ] => {
   const change = original.whatChanged(edited, borrowingRate);
-  // Reapply change to get the exact state the Trove will end up in (which could be slightly
+  // Reapply change to get the exact state the Vault will end up in (which could be slightly
   // different from `edited` due to imprecision).
   const afterFee = original.apply(change, borrowingRate);
 
@@ -109,14 +109,14 @@ export const validateTroveChange = (
 
   if (
     change.type === "invalidCreation" ||
-    (change.type !== "closure" && afterFee.debt.lt(LUSD_MINIMUM_DEBT))
+    (change.type !== "closure" && afterFee.debt.lt(BPD_MINIMUM_DEBT))
   ) {
     return [
       undefined,
       <ErrorDescription>
         Debt must be be at least{" "}
         <Amount>
-          {LUSD_MINIMUM_DEBT.toString()} {COIN}
+          {BPD_MINIMUM_DEBT.toString()} {COIN}
         </Amount>
         .
       </ErrorDescription>
@@ -126,7 +126,7 @@ export const validateTroveChange = (
   if (
     (change.type === "creation" ||
       (change.type === "adjustment" &&
-        (change.params.withdrawCollateral || change.params.borrowLUSD))) &&
+        (change.params.withdrawCollateral || change.params.borrowBPD))) &&
     afterFee.collateralRatioIsBelowMinimum(price)
   ) {
     return [
@@ -146,7 +146,7 @@ export const validateTroveChange = (
       undefined,
       change.type === "creation" ? (
         <ErrorDescription>
-          You're not allowed to open a Trove that would cause the total collateral ratio to fall
+          You're not allowed to open a Vault that would cause the total collateral ratio to fall
           below <Amount>{ccrPercent}</Amount>. Please increase your collateral ratio.
         </ErrorDescription>
       ) : (
@@ -158,22 +158,22 @@ export const validateTroveChange = (
     ];
   }
 
-  if (change.params.repayLUSD?.gt(lusdBalance)) {
+  if (change.params.repayBPD?.gt(bpdBalance)) {
     return [
       undefined,
       edited.isEmpty ? (
         <ErrorDescription>
           You need{" "}
           <Amount>
-            {change.params.repayLUSD.sub(lusdBalance).prettify()} {COIN}
+            {change.params.repayBPD.sub(bpdBalance).prettify()} {COIN}
           </Amount>{" "}
-          more to close your Trove.
+          more to close your Vault.
         </ErrorDescription>
       ) : (
         <ErrorDescription>
           The amount you're trying to repay exceeds your balance by{" "}
           <Amount>
-            {change.params.repayLUSD.sub(lusdBalance).prettify()} {COIN}
+            {change.params.repayBPD.sub(bpdBalance).prettify()} {COIN}
           </Amount>
           .
         </ErrorDescription>
@@ -189,7 +189,7 @@ export const validateTroveChange = (
     return [
       undefined,
       <ErrorDescription>
-        You're not allowed to open a Trove with less than <Amount>{ccrPercent}</Amount> collateral
+        You're not allowed to open a Vault with less than <Amount>{ccrPercent}</Amount> collateral
         ratio during recovery mode. Please increase your collateral ratio.
       </ErrorDescription>
     ];
@@ -199,16 +199,16 @@ export const validateTroveChange = (
     return [
       undefined,
       <ErrorDescription>
-        You're not allowed to close your Trove during recovery mode.
+        You're not allowed to close your Vault during recovery mode.
       </ErrorDescription>
     ];
   }
 
-  if (change.type === "closure" && numberOfTroves === 1) {
+  if (change.type === "closure" && numberOfVaults === 1) {
     return [
       undefined,
       <ErrorDescription>
-        You're not allowed to close your Trove when there are no other Troves in the system.
+        You're not allowed to close your Vault when there are no other Vaults in the system.
       </ErrorDescription>
     ];
   }
@@ -226,5 +226,5 @@ export const validateTroveChange = (
     ];
   }
 
-  return [change, <TroveAdjustmentDescription params={change.params} />];
+  return [change, <VaultAdjustmentDescription params={change.params} />];
 };

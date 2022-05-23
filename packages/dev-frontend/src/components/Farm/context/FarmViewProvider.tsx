@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { LiquityStoreState, Decimal } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { MoneypStoreState, Decimal } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 import { FarmViewContext } from "./FarmViewContext";
 import { transitions } from "./transitions";
 import type { FarmView, FarmEvent } from "./transitions";
@@ -12,24 +12,24 @@ const transition = (view: FarmView, event: FarmEvent): FarmView => {
 
 const getInitialView = (
   liquidityMiningStake: Decimal,
-  remainingLiquidityMiningLQTYReward: Decimal
+  remainingLiquidityMiningMPReward: Decimal
 ): FarmView => {
-  if (remainingLiquidityMiningLQTYReward.isZero) return "DISABLED";
+  if (remainingLiquidityMiningMPReward.isZero) return "DISABLED";
   if (liquidityMiningStake.isZero) return "INACTIVE";
   return "ACTIVE";
 };
 
 const selector = ({
   liquidityMiningStake,
-  remainingLiquidityMiningLQTYReward
-}: LiquityStoreState) => ({ liquidityMiningStake, remainingLiquidityMiningLQTYReward });
+  remainingLiquidityMiningMPReward
+}: MoneypStoreState) => ({ liquidityMiningStake, remainingLiquidityMiningMPReward });
 
 export const FarmViewProvider: React.FC = props => {
   const { children } = props;
-  const { liquidityMiningStake, remainingLiquidityMiningLQTYReward } = useLiquitySelector(selector);
+  const { liquidityMiningStake, remainingLiquidityMiningMPReward } = useMoneypSelector(selector);
 
   const [view, setView] = useState<FarmView>(
-    getInitialView(liquidityMiningStake, remainingLiquidityMiningLQTYReward)
+    getInitialView(liquidityMiningStake, remainingLiquidityMiningMPReward)
   );
   const viewRef = useRef<FarmView>(view);
 

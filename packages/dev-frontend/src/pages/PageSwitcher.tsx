@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
 import { AddressZero } from "@ethersproject/constants";
 
-import { LiquityStoreState } from "@liquity/lib-base";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { MoneypStoreState } from "@liquity/lib-base";
+import { useMoneypSelector } from "@liquity/lib-react";
 
-import { useLiquity } from "../hooks/LiquityContext";
+import { useMoneyp } from "../hooks/MoneypContext";
 
 import { Dashboard } from "./Dashboard";
 import { UnregisteredFrontend } from "./UnregisteredFrontend";
 import { FrontendRegistration } from "./FrontendRegistration";
 import { FrontendRegistrationSuccess } from "./FrontendRegistrationSuccess";
 
-const selectFrontend = ({ frontend }: LiquityStoreState) => frontend;
+const selectFrontend = ({ frontend }: MoneypStoreState) => frontend;
 
 export const PageSwitcher: React.FC = () => {
   const {
     account,
     config: { frontendTag }
-  } = useLiquity();
+  } = useMoneyp();
 
-  const frontend = useLiquitySelector(selectFrontend);
+  const frontend = useMoneypSelector(selectFrontend);
   const unregistered = frontendTag !== AddressZero && frontend.status === "unregistered";
 
   const [registering, setRegistering] = useState(false);

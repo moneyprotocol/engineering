@@ -6,29 +6,29 @@ type UniswapResponse = {
       ethPrice: string;
     } | null;
     token: {
-      derivedETH: string;
+      derivedRBTC: string;
     } | null;
   };
   errors?: Array<{ message: string }>;
 };
 
-const uniswapQuery = (lqtyTokenAddress: string) => `{
-  token(id: "${lqtyTokenAddress.toLowerCase()}") {
-    derivedETH
+const uniswapQuery = (mpTokenAddress: string) => `{
+  token(id: "${mpTokenAddress.toLowerCase()}") {
+    derivedRBTC
   },
   bundle(id: 1) {
     ethPrice
   },
 }`;
 
-export async function fetchLqtyPrice(lqtyTokenAddress: string) {
+export async function fetchLqtyPrice(mpTokenAddress: string) {
   const response = await window.fetch("https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2", {
     method: "POST",
     headers: {
       "content-type": "application/json"
     },
     body: JSON.stringify({
-      query: uniswapQuery(lqtyTokenAddress),
+      query: uniswapQuery(mpTokenAddress),
       variables: null
     })
   });
@@ -42,11 +42,11 @@ export async function fetchLqtyPrice(lqtyTokenAddress: string) {
     return Promise.reject(errors);
   }
 
-  if (typeof data?.token?.derivedETH === "string" && typeof data?.bundle?.ethPrice === "string") {
+  if (typeof data?.token?.derivedRBTC === "string" && typeof data?.bundle?.ethPrice === "string") {
     const ethPriceUSD = Decimal.from(data.bundle.ethPrice);
-    const lqtyPriceUSD = Decimal.from(data.token.derivedETH).mul(ethPriceUSD);
+    const mpPriceUSD = Decimal.from(data.token.derivedRBTC).mul(ethPriceUSD);
 
-    return { lqtyPriceUSD };
+    return { mpPriceUSD };
   }
 
   return Promise.reject("Uniswap doesn't have the required data to calculate yield");

@@ -1,39 +1,39 @@
 import React, { useState } from "react";
 import { Heading, Box, Card, Button } from "theme-ui";
 
-import { Decimal, Decimalish, StabilityDeposit, LiquityStoreState } from "@liquity/lib-base";
+import { Decimal, Decimalish, StabilityDeposit, MoneypStoreState } from "@liquity/lib-base";
 
-import { useLiquitySelector } from "@liquity/lib-react";
+import { useMoneypSelector } from "@liquity/lib-react";
 
 import { COIN, GT } from "../../strings";
 
 import { Icon } from "../Icon";
-import { EditableRow, StaticRow } from "../Trove/Editor";
+import { EditableRow, StaticRow } from "../Vault/Editor";
 import { LoadingOverlay } from "../LoadingOverlay";
 
-const selectLUSDBalance = ({ lusdBalance }: LiquityStoreState) => lusdBalance;
+const selectBPDBalance = ({ bpdBalance }: MoneypStoreState) => bpdBalance;
 
 type StabilityDepositEditorProps = {
   originalDeposit: StabilityDeposit;
-  editedLUSD: Decimal;
+  editedBPD: Decimal;
   changePending: boolean;
   dispatch: (action: { type: "setDeposit"; newValue: Decimalish } | { type: "revert" }) => void;
 };
 
 export const StabilityDepositEditor: React.FC<StabilityDepositEditorProps> = ({
   originalDeposit,
-  editedLUSD,
+  editedBPD,
   changePending,
   dispatch,
   children
 }) => {
-  const lusdBalance = useLiquitySelector(selectLUSDBalance);
+  const bpdBalance = useMoneypSelector(selectBPDBalance);
   const editingState = useState<string>();
 
-  const edited = !editedLUSD.eq(originalDeposit.currentLUSD);
+  const edited = !editedBPD.eq(originalDeposit.currentBPD);
 
-  const maxAmount = originalDeposit.currentLUSD.add(lusdBalance);
-  const maxedOut = editedLUSD.eq(maxAmount);
+  const maxAmount = originalDeposit.currentBPD.add(bpdBalance);
+  const maxedOut = editedBPD.eq(maxAmount);
 
   return (
     <Card>
@@ -53,13 +53,13 @@ export const StabilityDepositEditor: React.FC<StabilityDepositEditorProps> = ({
       <Box sx={{ p: [2, 3] }}>
         <EditableRow
           label="Deposit"
-          inputId="deposit-lqty"
-          amount={editedLUSD.prettify()}
+          inputId="deposit-mp"
+          amount={editedBPD.prettify()}
           maxAmount={maxAmount.toString()}
           maxedOut={maxedOut}
           unit={COIN}
           {...{ editingState }}
-          editedAmount={editedLUSD.toString(2)}
+          editedAmount={editedBPD.toString(2)}
           setEditedAmount={newValue => dispatch({ type: "setDeposit", newValue })}
         />
 
@@ -70,14 +70,14 @@ export const StabilityDepositEditor: React.FC<StabilityDepositEditorProps> = ({
               inputId="deposit-gain"
               amount={originalDeposit.collateralGain.prettify(4)}
               color={originalDeposit.collateralGain.nonZero && "success"}
-              unit="ETH"
+              unit="RBTC"
             />
 
             <StaticRow
               label="Reward"
               inputId="deposit-reward"
-              amount={originalDeposit.lqtyReward.prettify()}
-              color={originalDeposit.lqtyReward.nonZero && "success"}
+              amount={originalDeposit.mpReward.prettify()}
+              color={originalDeposit.mpReward.nonZero && "success"}
               unit={GT}
             />
           </>

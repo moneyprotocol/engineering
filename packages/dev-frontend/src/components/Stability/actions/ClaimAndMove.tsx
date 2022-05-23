@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "theme-ui";
-import { useLiquity } from "../../../hooks/LiquityContext";
+import { useMoneyp } from "../../../hooks/MoneypContext";
 import { useTransactionFunction } from "../../Transaction";
 
 type ClaimAndMoveProps = {
@@ -8,11 +8,11 @@ type ClaimAndMoveProps = {
 };
 
 export const ClaimAndMove: React.FC<ClaimAndMoveProps> = ({ disabled, children }) => {
-  const { liquity } = useLiquity();
+  const { moneyp } = useMoneyp();
 
   const [sendTransaction] = useTransactionFunction(
     "stability-deposit",
-    liquity.send.transferCollateralGainToTrove.bind(liquity.send)
+    moneyp.send.transferCollateralGainToVault.bind(moneyp.send)
   );
 
   return (

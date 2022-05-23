@@ -1,22 +1,22 @@
-import { BlockPolledLiquityStoreState } from "@liquity/lib-ethers";
-import { useLiquitySelector } from "@liquity/lib-react";
+import { BlockPolledMoneypStoreState } from "@liquity/lib-ethers";
+import { useMoneypSelector } from "@liquity/lib-react";
 
-import { useLiquity } from "../../hooks/LiquityContext";
+import { useMoneyp } from "../../hooks/MoneypContext";
 import { DisabledRedemption } from "./DisabledRedemption";
 import { RedemptionManager } from "./RedemptionManager";
 
 const SECONDS_IN_ONE_DAY = 24 * 60 * 60;
 
-const selectBlockTimestamp = ({ blockTimestamp }: BlockPolledLiquityStoreState) => blockTimestamp;
+const selectBlockTimestamp = ({ blockTimestamp }: BlockPolledMoneypStoreState) => blockTimestamp;
 
 export const Redemption: React.FC = () => {
   const {
-    liquity: {
+    moneyp: {
       connection: { deploymentDate, bootstrapPeriod }
     }
-  } = useLiquity();
+  } = useMoneyp();
 
-  const blockTimestamp = useLiquitySelector(selectBlockTimestamp);
+  const blockTimestamp = useMoneypSelector(selectBlockTimestamp);
 
   const bootstrapPeriodDays = Math.round(bootstrapPeriod / SECONDS_IN_ONE_DAY);
   const deploymentTime = deploymentDate.getTime() / 1000;

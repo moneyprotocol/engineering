@@ -1,22 +1,22 @@
 import { Button } from "theme-ui";
 
-import { Decimal, LQTYStakeChange } from "@liquity/lib-base";
+import { Decimal, MPStakeChange } from "@liquity/lib-base";
 
-import { useLiquity } from "../../hooks/LiquityContext";
+import { useMoneyp } from "../../hooks/MoneypContext";
 import { useTransactionFunction } from "../Transaction";
 
 type StakingActionProps = {
-  change: LQTYStakeChange<Decimal>;
+  change: MPStakeChange<Decimal>;
 };
 
 export const StakingManagerAction: React.FC<StakingActionProps> = ({ change, children }) => {
-  const { liquity } = useLiquity();
+  const { moneyp } = useMoneyp();
 
   const [sendTransaction] = useTransactionFunction(
     "stake",
-    change.stakeLQTY
-      ? liquity.send.stakeLQTY.bind(liquity.send, change.stakeLQTY)
-      : liquity.send.unstakeLQTY.bind(liquity.send, change.unstakeLQTY)
+    change.stakeMP
+      ? moneyp.send.stakeMP.bind(moneyp.send, change.stakeMP)
+      : moneyp.send.unstakeMP.bind(moneyp.send, change.unstakeMP)
   );
 
   return <Button onClick={sendTransaction}>{children}</Button>;
