@@ -1,22 +1,22 @@
-import { TroveManager } from "../../generated/TroveManager/TroveManager";
+import { VaultManager } from "../../generated/VaultManager/VaultManager";
 import {
   BorrowerOperations,
-  TroveUpdated
+  VaultUpdated
 } from "../../generated/templates/BorrowerOperations/BorrowerOperations";
 
-import { getTroveOperationFromBorrowerOperation } from "../types/TroveOperation";
+import { getVaultOperationFromBorrowerOperation } from "../types/VaultOperation";
 
-import { updateTrove } from "../entities/Trove";
+import { updateVault } from "../entities/Vault";
 
-export function handleTroveUpdated(event: TroveUpdated): void {
+export function handleVaultUpdated(event: VaultUpdated): void {
   let borrowerOperations = BorrowerOperations.bind(event.address);
-  let troveManagerAddress = borrowerOperations.troveManager();
-  let troveManager = TroveManager.bind(troveManagerAddress);
-  let snapshots = troveManager.rewardSnapshots(event.params._borrower);
+  let vaultManagerAddress = borrowerOperations.vaultManager();
+  let vaultManager = VaultManager.bind(vaultManagerAddress);
+  let snapshots = vaultManager.rewardSnapshots(event.params._borrower);
 
-  updateTrove(
+  updateVault(
     event,
-    getTroveOperationFromBorrowerOperation(event.params.operation),
+    getVaultOperationFromBorrowerOperation(event.params.operation),
     event.params._borrower,
     event.params._coll,
     event.params._debt,

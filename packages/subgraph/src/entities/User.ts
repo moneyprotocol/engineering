@@ -15,7 +15,7 @@ export function getUser(_user: Address): User {
   } else {
     let newUser = new User(id);
 
-    newUser.troveCount = 0;
+    newUser.vaultCount = 0;
     newUser.stabilityDepositCount = 0;
     newUser.collSurplus = DECIMAL_ZERO;
     newUser.save();

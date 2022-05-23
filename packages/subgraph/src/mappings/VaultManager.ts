@@ -1,23 +1,23 @@
 import {
-  TroveManager,
-  TroveUpdated,
-  TroveLiquidated,
+  VaultManager,
+  VaultUpdated,
+  VaultLiquidated,
   Liquidation,
   Redemption,
   BorrowerOperationsAddressChanged,
   StabilityPoolAddressChanged,
   CollSurplusPoolAddressChanged,
   PriceFeedAddressChanged
-} from "../../generated/TroveManager/TroveManager";
+} from "../../generated/VaultManager/VaultManager";
 import { BorrowerOperations, StabilityPool, CollSurplusPool } from "../../generated/templates";
 
 import { BIGINT_ZERO } from "../utils/bignumbers";
 
-import { getTroveOperationFromTroveManagerOperation } from "../types/TroveOperation";
+import { getVaultOperationFromVaultManagerOperation } from "../types/VaultOperation";
 
 import { finishCurrentLiquidation } from "../entities/Liquidation";
 import { finishCurrentRedemption } from "../entities/Redemption";
-import { updateTrove } from "../entities/Trove";
+import { updateVault } from "../entities/Vault";
 import { updatePriceFeedAddress, updateTotalRedistributed } from "../entities/Global";
 
 export function handleBorrowerOperationsAddressChanged(
@@ -38,13 +38,13 @@ export function handlePriceFeedAddressChanged(event: PriceFeedAddressChanged): v
   updatePriceFeedAddress(event.params._newPriceFeedAddress);
 }
 
-export function handleTroveUpdated(event: TroveUpdated): void {
-  let troveManager = TroveManager.bind(event.address);
-  let snapshots = troveManager.rewardSnapshots(event.params._borrower);
+export function handleVaultUpdated(event: VaultUpdated): void {
+  let vaultManager = VaultManager.bind(event.address);
+  let snapshots = vaultManager.rewardSnapshots(event.params._borrower);
 
-  updateTrove(
+  updateVault(
     event,
-    getTroveOperationFromTroveManagerOperation(event.params._operation),
+    getVaultOperationFromVaultManagerOperation(event.params._operation),
     event.params._borrower,
     event.params._coll,
     event.params._debt,
@@ -54,8 +54,8 @@ export function handleTroveUpdated(event: TroveUpdated): void {
   );
 }
 
-export function handleTroveLiquidated(event: TroveLiquidated): void {
-  updateTrove(
+export function handleVaultLiquidated(event: VaultLiquidated): void {
+  updateVault(
     event,
     "accrueRewards",
     event.params._borrower,
@@ -66,9 +66,9 @@ export function handleTroveLiquidated(event: TroveLiquidated): void {
     BIGINT_ZERO
   );
 
-  updateTrove(
+  updateVault(
     event,
-    getTroveOperationFromTroveManagerOperation(event.params._operation),
+    getVaultOperationFromVaultManagerOperation(event.params._operation),
     event.params._borrower,
     BIGINT_ZERO,
     BIGINT_ZERO,
@@ -79,24 +79,24 @@ export function handleTroveLiquidated(event: TroveLiquidated): void {
 }
 
 export function handleLiquidation(event: Liquidation): void {
-  let troveManager = TroveManager.bind(event.address);
+  let vaultManager = VaultManager.bind(event.address);
 
   finishCurrentLiquidation(
     event,
     event.params._liquidatedColl,
     event.params._liquidatedDebt,
     event.params._collGasCompensation,
-    event.params._LUSDGasCompensation
+    event.params._BPDGasCompensation
   );
 
-  updateTotalRedistributed(troveManager.L_ETH(), troveManager.L_LUSDDebt());
+  updateTotalRedistributed(vaultManager.B_RBTC(), vaultManager.B_BPDDebt());
 }
 
 export function handleRedemption(event: Redemption): void {
   finishCurrentRedemption(
     event,
-    event.params._attemptedLUSDAmount,
-    event.params._actualLUSDAmount,
-    event.params._ETHSent
+    event.params._attemptedBPDAmount,
+    event.params._actualBPDAmount,
+    event.params._RBTCSent
   );
 }

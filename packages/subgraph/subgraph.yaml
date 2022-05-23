@@ -1,19 +1,19 @@
 specVersion: 0.0.2
-description: Liquity Decentralized Borrowing Protocol
+description: Moneyp Decentralized Borrowing Protocol
 repository: https://github.com/liquity/subgraph
 schema:
   file: ./schema.graphql
 dataSources:
-  - name: TroveManager
+  - name: VaultManager
     kind: ethereum/contract
     network: ropsten
     source:
       #address: "0x56fcdA0436E5C7a33ee5bfe292f11AC66429Eb5c"
       address: "0x6645E03DA2a711f780af7cCE1019Cb9a9135C898"
-      abi: TroveManager
+      abi: VaultManager
       # startBlock: 8110721
     mapping:
-      file: ./src/mappings/TroveManager.ts
+      file: ./src/mappings/VaultManager.ts
       language: wasm/assemblyscript
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -22,14 +22,14 @@ dataSources:
         - User
         - Transaction
         - PriceChange
-        - Trove
-        - TroveChange
+        - Vault
+        - VaultChange
         - Redemption
         - Liquidation
         - SystemState
       abis:
-        - name: TroveManager
-          file: ../lib-ethers/abi/TroveManager.json
+        - name: VaultManager
+          file: ../lib-ethers/abi/VaultManager.json
         - name: PriceFeed
           file: ../lib-ethers/abi/PriceFeed.json
       eventHandlers:
@@ -41,10 +41,10 @@ dataSources:
           handler: handleCollSurplusPoolAddressChanged
         - event: PriceFeedAddressChanged(address)
           handler: handlePriceFeedAddressChanged
-        - event: TroveUpdated(indexed address,uint256,uint256,uint256,uint8)
-          handler: handleTroveUpdated
-        - event: TroveLiquidated(indexed address,uint256,uint256,uint8)
-          handler: handleTroveLiquidated
+        - event: VaultUpdated(indexed address,uint256,uint256,uint256,uint8)
+          handler: handleVaultUpdated
+        - event: VaultLiquidated(indexed address,uint256,uint256,uint8)
+          handler: handleVaultLiquidated
         - event: Liquidation(uint256,uint256,uint256,uint256)
           handler: handleLiquidation
         - event: Redemption(uint256,uint256,uint256,uint256)
@@ -65,19 +65,19 @@ templates:
         - User
         - Transaction
         - PriceChange
-        - Trove
-        - TroveChange
+        - Vault
+        - VaultChange
         - SystemState
       abis:
         - name: BorrowerOperations
           file: ../lib-ethers/abi/BorrowerOperations.json
-        - name: TroveManager
-          file: ../lib-ethers/abi/TroveManager.json
+        - name: VaultManager
+          file: ../lib-ethers/abi/VaultManager.json
         - name: PriceFeed
           file: ../lib-ethers/abi/PriceFeed.json
       eventHandlers:
-        - event: TroveUpdated(indexed address,uint256,uint256,uint256,uint8)
-          handler: handleTroveUpdated
+        - event: VaultUpdated(indexed address,uint256,uint256,uint256,uint8)
+          handler: handleVaultUpdated
   - name: StabilityPool
     kind: ethereum/contract
     network: ropsten
@@ -104,8 +104,8 @@ templates:
       eventHandlers:
         - event: UserDepositChanged(indexed address,uint256)
           handler: handleUserDepositChanged
-        - event: ETHGainWithdrawn(indexed address,uint256,uint256)
-          handler: handleETHGainWithdrawn
+        - event: RBTCGainWithdrawn(indexed address,uint256,uint256)
+          handler: handleRBTCGainWithdrawn
   - name: CollSurplusPool
     kind: ethereum/contract
     network: ropsten
@@ -120,7 +120,7 @@ templates:
         - Global
         - User
         - Transaction
-        - Trove
+        - Vault
         - CollSurplusChange
         - SystemState
       abis:

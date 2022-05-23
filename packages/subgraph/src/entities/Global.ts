@@ -19,11 +19,11 @@ export function getGlobal(): Global {
     newGlobal.changeCount = 0;
     newGlobal.liquidationCount = 0;
     newGlobal.redemptionCount = 0;
-    newGlobal.numberOfOpenTroves = 0;
-    newGlobal.numberOfLiquidatedTroves = 0;
-    newGlobal.numberOfRedeemedTroves = 0;
-    newGlobal.numberOfTrovesClosedByOwner = 0;
-    newGlobal.totalNumberOfTroves = 0;
+    newGlobal.numberOfOpenVaults = 0;
+    newGlobal.numberOfLiquidatedVaults = 0;
+    newGlobal.numberOfRedeemedVaults = 0;
+    newGlobal.numberOfVaultsClosedByOwner = 0;
+    newGlobal.totalNumberOfVaults = 0;
     newGlobal.rawTotalRedistributedCollateral = BIGINT_ZERO;
     newGlobal.rawTotalRedistributedDebt = BIGINT_ZERO;
 
@@ -72,42 +72,42 @@ export function getPriceFeedAddress(): Address {
   return getGlobal().priceFeedAddress as Address;
 }
 
-export function updateTotalRedistributed(L_ETH: BigInt, L_LUSDDebt: BigInt): void {
+export function updateTotalRedistributed(B_RBTC: BigInt, B_BPDDebt: BigInt): void {
   let global = getGlobal();
 
-  global.rawTotalRedistributedCollateral = L_ETH;
-  global.rawTotalRedistributedDebt = L_LUSDDebt;
+  global.rawTotalRedistributedCollateral = B_RBTC;
+  global.rawTotalRedistributedDebt = B_BPDDebt;
   global.save();
 }
 
-export function increaseNumberOfOpenTroves(): void {
+export function increaseNumberOfOpenVaults(): void {
   let global = getGlobal();
 
-  global.numberOfOpenTroves++;
-  global.totalNumberOfTroves++;
+  global.numberOfOpenVaults++;
+  global.totalNumberOfVaults++;
   global.save();
 }
 
-export function increaseNumberOfLiquidatedTroves(): void {
+export function increaseNumberOfLiquidatedVaults(): void {
   let global = getGlobal();
 
-  global.numberOfLiquidatedTroves++;
-  global.numberOfOpenTroves--;
+  global.numberOfLiquidatedVaults++;
+  global.numberOfOpenVaults--;
   global.save();
 }
 
-export function increaseNumberOfRedeemedTroves(): void {
+export function increaseNumberOfRedeemedVaults(): void {
   let global = getGlobal();
 
-  global.numberOfRedeemedTroves++;
-  global.numberOfOpenTroves--;
+  global.numberOfRedeemedVaults++;
+  global.numberOfOpenVaults--;
   global.save();
 }
 
-export function increaseNumberOfTrovesClosedByOwner(): void {
+export function increaseNumberOfVaultsClosedByOwner(): void {
   let global = getGlobal();
 
-  global.numberOfTrovesClosedByOwner++;
-  global.numberOfOpenTroves--;
+  global.numberOfVaultsClosedByOwner++;
+  global.numberOfOpenVaults--;
   global.save();
 }

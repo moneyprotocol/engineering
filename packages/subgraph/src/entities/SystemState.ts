@@ -3,7 +3,7 @@ import { ethereum, BigDecimal } from "@graphprotocol/graph-ts";
 import {
   SystemState,
   PriceChange,
-  TroveChange,
+  VaultChange,
   StabilityDepositChange,
   CollSurplusChange
 } from "../../generated/schema";
@@ -16,7 +16,7 @@ import {
   isRedemption,
   isLiquidation,
   isRecoveryModeLiquidation
-} from "../types/TroveOperation";
+} from "../types/VaultOperation";
 
 import { getPrice } from "../calls/PriceFeed";
 
@@ -122,20 +122,20 @@ function tryToOffsetWithTokensFromStabilityPool(
   }
 }
 
-export function updateSystemStateByTroveChange(troveChange: TroveChange): void {
+export function updateSystemStateByVaultChange(vaultChange: VaultChange): void {
   let systemState = getCurrentSystemState();
-  let operation = troveChange.troveOperation;
+  let operation = vaultChange.vaultOperation;
 
   if (isBorrowerOperation(operation) || isRedemption(operation)) {
-    systemState.totalCollateral += troveChange.collateralChange;
-    systemState.totalDebt += troveChange.debtChange;
+    systemState.totalCollateral += vaultChange.collateralChange;
+    systemState.totalDebt += vaultChange.debtChange;
   } else if (isLiquidation(operation)) {
     // TODO gas compensation
-    if (!isRecoveryModeLiquidation(operation) || troveChange.collateralRatioBefore > DECIMAL_ONE) {
+    if (!isRecoveryModeLiquidation(operation) || vaultChange.collateralRatioBefore > DECIMAL_ONE) {
       tryToOffsetWithTokensFromStabilityPool(
         systemState,
-        -troveChange.collateralChange,
-        -troveChange.debtChange
+        -vaultChange.collateralChange,
+        -vaultChange.debtChange
       );
     }
   }

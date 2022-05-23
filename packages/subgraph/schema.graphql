@@ -10,11 +10,11 @@ type Global @entity {
   liquidationCount: Int!
   redemptionCount: Int!
 
-  numberOfOpenTroves: Int!
-  numberOfLiquidatedTroves: Int!
-  numberOfRedeemedTroves: Int!
-  numberOfTrovesClosedByOwner: Int!
-  totalNumberOfTroves: Int!
+  numberOfOpenVaults: Int!
+  numberOfLiquidatedVaults: Int!
+  numberOfRedeemedVaults: Int!
+  numberOfVaultsClosedByOwner: Int!
+  totalNumberOfVaults: Int!
 
   "Total redistributed per-stake collateral"
   rawTotalRedistributedCollateral: BigInt!
@@ -54,37 +54,37 @@ type User @entity {
   "User's Ethereum address as a hex-string"
   id: ID!
 
-  currentTrove: Trove
-  troveCount: Int!
+  currentVault: Vault
+  vaultCount: Int!
 
   currentStabilityDeposit: StabilityDeposit
   stabilityDepositCount: Int!
 
-  troves: [Trove!]! @derivedFrom(field: "owner")
+  vaults: [Vault!]! @derivedFrom(field: "owner")
   stabilityDeposits: [StabilityDeposit!]! @derivedFrom(field: "owner")
   liquidations: [Liquidation!]! @derivedFrom(field: "liquidator")
   collSurplus: BigDecimal!
   collSurplusChanges: [CollSurplusChange!]! @derivedFrom(field: "user")
 }
 
-enum TroveStatus {
+enum VaultStatus {
   open
   closedByOwner
   closedByLiquidation
   closedByRedemption
 }
 
-type Trove @entity {
+type Vault @entity {
   "Owner's ID + '-' + an incremented integer"
   id: ID!
 
   owner: User!
-  status: TroveStatus!
+  status: VaultStatus!
 
   collateral: BigDecimal!
   debt: BigDecimal!
 
-  changes: [TroveChange!]! @derivedFrom(field: "trove")
+  changes: [VaultChange!]! @derivedFrom(field: "vault")
 
   rawCollateral: BigInt!
   rawDebt: BigInt!
@@ -140,25 +140,25 @@ interface Change {
   systemStateAfter: SystemState!
 }
 
-enum TroveOperation {
-  openTrove
-  closeTrove
-  adjustTrove
+enum VaultOperation {
+  openVault
+  closeVault
+  adjustVault
   accrueRewards
   liquidateInNormalMode
   liquidateInRecoveryMode
   redeemCollateral
 }
 
-type TroveChange implements Change @entity {
+type VaultChange implements Change @entity {
   id: ID!
   sequenceNumber: Int!
   transaction: Transaction!
   systemStateBefore: SystemState!
   systemStateAfter: SystemState!
 
-  trove: Trove!
-  troveOperation: TroveOperation!
+  vault: Vault!
+  vaultOperation: VaultOperation!
 
   collateralBefore: BigDecimal!
   collateralChange: BigDecimal!
@@ -219,7 +219,7 @@ type Liquidation @entity {
   collGasCompensation: BigDecimal!
   tokenGasCompensation: BigDecimal!
 
-  troveChanges: [TroveChange!]! @derivedFrom(field: "liquidation")
+  vaultChanges: [VaultChange!]! @derivedFrom(field: "liquidation")
 }
 
 type Redemption @entity {
@@ -233,7 +233,7 @@ type Redemption @entity {
   collateralRedeemed: BigDecimal!
   partial: Boolean!
 
-  troveChanges: [TroveChange!]! @derivedFrom(field: "redemption")
+  vaultChanges: [VaultChange!]! @derivedFrom(field: "redemption")
 }
 
 type CollSurplusChange implements Change @entity {

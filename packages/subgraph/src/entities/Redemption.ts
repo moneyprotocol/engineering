@@ -37,15 +37,15 @@ export function getCurrentRedemption(event: ethereum.Event): Redemption {
 
 export function finishCurrentRedemption(
   event: ethereum.Event,
-  _attemptedLUSDAmount: BigInt,
-  _actualLUSDAmount: BigInt,
-  _ETHSent: BigInt
+  _attemptedBPDAmount: BigInt,
+  _actualBPDAmount: BigInt,
+  _RBTCSent: BigInt
 ): void {
   let currentRedemption = getCurrentRedemption(event);
-  currentRedemption.tokensAttemptedToRedeem = decimalize(_attemptedLUSDAmount);
-  currentRedemption.tokensActuallyRedeemed = decimalize(_actualLUSDAmount);
-  currentRedemption.collateralRedeemed = decimalize(_ETHSent);
-  currentRedemption.partial = _actualLUSDAmount < _attemptedLUSDAmount;
+  currentRedemption.tokensAttemptedToRedeem = decimalize(_attemptedBPDAmount);
+  currentRedemption.tokensActuallyRedeemed = decimalize(_actualBPDAmount);
+  currentRedemption.collateralRedeemed = decimalize(_RBTCSent);
+  currentRedemption.partial = _actualBPDAmount < _attemptedBPDAmount;
   currentRedemption.save();
 
   let global = getGlobal();

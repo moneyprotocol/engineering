@@ -121,16 +121,16 @@ export function updateStabilityDeposit(
 export function withdrawCollateralGainFromStabilityDeposit(
   event: ethereum.Event,
   _user: Address,
-  _ETH: BigInt,
-  _LUSDLoss: BigInt
+  _RBTC: BigInt,
+  _BPDLoss: BigInt
 ): void {
-  if (_ETH == BIGINT_ZERO && _LUSDLoss == BIGINT_ZERO) {
+  if (_RBTC == BIGINT_ZERO && _BPDLoss == BIGINT_ZERO) {
     // Ignore "NOP" event
     return;
   }
 
   let stabilityDeposit = getCurrentStabilityDepositOfOwner(_user) as StabilityDeposit;
-  let depositLoss = decimalize(_LUSDLoss);
+  let depositLoss = decimalize(_BPDLoss);
   let newDepositedAmount = stabilityDeposit.depositedAmount - depositLoss;
 
   updateStabilityDepositByOperation(
@@ -138,7 +138,7 @@ export function withdrawCollateralGainFromStabilityDeposit(
     stabilityDeposit,
     "withdrawCollateralGain",
     newDepositedAmount,
-    decimalize(_ETH)
+    decimalize(_RBTC)
   );
 
   if (newDepositedAmount == DECIMAL_ZERO) {

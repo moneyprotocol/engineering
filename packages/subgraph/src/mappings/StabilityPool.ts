@@ -1,6 +1,6 @@
 import {
   UserDepositChanged,
-  ETHGainWithdrawn
+  RBTCGainWithdrawn
 } from "../../generated/templates/StabilityPool/StabilityPool";
 
 import {
@@ -12,11 +12,11 @@ export function handleUserDepositChanged(event: UserDepositChanged): void {
   updateStabilityDeposit(event, event.params._depositor, event.params._newDeposit);
 }
 
-export function handleETHGainWithdrawn(event: ETHGainWithdrawn): void {
+export function handleRBTCGainWithdrawn(event: RBTCGainWithdrawn): void {
   withdrawCollateralGainFromStabilityDeposit(
     event,
     event.params._depositor,
-    event.params._ETH,
-    event.params._LUSDLoss
+    event.params._RBTC,
+    event.params._BPDLoss
   );
 }
