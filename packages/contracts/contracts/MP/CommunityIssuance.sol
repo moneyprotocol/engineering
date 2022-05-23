@@ -40,9 +40,9 @@ contract CommunityIssuance is ICommunityIssuance, Ownable, CheckContract, BaseMa
     * The community MP supply cap is the starting balance of the Community Issuance contract.
     * It should be minted to this contract by MPToken, when the token is deployed.
     * 
-    * Set to 32M (slightly less than 1/3) of total MP supply.
+    * Set to 167.705382 million (slightly less than 1/3) of total MP supply.
     */
-    uint constant public MPSupplyCap = 32e24; // 32 million
+    uint constant public MPSupplyCap = 167.705382e24;
 
     IMPToken public mpToken;
 

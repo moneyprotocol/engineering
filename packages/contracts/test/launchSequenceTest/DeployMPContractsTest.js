@@ -15,10 +15,9 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
 
   let MPContracts
 
-  const oneMillion = toBN(1000000)
   const digits = toBN(1e18)
-  const thirtyTwo = toBN(32)
-  const expectedCISupplyCap = thirtyTwo.mul(oneMillion).mul(digits)
+  const oneHundresSixtySevenMillion = toBN(167705382)
+  const expectedCISupplyCap = oneHundresSixtySevenMillion.mul(digits)
 
   beforeEach(async () => {
     // Deploy all contracts from the first account
@@ -70,36 +69,40 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
       assert.equal(lockupContractFactory.address, storedLCFAddress)
     })
 
-    it("Mints the correct MP amount to the multisig's address: (64.66 million)", async () => {
+    it("Mints the correct MP amount to the multisig's address: (314.825309 million)", async () => {
       const multisigMPEntitlement = await mpToken.balanceOf(multisig)
 
-     const twentyThreeSixes = "6".repeat(23)
-      const expectedMultisigEntitlement = "64".concat(twentyThreeSixes).concat("7")
+      const eighteenZeroes = "0".repeat(18)
+      const expectedMultisigEntitlement = "314825309".concat(eighteenZeroes)
+
       assert.equal(multisigMPEntitlement, expectedMultisigEntitlement)
     })
 
-    it("Mints the correct MP amount to the CommunityIssuance contract address: 32 million", async () => {
+    it("Mints the correct MP amount to the CommunityIssuance contract address: 167.705382 million", async () => {
       const communityMPEntitlement = await mpToken.balanceOf(communityIssuance.address)
-      // 32 million as 18-digit decimal
-      const _32Million = dec(32, 24)
 
-      assert.equal(communityMPEntitlement, _32Million)
+      const eighteenZeroes = "0".repeat(18)
+      const expectedCommunityMPEntitlement = "167705382".concat(eighteenZeroes)
+
+      assert.equal(communityMPEntitlement, expectedCommunityMPEntitlement)
     })
 
-    it("Mints the correct MP amount to the bountyAddress EOA: 2 million", async () => {
+    it("Mints the correct MP amount to the bountyAddress EOA: 10.481586 million", async () => {
       const bountyAddressBal = await mpToken.balanceOf(bountyAddress)
-      // 2 million as 18-digit decimal
-      const _2Million = dec(2, 24)
 
-      assert.equal(bountyAddressBal, _2Million)
+      const eighteenZeroes = "0".repeat(18)
+      const expectedBountyEntitlement = '10481586'.concat(eighteenZeroes);
+
+      assert.equal(bountyAddressBal, expectedBountyEntitlement)
     })
 
-    it("Mints the correct MP amount to the lpRewardsAddress EOA: 1.33 million", async () => {
+    it("Mints the correct MP amount to the lpRewardsAddress EOA: 6.987723 million", async () => {
       const lpRewardsAddressBal = await mpToken.balanceOf(lpRewardsAddress)
-      // 1.3 million as 18-digit decimal
-      const _1pt33Million = "1".concat("3".repeat(24))
 
-      assert.equal(lpRewardsAddressBal, _1pt33Million)
+      const eighteenZeroes = "0".repeat(18)
+      const expectedLpRewardsEntitlement = '6987723'.concat(eighteenZeroes);
+
+      assert.equal(lpRewardsAddressBal, expectedLpRewardsEntitlement)
     })
   })
 
@@ -111,13 +114,16 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
       assert.equal(storedDeployerAddress, moneypAG)
     })
 
-    it("Has a supply cap of 32 million", async () => {
+    it("Has a supply cap of 167.705382 million", async () => {
       const supplyCap = await communityIssuance.MPSupplyCap()
+
+      console.log(supplyCap.toString());
+      console.log(expectedCISupplyCap.toString())
 
       assert.isTrue(expectedCISupplyCap.eq(supplyCap))
     })
 
-    it("Moneyp AG can set addresses if CI's MP balance is equal or greater than 32 million ", async () => {
+    it("Moneyp AG can set addresses if CI's MP balance is equal or greater than 167.705382 million ", async () => {
       const MPBalance = await mpToken.balanceOf(communityIssuance.address)
       assert.isTrue(MPBalance.eq(expectedCISupplyCap))
 

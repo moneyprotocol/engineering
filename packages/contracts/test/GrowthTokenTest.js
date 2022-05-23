@@ -139,7 +139,7 @@ contract('MP Token', async accounts => {
   it('totalSupply(): gets the total supply', async () => {
     const total = (await mpTokenTester.totalSupply()).toString()
    
-    assert.equal(total, dec(100, 24))
+    assert.equal(total, dec(500, 24))
   })
 
   it("name(): returns the token's name", async () => {
