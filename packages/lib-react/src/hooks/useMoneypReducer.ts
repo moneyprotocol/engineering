@@ -1,28 +1,28 @@
 import { useCallback, useEffect, useReducer, useRef } from "react";
 
-import { LiquityStoreState } from "@liquity/lib-base";
+import { MoneypStoreState } from "@liquity/lib-base";
 
 import { equals } from "../utils/equals";
-import { useLiquityStore } from "./useLiquityStore";
+import { useMoneypStore } from "./useMoneypStore";
 
-export type LiquityStoreUpdate<T = unknown> = {
+export type MoneypStoreUpdate<T = unknown> = {
   type: "updateStore";
-  newState: LiquityStoreState<T>;
-  oldState: LiquityStoreState<T>;
-  stateChange: Partial<LiquityStoreState<T>>;
+  newState: MoneypStoreState<T>;
+  oldState: MoneypStoreState<T>;
+  stateChange: Partial<MoneypStoreState<T>>;
 };
 
-export const useLiquityReducer = <S, A, T>(
-  reduce: (state: S, action: A | LiquityStoreUpdate<T>) => S,
-  init: (storeState: LiquityStoreState<T>) => S
-): [S, (action: A | LiquityStoreUpdate<T>) => void] => {
-  const store = useLiquityStore<T>();
+export const useMoneypReducer = <S, A, T>(
+  reduce: (state: S, action: A | MoneypStoreUpdate<T>) => S,
+  init: (storeState: MoneypStoreState<T>) => S
+): [S, (action: A | MoneypStoreUpdate<T>) => void] => {
+  const store = useMoneypStore<T>();
   const oldStore = useRef(store);
   const state = useRef(init(store.state));
   const [, rerender] = useReducer(() => ({}), {});
 
   const dispatch = useCallback(
-    (action: A | LiquityStoreUpdate<T>) => {
+    (action: A | MoneypStoreUpdate<T>) => {
       const newState = reduce(state.current, action);
 
       if (!equals(newState, state.current)) {

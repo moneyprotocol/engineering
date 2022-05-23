@@ -1,12 +1,12 @@
 import { useEffect, useReducer } from "react";
 
-import { LiquityStoreState } from "@liquity/lib-base";
+import { MoneypStoreState } from "@liquity/lib-base";
 
 import { equals } from "../utils/equals";
-import { useLiquityStore } from "./useLiquityStore";
+import { useMoneypStore } from "./useMoneypStore";
 
-export const useLiquitySelector = <S, T>(select: (state: LiquityStoreState<T>) => S): S => {
-  const store = useLiquityStore<T>();
+export const useMoneypSelector = <S, T>(select: (state: MoneypStoreState<T>) => S): S => {
+  const store = useMoneypStore<T>();
   const [, rerender] = useReducer(() => ({}), {});
 
   useEffect(

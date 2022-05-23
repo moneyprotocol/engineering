@@ -1,5 +1,5 @@
-export * from "./src/components/LiquityStoreProvider";
+export * from "./src/components/MoneypStoreProvider";
 
-export * from "./src/hooks/useLiquityStore";
-export * from "./src/hooks/useLiquityReducer";
-export * from "./src/hooks/useLiquitySelector";
+export * from "./src/hooks/useMoneypStore";
+export * from "./src/hooks/useMoneypReducer";
+export * from "./src/hooks/useMoneypSelector";
