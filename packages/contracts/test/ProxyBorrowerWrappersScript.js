@@ -304,7 +304,7 @@ contract('BorrowerWrappers', async accounts => {
     // to force MP issuance
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider)
 
-    const expectedMPGain_A = toBN('50373424199406504708132')
+    const expectedMPGain_A = toBN('263996698375297251417556')
 
     await priceFeed.setPrice(price.mul(toBN(2)));
 
@@ -500,8 +500,8 @@ contract('BorrowerWrappers', async accounts => {
     const borrowingRate = await vaultManagerOriginal.getBorrowingRateWithDecay()
     const netDebtChange = proportionalBPD.mul(toBN(dec(1, 18))).div(toBN(dec(1, 18)).add(borrowingRate))
 
-    // approximately 4.0002556e+23 * number of weeks staked
-    const expectedMPGain_A = toBN('1772113218781843392000000')
+    // approximately 2.1670317e+24 * number of weeks staked
+    const expectedMPGain_A = toBN('9287278884470581897485450')
 
     const proxyAddress = borrowerWrappers.getProxyAddressFromUser(alice)
     // Alice claims staking rewards and puts them back in the system through the proxy
@@ -663,8 +663,8 @@ contract('BorrowerWrappers', async accounts => {
     const netDebtChange = proportionalBPD.mul(toBN(dec(1, 18))).div(toBN(dec(1, 18)).add(borrowingRate))
     const expectedTotalBPD = expectedBPDGain_A.add(netDebtChange)
 
-    // approximately 4.1977853e+23 * number of weeks staked
-    const expectedMPGain_A = toBN('1830059328708718848000000')
+    // approximately 2.1650028e+24 * number of weeks staked
+    const expectedMPGain_A = toBN('9590962462617476910451200')
 
     // Alice claims staking rewards and puts them back in the system through the proxy
     await borrowerWrappers.claimStakingGainsAndRecycle(th._100pct, alice, alice, { from: alice })

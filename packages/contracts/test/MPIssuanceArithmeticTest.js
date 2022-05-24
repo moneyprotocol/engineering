@@ -434,7 +434,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '42200713760820460000'
+    const expectedTotalMPIssued = '221165213181045510000'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -447,7 +447,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 2,531.94 after an hour", async () => {
+  it("Total MP tokens issued is 13,269.39 after an hour", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -459,7 +459,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '2531944322115010000000'
+    const expectedTotalMPIssued = '13269396554220261614874'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -472,7 +472,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 60,711.40 after a day", async () => {
+  it("Total MP tokens issued is 318,175.9 after a day", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -484,7 +484,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '60711403150133240000000'
+    const expectedTotalMPIssued = '318175908026681734690050'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -497,7 +497,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 422,568.60 after a week", async () => {
+  it("Total MP tokens issued is 2,214,594.64 after a week", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -509,7 +509,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '422568600980110200000000'
+    const expectedTotalMPIssued = '2214594645225704303178552'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -522,7 +522,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 1,772,113.21 after a month", async () => {
+  it("Total MP tokens issued is 9,287,278.88 after a month", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -534,7 +534,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '1772113218814930000000000'
+    const expectedTotalMPIssued = '9287278884470581897485492'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -547,7 +547,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 5,027,363.22 after 3 months", async () => {
+  it("Total MP tokens issued is 26,347,370.93 after 3 months", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -558,7 +558,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '5027363224065180000000000'
+    const expectedTotalMPIssued = '26347370935304654766607830'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -571,7 +571,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 9,264,902.04 after 6 months", async () => {
+  it("Total MP tokens issued is 48,555,435.50 after 6 months", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -582,7 +582,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '9264902042296516000000000'
+    const expectedTotalMPIssued = '48555435505339908284891154'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -595,7 +595,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 16,000,000 after a year", async () => {
+  it("Total MP tokens issued is 83,852,690.99 after a year", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -606,7 +606,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '16000000000000000000000000'
+    const expectedTotalMPIssued = '83852690999997199152415218'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -619,7 +619,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 24,000,000 after 2 years", async () => {
+  it("Total MP tokens issued is 125,779,036.49 after 2 years", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -630,7 +630,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '24000000000000000000000000'
+    const expectedTotalMPIssued = '125779036499997199152415218'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -643,7 +643,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 28,000,000 after 3 years", async () => {
+  it("Total MP tokens issued is 146,742,209 after 3 years", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -654,7 +654,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '28000000000000000000000000'
+    const expectedTotalMPIssued = '146742209249997899490090450'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -667,7 +667,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 30,000,000 after 4 years", async () => {
+  it("Total MP tokens issued is 157,223,795 after 4 years", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -678,7 +678,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '30000000000000000000000000'
+    const expectedTotalMPIssued = '157223795624998599660060300'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -691,7 +691,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 31,968,750 after 10 years", async () => {
+  it("Total MP tokens issued is 167,541,160 after 10 years", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -702,7 +702,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '31968750000000000000000000'
+    const expectedTotalMPIssued = '167541607212890570328045468'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -715,7 +715,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 31,999,969.48 after 20 years", async () => {
+  it("Total MP tokens issued is 167,705,222.06 after 20 years", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -726,7 +726,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '31999969482421880000000000'
+    const expectedTotalMPIssued = '167705222063684463375197526'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(
@@ -739,7 +739,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 31,999,999.97 after 30 years", async () => {
+  it("Total MP tokens issued is 167,705,381.18 after 30 years", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -750,7 +750,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     // Issue MP
     await communityIssuanceTester.unprotectedIssueMP()
     const totalMPIssued = await communityIssuanceTester.totalMPIssued()
-    const expectedTotalMPIssued = '31999999970197680000000000'
+    const expectedTotalMPIssued = '167705381843812191794401350'
 
     const absError = th.toBN(expectedTotalMPIssued).sub(totalMPIssued)
     // console.log(

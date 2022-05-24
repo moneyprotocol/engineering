@@ -117,9 +117,6 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
     it("Has a supply cap of 167.705382 million", async () => {
       const supplyCap = await communityIssuance.MPSupplyCap()
 
-      console.log(supplyCap.toString());
-      console.log(expectedCISupplyCap.toString())
-
       assert.isTrue(expectedCISupplyCap.eq(supplyCap))
     })
 

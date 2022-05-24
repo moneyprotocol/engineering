@@ -67,7 +67,7 @@ contract('Access Control: Moneyp functions with the caller restricted to Moneyp 
       await th.openVault(coreContracts, { extraBPDAmount: toBN(dec(20000, 18)), ICR: toBN(dec(2, 18)), extraParams: { from: account } })
     }
 
-    const expectedCISupplyCap = '32000000000000000000000000' // 32mil
+    const expectedCISupplyCap = '167705382000000000000000000' // 167 mil
 
     // Check CI has been properly funded
     const bal = await mpToken.balanceOf(communityIssuance.address)
