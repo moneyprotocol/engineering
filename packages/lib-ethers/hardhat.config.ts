@@ -62,6 +62,11 @@ const infuraNetwork = (name: string): { [name: string]: NetworkUserConfig } => (
     accounts: [deployerAccount]
   }
 });
+const mnemonic = fs.readFileSync('.testnet.seed-phrase').toString().trim();
+if (!mnemonic || mnemonic.split(' ').length !== 12) {
+  console.log('unable to retrieve mnemonic from .secret');
+}
+
 
 // https://docs.chain.link/docs/ethereum-addresses
 // https://docs.tellor.io/tellor/integration/reference-page
@@ -117,6 +122,18 @@ const config: HardhatUserConfig = {
       url: "http://localhost:4444/",
       accounts: [deployerAccount]
     },
+    
+    testnet: {
+      chainId: 31,
+      url: 'https://public-node.testnet.rsk.co/',
+      accounts: {
+          mnemonic: mnemonic,
+          initialIndex: 0,
+          path: "m/44'/60'/0'/0",
+          count: 10,
+      },
+      timeout: 1000000
+  },
 
     ...infuraNetwork("ropsten"),
     ...infuraNetwork("rinkeby"),

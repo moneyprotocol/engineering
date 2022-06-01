@@ -18,6 +18,11 @@ const getSecret = (secretKey, defaultValue='') => {
 
     return secret
 }
+const mnemonic = fs.readFileSync('.testnet.seed-phrase').toString().trim();
+if (!mnemonic || mnemonic.split(' ').length !== 12) {
+  console.log('unable to retrieve mnemonic from .secret');
+}
+
 const alchemyUrl = () => {
     return `https://eth-mainnet.alchemyapi.io/v2/${getSecret('alchemyAPIKey')}`
 }
@@ -76,6 +81,16 @@ module.exports = {
                 getSecret('DEPLOYER_PRIVATEKEY', '0x60ddfe7f579ab6867cbe7a2dc03853dc141d7a4ab6dbefc0dae2d2b1bd4e487f'),
                 getSecret('ACCOUNT2_PRIVATEKEY', '0x3ec7cedbafd0cb9ec05bf9f7ccfa1e8b42b3e3a02c75addfccbfeb328d1b383b')
             ]
+        },
+        testnet: {
+            chainId: 31,
+            url: 'https://public-node.testnet.rsk.co/',
+            accounts: {
+                mnemonic: mnemonic,
+                initialIndex: 0,
+                path: "m/44'/60'/0'/0",
+                count: 10,
+            },
         },
         rinkeby: {
             url: alchemyUrlRinkeby(),

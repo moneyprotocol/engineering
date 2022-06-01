@@ -1,10 +1,4 @@
-export {
-  _connectByChainId,
-  BitcoinsMoneypConnection,
-  BitcoinsMoneypConnectionOptionalParams,
-  BitcoinsMoneypStoreOption,
-  UnsupportedNetworkError
-} from "./src/BitcoinsMoneypConnection";
+export * from "./src/BitcoinsMoneypConnection";
 
 export * from "./src/types";
 export * from "./src/ReadableBitcoinsMoneyp";

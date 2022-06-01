@@ -44,6 +44,7 @@
     "build:dev-frontend": "yarn workspace @liquity/dev-frontend build",
     "build:subgraph": "yarn workspace @liquity/subgraph build",
     "deploy": "yarn workspace @liquity/lib-ethers hardhat deploy",
+    "deploy:testnet": "yarn deploy --network testnet",
     "docs": "run-s docs:*",
     "docs:collect-sdk-apis": "node scripts/collect-sdk-apis.js",
     "docs:api-documenter": "api-documenter generate -i temp/sdk-apis -o docs/sdk",

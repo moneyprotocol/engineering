@@ -32,7 +32,11 @@ const deployContract = async (
   ...args: unknown[]
 ) => {
   log(`Deploying ${contractName} ...`);
-  const contract = await (await getContractFactory(contractName, deployer)).deploy(...args);
+  const contractFactory = await getContractFactory(contractName, deployer);
+
+  log(`Successfully fetched contract factory ...`);
+  log(`ARGS: ${JSON.stringify(args)}`);
+  const contract = await contractFactory.deploy(...args);
 
   log(`Waiting for transaction ${contract.deployTransaction.hash} ...`);
   const receipt = await contract.deployTransaction.wait();
@@ -276,19 +280,15 @@ const connectContracts = async (
       })
   ];
 
-  // const txs = await Promise.all(connections.map((connect, i) => connect(txCount + i)));
-
   for (let i=0; i<connections.length; i++) {
     const connect = connections[i];
     const tx = await connect(txCount + i);
 
+    console.log(JSON.stringify(tx));
     await tx.wait();
 
     log(`Connected ${i}`);
   }
-
-  // let i = 0;
-  // await Promise.all(txs.map(tx => tx.wait().then(() => log(`Connected ${++i}`))));
 };
 
 const deployMockUniToken = (
