@@ -321,6 +321,7 @@ export const deployAndSetupContracts = async (
 
   log("Deploying contracts...");
   log();
+  log(`wethAddress: ${wethAddress}`);
 
   const deployment: _MoneypDeploymentJSON = {
     chainId: await deployer.getChainId(),

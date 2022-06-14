@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import assert from "assert";
 
 import { Log } from "@ethersproject/abstract-provider";
@@ -12,9 +13,9 @@ const factoryAbi = [
   "event PairCreated(address indexed token0, address indexed token1, address pair, uint)"
 ];
 
-const factoryAddress = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f";
+const factoryAddress = "0xfaa7762f551bba9b0eba34d6443d49d0a577c0e1";
 
-const hasFactory = (chainId: number) => [1, 3, 4, 5, 42].includes(chainId);
+const hasFactory = (chainId: number) => [1, 3, 4, 5, 42, 31].includes(chainId);
 
 interface UniswapV2Factory
   extends _TypedMoneypContract<
@@ -46,11 +47,24 @@ export const createUniswapV2Pair = async (
   ) as unknown) as UniswapV2Factory;
 
   log(`Creating Uniswap v2 WETH <=> BPD pair...`);
+  log(`[ARGS] ${tokenA} | ${tokenB} | ${JSON.stringify(overrides)}`)
 
   const tx = await factory.createPair(tokenA, tokenB, { ...overrides });
   const receipt = await tx.wait();
-  const pairCreatedEvents = factory.extractEvents(receipt.logs, "PairCreated");
+  log(JSON.stringify(receipt));
 
-  assert(pairCreatedEvents.length === 1);
-  return pairCreatedEvents[0].args.pair;
+  // const pairCreatedEvents = factory.extractEvents(receipt.logs, "PairCreated");
+  // log(JSON.stringify(pairCreatedEvents));
+
+  // assert(pairCreatedEvents.length === 1);
+  // return pairCreatedEvents[0].args.pair;
+
+  const pairCreatedEvent = receipt.events![0];
+
+  if (pairCreatedEvent.event === 'PairCreated') {
+    return pairCreatedEvent.args![2]
+  }
+
+  log(`Could not find PairCreated event within the transaction.`);
+  throw Error('I')
 };

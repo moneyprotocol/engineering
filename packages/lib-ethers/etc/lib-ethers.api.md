@@ -4,21 +4,32 @@
 
 ```ts
 
+import { BigNumber } from '@ethersproject/bignumber';
 import { BigNumberish } from '@ethersproject/bignumber';
 import { BlockTag } from '@ethersproject/abstract-provider';
+import { BytesLike } from '@ethersproject/bytes';
+import { CallOverrides } from '@ethersproject/contracts';
 import { CollateralGainTransferDetails } from '@liquity/lib-base';
+import { Contract } from '@ethersproject/contracts';
+import { ContractInterface } from '@ethersproject/contracts';
+import { ContractTransaction } from '@ethersproject/contracts';
 import { Decimal } from '@liquity/lib-base';
 import { Decimalish } from '@liquity/lib-base';
+import { EventFilter } from '@ethersproject/contracts';
 import { FailedReceipt } from '@liquity/lib-base';
 import { Fees } from '@liquity/lib-base';
 import { FrontendStatus } from '@liquity/lib-base';
 import { LiquidationDetails } from '@liquity/lib-base';
+import { Log } from '@ethersproject/abstract-provider';
+import { LogDescription } from '@ethersproject/abi';
 import { MinedReceipt } from '@liquity/lib-base';
 import { MoneypReceipt } from '@liquity/lib-base';
 import { MoneypStore } from '@liquity/lib-base';
 import { MoneypStoreState } from '@liquity/lib-base';
 import { MPStake } from '@liquity/lib-base';
 import { ObservableMoneyp } from '@liquity/lib-base';
+import { Overrides } from '@ethersproject/contracts';
+import { PayableOverrides } from '@ethersproject/contracts';
 import { PopulatableMoneyp } from '@liquity/lib-base';
 import { PopulatedMoneypTransaction } from '@liquity/lib-base';
 import { PopulatedRedemption } from '@liquity/lib-base';
@@ -274,6 +285,9 @@ export interface BlockPolledMoneypStoreExtraState {
 export type BlockPolledMoneypStoreState = MoneypStoreState<BlockPolledMoneypStoreExtraState>;
 
 // @internal (undocumented)
+export const _connect: (signerOrProvider: BitcoinsSigner | BitcoinsProvider, optionalParams?: BitcoinsMoneypConnectionOptionalParams | undefined) => Promise<BitcoinsMoneypConnection>;
+
+// @internal (undocumented)
 export function _connectByChainId<T>(provider: BitcoinsProvider, signer: BitcoinsSigner | undefined, chainId: number, optionalParams: BitcoinsMoneypConnectionOptionalParams & {
     useStore: T;
 }): BitcoinsMoneypConnection & {
@@ -282,6 +296,28 @@ export function _connectByChainId<T>(provider: BitcoinsProvider, signer: Bitcoin
 
 // @internal (undocumented)
 export function _connectByChainId(provider: BitcoinsProvider, signer: BitcoinsSigner | undefined, chainId: number, optionalParams?: BitcoinsMoneypConnectionOptionalParams): BitcoinsMoneypConnection;
+
+// @internal (undocumented)
+export const _connectToDeployment: (deployment: _MoneypDeploymentJSON, signerOrProvider: BitcoinsSigner | BitcoinsProvider, optionalParams?: BitcoinsMoneypConnectionOptionalParams | undefined) => BitcoinsMoneypConnection;
+
+// @internal (undocumented)
+export const _getBlockTimestamp: (connection: BitcoinsMoneypConnection, blockTag?: BlockTag) => Promise<number>;
+
+// @internal (undocumented)
+export const _getContracts: (connection: BitcoinsMoneypConnection) => _MoneypContracts;
+
+// @internal (undocumented)
+export const _getProvider: (connection: BitcoinsMoneypConnection) => BitcoinsProvider;
+
+// @internal (undocumented)
+export interface _InternalBitcoinsMoneypConnection extends BitcoinsMoneypConnection {
+    // (undocumented)
+    readonly addresses: _MoneypContractAddresses;
+    // (undocumented)
+    readonly _contracts: _MoneypContracts;
+    // (undocumented)
+    readonly _multicall?: _Multicall;
+}
 
 // @alpha (undocumented)
 export class ObservableBitcoinsMoneyp implements ObservableMoneyp {
@@ -476,6 +512,17 @@ export interface ReadableBitcoinsMoneypWithStore<T extends MoneypStore = MoneypS
 // @internal (undocumented)
 export const _redeemMaxIterations = 70;
 
+// @internal (undocumented)
+export const _requireAddress: (connection: BitcoinsMoneypConnection, overrides?: {
+    from?: string | undefined;
+} | undefined) => string;
+
+// @internal (undocumented)
+export const _requireFrontendAddress: (connection: BitcoinsMoneypConnection) => string;
+
+// @internal (undocumented)
+export const _requireSigner: (connection: BitcoinsMoneypConnection) => BitcoinsSigner;
+
 // @public
 export class SendableBitcoinsMoneyp implements SendableMoneyp<BitcoinsTransactionReceipt, BitcoinsTransactionResponse> {
     constructor(populatable: PopulatableBitcoinsMoneyp);
@@ -554,6 +601,11 @@ export class UnsupportedNetworkError extends Error {
     constructor(chainId: number);
     readonly chainId: number;
 }
+
+// @internal (undocumented)
+export const _usingStore: (connection: BitcoinsMoneypConnection) => connection is BitcoinsMoneypConnection & {
+    useStore: BitcoinsMoneypStoreOption;
+};
 
 // @internal (undocumented)
 export interface _VaultChangeWithFees<T> {

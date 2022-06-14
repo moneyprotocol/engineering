@@ -94,7 +94,8 @@ const wethAddresses = {
   ropsten: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
   rinkeby: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
   goerli: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
-  kovan: "0xd0A1E359811322d97991E03f863a0C30C2cF029C"
+  kovan: "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
+  testnet: "0x09b6ca5e4496238a1f176aea6bb607db96c2286e"
 };
 
 const hasWETH = (network: string): network is keyof typeof wethAddresses => network in wethAddresses;
@@ -212,7 +213,7 @@ task("deploy", "Deploys the contracts to the network")
   .addOptionalParam(
     "createUniswapPair",
     "Create a real Uniswap v2 WETH-BPD pair instead of a mock ERC20 token",
-    undefined,
+    true,
     types.boolean
   )
   .setAction(
@@ -226,6 +227,7 @@ task("deploy", "Deploys the contracts to the network")
         throw new Error(`PriceFeed not supported on ${env.network.name}`);
       }
 
+      console.log(`createUniswapPair? ${createUniswapPair}`);
       let wethAddress: string | undefined = undefined;
       if (createUniswapPair) {
         if (!hasWETH(env.network.name)) {
