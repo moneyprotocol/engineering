@@ -30,7 +30,7 @@ collSurplusPool: 0x4428EF2Edc5f091e166e197C4c4915eBc04B2d3C
 borrowerOperations: 0x4E4E2eC25B1F591bb591d42A944eCc1CB9C79d8A
 hintHelpers: 0xAB1b14AfAE47054ca29A23858A7850E859aE6E31
 tellorCaller: 0x093FA46A3FC715B65E9A6d37ACD92d99F48B81F6
-Using previously deployed unipool contract at address 0xBAeE57B5e130fC602F0859e6f85029Ec47340298
+Using previously deployed rskSwapPool contract at address 0xBAeE57B5e130fC602F0859e6f85029Ec47340298
 No Bitcoinscan Url defined, skipping verification
 Using previously deployed mpStaking contract at address 0x3d130ccbabe9b3561bb1f45f9605EDF2944C9Ee5
 Using previously deployed lockupContractFactory contract at address 0xe6dEcadA1d49466F09c5bfb69F6C14f376B2Eece
@@ -62,7 +62,7 @@ Base rate: .000000000000000000
 Current borrowing rate: .005000000000000000
 Total BPD SP deposits: 34.160000000000000000
 Total MP staked: 39.000000000000000000
-Total LP (BPD-RBTC) tokens staked in unipool: .552691887045032822
+Total LP (BPD-RBTC) tokens staked in rskSwapPool: .552691887045032822
 VaultManager state variables:
 Total vault stakes: 6.000000000000000000
 Snapshot of total vault stakes before last liq. : .000000000000000000

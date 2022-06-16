@@ -58,7 +58,7 @@
     "txHash": "0xa1bda13e81a49172db4ecf720b332ad7f3d74d85d59f085e7d67fa0528b0844f",
     "verification": "https://rinkeby.etherscan.io/address/0xaf844BBaD90fB27ae949376338F7c9DA1251acFf#code"
   },
-  "unipool": {
+  "rskSwapPool": {
     "address": "0x14d97516560433c0B04FfB16d7FF85B82a1b83fE",
     "txHash": "0x456c8d5b498916ce95712562bbf62a83054e3debebf693d2e3500a9da884b10b",
     "verification": "https://rinkeby.etherscan.io/address/0x14d97516560433c0B04FfB16d7FF85B82a1b83fE#code"
