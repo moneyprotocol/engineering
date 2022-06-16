@@ -32,10 +32,10 @@ export interface MoneypStoreBaseState {
   mpBalance: Decimal;
 
   /** User's Uniswap RBTC/BPD LP token balance. */
-  uniTokenBalance: Decimal;
+  rskSwapTokenBalance: Decimal;
 
   /** The liquidity mining contract's allowance of user's Uniswap RBTC/BPD LP tokens. */
-  uniTokenAllowance: Decimal;
+  rskSwapTokenAllowance: Decimal;
 
   /** Remaining MP that will be collectively rewarded to liquidity miners. */
   remainingLiquidityMiningMPReward: Decimal;
@@ -44,7 +44,7 @@ export interface MoneypStoreBaseState {
   liquidityMiningStake: Decimal;
 
   /** Total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. */
-  totalStakedUniTokens: Decimal;
+  totalStakedRskSwapTokens: Decimal;
 
   /** Amount of MP the user has earned through mining liquidity. */
   liquidityMiningMPReward: Decimal;
@@ -366,18 +366,18 @@ export abstract class MoneypStore<T = unknown> {
         baseStateUpdate.mpBalance
       ),
 
-      uniTokenBalance: this._updateIfChanged(
+      rskSwapTokenBalance: this._updateIfChanged(
         eq,
-        "uniTokenBalance",
-        baseState.uniTokenBalance,
-        baseStateUpdate.uniTokenBalance
+        "rskSwapTokenBalance",
+        baseState.rskSwapTokenBalance,
+        baseStateUpdate.rskSwapTokenBalance
       ),
 
-      uniTokenAllowance: this._updateIfChanged(
+      rskSwapTokenAllowance: this._updateIfChanged(
         eq,
-        "uniTokenAllowance",
-        baseState.uniTokenAllowance,
-        baseStateUpdate.uniTokenAllowance
+        "rskSwapTokenAllowance",
+        baseState.rskSwapTokenAllowance,
+        baseStateUpdate.rskSwapTokenAllowance
       ),
 
       remainingLiquidityMiningMPReward: this._silentlyUpdateIfChanged(
@@ -393,11 +393,11 @@ export abstract class MoneypStore<T = unknown> {
         baseStateUpdate.liquidityMiningStake
       ),
 
-      totalStakedUniTokens: this._updateIfChanged(
+      totalStakedRskSwapTokens: this._updateIfChanged(
         eq,
-        "totalStakedUniTokens",
-        baseState.totalStakedUniTokens,
-        baseStateUpdate.totalStakedUniTokens
+        "totalStakedRskSwapTokens",
+        baseState.totalStakedRskSwapTokens,
+        baseStateUpdate.totalStakedRskSwapTokens
       ),
 
       liquidityMiningMPReward: this._silentlyUpdateIfChanged(

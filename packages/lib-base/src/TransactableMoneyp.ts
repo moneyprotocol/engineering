@@ -460,19 +460,19 @@ export interface TransactableMoneyp {
 
   /**
    * Allow the liquidity mining contract to use Uniswap RBTC/BPD LP tokens for
-   * {@link @liquity/lib-base#TransactableMoneyp.stakeUniTokens | staking}.
+   * {@link @liquity/lib-base#TransactableMoneyp.stakeRskSwapTokens | staking}.
    *
    * @param allowance - Maximum amount of LP tokens that will be transferrable to liquidity mining
    *                    (`2^256 - 1` by default).
    *
    * @remarks
    * Must be performed before calling
-   * {@link @liquity/lib-base#TransactableMoneyp.stakeUniTokens | stakeUniTokens()}.
+   * {@link @liquity/lib-base#TransactableMoneyp.stakeRskSwapTokens | stakeRskSwapTokens()}.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
    */
-  approveUniTokens(allowance?: Decimalish): Promise<void>;
+  approveRskSwapTokens(allowance?: Decimalish): Promise<void>;
 
   /**
    * Stake Uniswap RBTC/BPD LP tokens to participate in liquidity mining and earn MP.
@@ -482,7 +482,7 @@ export interface TransactableMoneyp {
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
    */
-  stakeUniTokens(amount: Decimalish): Promise<void>;
+  stakeRskSwapTokens(amount: Decimalish): Promise<void>;
 
   /**
    * Withdraw Uniswap RBTC/BPD LP tokens from liquidity mining.
@@ -492,7 +492,7 @@ export interface TransactableMoneyp {
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
    */
-  unstakeUniTokens(amount: Decimalish): Promise<void>;
+  unstakeRskSwapTokens(amount: Decimalish): Promise<void>;
 
   /**
    * Withdraw MP that has been earned by mining liquidity.

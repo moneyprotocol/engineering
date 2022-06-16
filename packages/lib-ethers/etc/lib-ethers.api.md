@@ -70,7 +70,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     // (undocumented)
     adjustVault(params: VaultAdjustmentParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<VaultAdjustmentDetails>;
     // (undocumented)
-    approveUniTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    approveRskSwapTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
     // (undocumented)
     borrowBPD(amount: Decimalish, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<VaultAdjustmentDetails>;
     // (undocumented)
@@ -138,11 +138,11 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     // (undocumented)
     getTotalStakedMP(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getTotalStakedUniTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    getTotalStakedRskSwapTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getUniTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getUniTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    getRskSwapTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
     getVault(address?: string, overrides?: BitcoinsCallOverrides): Promise<UserVault>;
     // (undocumented)
@@ -160,7 +160,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     // (undocumented)
     liquidateUpTo(maximumNumberOfVaultsToLiquidate: number, overrides?: BitcoinsTransactionOverrides): Promise<LiquidationDetails>;
     // @internal (undocumented)
-    _mintUniToken(amount: Decimalish, address?: string, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    _mintRskSwapToken(amount: Decimalish, address?: string, overrides?: BitcoinsTransactionOverrides): Promise<void>;
     // (undocumented)
     openVault(params: VaultCreationParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<VaultCreationDetails>;
     readonly populate: PopulatableBitcoinsMoneyp;
@@ -180,13 +180,13 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     // (undocumented)
     stakeMP(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
     // (undocumented)
-    stakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    stakeRskSwapTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
     // (undocumented)
     transferCollateralGainToVault(overrides?: BitcoinsTransactionOverrides): Promise<CollateralGainTransferDetails>;
     // (undocumented)
     unstakeMP(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
     // (undocumented)
-    unstakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
+    unstakeRskSwapTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void>;
     // (undocumented)
     withdrawBPDFromStabilityPool(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<StabilityDepositChangeDetails>;
     // (undocumented)
@@ -346,7 +346,7 @@ export class PopulatableBitcoinsMoneyp implements PopulatableMoneyp<BitcoinsTran
     // (undocumented)
     adjustVault(params: VaultAdjustmentParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
-    approveUniTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
+    approveRskSwapTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
     borrowBPD(amount: Decimalish, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
@@ -364,7 +364,7 @@ export class PopulatableBitcoinsMoneyp implements PopulatableMoneyp<BitcoinsTran
     // (undocumented)
     liquidateUpTo(maximumNumberOfVaultsToLiquidate: number, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<LiquidationDetails>>;
     // @internal (undocumented)
-    _mintUniToken(amount: Decimalish, address?: string, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
+    _mintRskSwapToken(amount: Decimalish, address?: string, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
     openVault(params: VaultCreationParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<VaultCreationDetails>>;
     // (undocumented)
@@ -382,13 +382,13 @@ export class PopulatableBitcoinsMoneyp implements PopulatableMoneyp<BitcoinsTran
     // (undocumented)
     stakeMP(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    stakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
+    stakeRskSwapTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
     transferCollateralGainToVault(overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<CollateralGainTransferDetails>>;
     // (undocumented)
     unstakeMP(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    unstakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
+    unstakeRskSwapTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<void>>;
     // (undocumented)
     withdrawBPDFromStabilityPool(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<PopulatedBitcoinsMoneypTransaction<StabilityDepositChangeDetails>>;
     // (undocumented)
@@ -485,11 +485,11 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     // (undocumented)
     getTotalStakedMP(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getTotalStakedUniTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    getTotalStakedRskSwapTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getUniTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
-    getUniTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    getRskSwapTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
     getVault(address?: string, overrides?: BitcoinsCallOverrides): Promise<UserVault>;
     // (undocumented)
@@ -529,7 +529,7 @@ export class SendableBitcoinsMoneyp implements SendableMoneyp<BitcoinsTransactio
     // (undocumented)
     adjustVault(params: VaultAdjustmentParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
-    approveUniTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
+    approveRskSwapTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
     borrowBPD(amount: Decimalish, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<VaultAdjustmentDetails>>;
     // (undocumented)
@@ -547,7 +547,7 @@ export class SendableBitcoinsMoneyp implements SendableMoneyp<BitcoinsTransactio
     // (undocumented)
     liquidateUpTo(maximumNumberOfVaultsToLiquidate: number, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<LiquidationDetails>>;
     // @internal (undocumented)
-    _mintUniToken(amount: Decimalish, address?: string, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
+    _mintRskSwapToken(amount: Decimalish, address?: string, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
     openVault(params: VaultCreationParams<Decimalish>, maxBorrowingRate?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<VaultCreationDetails>>;
     // (undocumented)
@@ -565,13 +565,13 @@ export class SendableBitcoinsMoneyp implements SendableMoneyp<BitcoinsTransactio
     // (undocumented)
     stakeMP(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    stakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
+    stakeRskSwapTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
     transferCollateralGainToVault(overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<CollateralGainTransferDetails>>;
     // (undocumented)
     unstakeMP(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
-    unstakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
+    unstakeRskSwapTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<void>>;
     // (undocumented)
     withdrawBPDFromStabilityPool(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<SentBitcoinsMoneypTransaction<StabilityDepositChangeDetails>>;
     // (undocumented)

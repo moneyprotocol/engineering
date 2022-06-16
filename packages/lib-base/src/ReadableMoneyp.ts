@@ -130,14 +130,14 @@ export interface ReadableMoneyp {
    *
    * @param address - Address whose balance should be retrieved.
    */
-  getUniTokenBalance(address?: string): Promise<Decimal>;
+  getRskSwapTokenBalance(address?: string): Promise<Decimal>;
 
   /**
    * Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens.
    *
    * @param address - Address holding the Uniswap RBTC/BPD LP tokens.
    */
-  getUniTokenAllowance(address?: string): Promise<Decimal>;
+  getRskSwapTokenAllowance(address?: string): Promise<Decimal>;
 
   /**
    * Get the remaining MP that will be collectively rewarded to liquidity miners.
@@ -154,7 +154,7 @@ export interface ReadableMoneyp {
   /**
    * Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining.
    */
-  getTotalStakedUniTokens(): Promise<Decimal>;
+  getTotalStakedRskSwapTokens(): Promise<Decimal>;
 
   /**
    * Get the amount of MP earned by an address through mining liquidity.

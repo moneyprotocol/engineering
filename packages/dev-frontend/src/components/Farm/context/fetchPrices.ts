@@ -16,27 +16,27 @@ type UniswapResponse = {
   errors?: Array<{ message: string }>;
 };
 
-const uniswapQuery = (mpTokenAddress: string, uniTokenAddress: string) => `{
+const uniswapQuery = (mpTokenAddress: string, rskSwapTokenAddress: string) => `{
   token(id: "${mpTokenAddress.toLowerCase()}") {
     derivedRBTC
   },
   bundle(id: 1) {
     ethPrice
   },
-  pair(id: "${uniTokenAddress.toLowerCase()}") {
+  pair(id: "${rskSwapTokenAddress.toLowerCase()}") {
     totalSupply
     reserveUSD
   }
 }`;
 
-export async function fetchPrices(mpTokenAddress: string, uniTokenAddress: string) {
+export async function fetchPrices(mpTokenAddress: string, rskSwapTokenAddress: string) {
   const response = await window.fetch("https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2", {
     method: "POST",
     headers: {
       "content-type": "application/json"
     },
     body: JSON.stringify({
-      query: uniswapQuery(mpTokenAddress, uniTokenAddress),
+      query: uniswapQuery(mpTokenAddress, rskSwapTokenAddress),
       variables: null
     })
   });

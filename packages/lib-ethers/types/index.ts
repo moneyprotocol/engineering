@@ -902,13 +902,13 @@ interface RskSwapPoolCalls {
   rewardRate(_overrides?: CallOverrides): Promise<BigNumber>;
   rewards(arg0: string, _overrides?: CallOverrides): Promise<BigNumber>;
   totalSupply(_overrides?: CallOverrides): Promise<BigNumber>;
-  uniToken(_overrides?: CallOverrides): Promise<string>;
+  rskSwapToken(_overrides?: CallOverrides): Promise<string>;
   userRewardPerTokenPaid(arg0: string, _overrides?: CallOverrides): Promise<BigNumber>;
 }
 
 interface RskSwapPoolTransactions {
   claimReward(_overrides?: Overrides): Promise<void>;
-  setParams(_mpTokenAddress: string, _uniTokenAddress: string, _duration: BigNumberish, _overrides?: Overrides): Promise<void>;
+  setParams(_mpTokenAddress: string, _rskSwapTokenAddress: string, _duration: BigNumberish, _overrides?: Overrides): Promise<void>;
   stake(amount: BigNumberish, _overrides?: Overrides): Promise<void>;
   withdraw(amount: BigNumberish, _overrides?: Overrides): Promise<void>;
   withdrawAndClaim(_overrides?: Overrides): Promise<void>;
@@ -922,7 +922,7 @@ export interface RskSwapPool
     RewardAdded(reward?: null): EventFilter;
     RewardPaid(user?: string | null, reward?: null): EventFilter;
     Staked(user?: string | null, amount?: null): EventFilter;
-    UniTokenAddressChanged(_uniTokenAddress?: null): EventFilter;
+    RskSwapTokenAddressChanged(_rskSwapTokenAddress?: null): EventFilter;
     Withdrawn(user?: string | null, amount?: null): EventFilter;
   };
   extractEvents(logs: Log[], name: "MPTokenAddressChanged"): _TypedLogDescription<{ _mpTokenAddress: string }>[];
@@ -930,6 +930,6 @@ export interface RskSwapPool
   extractEvents(logs: Log[], name: "RewardAdded"): _TypedLogDescription<{ reward: BigNumber }>[];
   extractEvents(logs: Log[], name: "RewardPaid"): _TypedLogDescription<{ user: string; reward: BigNumber }>[];
   extractEvents(logs: Log[], name: "Staked"): _TypedLogDescription<{ user: string; amount: BigNumber }>[];
-  extractEvents(logs: Log[], name: "UniTokenAddressChanged"): _TypedLogDescription<{ _uniTokenAddress: string }>[];
+  extractEvents(logs: Log[], name: "RskSwapTokenAddressChanged"): _TypedLogDescription<{ _rskSwapTokenAddress: string }>[];
   extractEvents(logs: Log[], name: "Withdrawn"): _TypedLogDescription<{ user: string; amount: BigNumber }>[];
 }

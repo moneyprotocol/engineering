@@ -244,16 +244,16 @@ export interface SendableMoneyp<R = unknown, S = unknown>
   /** {@inheritDoc TransactableMoneyp.withdrawGainsFromStaking} */
   withdrawGainsFromStaking(): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
 
-  /** {@inheritDoc TransactableMoneyp.approveUniTokens} */
-  approveUniTokens(
+  /** {@inheritDoc TransactableMoneyp.approveRskSwapTokens} */
+  approveRskSwapTokens(
     allowance?: Decimalish
   ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
 
-  /** {@inheritDoc TransactableMoneyp.stakeUniTokens} */
-  stakeUniTokens(amount: Decimalish): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
+  /** {@inheritDoc TransactableMoneyp.stakeRskSwapTokens} */
+  stakeRskSwapTokens(amount: Decimalish): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
 
-  /** {@inheritDoc TransactableMoneyp.unstakeUniTokens} */
-  unstakeUniTokens(amount: Decimalish): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
+  /** {@inheritDoc TransactableMoneyp.unstakeRskSwapTokens} */
+  unstakeRskSwapTokens(amount: Decimalish): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
 
   /** {@inheritDoc TransactableMoneyp.withdrawMPRewardFromLiquidityMining} */
   withdrawMPRewardFromLiquidityMining(): Promise<

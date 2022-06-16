@@ -48,7 +48,7 @@ import {
   _requireSigner
 } from "./BitcoinsMoneypConnection";
 
-import { _priceFeedIsTestnet, _uniTokenIsMock } from "./contracts";
+import { _priceFeedIsTestnet, _rskSwapTokenIsMock } from "./contracts";
 import { logsToString } from "./parseLogs";
 import { ReadableBitcoinsMoneyp } from "./ReadableBitcoinsMoneyp";
 
@@ -1003,20 +1003,20 @@ export class PopulatableBitcoinsMoneyp
   }
 
   /** @internal */
-  async _mintUniToken(
+  async _mintRskSwapToken(
     amount: Decimalish,
     address?: string,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     address ??= _requireAddress(this._readable.connection, overrides);
-    const { uniToken } = _getContracts(this._readable.connection);
+    const { rskSwapToken } = _getContracts(this._readable.connection);
 
-    if (!_uniTokenIsMock(uniToken)) {
-      throw new Error("_mintUniToken() unavailable on this deployment of Moneyp");
+    if (!_rskSwapTokenIsMock(rskSwapToken)) {
+      throw new Error("_mintRskSwapToken() unavailable on this deployment of Moneyp");
     }
 
     return this._wrapSimpleTransaction(
-      await uniToken.estimateAndPopulate.mint(
+      await rskSwapToken.estimateAndPopulate.mint(
         { ...overrides },
         id,
         address,
@@ -1025,15 +1025,15 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.approveUniTokens} */
-  async approveUniTokens(
+  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.approveRskSwapTokens} */
+  async approveRskSwapTokens(
     allowance?: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { uniToken, unipool } = _getContracts(this._readable.connection);
+    const { rskSwapToken, unipool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
-      await uniToken.estimateAndPopulate.approve(
+      await rskSwapToken.estimateAndPopulate.approve(
         { ...overrides },
         id,
         unipool.address,
@@ -1042,8 +1042,8 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.stakeUniTokens} */
-  async stakeUniTokens(
+  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.stakeRskSwapTokens} */
+  async stakeRskSwapTokens(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
@@ -1058,8 +1058,8 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.unstakeUniTokens} */
-  async unstakeUniTokens(
+  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.unstakeRskSwapTokens} */
+  async unstakeRskSwapTokens(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {

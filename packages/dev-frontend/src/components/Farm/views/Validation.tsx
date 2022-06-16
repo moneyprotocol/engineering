@@ -9,7 +9,7 @@ type ValidationProps = {
 };
 
 export const Validation: React.FC<ValidationProps> = ({ amount }) => {
-  const { isValid, hasApproved, hasEnoughUniToken } = useValidationState(amount);
+  const { isValid, hasApproved, hasEnoughRskSwapToken } = useValidationState(amount);
 
   if (isValid) {
     return null;
@@ -19,7 +19,7 @@ export const Validation: React.FC<ValidationProps> = ({ amount }) => {
     return <ErrorDescription>You haven't approved enough {LP}</ErrorDescription>;
   }
 
-  if (!hasEnoughUniToken) {
+  if (!hasEnoughRskSwapToken) {
     return <ErrorDescription>You don't have enough {LP}</ErrorDescription>;
   }
 

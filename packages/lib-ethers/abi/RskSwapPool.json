@@ -88,11 +88,11 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_uniTokenAddress",
+        "name": "_rskSwapTokenAddress",
         "type": "address"
       }
     ],
-    "name": "UniTokenAddressChanged",
+    "name": "RskSwapTokenAddressChanged",
     "type": "event"
   },
   {
@@ -330,7 +330,7 @@
       },
       {
         "internalType": "address",
-        "name": "_uniTokenAddress",
+        "name": "_rskSwapTokenAddress",
         "type": "address"
       },
       {
@@ -372,7 +372,7 @@
   },
   {
     "inputs": [],
-    "name": "uniToken",
+    "name": "rskSwapToken",
     "outputs": [
       {
         "internalType": "contract IERC20",

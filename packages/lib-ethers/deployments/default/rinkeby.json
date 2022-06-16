@@ -5,7 +5,7 @@
   "bootstrapPeriod": 1209600,
   "totalStabilityPoolMPReward": "32000000",
   "_priceFeedIsTestnet": false,
-  "_uniTokenIsMock": false,
+  "_rskSwapTokenIsMock": false,
   "_isDev": false,
   "addresses": {
     "activePool": "0x85f70CfD59a5df512955f638BCf5F70F45a91c65",
@@ -25,6 +25,6 @@
     "bpdToken": "0x600df0dE0c53d890a3BB532d4983882d7368faF0",
     "mpToken": "0x7Dc210947D9f5cA546BD6bBdbC5c3d6884ffE25a",
     "multiVaultGetter": "0x1CfCe40dE399fB5A8C1239f60639A836d497D44C",
-    "uniToken": "0x2C69Bb79fb571796aE8e6279CEF6A372dff65Bd4"
+    "rskSwapToken": "0x2C69Bb79fb571796aE8e6279CEF6A372dff65Bd4"
   }
 }

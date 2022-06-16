@@ -170,7 +170,7 @@ export interface _MoneypContracts {
   stabilityPool: StabilityPool;
   gasPool: GasPool;
   unipool: RskSwapPool;
-  uniToken: IERC20 | ERC20Mock;
+  rskSwapToken: IERC20 | ERC20Mock;
 }
 
 /** @internal */
@@ -179,8 +179,8 @@ export const _priceFeedIsTestnet = (
 ): priceFeed is PriceFeedTestnet => "setPrice" in priceFeed;
 
 /** @internal */
-export const _uniTokenIsMock = (uniToken: IERC20 | ERC20Mock): uniToken is ERC20Mock =>
-  "mint" in uniToken;
+export const _rskSwapTokenIsMock = (rskSwapToken: IERC20 | ERC20Mock): rskSwapToken is ERC20Mock =>
+  "mint" in rskSwapToken;
 
 type MoneypContractsKey = keyof _MoneypContracts;
 
@@ -189,7 +189,7 @@ export type _MoneypContractAddresses = Record<MoneypContractsKey, string>;
 
 type MoneypContractAbis = Record<MoneypContractsKey, JsonFragment[]>;
 
-const getAbi = (priceFeedIsTestnet: boolean, uniTokenIsMock: boolean): MoneypContractAbis => ({
+const getAbi = (priceFeedIsTestnet: boolean, rskSwapTokenIsMock: boolean): MoneypContractAbis => ({
   activePool: activePoolAbi,
   borrowerOperations: borrowerOperationsAbi,
   vaultManager: vaultManagerAbi,
@@ -207,7 +207,7 @@ const getAbi = (priceFeedIsTestnet: boolean, uniTokenIsMock: boolean): MoneypCon
   gasPool: gasPoolAbi,
   collSurplusPool: collSurplusPoolAbi,
   unipool: unipoolAbi,
-  uniToken: uniTokenIsMock ? erc20MockAbi : iERC20Abi
+  rskSwapToken: rskSwapTokenIsMock ? erc20MockAbi : iERC20Abi
 });
 
 const mapMoneypContracts = <T, U>(
@@ -227,16 +227,16 @@ export interface _MoneypDeploymentJSON {
   readonly bootstrapPeriod: number;
   readonly totalStabilityPoolMPReward: string;
   readonly _priceFeedIsTestnet: boolean;
-  readonly _uniTokenIsMock: boolean;
+  readonly _rskSwapTokenIsMock: boolean;
   readonly _isDev: boolean;
 }
 
 /** @internal */
 export const _connectToContracts = (
   signerOrProvider: BitcoinsSigner | BitcoinsProvider,
-  { addresses, _priceFeedIsTestnet, _uniTokenIsMock }: _MoneypDeploymentJSON
+  { addresses, _priceFeedIsTestnet, _rskSwapTokenIsMock }: _MoneypDeploymentJSON
 ): _MoneypContracts => {
-  const abi = getAbi(_priceFeedIsTestnet, _uniTokenIsMock);
+  const abi = getAbi(_priceFeedIsTestnet, _rskSwapTokenIsMock);
 
   return mapMoneypContracts(
     addresses,

@@ -219,14 +219,14 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     return this._readable.getMPBalance(address, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getUniTokenBalance} */
-  getUniTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
-    return this._readable.getUniTokenBalance(address, overrides);
+  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getRskSwapTokenBalance} */
+  getRskSwapTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+    return this._readable.getRskSwapTokenBalance(address, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getUniTokenAllowance} */
-  getUniTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
-    return this._readable.getUniTokenAllowance(address, overrides);
+  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getRskSwapTokenAllowance} */
+  getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+    return this._readable.getRskSwapTokenAllowance(address, overrides);
   }
 
   /** @internal */
@@ -246,9 +246,9 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     return this._readable.getLiquidityMiningStake(address, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getTotalStakedUniTokens} */
-  getTotalStakedUniTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
-    return this._readable.getTotalStakedUniTokens(overrides);
+  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getTotalStakedRskSwapTokens} */
+  getTotalStakedRskSwapTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+    return this._readable.getTotalStakedRskSwapTokens(overrides);
   }
 
   /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getLiquidityMiningMPReward} */
@@ -567,42 +567,42 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /** @internal */
-  _mintUniToken(
+  _mintRskSwapToken(
     amount: Decimalish,
     address?: string,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<void> {
-    return this.send._mintUniToken(amount, address, overrides).then(waitForSuccess);
+    return this.send._mintRskSwapToken(amount, address, overrides).then(waitForSuccess);
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.approveUniTokens}
+   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.approveRskSwapTokens}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
    */
-  approveUniTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void> {
-    return this.send.approveUniTokens(allowance, overrides).then(waitForSuccess);
+  approveRskSwapTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void> {
+    return this.send.approveRskSwapTokens(allowance, overrides).then(waitForSuccess);
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.stakeUniTokens}
+   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.stakeRskSwapTokens}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
    */
-  stakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void> {
-    return this.send.stakeUniTokens(amount, overrides).then(waitForSuccess);
+  stakeRskSwapTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void> {
+    return this.send.stakeRskSwapTokens(amount, overrides).then(waitForSuccess);
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.unstakeUniTokens}
+   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.unstakeRskSwapTokens}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
    */
-  unstakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void> {
-    return this.send.unstakeUniTokens(amount, overrides).then(waitForSuccess);
+  unstakeRskSwapTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void> {
+    return this.send.unstakeRskSwapTokens(amount, overrides).then(waitForSuccess);
   }
 
   /**

@@ -64,7 +64,7 @@
         },
         {
           "internalType": "address",
-          "name": "_uniTokenAddress",
+          "name": "_rskSwapTokenAddress",
           "type": "address"
         },
         {

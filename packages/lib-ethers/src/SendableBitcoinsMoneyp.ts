@@ -223,36 +223,36 @@ export class SendableBitcoinsMoneyp
   }
 
   /** @internal */
-  _mintUniToken(
+  _mintRskSwapToken(
     amount: Decimalish,
     address?: string,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<void>> {
-    return this._populate._mintUniToken(amount, address, overrides).then(sendTransaction);
+    return this._populate._mintRskSwapToken(amount, address, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.approveUniTokens} */
-  approveUniTokens(
+  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.approveRskSwapTokens} */
+  approveRskSwapTokens(
     allowance?: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<void>> {
-    return this._populate.approveUniTokens(allowance, overrides).then(sendTransaction);
+    return this._populate.approveRskSwapTokens(allowance, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.stakeUniTokens} */
-  stakeUniTokens(
+  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.stakeRskSwapTokens} */
+  stakeRskSwapTokens(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<void>> {
-    return this._populate.stakeUniTokens(amount, overrides).then(sendTransaction);
+    return this._populate.stakeRskSwapTokens(amount, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.unstakeUniTokens} */
-  unstakeUniTokens(
+  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.unstakeRskSwapTokens} */
+  unstakeRskSwapTokens(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<void>> {
-    return this._populate.unstakeUniTokens(amount, overrides).then(sendTransaction);
+    return this._populate.unstakeRskSwapTokens(amount, overrides).then(sendTransaction);
   }
 
   /** {@inheritDoc @liquity/lib-base#SendableMoneyp.withdrawMPRewardFromLiquidityMining} */
