@@ -22,8 +22,8 @@ export const Confirm: React.FC<ConfirmProps> = ({ amount }) => {
   const { isValid, isWithdrawing, amountChanged } = useValidationState(amount);
 
   const transactionAction = isWithdrawing
-    ? moneyp.unstakeUniTokens.bind(moneyp, amountChanged)
-    : moneyp.stakeUniTokens.bind(moneyp, amountChanged);
+    ? moneyp.unstakeRskSwapTokens.bind(moneyp, amountChanged)
+    : moneyp.stakeRskSwapTokens.bind(moneyp, amountChanged);
 
   const shouldDisable = amountChanged.isZero || !isValid;
 

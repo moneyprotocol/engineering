@@ -24,7 +24,7 @@ contract LPTokenWrapper is ILPTokenWrapper {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    IERC20 public uniToken;
+    IERC20 public rskSwapToken;
 
     uint256 private _totalSupply;
     mapping(address => uint256) private _balances;
@@ -40,13 +40,13 @@ contract LPTokenWrapper is ILPTokenWrapper {
     function stake(uint256 amount) public virtual override {
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
-        uniToken.safeTransferFrom(msg.sender, address(this), amount);
+        rskSwapToken.safeTransferFrom(msg.sender, address(this), amount);
     }
 
     function withdraw(uint256 amount) public virtual override {
         _totalSupply = _totalSupply.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
-        uniToken.safeTransfer(msg.sender, amount);
+        rskSwapToken.safeTransfer(msg.sender, amount);
     }
 }
 
@@ -85,7 +85,7 @@ contract RskSwapPool is LPTokenWrapper, Ownable, CheckContract, IRskSwapPool {
     mapping(address => uint256) public rewards;
 
     event MPTokenAddressChanged(address _mpTokenAddress);
-    event UniTokenAddressChanged(address _uniTokenAddress);
+    event RskSwapTokenAddressChanged(address _rskSwapTokenAddress);
     event RewardAdded(uint256 reward);
     event Staked(address indexed user, uint256 amount);
     event Withdrawn(address indexed user, uint256 amount);
@@ -94,7 +94,7 @@ contract RskSwapPool is LPTokenWrapper, Ownable, CheckContract, IRskSwapPool {
     // initialization function
     function setParams(
         address _mpTokenAddress,
-        address _uniTokenAddress,
+        address _rskSwapTokenAddress,
         uint _duration
     )
         external
@@ -102,16 +102,16 @@ contract RskSwapPool is LPTokenWrapper, Ownable, CheckContract, IRskSwapPool {
         onlyOwner
     {
         checkContract(_mpTokenAddress);
-        checkContract(_uniTokenAddress);
+        checkContract(_rskSwapTokenAddress);
 
-        uniToken = IERC20(_uniTokenAddress);
+        rskSwapToken = IERC20(_rskSwapTokenAddress);
         mpToken = IMPToken(_mpTokenAddress);
         duration = _duration;
 
         _notifyRewardAmount(mpToken.getLpRewardsEntitlement(), _duration);
 
         emit MPTokenAddressChanged(_mpTokenAddress);
-        emit UniTokenAddressChanged(_uniTokenAddress);
+        emit RskSwapTokenAddressChanged(_rskSwapTokenAddress);
 
         _renounceOwnership();
     }
@@ -148,7 +148,7 @@ contract RskSwapPool is LPTokenWrapper, Ownable, CheckContract, IRskSwapPool {
     // stake visibility is public as overriding LPTokenWrapper's stake() function
     function stake(uint256 amount) public override {
         require(amount > 0, "Cannot stake 0");
-        require(address(uniToken) != address(0), "Liquidity Pool Token has not been set yet");
+        require(address(rskSwapToken) != address(0), "Liquidity Pool Token has not been set yet");
 
         _updatePeriodFinish();
         _updateAccountReward(msg.sender);
@@ -160,7 +160,7 @@ contract RskSwapPool is LPTokenWrapper, Ownable, CheckContract, IRskSwapPool {
 
     function withdraw(uint256 amount) public override {
         require(amount > 0, "Cannot withdraw 0");
-        require(address(uniToken) != address(0), "Liquidity Pool Token has not been set yet");
+        require(address(rskSwapToken) != address(0), "Liquidity Pool Token has not been set yet");
 
         _updateAccountReward(msg.sender);
 
@@ -176,7 +176,7 @@ contract RskSwapPool is LPTokenWrapper, Ownable, CheckContract, IRskSwapPool {
     }
 
     function claimReward() public override {
-        require(address(uniToken) != address(0), "Liquidity Pool Token has not been set yet");
+        require(address(rskSwapToken) != address(0), "Liquidity Pool Token has not been set yet");
 
         _updatePeriodFinish();
         _updateAccountReward(msg.sender);

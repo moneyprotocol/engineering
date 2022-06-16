@@ -220,7 +220,7 @@ async function mainnetDeploy(configParams) {
   // --- RskSwapPool ---
 
   // Check RskSwapPool's BPD-RBTC Uniswap Pair address
-  const unipoolUniswapPairAddr = await unipool.uniToken()
+  const unipoolUniswapPairAddr = await unipool.rskSwapToken()
   console.log(`RskSwapPool's stored BPD-RBTC Uniswap Pair address: ${unipoolUniswapPairAddr}`)
 
   console.log("SYSTEM GLOBAL VARS CHECKS")
@@ -359,7 +359,7 @@ async function mainnetDeploy(configParams) {
 
   // Stake LP tokens in RskSwapPool
   console.log(`BPDRBTCPair addr: ${BPDRBTCPair.address}`)
-  console.log(`Pair addr stored in RskSwapPool: ${await unipool.uniToken()}`)
+  console.log(`Pair addr stored in RskSwapPool: ${await unipool.rskSwapToken()}`)
 
   earnedMP = await unipool.earned(deployerWallet.address)
   th.logBN("deployer's farmed MP before staking LP tokens", earnedMP)

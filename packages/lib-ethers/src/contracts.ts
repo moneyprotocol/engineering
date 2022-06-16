@@ -9,7 +9,7 @@ import {
   Overrides,
   CallOverrides,
   PopulatedTransaction,
-  ContractTransaction
+  ContractTransaction,
 } from "@ethersproject/contracts";
 
 import activePoolAbi from "../abi/ActivePool.json";
@@ -53,7 +53,7 @@ import {
   GasPool,
   RskSwapPool,
   ERC20Mock,
-  IERC20
+  IERC20,
 } from "../types";
 
 import { BitcoinsProvider, BitcoinsSigner } from "./types";
@@ -76,7 +76,11 @@ export type _TypeSafeContract<T> = Pick<
     : never
 >;
 
-type EstimatedContractFunction<R = unknown, A extends unknown[] = unknown[], O = Overrides> = (
+type EstimatedContractFunction<
+  R = unknown,
+  A extends unknown[] = unknown[],
+  O = Overrides
+> = (
   overrides: O,
   adjustGas: (gas: BigNumber) => BigNumber,
   ...args: A
@@ -85,8 +89,7 @@ type EstimatedContractFunction<R = unknown, A extends unknown[] = unknown[], O =
 type CallOverridesArg = [overrides?: CallOverrides];
 
 type TypedContract<T extends Contract, U, V> = _TypeSafeContract<T> &
-  U &
-  {
+  U & {
     [P in keyof V]: V[P] extends (...args: infer A) => unknown
       ? (...args: A) => Promise<ContractTransaction>
       : never;
@@ -98,7 +101,9 @@ type TypedContract<T extends Contract, U, V> = _TypeSafeContract<T> &
     };
 
     readonly estimateAndPopulate: {
-      [P in keyof V]: V[P] extends (...args: [...infer A, infer O | undefined]) => unknown
+      [P in keyof V]: V[P] extends (
+        ...args: [...infer A, infer O | undefined]
+      ) => unknown
         ? EstimatedContractFunction<PopulatedTransaction, A, O>
         : never;
     };
@@ -109,25 +114,31 @@ const buildEstimatedFunctions = <T>(
   functions: Record<string, ContractFunction<T>>
 ): Record<string, EstimatedContractFunction<T>> =>
   Object.fromEntries(
-    Object.keys(estimateFunctions).map(functionName => [
+    Object.keys(estimateFunctions).map((functionName) => [
       functionName,
       async (overrides, adjustEstimate, ...args) => {
         if (overrides.gasLimit === undefined) {
-          const estimatedGas = await estimateFunctions[functionName](...args, overrides);
+          const estimatedGas = await estimateFunctions[functionName](
+            ...args,
+            overrides
+          );
 
           overrides = {
             ...overrides,
-            gasLimit: adjustEstimate(estimatedGas)
+            gasLimit: adjustEstimate(estimatedGas),
           };
         }
 
         return functions[functionName](...args, overrides);
-      }
+      },
     ])
   );
 
 export class _MoneypContract extends Contract {
-  readonly estimateAndPopulate: Record<string, EstimatedContractFunction<PopulatedTransaction>>;
+  readonly estimateAndPopulate: Record<
+    string,
+    EstimatedContractFunction<PopulatedTransaction>
+  >;
 
   constructor(
     addressOrName: string,
@@ -137,19 +148,26 @@ export class _MoneypContract extends Contract {
     super(addressOrName, contractInterface, signerOrProvider);
 
     // this.estimateAndCall = buildEstimatedFunctions(this.estimateGas, this);
-    this.estimateAndPopulate = buildEstimatedFunctions(this.estimateGas, this.populateTransaction);
+    this.estimateAndPopulate = buildEstimatedFunctions(
+      this.estimateGas,
+      this.populateTransaction
+    );
   }
 
   extractEvents(logs: Log[], name: string): _TypedLogDescription<unknown>[] {
     return logs
-      .filter(log => log.address === this.address)
-      .map(log => this.interface.parseLog(log))
-      .filter(e => e.name === name);
+      .filter((log) => log.address === this.address)
+      .map((log) => this.interface.parseLog(log))
+      .filter((e) => e.name === name);
   }
 }
 
 /** @internal */
-export type _TypedMoneypContract<T = unknown, U = unknown> = TypedContract<_MoneypContract, T, U>;
+export type _TypedMoneypContract<T = unknown, U = unknown> = TypedContract<
+  _MoneypContract,
+  T,
+  U
+>;
 
 /** @internal */
 export interface _MoneypContracts {
@@ -170,7 +188,7 @@ export interface _MoneypContracts {
   stabilityPool: StabilityPool;
   gasPool: GasPool;
   unipool: RskSwapPool;
-  uniToken: IERC20 | ERC20Mock;
+  rskSwapToken: IERC20 | ERC20Mock;
 }
 
 /** @internal */
@@ -179,8 +197,9 @@ export const _priceFeedIsTestnet = (
 ): priceFeed is PriceFeedTestnet => "setPrice" in priceFeed;
 
 /** @internal */
-export const _rskSwapTokenIsMock = (uniToken: IERC20 | ERC20Mock): uniToken is ERC20Mock =>
-  "mint" in uniToken;
+export const _rskSwapTokenIsMock = (
+  rskSwapToken: IERC20 | ERC20Mock
+): rskSwapToken is ERC20Mock => "mint" in rskSwapToken;
 
 type MoneypContractsKey = keyof _MoneypContracts;
 
@@ -189,7 +208,10 @@ export type _MoneypContractAddresses = Record<MoneypContractsKey, string>;
 
 type MoneypContractAbis = Record<MoneypContractsKey, JsonFragment[]>;
 
-const getAbi = (priceFeedIsTestnet: boolean, uniTokenIsMock: boolean): MoneypContractAbis => ({
+const getAbi = (
+  priceFeedIsTestnet: boolean,
+  rskSwapTokenIsMock: boolean
+): MoneypContractAbis => ({
   activePool: activePoolAbi,
   borrowerOperations: borrowerOperationsAbi,
   vaultManager: vaultManagerAbi,
@@ -207,7 +229,7 @@ const getAbi = (priceFeedIsTestnet: boolean, uniTokenIsMock: boolean): MoneypCon
   gasPool: gasPoolAbi,
   collSurplusPool: collSurplusPoolAbi,
   unipool: unipoolAbi,
-  uniToken: uniTokenIsMock ? erc20MockAbi : iERC20Abi
+  rskSwapToken: rskSwapTokenIsMock ? erc20MockAbi : iERC20Abi,
 });
 
 const mapMoneypContracts = <T, U>(
@@ -215,7 +237,10 @@ const mapMoneypContracts = <T, U>(
   f: (t: T, key: MoneypContractsKey) => U
 ) =>
   Object.fromEntries(
-    Object.entries(contracts).map(([key, t]) => [key, f(t, key as MoneypContractsKey)])
+    Object.entries(contracts).map(([key, t]) => [
+      key,
+      f(t, key as MoneypContractsKey),
+    ])
   ) as Record<MoneypContractsKey, U>;
 
 /** @internal */
@@ -241,6 +266,10 @@ export const _connectToContracts = (
   return mapMoneypContracts(
     addresses,
     (address, key) =>
-      new _MoneypContract(address, abi[key], signerOrProvider) as _TypedMoneypContract
+      new _MoneypContract(
+        address,
+        abi[key],
+        signerOrProvider
+      ) as _TypedMoneypContract
   ) as _MoneypContracts;
 };

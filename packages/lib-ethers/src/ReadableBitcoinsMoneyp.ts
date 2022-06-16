@@ -317,20 +317,20 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     return mpToken.balanceOf(address, { ...overrides }).then(decimalify);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getUniTokenBalance} */
-  getUniTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getRskSwapTokenBalance} */
+  getRskSwapTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     address ??= _requireAddress(this.connection);
-    const { uniToken } = _getContracts(this.connection);
+    const { rskSwapToken } = _getContracts(this.connection);
 
-    return uniToken.balanceOf(address, { ...overrides }).then(decimalify);
+    return rskSwapToken.balanceOf(address, { ...overrides }).then(decimalify);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getUniTokenAllowance} */
-  getUniTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getRskSwapTokenAllowance} */
+  getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     address ??= _requireAddress(this.connection);
-    const { uniToken, unipool } = _getContracts(this.connection);
+    const { rskSwapToken, unipool } = _getContracts(this.connection);
 
-    return uniToken.allowance(address, unipool.address, { ...overrides }).then(decimalify);
+    return rskSwapToken.allowance(address, unipool.address, { ...overrides }).then(decimalify);
   }
 
   /** @internal */
@@ -370,8 +370,8 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     return unipool.balanceOf(address, { ...overrides }).then(decimalify);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getTotalStakedUniTokens} */
-  getTotalStakedUniTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getTotalStakedRskSwapTokens} */
+  getTotalStakedRskSwapTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     const { unipool } = _getContracts(this.connection);
 
     return unipool.totalSupply({ ...overrides }).then(decimalify);
@@ -639,15 +639,15 @@ class BlockPolledMoneypStoreBasedCache
     }
   }
 
-  getUniTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Decimal | undefined {
+  getRskSwapTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Decimal | undefined {
     if (this._userHit(address, overrides)) {
-      return this._store.state.uniTokenBalance;
+      return this._store.state.rskSwapTokenBalance;
     }
   }
 
-  getUniTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Decimal | undefined {
+  getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Decimal | undefined {
     if (this._userHit(address, overrides)) {
-      return this._store.state.uniTokenAllowance;
+      return this._store.state.rskSwapTokenAllowance;
     }
   }
 
@@ -663,9 +663,9 @@ class BlockPolledMoneypStoreBasedCache
     }
   }
 
-  getTotalStakedUniTokens(overrides?: BitcoinsCallOverrides): Decimal | undefined {
+  getTotalStakedRskSwapTokens(overrides?: BitcoinsCallOverrides): Decimal | undefined {
     if (this._blockHit(overrides)) {
-      return this._store.state.totalStakedUniTokens;
+      return this._store.state.totalStakedRskSwapTokens;
     }
   }
 

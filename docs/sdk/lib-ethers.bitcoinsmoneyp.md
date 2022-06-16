@@ -30,7 +30,7 @@ The constructor for this class is marked as internal. Third-party code should no
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
 |  [adjustVault(params, maxBorrowingRate, overrides)](./lib-ethers.bitcoinsmoneyp.adjustvault.md) |  | Adjust existing Vault by changing its collateral, debt, or both. |
-|  [approveUniTokens(allowance, overrides)](./lib-ethers.bitcoinsmoneyp.approveunitokens.md) |  | Allow the liquidity mining contract to use Uniswap RBTC/BPD LP tokens for [staking](./lib-base.transactablemoneyp.stakeunitokens.md)<!-- -->. |
+|  [approveRskSwapTokens(allowance, overrides)](./lib-ethers.bitcoinsmoneyp.approveunitokens.md) |  | Allow the liquidity mining contract to use Uniswap RBTC/BPD LP tokens for [staking](./lib-base.transactablemoneyp.stakeunitokens.md)<!-- -->. |
 |  [borrowBPD(amount, maxBorrowingRate, overrides)](./lib-ethers.bitcoinsmoneyp.borrowbpd.md) |  | Adjust existing Vault by borrowing more BPD. |
 |  [claimCollateralSurplus(overrides)](./lib-ethers.bitcoinsmoneyp.claimcollateralsurplus.md) |  | Claim leftover collateral after a liquidation or redemption. |
 |  [closeVault(overrides)](./lib-ethers.bitcoinsmoneyp.closevault.md) |  | Close existing Vault by repaying all debt and withdrawing all collateral. |
@@ -55,9 +55,9 @@ The constructor for this class is marked as internal. Third-party code should no
 |  [getTotal(overrides)](./lib-ethers.bitcoinsmoneyp.gettotal.md) |  | Get the total amount of collateral and debt in the Moneyp system. |
 |  [getTotalRedistributed(overrides)](./lib-ethers.bitcoinsmoneyp.gettotalredistributed.md) |  | Get the total collateral and debt per stake that has been liquidated through redistribution. |
 |  [getTotalStakedMP(overrides)](./lib-ethers.bitcoinsmoneyp.gettotalstakedmp.md) |  | Get the total amount of MP currently staked. |
-|  [getTotalStakedUniTokens(overrides)](./lib-ethers.bitcoinsmoneyp.gettotalstakedunitokens.md) |  | Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. |
-|  [getUniTokenAllowance(address, overrides)](./lib-ethers.bitcoinsmoneyp.getunitokenallowance.md) |  | Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens. |
-|  [getUniTokenBalance(address, overrides)](./lib-ethers.bitcoinsmoneyp.getunitokenbalance.md) |  | Get the amount of Uniswap RBTC/BPD LP tokens held by an address. |
+|  [getTotalStakedRskSwapTokens(overrides)](./lib-ethers.bitcoinsmoneyp.gettotalstakedunitokens.md) |  | Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. |
+|  [getRskSwapTokenAllowance(address, overrides)](./lib-ethers.bitcoinsmoneyp.getunitokenallowance.md) |  | Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens. |
+|  [getRskSwapTokenBalance(address, overrides)](./lib-ethers.bitcoinsmoneyp.getunitokenbalance.md) |  | Get the amount of Uniswap RBTC/BPD LP tokens held by an address. |
 |  [getVault(address, overrides)](./lib-ethers.bitcoinsmoneyp.getvault.md) |  | Get the current state of a Vault. |
 |  [getVaultBeforeRedistribution(address, overrides)](./lib-ethers.bitcoinsmoneyp.getvaultbeforeredistribution.md) |  | Get a Vault in its state after the last direct modification. |
 |  [getVaults(params, overrides)](./lib-ethers.bitcoinsmoneyp.getvaults_1.md) |  | Get a slice from the list of Vaults. |
@@ -72,10 +72,10 @@ The constructor for this class is marked as internal. Third-party code should no
 |  [sendBPD(toAddress, amount, overrides)](./lib-ethers.bitcoinsmoneyp.sendbpd.md) |  | Send BPD tokens to an address. |
 |  [sendMP(toAddress, amount, overrides)](./lib-ethers.bitcoinsmoneyp.sendmp.md) |  | Send MP tokens to an address. |
 |  [stakeMP(amount, overrides)](./lib-ethers.bitcoinsmoneyp.stakemp.md) |  | Stake MP to start earning fee revenue or increase existing stake. |
-|  [stakeUniTokens(amount, overrides)](./lib-ethers.bitcoinsmoneyp.stakeunitokens.md) |  | Stake Uniswap RBTC/BPD LP tokens to participate in liquidity mining and earn MP. |
+|  [stakeRskSwapTokens(amount, overrides)](./lib-ethers.bitcoinsmoneyp.stakeunitokens.md) |  | Stake Uniswap RBTC/BPD LP tokens to participate in liquidity mining and earn MP. |
 |  [transferCollateralGainToVault(overrides)](./lib-ethers.bitcoinsmoneyp.transfercollateralgaintovault.md) |  | Transfer [collateral gain](./lib-base.stabilitydeposit.collateralgain.md) from Stability Deposit to Vault. |
 |  [unstakeMP(amount, overrides)](./lib-ethers.bitcoinsmoneyp.unstakemp.md) |  | Withdraw MP from staking. |
-|  [unstakeUniTokens(amount, overrides)](./lib-ethers.bitcoinsmoneyp.unstakeunitokens.md) |  | Withdraw Uniswap RBTC/BPD LP tokens from liquidity mining. |
+|  [unstakeRskSwapTokens(amount, overrides)](./lib-ethers.bitcoinsmoneyp.unstakeunitokens.md) |  | Withdraw Uniswap RBTC/BPD LP tokens from liquidity mining. |
 |  [withdrawBPDFromStabilityPool(amount, overrides)](./lib-ethers.bitcoinsmoneyp.withdrawbpdfromstabilitypool.md) |  | Withdraw BPD from Stability Deposit. |
 |  [withdrawCollateral(amount, overrides)](./lib-ethers.bitcoinsmoneyp.withdrawcollateral.md) |  | Adjust existing Vault by withdrawing some of its collateral. |
 |  [withdrawGainsFromStabilityPool(overrides)](./lib-ethers.bitcoinsmoneyp.withdrawgainsfromstabilitypool.md) |  | Withdraw [collateral gain](./lib-base.stabilitydeposit.collateralgain.md) and [MP reward](./lib-base.stabilitydeposit.mpreward.md) from Stability Deposit. |

@@ -57,7 +57,7 @@ const deployContracts = async (
   getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
   priceFeedIsTestnet = true,
   overrides?: Overrides
-): Promise<Omit<_MoneypContractAddresses, "uniToken">> => {
+): Promise<Omit<_MoneypContractAddresses, "rskSwapToken">> => {
   const addresses = {
     activePool: await deployContract(deployer, getContractFactory, "ActivePool", { ...overrides }),
     borrowerOperations: await deployContract(deployer, getContractFactory, "BorrowerOperations", {
@@ -161,7 +161,7 @@ const connectContracts = async (
     stabilityPool,
     gasPool,
     unipool,
-    uniToken
+    rskSwapToken
   }: _MoneypContracts,
   deployer: Signer,
   overrides?: Overrides
@@ -274,7 +274,7 @@ const connectContracts = async (
       }),
 
     nonce =>
-      unipool.setParams(mpToken.address, uniToken.address, 2 * 30 * 24 * 60 * 60, {
+      unipool.setParams(mpToken.address, rskSwapToken.address, 2 * 30 * 24 * 60 * 60, {
         ...overrides,
         nonce
       })
@@ -291,7 +291,7 @@ const connectContracts = async (
   }
 };
 
-const deployMockUniToken = (
+const deployMockRskSwapToken = (
   deployer: Signer,
   getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
   overrides?: Overrides
@@ -341,9 +341,9 @@ export const deployAndSetupContracts = async (
     ).then(async addresses => ({
       ...addresses,
 
-      uniToken: await (wethAddress
+      rskSwapToken: await (wethAddress
         ? createUniswapV2Pair(deployer, wethAddress, addresses.bpdToken)
-        : deployMockUniToken(deployer, getContractFactory, overrides))
+        : deployMockRskSwapToken(deployer, getContractFactory, overrides))
     }))
   };
 

@@ -24,7 +24,7 @@ Implemented by [SendableBitcoinsMoneyp](./lib-ethers.sendablebitcoinsmoneyp.md)<
 |  Method | Description |
 |  --- | --- |
 |  [adjustVault(params, maxBorrowingRate)](./lib-base.sendablemoneyp.adjustvault.md) | Adjust existing Vault by changing its collateral, debt, or both. |
-|  [approveUniTokens(allowance)](./lib-base.sendablemoneyp.approveunitokens.md) | Allow the liquidity mining contract to use Uniswap RBTC/BPD LP tokens for [staking](./lib-base.transactablemoneyp.stakeunitokens.md)<!-- -->. |
+|  [approveRskSwapTokens(allowance)](./lib-base.sendablemoneyp.approveunitokens.md) | Allow the liquidity mining contract to use Uniswap RBTC/BPD LP tokens for [staking](./lib-base.transactablemoneyp.stakeunitokens.md)<!-- -->. |
 |  [borrowBPD(amount, maxBorrowingRate)](./lib-base.sendablemoneyp.borrowbpd.md) | Adjust existing Vault by borrowing more BPD. |
 |  [claimCollateralSurplus()](./lib-base.sendablemoneyp.claimcollateralsurplus.md) | Claim leftover collateral after a liquidation or redemption. |
 |  [closeVault()](./lib-base.sendablemoneyp.closevault.md) | Close existing Vault by repaying all debt and withdrawing all collateral. |
@@ -40,10 +40,10 @@ Implemented by [SendableBitcoinsMoneyp](./lib-ethers.sendablebitcoinsmoneyp.md)<
 |  [sendBPD(toAddress, amount)](./lib-base.sendablemoneyp.sendbpd.md) | Send BPD tokens to an address. |
 |  [sendMP(toAddress, amount)](./lib-base.sendablemoneyp.sendmp.md) | Send MP tokens to an address. |
 |  [stakeMP(amount)](./lib-base.sendablemoneyp.stakemp.md) | Stake MP to start earning fee revenue or increase existing stake. |
-|  [stakeUniTokens(amount)](./lib-base.sendablemoneyp.stakeunitokens.md) | Stake Uniswap RBTC/BPD LP tokens to participate in liquidity mining and earn MP. |
+|  [stakeRskSwapTokens(amount)](./lib-base.sendablemoneyp.stakeunitokens.md) | Stake Uniswap RBTC/BPD LP tokens to participate in liquidity mining and earn MP. |
 |  [transferCollateralGainToVault()](./lib-base.sendablemoneyp.transfercollateralgaintovault.md) | Transfer [collateral gain](./lib-base.stabilitydeposit.collateralgain.md) from Stability Deposit to Vault. |
 |  [unstakeMP(amount)](./lib-base.sendablemoneyp.unstakemp.md) | Withdraw MP from staking. |
-|  [unstakeUniTokens(amount)](./lib-base.sendablemoneyp.unstakeunitokens.md) | Withdraw Uniswap RBTC/BPD LP tokens from liquidity mining. |
+|  [unstakeRskSwapTokens(amount)](./lib-base.sendablemoneyp.unstakeunitokens.md) | Withdraw Uniswap RBTC/BPD LP tokens from liquidity mining. |
 |  [withdrawBPDFromStabilityPool(amount)](./lib-base.sendablemoneyp.withdrawbpdfromstabilitypool.md) | Withdraw BPD from Stability Deposit. |
 |  [withdrawCollateral(amount)](./lib-base.sendablemoneyp.withdrawcollateral.md) | Adjust existing Vault by withdrawing some of its collateral. |
 |  [withdrawGainsFromStabilityPool()](./lib-base.sendablemoneyp.withdrawgainsfromstabilitypool.md) | Withdraw [collateral gain](./lib-base.stabilitydeposit.collateralgain.md) and [MP reward](./lib-base.stabilitydeposit.mpreward.md) from Stability Deposit. |

@@ -273,18 +273,18 @@ export interface PopulatableMoneyp<R = unknown, S = unknown, P = unknown>
     PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>
   >;
 
-  /** {@inheritDoc TransactableMoneyp.approveUniTokens} */
-  approveUniTokens(
+  /** {@inheritDoc TransactableMoneyp.approveRskSwapTokens} */
+  approveRskSwapTokens(
     allowance?: Decimalish
   ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
 
-  /** {@inheritDoc TransactableMoneyp.stakeUniTokens} */
-  stakeUniTokens(
+  /** {@inheritDoc TransactableMoneyp.stakeRskSwapTokens} */
+  stakeRskSwapTokens(
     amount: Decimalish
   ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
 
-  /** {@inheritDoc TransactableMoneyp.unstakeUniTokens} */
-  unstakeUniTokens(
+  /** {@inheritDoc TransactableMoneyp.unstakeRskSwapTokens} */
+  unstakeRskSwapTokens(
     amount: Decimalish
   ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
 

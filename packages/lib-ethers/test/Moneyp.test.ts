@@ -888,35 +888,35 @@ describe("BitcoinsMoneyp", () => {
       [deployerMoneyp, moneyp] = await connectUsers([deployer, user]);
     });
 
-    const someUniTokens = 1000;
+    const someRskSwapTokens = 1000;
 
     it("should obtain some UNI LP tokens", async () => {
-      await moneyp._mintUniToken(someUniTokens);
+      await moneyp._mintRskSwapToken(someRskSwapTokens);
 
-      const uniTokenBalance = await moneyp.getUniTokenBalance();
-      expect(`${uniTokenBalance}`).to.equal(`${someUniTokens}`);
+      const rskSwapTokenBalance = await moneyp.getRskSwapTokenBalance();
+      expect(`${rskSwapTokenBalance}`).to.equal(`${someRskSwapTokens}`);
     });
 
     it("should fail to stake UNI LP before approving the spend", async () => {
-      await expect(moneyp.stakeUniTokens(someUniTokens)).to.eventually.be.rejected;
+      await expect(moneyp.stakeRskSwapTokens(someRskSwapTokens)).to.eventually.be.rejected;
     });
 
     it("should stake UNI LP after approving the spend", async () => {
-      const initialAllowance = await moneyp.getUniTokenAllowance();
+      const initialAllowance = await moneyp.getRskSwapTokenAllowance();
       expect(`${initialAllowance}`).to.equal("0");
 
-      await moneyp.approveUniTokens();
+      await moneyp.approveRskSwapTokens();
 
-      const newAllowance = await moneyp.getUniTokenAllowance();
+      const newAllowance = await moneyp.getRskSwapTokenAllowance();
       expect(newAllowance.isZero).to.be.false;
 
-      await moneyp.stakeUniTokens(someUniTokens);
+      await moneyp.stakeRskSwapTokens(someRskSwapTokens);
 
-      const uniTokenBalance = await moneyp.getUniTokenBalance();
-      expect(`${uniTokenBalance}`).to.equal("0");
+      const rskSwapTokenBalance = await moneyp.getRskSwapTokenBalance();
+      expect(`${rskSwapTokenBalance}`).to.equal("0");
 
       const stake = await moneyp.getLiquidityMiningStake();
-      expect(`${stake}`).to.equal(`${someUniTokens}`);
+      expect(`${stake}`).to.equal(`${someRskSwapTokens}`);
     });
 
     it("should have an MP reward after some time has passed", async function () {
@@ -928,7 +928,7 @@ describe("BitcoinsMoneyp", () => {
       await new Promise(resolve => setTimeout(resolve, 4000));
 
       // Trigger a new block with a dummy TX.
-      await moneyp._mintUniToken(0);
+      await moneyp._mintRskSwapToken(0);
 
       const mpReward = Number(await moneyp.getLiquidityMiningMPReward());
       expect(mpReward).to.be.at.least(1); // ~0.2572 per second [(4e6/3) / (60*24*60*60)]
@@ -939,28 +939,28 @@ describe("BitcoinsMoneyp", () => {
     });
 
     it("should partially unstake", async () => {
-      await moneyp.unstakeUniTokens(someUniTokens / 2);
+      await moneyp.unstakeRskSwapTokens(someRskSwapTokens / 2);
 
-      const uniTokenStake = await moneyp.getLiquidityMiningStake();
-      expect(`${uniTokenStake}`).to.equal(`${someUniTokens / 2}`);
+      const rskSwapTokenStake = await moneyp.getLiquidityMiningStake();
+      expect(`${rskSwapTokenStake}`).to.equal(`${someRskSwapTokens / 2}`);
 
-      const uniTokenBalance = await moneyp.getUniTokenBalance();
-      expect(`${uniTokenBalance}`).to.equal(`${someUniTokens / 2}`);
+      const rskSwapTokenBalance = await moneyp.getRskSwapTokenBalance();
+      expect(`${rskSwapTokenBalance}`).to.equal(`${someRskSwapTokens / 2}`);
     });
 
     it("should unstake remaining tokens and withdraw remaining MP reward", async () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      await moneyp._mintUniToken(0); // dummy block
+      await moneyp._mintRskSwapToken(0); // dummy block
       await moneyp.exitLiquidityMining();
 
-      const uniTokenStake = await moneyp.getLiquidityMiningStake();
-      expect(`${uniTokenStake}`).to.equal("0");
+      const rskSwapTokenStake = await moneyp.getLiquidityMiningStake();
+      expect(`${rskSwapTokenStake}`).to.equal("0");
 
       const mpReward = await moneyp.getLiquidityMiningMPReward();
       expect(`${mpReward}`).to.equal("0");
 
-      const uniTokenBalance = await moneyp.getUniTokenBalance();
-      expect(`${uniTokenBalance}`).to.equal(`${someUniTokens}`);
+      const rskSwapTokenBalance = await moneyp.getRskSwapTokenBalance();
+      expect(`${rskSwapTokenBalance}`).to.equal(`${someRskSwapTokens}`);
     });
 
     it("should have no more rewards after the mining period is over", async function () {
@@ -969,7 +969,7 @@ describe("BitcoinsMoneyp", () => {
         this.skip();
       }
 
-      await moneyp.stakeUniTokens(someUniTokens);
+      await moneyp.stakeRskSwapTokens(someRskSwapTokens);
       await increaseTime(2 * 30 * 24 * 60 * 60);
       await moneyp.exitLiquidityMining();
 

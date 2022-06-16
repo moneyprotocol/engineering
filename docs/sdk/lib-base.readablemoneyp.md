@@ -37,9 +37,9 @@ Implemented by [BitcoinsMoneyp](./lib-ethers.bitcoinsmoneyp.md)<!-- -->.
 |  [getTotal()](./lib-base.readablemoneyp.gettotal.md) | Get the total amount of collateral and debt in the Moneyp system. |
 |  [getTotalRedistributed()](./lib-base.readablemoneyp.gettotalredistributed.md) | Get the total collateral and debt per stake that has been liquidated through redistribution. |
 |  [getTotalStakedMP()](./lib-base.readablemoneyp.gettotalstakedmp.md) | Get the total amount of MP currently staked. |
-|  [getTotalStakedUniTokens()](./lib-base.readablemoneyp.gettotalstakedunitokens.md) | Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. |
-|  [getUniTokenAllowance(address)](./lib-base.readablemoneyp.getunitokenallowance.md) | Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens. |
-|  [getUniTokenBalance(address)](./lib-base.readablemoneyp.getunitokenbalance.md) | Get the amount of Uniswap RBTC/BPD LP tokens held by an address. |
+|  [getTotalStakedRskSwapTokens()](./lib-base.readablemoneyp.gettotalstakedunitokens.md) | Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. |
+|  [getRskSwapTokenAllowance(address)](./lib-base.readablemoneyp.getunitokenallowance.md) | Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens. |
+|  [getRskSwapTokenBalance(address)](./lib-base.readablemoneyp.getunitokenbalance.md) | Get the amount of Uniswap RBTC/BPD LP tokens held by an address. |
 |  [getVault(address)](./lib-base.readablemoneyp.getvault.md) | Get the current state of a Vault. |
 |  [getVaultBeforeRedistribution(address)](./lib-base.readablemoneyp.getvaultbeforeredistribution.md) | Get a Vault in its state after the last direct modification. |
 |  [getVaults(params)](./lib-base.readablemoneyp.getvaults_1.md) | Get a slice from the list of Vaults. |

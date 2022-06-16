@@ -45,9 +45,9 @@ The constructor for this class is marked as internal. Third-party code should no
 |  [getTotal(overrides)](./lib-ethers.readablebitcoinsmoneyp.gettotal.md) |  | Get the total amount of collateral and debt in the Moneyp system. |
 |  [getTotalRedistributed(overrides)](./lib-ethers.readablebitcoinsmoneyp.gettotalredistributed.md) |  | Get the total collateral and debt per stake that has been liquidated through redistribution. |
 |  [getTotalStakedMP(overrides)](./lib-ethers.readablebitcoinsmoneyp.gettotalstakedmp.md) |  | Get the total amount of MP currently staked. |
-|  [getTotalStakedUniTokens(overrides)](./lib-ethers.readablebitcoinsmoneyp.gettotalstakedunitokens.md) |  | Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. |
-|  [getUniTokenAllowance(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getunitokenallowance.md) |  | Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens. |
-|  [getUniTokenBalance(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getunitokenbalance.md) |  | Get the amount of Uniswap RBTC/BPD LP tokens held by an address. |
+|  [getTotalStakedRskSwapTokens(overrides)](./lib-ethers.readablebitcoinsmoneyp.gettotalstakedunitokens.md) |  | Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. |
+|  [getRskSwapTokenAllowance(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getunitokenallowance.md) |  | Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens. |
+|  [getRskSwapTokenBalance(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getunitokenbalance.md) |  | Get the amount of Uniswap RBTC/BPD LP tokens held by an address. |
 |  [getVault(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getvault.md) |  | Get the current state of a Vault. |
 |  [getVaultBeforeRedistribution(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getvaultbeforeredistribution.md) |  | Get a Vault in its state after the last direct modification. |
 |  [getVaults(params, overrides)](./lib-ethers.readablebitcoinsmoneyp.getvaults_1.md) |  | Get a slice from the list of Vaults. |

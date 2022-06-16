@@ -34,7 +34,7 @@ export const Approve: React.FC<ApproveProps> = ({ amount }) => {
   return (
     <Transaction
       id={transactionId}
-      send={moneyp.approveUniTokens.bind(moneyp, undefined)}
+      send={moneyp.approveRskSwapTokens.bind(moneyp, undefined)}
       showFailure="asTooltip"
       tooltipPlacement="bottom"
     >

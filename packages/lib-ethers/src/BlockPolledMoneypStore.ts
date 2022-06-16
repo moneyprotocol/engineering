@@ -120,7 +120,7 @@ export class BlockPolledMoneypStore extends MoneypStore<BlockPolledMoneypStoreEx
       bpdInStabilityPool: this._readable.getBPDInStabilityPool({ blockTag }),
       totalStakedMP: this._readable.getTotalStakedMP({ blockTag }),
       _riskiestVaultBeforeRedistribution: this._getRiskiestVaultBeforeRedistribution({ blockTag }),
-      totalStakedUniTokens: this._readable.getTotalStakedUniTokens({ blockTag }),
+      totalStakedRskSwapTokens: this._readable.getTotalStakedRskSwapTokens({ blockTag }),
       remainingStabilityPoolMPReward: this._readable.getRemainingStabilityPoolMPReward({
         blockTag
       }),
@@ -134,8 +134,8 @@ export class BlockPolledMoneypStore extends MoneypStore<BlockPolledMoneypStoreEx
             accountBalance: this._provider.getBalance(userAddress, blockTag).then(decimalify),
             bpdBalance: this._readable.getBPDBalance(userAddress, { blockTag }),
             mpBalance: this._readable.getMPBalance(userAddress, { blockTag }),
-            uniTokenBalance: this._readable.getUniTokenBalance(userAddress, { blockTag }),
-            uniTokenAllowance: this._readable.getUniTokenAllowance(userAddress, { blockTag }),
+            rskSwapTokenBalance: this._readable.getRskSwapTokenBalance(userAddress, { blockTag }),
+            rskSwapTokenAllowance: this._readable.getRskSwapTokenAllowance(userAddress, { blockTag }),
             liquidityMiningStake: this._readable.getLiquidityMiningStake(userAddress, { blockTag }),
             liquidityMiningMPReward: this._readable.getLiquidityMiningMPReward(userAddress, {
               blockTag
@@ -154,8 +154,8 @@ export class BlockPolledMoneypStore extends MoneypStore<BlockPolledMoneypStoreEx
             accountBalance: Decimal.ZERO,
             bpdBalance: Decimal.ZERO,
             mpBalance: Decimal.ZERO,
-            uniTokenBalance: Decimal.ZERO,
-            uniTokenAllowance: Decimal.ZERO,
+            rskSwapTokenBalance: Decimal.ZERO,
+            rskSwapTokenAllowance: Decimal.ZERO,
             liquidityMiningStake: Decimal.ZERO,
             liquidityMiningMPReward: Decimal.ZERO,
             collateralSurplusBalance: Decimal.ZERO,
