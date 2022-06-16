@@ -22,7 +22,7 @@ import PriceFeedTestnet from "../../contracts/artifacts/contracts/TestContracts/
 import SortedVaults from "../../contracts/artifacts/contracts/SortedVaults.sol/SortedVaults.json";
 import StabilityPool from "../../contracts/artifacts/contracts/StabilityPool.sol/StabilityPool.json";
 import VaultManager from "../../contracts/artifacts/contracts/VaultManager.sol/VaultManager.json";
-import Unipool from "../../contracts/artifacts/contracts/LPRewards/Unipool.sol/Unipool.json";
+import RskSwapPool from "../../contracts/artifacts/contracts/LPRewards/RskSwapPool.sol/RskSwapPool.json";
 
 const getTupleType = (components: ParamType[], flexible: boolean) => {
   if (components.every(component => component.name)) {
@@ -162,7 +162,7 @@ const contractArtifacts = [
   SortedVaults,
   StabilityPool,
   VaultManager,
-  Unipool
+  RskSwapPool
 ];
 
 const contracts = contractArtifacts.map(({ contractName, abi }) => ({

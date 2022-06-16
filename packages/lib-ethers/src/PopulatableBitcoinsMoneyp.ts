@@ -75,7 +75,7 @@ const addGasForPotentialListTraversal = (gas: BigNumber) => gas.add(25000);
 
 const addGasForMPIssuance = (gas: BigNumber) => gas.add(50000);
 
-const addGasForUnipoolRewardUpdate = (gas: BigNumber) => gas.add(20000);
+const addGasForRskSwapPoolRewardUpdate = (gas: BigNumber) => gas.add(20000);
 
 // To get the best entropy available, we'd do something like:
 //
@@ -1052,7 +1052,7 @@ export class PopulatableBitcoinsMoneyp
     return this._wrapSimpleTransaction(
       await unipool.estimateAndPopulate.stake(
         { ...overrides },
-        addGasForUnipoolRewardUpdate,
+        addGasForRskSwapPoolRewardUpdate,
         Decimal.from(amount).hex
       )
     );
@@ -1068,7 +1068,7 @@ export class PopulatableBitcoinsMoneyp
     return this._wrapSimpleTransaction(
       await unipool.estimateAndPopulate.withdraw(
         { ...overrides },
-        addGasForUnipoolRewardUpdate,
+        addGasForRskSwapPoolRewardUpdate,
         Decimal.from(amount).hex
       )
     );
@@ -1081,7 +1081,7 @@ export class PopulatableBitcoinsMoneyp
     const { unipool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
-      await unipool.estimateAndPopulate.claimReward({ ...overrides }, addGasForUnipoolRewardUpdate)
+      await unipool.estimateAndPopulate.claimReward({ ...overrides }, addGasForRskSwapPoolRewardUpdate)
     );
   }
 
@@ -1094,7 +1094,7 @@ export class PopulatableBitcoinsMoneyp
     return this._wrapSimpleTransaction(
       await unipool.estimateAndPopulate.withdrawAndClaim(
         { ...overrides },
-        addGasForUnipoolRewardUpdate
+        addGasForRskSwapPoolRewardUpdate
       )
     );
   }
