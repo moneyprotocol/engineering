@@ -180,8 +180,8 @@ class MainnetDeploymentHelper {
     return MPContracts
   }
 
-  async deployUnipoolMainnet(deploymentState) {
-    const unipoolFactory = await this.getFactory("Unipool")
+  async deployRskSwapPoolMainnet(deploymentState) {
+    const unipoolFactory = await this.getFactory("RskSwapPool")
     const unipool = await this.loadOrDeploy(unipoolFactory, 'unipool', deploymentState)
 
     if (!this.configParams.ASDFGSCAN_BASE_URL) {
@@ -342,7 +342,7 @@ class MainnetDeploymentHelper {
       ))
   }
 
-  async connectUnipoolMainnet(uniPool, MPContracts, BPDWRBTCPairAddr, duration) {
+  async connectRskSwapPoolMainnet(uniPool, MPContracts, BPDWRBTCPairAddr, duration) {
     const gasPrice = this.configParams.GAS_PRICE
     await this.isOwnershipRenounced(uniPool) ||
       await this.sendAndWaitForTransaction(uniPool.setParams(MPContracts.mpToken.address, BPDWRBTCPairAddr, duration, {gasPrice}))

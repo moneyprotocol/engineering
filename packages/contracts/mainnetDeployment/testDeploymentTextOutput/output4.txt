@@ -40,7 +40,7 @@ mpStaking: 0x3d130ccbabe9b3561bb1f45f9605EDF2944C9Ee5
 lockupContractFactory: 0xe6dEcadA1d49466F09c5bfb69F6C14f376B2Eece
 communityIssuance: 0x89c5eaD36eCA8d7c0840ddD461d406Ad637CD35D
 mpToken: 0x05F1b3d2C7C90A61DA377942A35DF94B80537790
-Unipool address: 0xBAeE57B5e130fC602F0859e6f85029Ec47340298
+RskSwapPool address: 0xBAeE57B5e130fC602F0859e6f85029Ec47340298
 time now: 1617288159
 time oneYearFromNow: 1648824159
 Using previously deployed TEST_INVESTOR_A lockup contract at address 0xF41E0DD45d411102ed74c047BdA544396cB71E27
@@ -49,13 +49,13 @@ Using previously deployed TEST_INVESTOR_C lockup contract at address 0x98f95E112
 Using previously deployed TEST_INVESTOR_D lockup contract at address 0x45ad07343D58dEedacB1EbD935A1f220CA77aEC1
 Using previously deployed TEST_INVESTOR_E lockup contract at address 0x6E57f531239c0E892f79c349b830bC38c8120597
 current Chainlink price: 192651094164
-Unipool MP balance       : 1333333.333333333333333333
+RskSwapPool MP balance       : 1333333.333333333333333333
 MP Deployer balance     : 64666666.666666666666666667
 General Safe balance       : 2000000.000000000000000000
 Community Issuance balance: 32000000.000000000000000000
 PriceFeed first stored price: 1946.203658610000000000
 PriceFeed initial status: 0
-Unipool's stored BPD-RBTC Uniswap Pair address: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
+RskSwapPool's stored BPD-RBTC Uniswap Pair address: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
 system liquidation reserve: 200.000000000000000000
 system min net debt:: 1800.000000000000000000
 deployer is in sorted list after making vault: true
@@ -75,5 +75,5 @@ BPD-RBTC Pair's BPD reserves after provision: 1926.510941640000000000
 BPD-RBTC Pair's RBTC reserves after provision: 1.000000000000000000
 deployer's LP token balance: 43.892037337539936894
 BPDRBTCPair addr: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
-Pair addr stored in Unipool: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
-deployer's earned MP from Unipool after ~1.5mins: 34.538506760728982948
+Pair addr stored in RskSwapPool: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
+deployer's earned MP from RskSwapPool after ~1.5mins: 34.538506760728982948

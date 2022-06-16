@@ -29,7 +29,7 @@ import priceFeedTestnetAbi from "../abi/PriceFeedTestnet.json";
 import sortedVaultsAbi from "../abi/SortedVaults.json";
 import stabilityPoolAbi from "../abi/StabilityPool.json";
 import gasPoolAbi from "../abi/GasPool.json";
-import unipoolAbi from "../abi/Unipool.json";
+import unipoolAbi from "../abi/RskSwapPool.json";
 import iERC20Abi from "../abi/IERC20.json";
 import erc20MockAbi from "../abi/ERC20Mock.json";
 
@@ -51,7 +51,7 @@ import {
   SortedVaults,
   StabilityPool,
   GasPool,
-  Unipool,
+  RskSwapPool,
   ERC20Mock,
   IERC20
 } from "../types";
@@ -169,7 +169,7 @@ export interface _MoneypContracts {
   sortedVaults: SortedVaults;
   stabilityPool: StabilityPool;
   gasPool: GasPool;
-  unipool: Unipool;
+  unipool: RskSwapPool;
   uniToken: IERC20 | ERC20Mock;
 }
 

@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "IUnipool",
-  "sourceName": "contracts/LPRewards/Interfaces/IUnipool.sol",
+  "contractName": "IRskSwapPool",
+  "sourceName": "contracts/LPRewards/Interfaces/IRskSwapPool.sol",
   "abi": [
     {
       "inputs": [],

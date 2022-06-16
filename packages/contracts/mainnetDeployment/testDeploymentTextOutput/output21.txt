@@ -45,7 +45,7 @@ mpStaking: 0x3d130ccbabe9b3561bb1f45f9605EDF2944C9Ee5
 lockupContractFactory: 0xe6dEcadA1d49466F09c5bfb69F6C14f376B2Eece
 communityIssuance: 0x89c5eaD36eCA8d7c0840ddD461d406Ad637CD35D
 mpToken: 0x05F1b3d2C7C90A61DA377942A35DF94B80537790
-Unipool address: 0xBAeE57B5e130fC602F0859e6f85029Ec47340298
+RskSwapPool address: 0xBAeE57B5e130fC602F0859e6f85029Ec47340298
 time now: 1617566356
 time oneYearFromNow: 1649102356
 Using previously deployed ACCOUNT_2 lockup contract at address 0x66bDAE1c1b3a6d37816BC02BeF9aE9f5Acb8AD9a
@@ -67,14 +67,14 @@ lockupContract addr: 0xC4aC...FfEC,
             unlockTime: 1649064337
             
 INITIAL MP BALANCES
-Unipool MP balance       : 1332511.757789535567313421
+RskSwapPool MP balance       : 1332511.757789535567313421
 MP Safe balance     : 64666666.666666666666666667
 General Safe balance       : 2000000.000000000000000000
 Community Issuance balance: 31951399.568444579028830645
 PRICEFEED CHECKS
 PriceFeed first stored price: 2064.083968470000000000
 PriceFeed initial status: 0
-Unipool's stored BPD-RBTC Uniswap Pair address: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
+RskSwapPool's stored BPD-RBTC Uniswap Pair address: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
 SYSTEM GLOBAL VARS CHECKS
 system liquidation reserve: 200.000000000000000000
 system min net debt      : 1800.000000000000000000
@@ -97,11 +97,11 @@ BPD-RBTC Pair's RBTC reserves after provision: .188993756164807541
 CHECK LP STAKING EARNS MP
 deployer's LP token balance: 2.194601866876996844
 BPDRBTCPair addr: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
-Pair addr stored in Unipool: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
+Pair addr stored in RskSwapPool: 0x01365a50da15e38e9Fcc5Ee193E67D4845ff118E
 deployer's farmed MP before staking LP tokens: .000000000000048944
-Already staked in Unipool
+Already staked in RskSwapPool
 wait 90 seconds before checking earnings... 
-deployer's farmed MP from Unipool after waiting ~1.5mins: .000000000000049005
+deployer's farmed MP from RskSwapPool after waiting ~1.5mins: .000000000000049005
 deployer MP Balance Before SP deposit: 1395.789802366656842257
 CHECK DEPLOYER MAKING DEPOSIT AND EARNING MP
 deployer SP deposit before making deposit: .000000000000000000

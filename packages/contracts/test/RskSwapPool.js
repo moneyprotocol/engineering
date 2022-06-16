@@ -8,7 +8,7 @@ const { assertRevert } = TestHelper;
 
 const Uni = artifacts.require('ERC20Mock');
 const Mp = artifacts.require('MPToken');
-const Unipool = artifacts.require('Unipool');
+const RskSwapPool = artifacts.require('RskSwapPool');
 const NonPayable = artifacts.require('NonPayable');
 
 const _1e18 = new BN('10').pow(new BN('18'));
@@ -41,12 +41,12 @@ require('chai').use(function (chai, utils) {
   });
 });
 
-contract('Unipool', function ([_, wallet1, wallet2, wallet3, wallet4, bountyAddress, owner]) {
+contract('RskSwapPool', function ([_, wallet1, wallet2, wallet3, wallet4, bountyAddress, owner]) {
   let multisig = "0x5b5e5CC89636CA2685b4e4f50E66099EBCFAb638"  // Arbitrary address for the multisig, which is not tested in this file
 
   const deploy = async (that) => {
       that.uni = await Uni.new('Uniswap token', 'LPT', owner, 0);
-      that.pool = await Unipool.new();
+      that.pool = await RskSwapPool.new();
 
       const communityIssuance = await NonPayable.new();
       const mpStaking = await NonPayable.new();
@@ -74,7 +74,7 @@ contract('Unipool', function ([_, wallet1, wallet2, wallet3, wallet4, bountyAddr
       await that.uni.approve(that.pool.address, new BN(2).pow(new BN(255)), { from: wallet4 });
   };
 
-  describe('Unipool', async function () {
+  describe('RskSwapPool', async function () {
     beforeEach(async function () {
       await deploy(this);
       await this.pool.setParams(this.mp.address, this.uni.address, this.DURATION);
@@ -426,7 +426,7 @@ contract('Unipool', function ([_, wallet1, wallet2, wallet3, wallet4, bountyAddr
     });
   });
 
-  describe('Unipool, before calling setAddresses', async function () {
+  describe('RskSwapPool, before calling setAddresses', async function () {
     beforeEach(async function () {
       await deploy(this);
     });

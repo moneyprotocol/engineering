@@ -3,7 +3,7 @@
 pragma solidity 0.6.11;
 
 
-interface IUnipool {
+interface IRskSwapPool {
     function setParams(address _mpTokenAddress, address _uniTokenAddress, uint256 _duration) external;
     function lastTimeRewardApplicable() external view returns (uint256);
     function rewardPerToken() external view returns (uint256);

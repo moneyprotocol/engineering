@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "Unipool",
-  "sourceName": "contracts/LPRewards/Unipool.sol",
+  "contractName": "RskSwapPool",
+  "sourceName": "contracts/LPRewards/RskSwapPool.sol",
   "abi": [
     {
       "anonymous": false,

@@ -16,7 +16,7 @@ const MPToken = artifacts.require("./MPToken.sol")
 const LockupContractFactory = artifacts.require("./LockupContractFactory.sol")
 const CommunityIssuance = artifacts.require("./CommunityIssuance.sol")
 
-const Unipool =  artifacts.require("./Unipool.sol")
+const RskSwapPool =  artifacts.require("./RskSwapPool.sol")
 
 const MPTokenTester = artifacts.require("./MPTokenTester.sol")
 const CommunityIssuanceTester = artifacts.require("./CommunityIssuanceTester.sol")
@@ -423,7 +423,7 @@ class DeploymentHelper {
     )
   }
 
-  static async connectUnipool(uniPool, MPContracts, uniswapPairAddr, duration) {
+  static async connectRskSwapPool(uniPool, MPContracts, uniswapPairAddr, duration) {
     await uniPool.setParams(MPContracts.mpToken.address, uniswapPairAddr, duration)
   }
 }

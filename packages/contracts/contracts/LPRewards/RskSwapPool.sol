@@ -9,7 +9,7 @@ import "../Dependencies/CheckContract.sol";
 import "../Interfaces/IMPToken.sol";
 import "./Dependencies/SafeERC20.sol";
 import "./Interfaces/ILPTokenWrapper.sol";
-import "./Interfaces/IUnipool.sol";
+import "./Interfaces/IRskSwapPool.sol";
 import "../Dependencies/console.sol";
 
 
@@ -56,7 +56,7 @@ contract LPTokenWrapper is ILPTokenWrapper {
  * Essentially the way it works is:
 
  * - Liquidity providers add funds to the Uniswap pool, and get UNIv2 LP tokens in exchange
- * - Liquidity providers stake those UNIv2 LP tokens into Unipool rewards contract
+ * - Liquidity providers stake those UNIv2 LP tokens into RskSwapPool rewards contract
  * - Liquidity providers accrue rewards, proportional to the amount of staked tokens and staking time
  * - Liquidity providers can claim their rewards when they want
  * - Liquidity providers can unstake UNIv2 LP tokens to exit the program (i.e., stop earning rewards) when they want
@@ -68,11 +68,11 @@ contract LPTokenWrapper is ILPTokenWrapper {
  * so the period will be extended by the time during which the staking pool is empty,
  * in order to avoid getting MP tokens locked.
  * That also means that the start time for the program will be the event that occurs first:
- * either MP token contract is deployed, and therefore MP tokens are minted to Unipool contract,
+ * either MP token contract is deployed, and therefore MP tokens are minted to RskSwapPool contract,
  * or first liquidity provider stakes UNIv2 LP tokens into it.
  */
-contract Unipool is LPTokenWrapper, Ownable, CheckContract, IUnipool {
-    string constant public NAME = "Unipool";
+contract RskSwapPool is LPTokenWrapper, Ownable, CheckContract, IRskSwapPool {
+    string constant public NAME = "RskSwapPool";
 
     uint256 public duration;
     IMPToken public mpToken;

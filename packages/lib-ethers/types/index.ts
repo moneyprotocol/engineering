@@ -886,7 +886,7 @@ export interface VaultManager
   extractEvents(logs: Log[], name: "VaultUpdated"): _TypedLogDescription<{ _borrower: string; _debt: BigNumber; _coll: BigNumber; _stake: BigNumber; _operation: number }>[];
 }
 
-interface UnipoolCalls {
+interface RskSwapPoolCalls {
   NAME(_overrides?: CallOverrides): Promise<string>;
   balanceOf(account: string, _overrides?: CallOverrides): Promise<BigNumber>;
   duration(_overrides?: CallOverrides): Promise<BigNumber>;
@@ -906,7 +906,7 @@ interface UnipoolCalls {
   userRewardPerTokenPaid(arg0: string, _overrides?: CallOverrides): Promise<BigNumber>;
 }
 
-interface UnipoolTransactions {
+interface RskSwapPoolTransactions {
   claimReward(_overrides?: Overrides): Promise<void>;
   setParams(_mpTokenAddress: string, _uniTokenAddress: string, _duration: BigNumberish, _overrides?: Overrides): Promise<void>;
   stake(amount: BigNumberish, _overrides?: Overrides): Promise<void>;
@@ -914,8 +914,8 @@ interface UnipoolTransactions {
   withdrawAndClaim(_overrides?: Overrides): Promise<void>;
 }
 
-export interface Unipool
-  extends _TypedMoneypContract<UnipoolCalls, UnipoolTransactions> {
+export interface RskSwapPool
+  extends _TypedMoneypContract<RskSwapPoolCalls, RskSwapPoolTransactions> {
   readonly filters: {
     MPTokenAddressChanged(_mpTokenAddress?: null): EventFilter;
     OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): EventFilter;
