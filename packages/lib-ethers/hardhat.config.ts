@@ -88,7 +88,7 @@ const oracleAddresses = {
 const hasOracles = (network: string): network is keyof typeof oracleAddresses =>
   network in oracleAddresses;
 
-const wethAddresses = {
+const wrbtcAddresses = {
   mainnet: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
   ropsten: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
   rinkeby: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
@@ -97,7 +97,7 @@ const wethAddresses = {
   testnet: "0x09b6ca5e4496238a1f176aea6bb607db96c2286e"
 };
 
-const hasWETH = (network: string): network is keyof typeof wethAddresses => network in wethAddresses;
+const hasWRBTC = (network: string): network is keyof typeof wrbtcAddresses => network in wrbtcAddresses;
 
 const config: HardhatUserConfig = {
   networks: {
@@ -153,7 +153,7 @@ declare module "hardhat/types/runtime" {
     deployMoneyp: (
       deployer: Signer,
       useRealPriceFeed?: boolean,
-      wethAddress?: string,
+      wrbtcAddress?: string,
       overrides?: Overrides
     ) => Promise<_MoneypDeploymentJSON>;
   }
@@ -175,7 +175,7 @@ extendEnvironment(env => {
   env.deployMoneyp = async (
     deployer,
     useRealPriceFeed = false,
-    wethAddress = undefined,
+    wrbtcAddress = undefined,
     overrides?: Overrides
   ) => {
     const deployment = await deployAndSetupContracts(
@@ -183,7 +183,7 @@ extendEnvironment(env => {
       getContractFactory(env),
       !useRealPriceFeed,
       env.network.name === "dev",
-      wethAddress,
+      wrbtcAddress,
       overrides
     );
 
@@ -199,6 +199,7 @@ type DeployParams = {
 };
 
 const defaultChannel = process.env.CHANNEL || "default";
+const createUniswapPair = process.env.CREATE_UNISWAP_PAIR !== "false";
 
 task("deploy", "Deploys the contracts to the network")
   .addOptionalParam("channel", "Deployment channel to deploy into", defaultChannel, types.string)
@@ -211,8 +212,8 @@ task("deploy", "Deploys the contracts to the network")
   )
   .addOptionalParam(
     "createUniswapPair",
-    "Create a real Uniswap v2 WETH-BPD pair instead of a mock ERC20 token",
-    true,
+    "Create a real Uniswap v2 WRBTC-BPD pair instead of a mock ERC20 token",
+    createUniswapPair,
     types.boolean
   )
   .setAction(
@@ -227,17 +228,17 @@ task("deploy", "Deploys the contracts to the network")
       }
 
       console.log(`createUniswapPair? ${createUniswapPair}`);
-      let wethAddress: string | undefined = undefined;
+      let wrbtcAddress: string | undefined = undefined;
       if (createUniswapPair) {
-        if (!hasWETH(env.network.name)) {
-          throw new Error(`WETH not deployed on ${env.network.name}`);
+        if (!hasWRBTC(env.network.name)) {
+          throw new Error(`WRBTC not deployed on ${env.network.name}`);
         }
-        wethAddress = wethAddresses[env.network.name];
+        wrbtcAddress = wrbtcAddresses[env.network.name];
       }
 
       setSilent(false);
 
-      const deployment = await env.deployMoneyp(deployer, useRealPriceFeed, wethAddress, overrides);
+      const deployment = await env.deployMoneyp(deployer, useRealPriceFeed, wrbtcAddress, overrides);
 
       if (useRealPriceFeed) {
         const contracts = _connectToContracts(deployer, deployment);

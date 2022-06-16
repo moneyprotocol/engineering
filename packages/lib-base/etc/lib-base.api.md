@@ -53,6 +53,10 @@ export class _CachedReadableMoneyp<T extends unknown[]> implements _ReadableMone
     // (undocumented)
     getRemainingStabilityPoolMPReward(...extraParams: T): Promise<Decimal>;
     // (undocumented)
+    getRskSwapTokenAllowance(address?: string, ...extraParams: T): Promise<Decimal>;
+    // (undocumented)
+    getRskSwapTokenBalance(address?: string, ...extraParams: T): Promise<Decimal>;
+    // (undocumented)
     getStabilityDeposit(address?: string, ...extraParams: T): Promise<StabilityDeposit>;
     // (undocumented)
     getTotal(...extraParams: T): Promise<Vault>;
@@ -62,10 +66,6 @@ export class _CachedReadableMoneyp<T extends unknown[]> implements _ReadableMone
     getTotalStakedMP(...extraParams: T): Promise<Decimal>;
     // (undocumented)
     getTotalStakedRskSwapTokens(...extraParams: T): Promise<Decimal>;
-    // (undocumented)
-    getRskSwapTokenAllowance(address?: string, ...extraParams: T): Promise<Decimal>;
-    // (undocumented)
-    getRskSwapTokenBalance(address?: string, ...extraParams: T): Promise<Decimal>;
     // (undocumented)
     getVault(address?: string, ...extraParams: T): Promise<UserVault>;
     // (undocumented)
@@ -310,13 +310,13 @@ export interface MoneypStoreBaseState {
     remainingStabilityPoolMPReward: Decimal;
     // @internal (undocumented)
     _riskiestVaultBeforeRedistribution: VaultWithPendingRedistribution;
+    rskSwapTokenAllowance: Decimal;
+    rskSwapTokenBalance: Decimal;
     stabilityDeposit: StabilityDeposit;
     total: Vault;
     totalRedistributed: Vault;
     totalStakedMP: Decimal;
     totalStakedRskSwapTokens: Decimal;
-    rskSwapTokenAllowance: Decimal;
-    rskSwapTokenBalance: Decimal;
     vaultBeforeRedistribution: VaultWithPendingRedistribution;
 }
 
@@ -503,13 +503,13 @@ export interface ReadableMoneyp {
     getPrice(): Promise<Decimal>;
     getRemainingLiquidityMiningMPReward(): Promise<Decimal>;
     getRemainingStabilityPoolMPReward(): Promise<Decimal>;
+    getRskSwapTokenAllowance(address?: string): Promise<Decimal>;
+    getRskSwapTokenBalance(address?: string): Promise<Decimal>;
     getStabilityDeposit(address?: string): Promise<StabilityDeposit>;
     getTotal(): Promise<Vault>;
     getTotalRedistributed(): Promise<Vault>;
     getTotalStakedMP(): Promise<Decimal>;
     getTotalStakedRskSwapTokens(): Promise<Decimal>;
-    getRskSwapTokenAllowance(address?: string): Promise<Decimal>;
-    getRskSwapTokenBalance(address?: string): Promise<Decimal>;
     getVault(address?: string): Promise<UserVault>;
     getVaultBeforeRedistribution(address?: string): Promise<VaultWithPendingRedistribution>;
     // @internal (undocumented)

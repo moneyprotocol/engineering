@@ -46,7 +46,7 @@ export const createUniswapV2Pair = async (
     signer
   ) as unknown) as UniswapV2Factory;
 
-  log(`Creating Uniswap v2 WETH <=> BPD pair...`);
+  log(`Creating Uniswap v2 WRBTC <=> BPD pair...`);
   log(`[ARGS] ${tokenA} | ${tokenB} | ${JSON.stringify(overrides)}`)
 
   const tx = await factory.createPair(tokenA, tokenB, { ...overrides });

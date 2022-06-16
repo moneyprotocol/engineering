@@ -901,8 +901,8 @@ interface RskSwapPoolCalls {
   rewardPerTokenStored(_overrides?: CallOverrides): Promise<BigNumber>;
   rewardRate(_overrides?: CallOverrides): Promise<BigNumber>;
   rewards(arg0: string, _overrides?: CallOverrides): Promise<BigNumber>;
-  totalSupply(_overrides?: CallOverrides): Promise<BigNumber>;
   rskSwapToken(_overrides?: CallOverrides): Promise<string>;
+  totalSupply(_overrides?: CallOverrides): Promise<BigNumber>;
   userRewardPerTokenPaid(arg0: string, _overrides?: CallOverrides): Promise<BigNumber>;
 }
 
@@ -921,15 +921,15 @@ export interface RskSwapPool
     OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): EventFilter;
     RewardAdded(reward?: null): EventFilter;
     RewardPaid(user?: string | null, reward?: null): EventFilter;
-    Staked(user?: string | null, amount?: null): EventFilter;
     RskSwapTokenAddressChanged(_rskSwapTokenAddress?: null): EventFilter;
+    Staked(user?: string | null, amount?: null): EventFilter;
     Withdrawn(user?: string | null, amount?: null): EventFilter;
   };
   extractEvents(logs: Log[], name: "MPTokenAddressChanged"): _TypedLogDescription<{ _mpTokenAddress: string }>[];
   extractEvents(logs: Log[], name: "OwnershipTransferred"): _TypedLogDescription<{ previousOwner: string; newOwner: string }>[];
   extractEvents(logs: Log[], name: "RewardAdded"): _TypedLogDescription<{ reward: BigNumber }>[];
   extractEvents(logs: Log[], name: "RewardPaid"): _TypedLogDescription<{ user: string; reward: BigNumber }>[];
-  extractEvents(logs: Log[], name: "Staked"): _TypedLogDescription<{ user: string; amount: BigNumber }>[];
   extractEvents(logs: Log[], name: "RskSwapTokenAddressChanged"): _TypedLogDescription<{ _rskSwapTokenAddress: string }>[];
+  extractEvents(logs: Log[], name: "Staked"): _TypedLogDescription<{ user: string; amount: BigNumber }>[];
   extractEvents(logs: Log[], name: "Withdrawn"): _TypedLogDescription<{ user: string; amount: BigNumber }>[];
 }
