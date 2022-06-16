@@ -47,7 +47,7 @@
     "address": "0xaa052d8b915c9311e5EA234dd24105d6208087A5",
     "txHash": "0xab1d06662c09b826bdbdccd1226a2bd2a7975e33761a3820a7b343ed24f4b9a9"
   },
-  "unipool": {
+  "rskSwapPool": {
     "address": "0xBAeE57B5e130fC602F0859e6f85029Ec47340298",
     "txHash": "0xeb2eea18bbf1f0a90f93f19034364c14599e9a8322b8501901b102341991a7d0"
   },

@@ -1030,13 +1030,13 @@ export class PopulatableBitcoinsMoneyp
     allowance?: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { rskSwapToken, unipool } = _getContracts(this._readable.connection);
+    const { rskSwapToken, rskSwapPool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
       await rskSwapToken.estimateAndPopulate.approve(
         { ...overrides },
         id,
-        unipool.address,
+        rskSwapPool.address,
         Decimal.from(allowance ?? Decimal.INFINITY).hex
       )
     );
@@ -1047,10 +1047,10 @@ export class PopulatableBitcoinsMoneyp
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { unipool } = _getContracts(this._readable.connection);
+    const { rskSwapPool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
-      await unipool.estimateAndPopulate.stake(
+      await rskSwapPool.estimateAndPopulate.stake(
         { ...overrides },
         addGasForRskSwapPoolRewardUpdate,
         Decimal.from(amount).hex
@@ -1063,10 +1063,10 @@ export class PopulatableBitcoinsMoneyp
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { unipool } = _getContracts(this._readable.connection);
+    const { rskSwapPool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
-      await unipool.estimateAndPopulate.withdraw(
+      await rskSwapPool.estimateAndPopulate.withdraw(
         { ...overrides },
         addGasForRskSwapPoolRewardUpdate,
         Decimal.from(amount).hex
@@ -1078,10 +1078,10 @@ export class PopulatableBitcoinsMoneyp
   async withdrawMPRewardFromLiquidityMining(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { unipool } = _getContracts(this._readable.connection);
+    const { rskSwapPool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
-      await unipool.estimateAndPopulate.claimReward({ ...overrides }, addGasForRskSwapPoolRewardUpdate)
+      await rskSwapPool.estimateAndPopulate.claimReward({ ...overrides }, addGasForRskSwapPoolRewardUpdate)
     );
   }
 
@@ -1089,10 +1089,10 @@ export class PopulatableBitcoinsMoneyp
   async exitLiquidityMining(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { unipool } = _getContracts(this._readable.connection);
+    const { rskSwapPool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
-      await unipool.estimateAndPopulate.withdrawAndClaim(
+      await rskSwapPool.estimateAndPopulate.withdrawAndClaim(
         { ...overrides },
         addGasForRskSwapPoolRewardUpdate
       )

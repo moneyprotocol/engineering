@@ -181,16 +181,16 @@ class MainnetDeploymentHelper {
   }
 
   async deployRskSwapPoolMainnet(deploymentState) {
-    const unipoolFactory = await this.getFactory("RskSwapPool")
-    const unipool = await this.loadOrDeploy(unipoolFactory, 'unipool', deploymentState)
+    const rskSwapPoolFactory = await this.getFactory("RskSwapPool")
+    const rskSwapPool = await this.loadOrDeploy(rskSwapPoolFactory, 'rskSwapPool', deploymentState)
 
     if (!this.configParams.ASDFGSCAN_BASE_URL) {
       console.log('No Bitcoinscan Url defined, skipping verification')
     } else {
-      await this.verifyContract('unipool', deploymentState)
+      await this.verifyContract('rskSwapPool', deploymentState)
     }
 
-    return unipool
+    return rskSwapPool
   }
 
   async deployMultiVaultGetterMainnet(moneypCore, deploymentState) {

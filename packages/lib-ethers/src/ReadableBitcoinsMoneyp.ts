@@ -328,22 +328,22 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getRskSwapTokenAllowance} */
   getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     address ??= _requireAddress(this.connection);
-    const { rskSwapToken, unipool } = _getContracts(this.connection);
+    const { rskSwapToken, rskSwapPool } = _getContracts(this.connection);
 
-    return rskSwapToken.allowance(address, unipool.address, { ...overrides }).then(decimalify);
+    return rskSwapToken.allowance(address, rskSwapPool.address, { ...overrides }).then(decimalify);
   }
 
   /** @internal */
   async _getRemainingLiquidityMiningMPRewardCalculator(
     overrides?: BitcoinsCallOverrides
   ): Promise<(blockTimestamp: number) => Decimal> {
-    const { unipool } = _getContracts(this.connection);
+    const { rskSwapPool } = _getContracts(this.connection);
 
     const [totalSupply, rewardRate, periodFinish, lastUpdateTime] = await Promise.all([
-      unipool.totalSupply({ ...overrides }),
-      unipool.rewardRate({ ...overrides }).then(decimalify),
-      unipool.periodFinish({ ...overrides }).then(numberify),
-      unipool.lastUpdateTime({ ...overrides }).then(numberify)
+      rskSwapPool.totalSupply({ ...overrides }),
+      rskSwapPool.rewardRate({ ...overrides }).then(decimalify),
+      rskSwapPool.periodFinish({ ...overrides }).then(numberify),
+      rskSwapPool.lastUpdateTime({ ...overrides }).then(numberify)
     ]);
 
     return (blockTimestamp: number) =>
@@ -365,24 +365,24 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getLiquidityMiningStake} */
   getLiquidityMiningStake(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     address ??= _requireAddress(this.connection);
-    const { unipool } = _getContracts(this.connection);
+    const { rskSwapPool } = _getContracts(this.connection);
 
-    return unipool.balanceOf(address, { ...overrides }).then(decimalify);
+    return rskSwapPool.balanceOf(address, { ...overrides }).then(decimalify);
   }
 
   /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getTotalStakedRskSwapTokens} */
   getTotalStakedRskSwapTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
-    const { unipool } = _getContracts(this.connection);
+    const { rskSwapPool } = _getContracts(this.connection);
 
-    return unipool.totalSupply({ ...overrides }).then(decimalify);
+    return rskSwapPool.totalSupply({ ...overrides }).then(decimalify);
   }
 
   /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getLiquidityMiningMPReward} */
   getLiquidityMiningMPReward(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     address ??= _requireAddress(this.connection);
-    const { unipool } = _getContracts(this.connection);
+    const { rskSwapPool } = _getContracts(this.connection);
 
-    return unipool.earned(address, { ...overrides }).then(decimalify);
+    return rskSwapPool.earned(address, { ...overrides }).then(decimalify);
   }
 
   /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getCollateralSurplusBalance} */

@@ -96,7 +96,7 @@ const deployContracts = async (
     gasPool: await deployContract(deployer, getContractFactory, "GasPool", {
       ...overrides
     }),
-    unipool: await deployContract(deployer, getContractFactory, "RskSwapPool", { ...overrides })
+    rskSwapPool: await deployContract(deployer, getContractFactory, "RskSwapPool", { ...overrides })
   };
 
   return {
@@ -119,7 +119,7 @@ const deployContracts = async (
       addresses.mpStaking,
       addresses.lockupContractFactory,
       Wallet.createRandom().address, // _bountyAddress (TODO: parameterize this)
-      addresses.unipool, // _lpRewardsAddress
+      addresses.rskSwapPool, // _lpRewardsAddress
       Wallet.createRandom().address, // _multisigAddress (TODO: parameterize this)
       { ...overrides }
     ),
@@ -160,7 +160,7 @@ const connectContracts = async (
     sortedVaults,
     stabilityPool,
     gasPool,
-    unipool,
+    rskSwapPool,
     rskSwapToken
   }: _MoneypContracts,
   deployer: Signer,
@@ -274,7 +274,7 @@ const connectContracts = async (
       }),
 
     nonce =>
-      unipool.setParams(mpToken.address, rskSwapToken.address, 2 * 30 * 24 * 60 * 60, {
+      rskSwapPool.setParams(mpToken.address, rskSwapToken.address, 2 * 30 * 24 * 60 * 60, {
         ...overrides,
         nonce
       })

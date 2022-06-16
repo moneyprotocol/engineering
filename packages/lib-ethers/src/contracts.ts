@@ -29,7 +29,7 @@ import priceFeedTestnetAbi from "../abi/PriceFeedTestnet.json";
 import sortedVaultsAbi from "../abi/SortedVaults.json";
 import stabilityPoolAbi from "../abi/StabilityPool.json";
 import gasPoolAbi from "../abi/GasPool.json";
-import unipoolAbi from "../abi/RskSwapPool.json";
+import rskSwapPoolAbi from "../abi/RskSwapPool.json";
 import iERC20Abi from "../abi/IERC20.json";
 import erc20MockAbi from "../abi/ERC20Mock.json";
 
@@ -169,7 +169,7 @@ export interface _MoneypContracts {
   sortedVaults: SortedVaults;
   stabilityPool: StabilityPool;
   gasPool: GasPool;
-  unipool: RskSwapPool;
+  rskSwapPool: RskSwapPool;
   rskSwapToken: IERC20 | ERC20Mock;
 }
 
@@ -206,7 +206,7 @@ const getAbi = (priceFeedIsTestnet: boolean, rskSwapTokenIsMock: boolean): Money
   stabilityPool: stabilityPoolAbi,
   gasPool: gasPoolAbi,
   collSurplusPool: collSurplusPoolAbi,
-  unipool: unipoolAbi,
+  rskSwapPool: rskSwapPoolAbi,
   rskSwapToken: rskSwapTokenIsMock ? erc20MockAbi : iERC20Abi
 });
 
