@@ -33,13 +33,13 @@ Implemented by [BitcoinsMoneyp](./lib-ethers.bitcoinsmoneyp.md)<!-- -->.
 |  [getPrice()](./lib-base.readablemoneyp.getprice.md) | Get the current price of the native currency (e.g. Ether) in USD. |
 |  [getRemainingLiquidityMiningMPReward()](./lib-base.readablemoneyp.getremainingliquidityminingmpreward.md) | Get the remaining MP that will be collectively rewarded to liquidity miners. |
 |  [getRemainingStabilityPoolMPReward()](./lib-base.readablemoneyp.getremainingstabilitypoolmpreward.md) | Get the remaining MP that will be collectively rewarded to stability depositors. |
+|  [getRskSwapTokenAllowance(address)](./lib-base.readablemoneyp.getrskswaptokenallowance.md) | Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens. |
+|  [getRskSwapTokenBalance(address)](./lib-base.readablemoneyp.getrskswaptokenbalance.md) | Get the amount of Uniswap RBTC/BPD LP tokens held by an address. |
 |  [getStabilityDeposit(address)](./lib-base.readablemoneyp.getstabilitydeposit.md) | Get the current state of a Stability Deposit. |
 |  [getTotal()](./lib-base.readablemoneyp.gettotal.md) | Get the total amount of collateral and debt in the Moneyp system. |
 |  [getTotalRedistributed()](./lib-base.readablemoneyp.gettotalredistributed.md) | Get the total collateral and debt per stake that has been liquidated through redistribution. |
 |  [getTotalStakedMP()](./lib-base.readablemoneyp.gettotalstakedmp.md) | Get the total amount of MP currently staked. |
-|  [getTotalStakedRskSwapTokens()](./lib-base.readablemoneyp.gettotalstakedunitokens.md) | Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. |
-|  [getRskSwapTokenAllowance(address)](./lib-base.readablemoneyp.getunitokenallowance.md) | Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens. |
-|  [getRskSwapTokenBalance(address)](./lib-base.readablemoneyp.getunitokenbalance.md) | Get the amount of Uniswap RBTC/BPD LP tokens held by an address. |
+|  [getTotalStakedRskSwapTokens()](./lib-base.readablemoneyp.gettotalstakedrskswaptokens.md) | Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. |
 |  [getVault(address)](./lib-base.readablemoneyp.getvault.md) | Get the current state of a Vault. |
 |  [getVaultBeforeRedistribution(address)](./lib-base.readablemoneyp.getvaultbeforeredistribution.md) | Get a Vault in its state after the last direct modification. |
 |  [getVaults(params)](./lib-base.readablemoneyp.getvaults_1.md) | Get a slice from the list of Vaults. |

@@ -130,6 +130,10 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     // (undocumented)
     getRemainingStabilityPoolMPReward(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
+    getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getRskSwapTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
     getStabilityDeposit(address?: string, overrides?: BitcoinsCallOverrides): Promise<StabilityDeposit>;
     // (undocumented)
     getTotal(overrides?: BitcoinsCallOverrides): Promise<Vault>;
@@ -139,10 +143,6 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     getTotalStakedMP(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
     getTotalStakedRskSwapTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getRskSwapTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
     getVault(address?: string, overrides?: BitcoinsCallOverrides): Promise<UserVault>;
     // (undocumented)
@@ -477,6 +477,10 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     // (undocumented)
     getRemainingStabilityPoolMPReward(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
+    getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
+    getRskSwapTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
+    // (undocumented)
     getStabilityDeposit(address?: string, overrides?: BitcoinsCallOverrides): Promise<StabilityDeposit>;
     // (undocumented)
     getTotal(overrides?: BitcoinsCallOverrides): Promise<Vault>;
@@ -486,10 +490,6 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     getTotalStakedMP(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
     getTotalStakedRskSwapTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
-    // (undocumented)
-    getRskSwapTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal>;
     // (undocumented)
     getVault(address?: string, overrides?: BitcoinsCallOverrides): Promise<UserVault>;
     // (undocumented)

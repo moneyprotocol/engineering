@@ -41,13 +41,13 @@ The constructor for this class is marked as internal. Third-party code should no
 |  [getPrice(overrides)](./lib-ethers.readablebitcoinsmoneyp.getprice.md) |  | Get the current price of the native currency (e.g. Ether) in USD. |
 |  [getRemainingLiquidityMiningMPReward(overrides)](./lib-ethers.readablebitcoinsmoneyp.getremainingliquidityminingmpreward.md) |  | Get the remaining MP that will be collectively rewarded to liquidity miners. |
 |  [getRemainingStabilityPoolMPReward(overrides)](./lib-ethers.readablebitcoinsmoneyp.getremainingstabilitypoolmpreward.md) |  | Get the remaining MP that will be collectively rewarded to stability depositors. |
+|  [getRskSwapTokenAllowance(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getrskswaptokenallowance.md) |  | Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens. |
+|  [getRskSwapTokenBalance(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getrskswaptokenbalance.md) |  | Get the amount of Uniswap RBTC/BPD LP tokens held by an address. |
 |  [getStabilityDeposit(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getstabilitydeposit.md) |  | Get the current state of a Stability Deposit. |
 |  [getTotal(overrides)](./lib-ethers.readablebitcoinsmoneyp.gettotal.md) |  | Get the total amount of collateral and debt in the Moneyp system. |
 |  [getTotalRedistributed(overrides)](./lib-ethers.readablebitcoinsmoneyp.gettotalredistributed.md) |  | Get the total collateral and debt per stake that has been liquidated through redistribution. |
 |  [getTotalStakedMP(overrides)](./lib-ethers.readablebitcoinsmoneyp.gettotalstakedmp.md) |  | Get the total amount of MP currently staked. |
-|  [getTotalStakedRskSwapTokens(overrides)](./lib-ethers.readablebitcoinsmoneyp.gettotalstakedunitokens.md) |  | Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. |
-|  [getRskSwapTokenAllowance(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getunitokenallowance.md) |  | Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens. |
-|  [getRskSwapTokenBalance(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getunitokenbalance.md) |  | Get the amount of Uniswap RBTC/BPD LP tokens held by an address. |
+|  [getTotalStakedRskSwapTokens(overrides)](./lib-ethers.readablebitcoinsmoneyp.gettotalstakedrskswaptokens.md) |  | Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. |
 |  [getVault(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getvault.md) |  | Get the current state of a Vault. |
 |  [getVaultBeforeRedistribution(address, overrides)](./lib-ethers.readablebitcoinsmoneyp.getvaultbeforeredistribution.md) |  | Get a Vault in its state after the last direct modification. |
 |  [getVaults(params, overrides)](./lib-ethers.readablebitcoinsmoneyp.getvaults_1.md) |  | Get a slice from the list of Vaults. |

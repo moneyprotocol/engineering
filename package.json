@@ -67,6 +67,7 @@
     "start-rsk:regtest": "node dev-chain/start-rsk.js",
     "start-rsk:prepare-providers": "yarn prepare:providers",
     "start-rsk:deploy-contracts": "yarn deploy --network regtest",
+    "stop-rsk": "docker kill regtest-node-01",
     "start-dev-chain": "run-s start-dev-chain:*",
     "start-dev-chain:openethereum": "node dev-chain/start.js",
     "start-dev-chain:prepare-providers": "yarn prepare:providers",

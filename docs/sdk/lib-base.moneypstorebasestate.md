@@ -30,12 +30,12 @@ export interface MoneypStoreBaseState
 |  [price](./lib-base.moneypstorebasestate.price.md) | [Decimal](./lib-base.decimal.md) | Current price of the native currency (e.g. Ether) in USD. |
 |  [remainingLiquidityMiningMPReward](./lib-base.moneypstorebasestate.remainingliquidityminingmpreward.md) | [Decimal](./lib-base.decimal.md) | Remaining MP that will be collectively rewarded to liquidity miners. |
 |  [remainingStabilityPoolMPReward](./lib-base.moneypstorebasestate.remainingstabilitypoolmpreward.md) | [Decimal](./lib-base.decimal.md) | Remaining MP that will be collectively rewarded to stability depositors. |
+|  [rskSwapTokenAllowance](./lib-base.moneypstorebasestate.rskswaptokenallowance.md) | [Decimal](./lib-base.decimal.md) | The liquidity mining contract's allowance of user's Uniswap RBTC/BPD LP tokens. |
+|  [rskSwapTokenBalance](./lib-base.moneypstorebasestate.rskswaptokenbalance.md) | [Decimal](./lib-base.decimal.md) | User's Uniswap RBTC/BPD LP token balance. |
 |  [stabilityDeposit](./lib-base.moneypstorebasestate.stabilitydeposit.md) | [StabilityDeposit](./lib-base.stabilitydeposit.md) | User's stability deposit. |
 |  [total](./lib-base.moneypstorebasestate.total.md) | [Vault](./lib-base.vault.md) | Total collateral and debt in the Moneyp system. |
 |  [totalRedistributed](./lib-base.moneypstorebasestate.totalredistributed.md) | [Vault](./lib-base.vault.md) | Total collateral and debt per stake that has been liquidated through redistribution. |
 |  [totalStakedMP](./lib-base.moneypstorebasestate.totalstakedmp.md) | [Decimal](./lib-base.decimal.md) | Total amount of MP currently staked. |
-|  [totalStakedRskSwapTokens](./lib-base.moneypstorebasestate.totalstakedunitokens.md) | [Decimal](./lib-base.decimal.md) | Total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. |
-|  [rskSwapTokenAllowance](./lib-base.moneypstorebasestate.unitokenallowance.md) | [Decimal](./lib-base.decimal.md) | The liquidity mining contract's allowance of user's Uniswap RBTC/BPD LP tokens. |
-|  [rskSwapTokenBalance](./lib-base.moneypstorebasestate.unitokenbalance.md) | [Decimal](./lib-base.decimal.md) | User's Uniswap RBTC/BPD LP token balance. |
+|  [totalStakedRskSwapTokens](./lib-base.moneypstorebasestate.totalstakedrskswaptokens.md) | [Decimal](./lib-base.decimal.md) | Total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. |
 |  [vaultBeforeRedistribution](./lib-base.moneypstorebasestate.vaultbeforeredistribution.md) | [VaultWithPendingRedistribution](./lib-base.vaultwithpendingredistribution.md) | User's Vault in its state after the last direct modification. |
 

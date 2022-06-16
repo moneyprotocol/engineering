@@ -312,7 +312,7 @@ export const deployAndSetupContracts = async (
   getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
   _priceFeedIsTestnet = true,
   _isDev = true,
-  wethAddress?: string,
+  wrbtcAddress?: string,
   overrides?: Overrides
 ): Promise<_MoneypDeploymentJSON> => {
   if (!deployer.provider) {
@@ -321,7 +321,7 @@ export const deployAndSetupContracts = async (
 
   log("Deploying contracts...");
   log();
-  log(`wethAddress: ${wethAddress}`);
+  log(`wrbtcAddress: ${wrbtcAddress}`);
 
   const deployment: _MoneypDeploymentJSON = {
     chainId: await deployer.getChainId(),
@@ -330,7 +330,7 @@ export const deployAndSetupContracts = async (
     bootstrapPeriod: 0,
     totalStabilityPoolMPReward: "0",
     _priceFeedIsTestnet,
-    _rskSwapTokenIsMock: !wethAddress,
+    _rskSwapTokenIsMock: !wrbtcAddress,
     _isDev,
 
     addresses: await deployContracts(
@@ -341,8 +341,8 @@ export const deployAndSetupContracts = async (
     ).then(async addresses => ({
       ...addresses,
 
-      rskSwapToken: await (wethAddress
-        ? createUniswapV2Pair(deployer, wethAddress, addresses.bpdToken)
+      rskSwapToken: await (wrbtcAddress
+        ? createUniswapV2Pair(deployer, wrbtcAddress, addresses.bpdToken)
         : deployMockRskSwapToken(deployer, getContractFactory, overrides))
     }))
   };

@@ -24,7 +24,7 @@ export declare class PopulatableBitcoinsMoneyp implements PopulatableMoneyp<Bitc
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
 |  [adjustVault(params, maxBorrowingRate, overrides)](./lib-ethers.populatablebitcoinsmoneyp.adjustvault.md) |  | Adjust existing Vault by changing its collateral, debt, or both. |
-|  [approveRskSwapTokens(allowance, overrides)](./lib-ethers.populatablebitcoinsmoneyp.approveunitokens.md) |  | Allow the liquidity mining contract to use Uniswap RBTC/BPD LP tokens for [staking](./lib-base.transactablemoneyp.stakeunitokens.md)<!-- -->. |
+|  [approveRskSwapTokens(allowance, overrides)](./lib-ethers.populatablebitcoinsmoneyp.approverskswaptokens.md) |  | Allow the liquidity mining contract to use Uniswap RBTC/BPD LP tokens for [staking](./lib-base.transactablemoneyp.stakerskswaptokens.md)<!-- -->. |
 |  [borrowBPD(amount, maxBorrowingRate, overrides)](./lib-ethers.populatablebitcoinsmoneyp.borrowbpd.md) |  | Adjust existing Vault by borrowing more BPD. |
 |  [claimCollateralSurplus(overrides)](./lib-ethers.populatablebitcoinsmoneyp.claimcollateralsurplus.md) |  | Claim leftover collateral after a liquidation or redemption. |
 |  [closeVault(overrides)](./lib-ethers.populatablebitcoinsmoneyp.closevault.md) |  | Close existing Vault by repaying all debt and withdrawing all collateral. |
@@ -40,10 +40,10 @@ export declare class PopulatableBitcoinsMoneyp implements PopulatableMoneyp<Bitc
 |  [sendBPD(toAddress, amount, overrides)](./lib-ethers.populatablebitcoinsmoneyp.sendbpd.md) |  | Send BPD tokens to an address. |
 |  [sendMP(toAddress, amount, overrides)](./lib-ethers.populatablebitcoinsmoneyp.sendmp.md) |  | Send MP tokens to an address. |
 |  [stakeMP(amount, overrides)](./lib-ethers.populatablebitcoinsmoneyp.stakemp.md) |  | Stake MP to start earning fee revenue or increase existing stake. |
-|  [stakeRskSwapTokens(amount, overrides)](./lib-ethers.populatablebitcoinsmoneyp.stakeunitokens.md) |  | Stake Uniswap RBTC/BPD LP tokens to participate in liquidity mining and earn MP. |
+|  [stakeRskSwapTokens(amount, overrides)](./lib-ethers.populatablebitcoinsmoneyp.stakerskswaptokens.md) |  | Stake Uniswap RBTC/BPD LP tokens to participate in liquidity mining and earn MP. |
 |  [transferCollateralGainToVault(overrides)](./lib-ethers.populatablebitcoinsmoneyp.transfercollateralgaintovault.md) |  | Transfer [collateral gain](./lib-base.stabilitydeposit.collateralgain.md) from Stability Deposit to Vault. |
 |  [unstakeMP(amount, overrides)](./lib-ethers.populatablebitcoinsmoneyp.unstakemp.md) |  | Withdraw MP from staking. |
-|  [unstakeRskSwapTokens(amount, overrides)](./lib-ethers.populatablebitcoinsmoneyp.unstakeunitokens.md) |  | Withdraw Uniswap RBTC/BPD LP tokens from liquidity mining. |
+|  [unstakeRskSwapTokens(amount, overrides)](./lib-ethers.populatablebitcoinsmoneyp.unstakerskswaptokens.md) |  | Withdraw Uniswap RBTC/BPD LP tokens from liquidity mining. |
 |  [withdrawBPDFromStabilityPool(amount, overrides)](./lib-ethers.populatablebitcoinsmoneyp.withdrawbpdfromstabilitypool.md) |  | Withdraw BPD from Stability Deposit. |
 |  [withdrawCollateral(amount, overrides)](./lib-ethers.populatablebitcoinsmoneyp.withdrawcollateral.md) |  | Adjust existing Vault by withdrawing some of its collateral. |
 |  [withdrawGainsFromStabilityPool(overrides)](./lib-ethers.populatablebitcoinsmoneyp.withdrawgainsfromstabilitypool.md) |  | Withdraw [collateral gain](./lib-base.stabilitydeposit.collateralgain.md) and [MP reward](./lib-base.stabilitydeposit.mpreward.md) from Stability Deposit. |
