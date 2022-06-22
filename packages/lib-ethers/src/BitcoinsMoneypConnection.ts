@@ -9,6 +9,7 @@ import goerli from "../deployments/goerli.json";
 import kovan from "../deployments/kovan.json";
 import rinkeby from "../deployments/rinkeby.json";
 import ropsten from "../deployments/ropsten.json";
+import testnet from "../deployments/default/testnet.json";
 
 import { BitcoinsProvider, BitcoinsSigner } from "./types";
 
@@ -30,6 +31,7 @@ const deployments: {
   [rinkeby.chainId]: rinkeby,
   [goerli.chainId]: goerli,
   [kovan.chainId]: kovan,
+  [testnet.chainId]: testnet,
 
   ...(dev !== null ? { [dev.chainId]: dev } : {})
 };

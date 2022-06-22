@@ -33,7 +33,7 @@ const wsParams = (network: string, infuraApiKey: string): [string, string] => [
   network
 ];
 
-const supportedNetworks = ["homestead", "kovan", "rinkeby", "ropsten", "goerli"];
+const supportedNetworks = ["homestead", "kovan", "rinkeby", "ropsten", "goerli", "testnet"];
 
 export const MoneypProvider: React.FC<MoneypProviderProps> = ({
   children,
