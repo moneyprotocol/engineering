@@ -4,6 +4,7 @@ pragma solidity 0.6.11;
 
 import "./Interfaces/IExternalPriceFeed.sol";
 import "./Interfaces/IPriceFeed.sol";
+import "./Interfaces/IMOCState.sol";
 import "./Dependencies/Ownable.sol";
 import "./Dependencies/CheckContract.sol";
 
@@ -16,35 +17,28 @@ import "./Dependencies/CheckContract.sol";
  * Chainlink oracle.
  */
 contract PriceFeed is Ownable, CheckContract, IPriceFeed {
-    string public constant NAME = "PriceFeed";
+    IMoCState mocState;
 
-    IExternalPriceFeed[2] priceFeeds;
+    string public constant NAME = "PriceFeed";
 
     uint256 public lastGoodPrice;
 
     event LastGoodPriceUpdated(uint256 _lastGoodPrice);
-    event PriceFeedBroken(uint8 index, address priceFeedAddress);
-    event PriceFeedUpdated(uint8 index, address newPriceFeedAddress);
+
+    // [MP] TODO: revisit this
+    enum Status {
+        mocWorking
+    }
+
+    // The current status of the PriceFeed, which determines the conditions for the next price fetch attempt
+    Status public status;
 
     // --- Dependency setters ---
 
-    function setAddresses(address[] memory priceFeedAddresses)
-        external
-        onlyOwner
-    {
-        require(
-            priceFeedAddresses.length == priceFeeds.length,
-            "PriceFeed must have 2 price feeds"
-        );
+    function setAddresses(address _mocStateAddress) external onlyOwner {
+        checkContract(_mocStateAddress);
 
-        for (uint8 i = 0; i < priceFeedAddresses.length; i++) {
-            uint256 latestPrice = setExternalPriceFeed(
-                i,
-                priceFeedAddresses[i]
-            );
-            lastGoodPrice = latestPrice;
-            emit LastGoodPriceUpdated(lastGoodPrice);
-        }
+        mocState = IMoCState(_mocStateAddress);
 
         _renounceOwnership();
     }
@@ -76,15 +70,8 @@ contract PriceFeed is Ownable, CheckContract, IPriceFeed {
      *
      */
     function fetchPrice() external override returns (uint256) {
-        for (uint8 i = 0; i < priceFeeds.length; i++) {
-            (uint256 price, bool success) = priceFeeds[i].latestAnswer();
-            if (success) {
-                lastGoodPrice = price;
-                emit LastGoodPriceUpdated(lastGoodPrice);
-                return price;
-            }
-            emit PriceFeedBroken(i, address(priceFeeds[i]));
-        }
+        lastGoodPrice = mocState.getBitcoinPrice();
+        emit LastGoodPriceUpdated(lastGoodPrice);
         return lastGoodPrice;
     }
 }

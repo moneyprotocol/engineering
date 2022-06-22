@@ -77,16 +77,10 @@ try {
 
 const oracleAddresses = {
   mainnet: {
-    chainlink: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
-    tellor: "0x88dF592F8eb5D7Bd38bFeF7dEb0fBc02cf3778a0"
+    moc: "0xb9C42EFc8ec54490a37cA91c423F7285Fa01e257",
   },
-  rinkeby: {
-    chainlink: "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e",
-    tellor: "0x88dF592F8eb5D7Bd38bFeF7dEb0fBc02cf3778a0" // Core
-  },
-  kovan: {
-    chainlink: "0x9326BFA02ADD2366b30bacB125260Af641031331",
-    tellor: "0x20374E579832859f180536A69093A126Db1c8aE9" // Playground
+  testnet: {
+    moc: '0x0adb40132cB0ffcEf6ED81c26A1881e214100555',
   }
 };
 
@@ -226,7 +220,9 @@ task("deploy", "Deploys the contracts to the network")
       const overrides = { gasPrice: gasPrice && Decimal.from(gasPrice).div(1000000000).hex };
       const [deployer] = await env.ethers.getSigners();
 
-      useRealPriceFeed ??= env.network.name === "mainnet";
+      // [MP] TODO: set this dynamically
+      useRealPriceFeed = true;
+      // useRealPriceFeed ??= env.network.name === "mainnet";
 
       if (useRealPriceFeed && !hasOracles(env.network.name)) {
         throw new Error(`PriceFeed not supported on ${env.network.name}`);
@@ -254,17 +250,18 @@ task("deploy", "Deploys the contracts to the network")
           const tellorCallerAddress = await deployTellorCaller(
             deployer,
             getContractFactory(env),
-            oracleAddresses[env.network.name].tellor,
+            oracleAddresses[env.network.name].moc,
             overrides
           );
 
           console.log(`Hooking up PriceFeed with oracles ...`);
 
           const tx = await contracts.priceFeed.setAddresses(
-            oracleAddresses[env.network.name].chainlink,
-            tellorCallerAddress,
+            oracleAddresses[env.network.name].moc,
             overrides
           );
+
+          console.log(`Setting pricefeed address: ${oracleAddresses[env.network.name].moc}`);
 
           await tx.wait();
         }

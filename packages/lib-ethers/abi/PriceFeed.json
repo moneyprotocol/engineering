@@ -32,44 +32,6 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "index",
-        "type": "uint8"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "priceFeedAddress",
-        "type": "address"
-      }
-    ],
-    "name": "PriceFeedBroken",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "index",
-        "type": "uint8"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newPriceFeedAddress",
-        "type": "address"
-      }
-    ],
-    "name": "PriceFeedUpdated",
-    "type": "event"
-  },
-  {
     "inputs": [],
     "name": "NAME",
     "outputs": [
@@ -137,14 +99,27 @@
   {
     "inputs": [
       {
-        "internalType": "address[]",
-        "name": "priceFeedAddresses",
-        "type": "address[]"
+        "internalType": "address",
+        "name": "_mocStateAddress",
+        "type": "address"
       }
     ],
     "name": "setAddresses",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "status",
+    "outputs": [
+      {
+        "internalType": "enum PriceFeed.Status",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]
