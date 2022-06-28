@@ -61,9 +61,14 @@ const infuraNetwork = (name: string): { [name: string]: NetworkUserConfig } => (
     accounts: [deployerAccount]
   }
 });
-const mnemonic = fs.readFileSync('.testnet.seed-phrase').toString().trim();
-if (!mnemonic || mnemonic.split(' ').length !== 12) {
-  console.log('unable to retrieve mnemonic from .secret');
+let mnemonic = '';
+try {
+  mnemonic = fs.readFileSync('.testnet.seed-phrase').toString().trim();
+  if (!mnemonic || mnemonic.split(' ').length !== 12) {
+    console.log('unable to retrieve mnemonic from .secret');
+  }
+} catch (e) {
+  //
 }
 
 
