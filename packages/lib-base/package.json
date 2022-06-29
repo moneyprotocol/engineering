@@ -1,6 +1,6 @@
 {
-  "name": "@liquity/lib-base",
-  "version": "0.0.0-semantic-release",
+  "name": "@moneyprotocol/lib-base",
+  "version": "0.0.1",
   "description": "Moneyp SDK shared interfaces",
   "keywords": [
     "Moneyp",
@@ -8,12 +8,12 @@
     "DeFi",
     "Ethereum"
   ],
-  "homepage": "https://github.com/moneyp/moneyp#readme",
+  "homepage": "https://github.com/moneyprotocol/engineering#readme",
   "license": "MIT",
   "author": "Daniel Simon <dani@liquity.org>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "repository": "https://github.com/moneyp/dev",
+  "repository": "https://github.com/moneyprotocol/engineering",
   "scripts": {
     "prepare": "run-s prepare:*",
     "prepare:eslint": "eslint src",

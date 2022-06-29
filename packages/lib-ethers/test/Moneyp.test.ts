@@ -21,7 +21,7 @@ import {
   MINIMUM_BORROWING_RATE,
   BPD_MINIMUM_DEBT,
   BPD_MINIMUM_NET_DEBT
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import { HintHelpers } from "../types";
 

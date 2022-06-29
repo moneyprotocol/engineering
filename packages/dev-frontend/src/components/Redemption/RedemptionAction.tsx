@@ -1,6 +1,6 @@
 import { Button } from "theme-ui";
 
-import { Decimal } from "@liquity/lib-base";
+import { Decimal } from "@moneyprotocol/lib-base";
 
 import { useMoneyp } from "../../hooks/MoneypContext";
 import { useTransactionFunction } from "../Transaction";
