@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Button, Flex, Spinner } from "theme-ui";
 
-import { MoneypStoreState } from "@liquity/lib-base";
+import { MoneypStoreState } from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@liquity/lib-react";
 
 import { useMoneyp } from "../hooks/MoneypContext";

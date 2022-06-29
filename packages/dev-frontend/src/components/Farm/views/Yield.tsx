@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Paragraph, Text } from "theme-ui";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-import { Decimal, MoneypStoreState } from "@liquity/lib-base";
+import { Decimal, MoneypStoreState } from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@liquity/lib-react";
 import { InfoIcon } from "../../InfoIcon";
 import { useMoneyp } from "../../../hooks/MoneypContext";

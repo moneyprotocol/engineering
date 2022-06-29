@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex } from "theme-ui";
 
-import { MoneypStoreState } from "@liquity/lib-base";
+import { MoneypStoreState } from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@liquity/lib-react";
 
 const selector = ({ remainingLiquidityMiningMPReward }: MoneypStoreState) => ({

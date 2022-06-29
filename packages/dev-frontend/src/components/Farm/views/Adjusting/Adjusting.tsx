@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Heading, Box, Flex, Card, Button } from "theme-ui";
-import { Decimal, MoneypStoreState } from "@liquity/lib-base";
+import { Decimal, MoneypStoreState } from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@liquity/lib-react";
 
 import { LP, GT } from "../../../../strings";

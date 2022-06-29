@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Button } from "theme-ui";
-import { Decimal } from "@liquity/lib-base";
+import { Decimal } from "@moneyprotocol/lib-base";
 import { useMoneyp } from "../../../hooks/MoneypContext";
 import { Transaction, useMyTransactionState } from "../../Transaction";
 import { useFarmView } from "../context/FarmViewContext";

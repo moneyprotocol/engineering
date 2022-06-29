@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Card, Heading, Box, Flex, Button } from "theme-ui";
 import { LP, GT } from "../../../../strings";
-import { MoneypStoreState } from "@liquity/lib-base";
+import { MoneypStoreState } from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@liquity/lib-react";
 import { Icon } from "../../../Icon";
 import { LoadingOverlay } from "../../../LoadingOverlay";

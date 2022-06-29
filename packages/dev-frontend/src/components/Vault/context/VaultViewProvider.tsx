@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useMoneypSelector } from "@liquity/lib-react";
-import { MoneypStoreState, UserVaultStatus } from "@liquity/lib-base";
+import { MoneypStoreState, UserVaultStatus } from "@moneyprotocol/lib-base";
 import { VaultViewContext } from "./VaultViewContext";
 import type { VaultView, VaultEvent } from "./types";
 

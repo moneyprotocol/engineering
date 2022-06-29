@@ -9,7 +9,7 @@ import {
   StabilityDeposit,
   MPStake,
   MoneypStore
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import { ReadableBitcoinsMoneyp } from "./ReadableBitcoinsMoneyp";
 import {
@@ -20,7 +20,7 @@ import {
 import { BitcoinsCallOverrides, BitcoinsProvider } from "./types";
 
 /**
- * Extra state added to {@link @liquity/lib-base#MoneypStoreState} by
+ * Extra state added to {@link @moneyprotocol/lib-base#MoneypStoreState} by
  * {@link BlockPolledMoneypStore}.
  *
  * @public
@@ -42,7 +42,7 @@ export interface BlockPolledMoneypStoreExtraState {
 
 /**
  * The type of {@link BlockPolledMoneypStore}'s
- * {@link @liquity/lib-base#MoneypStore.state | state}.
+ * {@link @moneyprotocol/lib-base#MoneypStore.state | state}.
  *
  * @public
  */
@@ -62,7 +62,7 @@ const promiseAllValues = <T>(object: T) => {
 const decimalify = (bigNumber: BigNumber) => Decimal.fromBigNumberString(bigNumber.toHexString());
 
 /**
- * Bitcoins-based {@link @liquity/lib-base#MoneypStore} that updates state whenever there's a new
+ * Bitcoins-based {@link @moneyprotocol/lib-base#MoneypStore} that updates state whenever there's a new
  * block.
  *
  * @public
