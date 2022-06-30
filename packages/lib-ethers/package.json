@@ -1,6 +1,6 @@
 {
   "name": "@moneyprotocol/lib-ethers",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Moneyp SDK Bitcoins-based implementation",
   "keywords": [
     "Moneyp",
@@ -14,6 +14,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/moneyprotocol/engineering",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "hardhat": "hardhat",
     "check-live-version": "ts-node scripts/check-live-version.ts",
