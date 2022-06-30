@@ -1,6 +1,6 @@
 {
   "name": "@moneyprotocol/lib-base",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Moneyp SDK shared interfaces",
   "keywords": [
     "Moneyp",
@@ -14,6 +14,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/moneyprotocol/engineering",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "prepare": "run-s prepare:*",
     "prepare:eslint": "eslint src",
