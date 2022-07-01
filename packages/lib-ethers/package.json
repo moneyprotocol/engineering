@@ -1,7 +1,7 @@
 {
   "name": "@moneyprotocol/lib-ethers",
-  "version": "1.0.0",
-  "description": "Moneyp SDK Bitcoins-based implementation",
+  "version": "1.0.0-main",
+  "description": "Moneyprotocol SDK Bitcoins-based implementation",
   "keywords": [
     "Moneyp",
     "protocol",
@@ -36,7 +36,7 @@
     "test-live:run": "cross-env USE_LIVE_VERSION=true hardhat test"
   },
   "peerDependencies": {
-    "@moneyprotocol/lib-base": "^3.0.0",
+    "@moneyprotocol/lib-base": "^1.0.0-stable-testnet",
     "ethers": "^5.0.0"
   },
   "devDependencies": {
