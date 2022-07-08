@@ -7,7 +7,7 @@ import {
   StabilityDeposit,
   Vault,
   VaultWithPendingRedistribution
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import { _getContracts, _requireAddress } from "./BitcoinsMoneypConnection";
 import { ReadableBitcoinsMoneyp } from "./ReadableBitcoinsMoneyp";

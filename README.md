@@ -281,11 +281,11 @@ A `LockupContractFactory` is used to deploy `LockupContracts` in the first year.
 1. Liquity admin deploys `LockupContractFactory`
 2. Liquity admin deploys `CommunityIssuance`
 3. Liquity admin deploys `LQTYStaking` 
-4. Liquity admin creates a Pool in Uniswap for LUSD/ETH and deploys `Unipool` (LP rewards contract), which knows the address of the Pool
+4. Liquity admin creates a Pool in Uniswap for LUSD/ETH and deploys `RskSwapPool` (LP rewards contract), which knows the address of the Pool
 5. Liquity admin deploys `LQTYToken`, which upon deployment:
 - Stores the `CommunityIssuance` and `LockupContractFactory` addresses
-- Mints LQTY tokens to `CommunityIssuance`, the Liquity admin address, the `Unipool` LP rewards address, and the bug bounty address
-6. Liquity admin sets `LQTYToken` address in `LockupContractFactory`, `CommunityIssuance`, `LQTYStaking`, and `Unipool`
+- Mints LQTY tokens to `CommunityIssuance`, the Liquity admin address, the `RskSwapPool` LP rewards address, and the bug bounty address
+6. Liquity admin sets `LQTYToken` address in `LockupContractFactory`, `CommunityIssuance`, `LQTYStaking`, and `RskSwapPool`
 
 #### Deploy and fund Lockup Contracts
 7. Liquity admin tells `LockupContractFactory` to deploy a `LockupContract` for each beneficiary, with an `unlockTime` set to exactly one year after system deployment
@@ -1069,18 +1069,18 @@ When a liquidation occurs:
 
 ## LQTY issuance to liquity providers
 
-On deployment a new Uniswap pool will be created for the pair LUSD/ETH and a Staking rewards contract will be deployed. The contract is based on [Unipool by Synthetix](https://github.com/Synthetixio/Unipool/blob/master/contracts/Unipool.sol). More information about their liquidity rewards program can be found in the [original SIP 31](https://sips.synthetix.io/sips/sip-31) and in [their blog](https://blog.synthetix.io/new-uniswap-seth-lp-reward-system/).
+On deployment a new Uniswap pool will be created for the pair LUSD/ETH and a Staking rewards contract will be deployed. The contract is based on [RskSwapPool by Synthetix](https://github.com/Synthetixio/RskSwapPool/blob/master/contracts/RskSwapPool.sol). More information about their liquidity rewards program can be found in the [original SIP 31](https://sips.synthetix.io/sips/sip-31) and in [their blog](https://blog.synthetix.io/new-uniswap-seth-lp-reward-system/).
 
 Essentially the way it works is:
 - Liqudity providers add funds to the Uniswap pool, and get UNIv2 tokens in exchange
-- Liqudity providers stake those UNIv2 tokens into Unipool rewards contract
+- Liqudity providers stake those UNIv2 tokens into RskSwapPool rewards contract
 - Liqudity providers accrue rewards, proportional to the amount of staked tokens and staking time
 - Liqudity providers can claim their rewards when they want
 - Liqudity providers can unstake UNIv2 tokens to exit the program (i.e., stop earning rewards) when they want
 
 Our implementation is simpler because funds for rewards will only be added once, on deployment of LQTY token (for more technical details about the differences, see PR #271 on our repo).
 
-The amount of LQTY tokens that will be minted to rewards contract is 1.33M, and the duration of the program will be 30 days. If at some point the total amount of staked tokens is zero, the clock will be “stopped”, so the period will be extended by the time during which the staking pool is empty, in order to avoid getting LQTY tokens locked. That also means that the start time for the program will be the event that occurs first: either LQTY token contract is deployed, and therefore LQTY tokens are minted to Unipool contract, or first liquidity provider stakes UNIv2 tokens into it.
+The amount of LQTY tokens that will be minted to rewards contract is 1.33M, and the duration of the program will be 30 days. If at some point the total amount of staked tokens is zero, the clock will be “stopped”, so the period will be extended by the time during which the staking pool is empty, in order to avoid getting LQTY tokens locked. That also means that the start time for the program will be the event that occurs first: either LQTY token contract is deployed, and therefore LQTY tokens are minted to RskSwapPool contract, or first liquidity provider stakes UNIv2 tokens into it.
 
 ## Liquity System Fees
 

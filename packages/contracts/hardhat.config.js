@@ -5,7 +5,8 @@ require("solidity-coverage");
 require("hardhat-gas-reporter");
 
 const accounts = require("./hardhatAccountsList2k.js");
-const accountsList = accounts.accountsList
+// const accountsList = accounts.accountsList
+const accountsList = []
 
 const fs = require('fs')
 const getSecret = (secretKey, defaultValue='') => {
@@ -96,7 +97,7 @@ module.exports = {
                 path: "m/44'/60'/0'/0",
                 count: 10,
             },
-            wethAddress: "0x09b6ca5e4496238a1f176aea6bb607db96c2286e"
+            wrbtcAddress: "0x09b6ca5e4496238a1f176aea6bb607db96c2286e"
         },
         rinkeby: {
             url: alchemyUrlRinkeby(),

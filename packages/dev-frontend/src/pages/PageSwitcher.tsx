@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AddressZero } from "@ethersproject/constants";
 
-import { MoneypStoreState } from "@liquity/lib-base";
+import { MoneypStoreState } from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@liquity/lib-react";
 
 import { useMoneyp } from "../hooks/MoneypContext";

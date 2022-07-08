@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Container, Flex, Button } from "theme-ui";
 
-import { MoneypStoreState } from "@liquity/lib-base";
+import { MoneypStoreState } from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@liquity/lib-react";
 
 import { Icon } from "./Icon";

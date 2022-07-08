@@ -1,4 +1,4 @@
-import { BlockPolledMoneypStoreState } from "@liquity/lib-ethers";
+import { BlockPolledMoneypStoreState } from "@moneyprotocol/lib-ethers";
 import { useMoneypSelector } from "@liquity/lib-react";
 
 import { useMoneyp } from "../../hooks/MoneypContext";

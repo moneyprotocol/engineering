@@ -48,7 +48,7 @@ export interface VaultListingParams {
  * Read the state of the Moneyp protocol.
  *
  * @remarks
- * Implemented by {@link @liquity/lib-ethers#BitcoinsMoneyp}.
+ * Implemented by {@link @moneyprotocol/lib-ethers#BitcoinsMoneyp}.
  *
  * @public
  */
@@ -57,7 +57,7 @@ export interface ReadableMoneyp {
    * Get the total collateral and debt per stake that has been liquidated through redistribution.
    *
    * @remarks
-   * Needed when dealing with instances of {@link @liquity/lib-base#VaultWithPendingRedistribution}.
+   * Needed when dealing with instances of {@link @moneyprotocol/lib-base#VaultWithPendingRedistribution}.
    */
   getTotalRedistributed(): Promise<Vault>;
 
@@ -68,7 +68,7 @@ export interface ReadableMoneyp {
    *
    * @remarks
    * The current state of a Vault can be fetched using
-   * {@link @liquity/lib-base#ReadableMoneyp.getVault | getVault()}.
+   * {@link @moneyprotocol/lib-base#ReadableMoneyp.getVault | getVault()}.
    */
   getVaultBeforeRedistribution(address?: string): Promise<VaultWithPendingRedistribution>;
 
@@ -130,14 +130,14 @@ export interface ReadableMoneyp {
    *
    * @param address - Address whose balance should be retrieved.
    */
-  getUniTokenBalance(address?: string): Promise<Decimal>;
+  getRskSwapTokenBalance(address?: string): Promise<Decimal>;
 
   /**
    * Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens.
    *
    * @param address - Address holding the Uniswap RBTC/BPD LP tokens.
    */
-  getUniTokenAllowance(address?: string): Promise<Decimal>;
+  getRskSwapTokenAllowance(address?: string): Promise<Decimal>;
 
   /**
    * Get the remaining MP that will be collectively rewarded to liquidity miners.
@@ -154,7 +154,7 @@ export interface ReadableMoneyp {
   /**
    * Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining.
    */
-  getTotalStakedUniTokens(): Promise<Decimal>;
+  getTotalStakedRskSwapTokens(): Promise<Decimal>;
 
   /**
    * Get the amount of MP earned by an address through mining liquidity.
@@ -170,7 +170,7 @@ export interface ReadableMoneyp {
    * When a Vault gets liquidated or redeemed, any collateral it has above 110% (in case of
    * liquidation) or 100% collateralization (in case of redemption) gets sent to a pool, where it
    * can be withdrawn from using
-   * {@link @liquity/lib-base#TransactableMoneyp.claimCollateralSurplus | claimCollateralSurplus()}.
+   * {@link @moneyprotocol/lib-base#TransactableMoneyp.claimCollateralSurplus | claimCollateralSurplus()}.
    */
   getCollateralSurplusBalance(address?: string): Promise<Decimal>;
 

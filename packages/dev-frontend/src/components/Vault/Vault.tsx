@@ -5,7 +5,7 @@ import { NoVault } from "./NoVault";
 import { RedeemedVault } from "./RedeemedVault";
 import { useVaultView } from "./context/VaultViewContext";
 import { LiquidatedVault } from "./LiquidatedVault";
-import { Decimal } from "@liquity/lib-base";
+import { Decimal } from "@moneyprotocol/lib-base";
 
 export const Vault: React.FC = props => {
   const { view } = useVaultView();

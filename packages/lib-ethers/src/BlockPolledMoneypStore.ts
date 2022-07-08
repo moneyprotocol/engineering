@@ -9,7 +9,7 @@ import {
   StabilityDeposit,
   MPStake,
   MoneypStore
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import { ReadableBitcoinsMoneyp } from "./ReadableBitcoinsMoneyp";
 import {
@@ -20,7 +20,7 @@ import {
 import { BitcoinsCallOverrides, BitcoinsProvider } from "./types";
 
 /**
- * Extra state added to {@link @liquity/lib-base#MoneypStoreState} by
+ * Extra state added to {@link @moneyprotocol/lib-base#MoneypStoreState} by
  * {@link BlockPolledMoneypStore}.
  *
  * @public
@@ -42,7 +42,7 @@ export interface BlockPolledMoneypStoreExtraState {
 
 /**
  * The type of {@link BlockPolledMoneypStore}'s
- * {@link @liquity/lib-base#MoneypStore.state | state}.
+ * {@link @moneyprotocol/lib-base#MoneypStore.state | state}.
  *
  * @public
  */
@@ -62,7 +62,7 @@ const promiseAllValues = <T>(object: T) => {
 const decimalify = (bigNumber: BigNumber) => Decimal.fromBigNumberString(bigNumber.toHexString());
 
 /**
- * Bitcoins-based {@link @liquity/lib-base#MoneypStore} that updates state whenever there's a new
+ * Bitcoins-based {@link @moneyprotocol/lib-base#MoneypStore} that updates state whenever there's a new
  * block.
  *
  * @public
@@ -120,7 +120,7 @@ export class BlockPolledMoneypStore extends MoneypStore<BlockPolledMoneypStoreEx
       bpdInStabilityPool: this._readable.getBPDInStabilityPool({ blockTag }),
       totalStakedMP: this._readable.getTotalStakedMP({ blockTag }),
       _riskiestVaultBeforeRedistribution: this._getRiskiestVaultBeforeRedistribution({ blockTag }),
-      totalStakedUniTokens: this._readable.getTotalStakedUniTokens({ blockTag }),
+      totalStakedRskSwapTokens: this._readable.getTotalStakedRskSwapTokens({ blockTag }),
       remainingStabilityPoolMPReward: this._readable.getRemainingStabilityPoolMPReward({
         blockTag
       }),
@@ -134,8 +134,8 @@ export class BlockPolledMoneypStore extends MoneypStore<BlockPolledMoneypStoreEx
             accountBalance: this._provider.getBalance(userAddress, blockTag).then(decimalify),
             bpdBalance: this._readable.getBPDBalance(userAddress, { blockTag }),
             mpBalance: this._readable.getMPBalance(userAddress, { blockTag }),
-            uniTokenBalance: this._readable.getUniTokenBalance(userAddress, { blockTag }),
-            uniTokenAllowance: this._readable.getUniTokenAllowance(userAddress, { blockTag }),
+            rskSwapTokenBalance: this._readable.getRskSwapTokenBalance(userAddress, { blockTag }),
+            rskSwapTokenAllowance: this._readable.getRskSwapTokenAllowance(userAddress, { blockTag }),
             liquidityMiningStake: this._readable.getLiquidityMiningStake(userAddress, { blockTag }),
             liquidityMiningMPReward: this._readable.getLiquidityMiningMPReward(userAddress, {
               blockTag
@@ -154,8 +154,8 @@ export class BlockPolledMoneypStore extends MoneypStore<BlockPolledMoneypStoreEx
             accountBalance: Decimal.ZERO,
             bpdBalance: Decimal.ZERO,
             mpBalance: Decimal.ZERO,
-            uniTokenBalance: Decimal.ZERO,
-            uniTokenAllowance: Decimal.ZERO,
+            rskSwapTokenBalance: Decimal.ZERO,
+            rskSwapTokenAllowance: Decimal.ZERO,
             liquidityMiningStake: Decimal.ZERO,
             liquidityMiningMPReward: Decimal.ZERO,
             collateralSurplusBalance: Decimal.ZERO,

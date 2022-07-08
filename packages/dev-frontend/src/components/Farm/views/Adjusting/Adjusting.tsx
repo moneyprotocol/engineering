@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Heading, Box, Flex, Card, Button } from "theme-ui";
-import { Decimal, MoneypStoreState } from "@liquity/lib-base";
+import { Decimal, MoneypStoreState } from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@liquity/lib-react";
 
 import { LP, GT } from "../../../../strings";
@@ -17,18 +17,18 @@ import { Validation } from "../Validation";
 const selector = ({
   liquidityMiningStake,
   liquidityMiningMPReward,
-  uniTokenBalance
+  rskSwapTokenBalance
 }: MoneypStoreState) => ({
   liquidityMiningStake,
   liquidityMiningMPReward,
-  uniTokenBalance
+  rskSwapTokenBalance
 });
 
 const transactionId = /farm-/;
 
 export const Adjusting: React.FC = () => {
   const { dispatchEvent } = useFarmView();
-  const { liquidityMiningStake, liquidityMiningMPReward, uniTokenBalance } = useMoneypSelector(
+  const { liquidityMiningStake, liquidityMiningMPReward, rskSwapTokenBalance } = useMoneypSelector(
     selector
   );
   const [amount, setAmount] = useState<Decimal>(liquidityMiningStake);
@@ -39,7 +39,7 @@ export const Adjusting: React.FC = () => {
     transactionState.type === "waitingForApproval" ||
     transactionState.type === "waitingForConfirmation";
   const isDirty = !amount.eq(liquidityMiningStake);
-  const maximumAmount = liquidityMiningStake.add(uniTokenBalance);
+  const maximumAmount = liquidityMiningStake.add(rskSwapTokenBalance);
   const hasSetMaximumAmount = amount.eq(maximumAmount);
 
   const handleCancelPressed = useCallback(() => {

@@ -3,7 +3,7 @@ import {
   MoneypStoreState,
   StabilityDeposit,
   StabilityDepositChange
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import { COIN } from "../../../strings";
 import { Amount } from "../../ActionDescription";

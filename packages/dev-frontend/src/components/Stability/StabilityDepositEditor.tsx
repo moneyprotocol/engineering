@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Heading, Box, Card, Button } from "theme-ui";
 
-import { Decimal, Decimalish, StabilityDeposit, MoneypStoreState } from "@liquity/lib-base";
+import { Decimal, Decimalish, StabilityDeposit, MoneypStoreState } from "@moneyprotocol/lib-base";
 
 import { useMoneypSelector } from "@liquity/lib-react";
 

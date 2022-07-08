@@ -1,4 +1,4 @@
-import { MoneypStore } from "@liquity/lib-base";
+import { MoneypStore } from "@moneyprotocol/lib-base";
 import React, { createContext, useEffect, useState } from "react";
 
 export const MoneypStoreContext = createContext<MoneypStore | undefined>(undefined);

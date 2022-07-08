@@ -1,8 +1,8 @@
-# @liquity/lib-base
+# @moneyprotocol/lib-base
 
 Shared interfaces and classes of the Moneyp SDK.
 
-Needs to be installed in order to use other Moneyp SDK packages, for example [@liquity/lib-ethers](https://www.npmjs.com/package/@liquity/lib-ethers).
+Needs to be installed in order to use other Moneyp SDK packages, for example [@moneyprotocol/lib-ethers](https://www.npmjs.com/package/@moneyprotocol/lib-ethers).
 
 ## API Reference
 

@@ -7,8 +7,8 @@ import { defaultAbiCoder } from "@ethersproject/abi";
 import { buildStyles, CircularProgressbarWithChildren } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-import { BitcoinsTransactionOverrides } from "@liquity/lib-ethers";
-import { SentMoneypTransaction, MoneypReceipt } from "@liquity/lib-base";
+import { BitcoinsTransactionOverrides } from "@moneyprotocol/lib-ethers";
+import { SentMoneypTransaction, MoneypReceipt } from "@moneyprotocol/lib-base";
 
 import { useMoneyp } from "../hooks/MoneypContext";
 

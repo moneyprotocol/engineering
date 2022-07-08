@@ -7,7 +7,7 @@ import {
   Difference,
   MINIMUM_COLLATERAL_RATIO,
   Percent
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import { Icon } from "../Icon";
 

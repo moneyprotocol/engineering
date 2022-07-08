@@ -4,13 +4,13 @@ import { getNetwork } from "@ethersproject/networks";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 
-import { isBatchedProvider, isWebSocketAugmentedProvider } from "@liquity/providers";
+import { isBatchedProvider, isWebSocketAugmentedProvider } from "@moneyprotocol/providers";
 import {
   BlockPolledMoneypStore,
   BitcoinsMoneyp,
   BitcoinsMoneypWithStore,
   _connectByChainId
-} from "@liquity/lib-ethers";
+} from "@moneyprotocol/lib-ethers";
 
 import { MoneypFrontendConfig, getConfig } from "../config";
 

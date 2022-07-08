@@ -23,7 +23,7 @@ import {
   VaultListingParams,
   VaultWithPendingRedistribution,
   UserVault
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import {
   BitcoinsMoneypConnection,
@@ -151,12 +151,12 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     return false;
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getTotalRedistributed} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getTotalRedistributed} */
   getTotalRedistributed(overrides?: BitcoinsCallOverrides): Promise<Vault> {
     return this._readable.getTotalRedistributed(overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getVaultBeforeRedistribution} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getVaultBeforeRedistribution} */
   getVaultBeforeRedistribution(
     address?: string,
     overrides?: BitcoinsCallOverrides
@@ -164,17 +164,17 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     return this._readable.getVaultBeforeRedistribution(address, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getVault} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getVault} */
   getVault(address?: string, overrides?: BitcoinsCallOverrides): Promise<UserVault> {
     return this._readable.getVault(address, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getNumberOfVaults} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getNumberOfVaults} */
   getNumberOfVaults(overrides?: BitcoinsCallOverrides): Promise<number> {
     return this._readable.getNumberOfVaults(overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getPrice} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getPrice} */
   getPrice(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     return this._readable.getPrice(overrides);
   }
@@ -189,44 +189,44 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     return this._readable._getDefaultPool(overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getTotal} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getTotal} */
   getTotal(overrides?: BitcoinsCallOverrides): Promise<Vault> {
     return this._readable.getTotal(overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getStabilityDeposit} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getStabilityDeposit} */
   getStabilityDeposit(address?: string, overrides?: BitcoinsCallOverrides): Promise<StabilityDeposit> {
     return this._readable.getStabilityDeposit(address, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getRemainingStabilityPoolMPReward} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getRemainingStabilityPoolMPReward} */
   getRemainingStabilityPoolMPReward(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     return this._readable.getRemainingStabilityPoolMPReward(overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getBPDInStabilityPool} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getBPDInStabilityPool} */
   getBPDInStabilityPool(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     return this._readable.getBPDInStabilityPool(overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getBPDBalance} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getBPDBalance} */
   getBPDBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     return this._readable.getBPDBalance(address, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getMPBalance} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getMPBalance} */
   getMPBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     return this._readable.getMPBalance(address, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getUniTokenBalance} */
-  getUniTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
-    return this._readable.getUniTokenBalance(address, overrides);
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getRskSwapTokenBalance} */
+  getRskSwapTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+    return this._readable.getRskSwapTokenBalance(address, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getUniTokenAllowance} */
-  getUniTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
-    return this._readable.getUniTokenAllowance(address, overrides);
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getRskSwapTokenAllowance} */
+  getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+    return this._readable.getRskSwapTokenAllowance(address, overrides);
   }
 
   /** @internal */
@@ -236,27 +236,27 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     return this._readable._getRemainingLiquidityMiningMPRewardCalculator(overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getRemainingLiquidityMiningMPReward} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getRemainingLiquidityMiningMPReward} */
   getRemainingLiquidityMiningMPReward(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     return this._readable.getRemainingLiquidityMiningMPReward(overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getLiquidityMiningStake} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getLiquidityMiningStake} */
   getLiquidityMiningStake(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     return this._readable.getLiquidityMiningStake(address, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getTotalStakedUniTokens} */
-  getTotalStakedUniTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
-    return this._readable.getTotalStakedUniTokens(overrides);
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getTotalStakedRskSwapTokens} */
+  getTotalStakedRskSwapTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+    return this._readable.getTotalStakedRskSwapTokens(overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getLiquidityMiningMPReward} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getLiquidityMiningMPReward} */
   getLiquidityMiningMPReward(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     return this._readable.getLiquidityMiningMPReward(address, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getCollateralSurplusBalance} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getCollateralSurplusBalance} */
   getCollateralSurplusBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     return this._readable.getCollateralSurplusBalance(address, overrides);
   }
@@ -267,7 +267,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     overrides?: BitcoinsCallOverrides
   ): Promise<VaultWithPendingRedistribution[]>;
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.(getVaults:2)} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.(getVaults:2)} */
   getVaults(params: VaultListingParams, overrides?: BitcoinsCallOverrides): Promise<UserVault[]>;
 
   getVaults(params: VaultListingParams, overrides?: BitcoinsCallOverrides): Promise<UserVault[]> {
@@ -281,28 +281,28 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
     return this._readable._getFeesFactory(overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getFees} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getFees} */
   getFees(overrides?: BitcoinsCallOverrides): Promise<Fees> {
     return this._readable.getFees(overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getMPStake} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getMPStake} */
   getMPStake(address?: string, overrides?: BitcoinsCallOverrides): Promise<MPStake> {
     return this._readable.getMPStake(address, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getTotalStakedMP} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getTotalStakedMP} */
   getTotalStakedMP(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     return this._readable.getTotalStakedMP(overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#ReadableMoneyp.getFrontendStatus} */
+  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getFrontendStatus} */
   getFrontendStatus(address?: string, overrides?: BitcoinsCallOverrides): Promise<FrontendStatus> {
     return this._readable.getFrontendStatus(address, overrides);
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.openVault}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.openVault}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -316,7 +316,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.closeVault}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.closeVault}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -326,7 +326,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.adjustVault}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.adjustVault}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -340,7 +340,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.depositCollateral}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.depositCollateral}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -353,7 +353,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.withdrawCollateral}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.withdrawCollateral}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -366,7 +366,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.borrowBPD}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.borrowBPD}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -380,7 +380,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.repayBPD}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.repayBPD}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -398,7 +398,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.liquidate}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.liquidate}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -411,7 +411,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.liquidateUpTo}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.liquidateUpTo}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -424,7 +424,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.depositBPDInStabilityPool}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.depositBPDInStabilityPool}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -438,7 +438,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.withdrawBPDFromStabilityPool}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.withdrawBPDFromStabilityPool}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -451,7 +451,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.withdrawGainsFromStabilityPool}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.withdrawGainsFromStabilityPool}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -463,7 +463,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.transferCollateralGainToVault}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.transferCollateralGainToVault}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -475,7 +475,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.sendBPD}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.sendBPD}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -489,7 +489,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.sendMP}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.sendMP}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -503,7 +503,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.redeemBPD}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.redeemBPD}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -517,7 +517,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.claimCollateralSurplus}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.claimCollateralSurplus}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -527,7 +527,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.stakeMP}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.stakeMP}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -537,7 +537,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.unstakeMP}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.unstakeMP}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -547,7 +547,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.withdrawGainsFromStaking}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.withdrawGainsFromStaking}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -557,7 +557,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.registerFrontend}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.registerFrontend}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -567,46 +567,46 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /** @internal */
-  _mintUniToken(
+  _mintRskSwapToken(
     amount: Decimalish,
     address?: string,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<void> {
-    return this.send._mintUniToken(amount, address, overrides).then(waitForSuccess);
+    return this.send._mintRskSwapToken(amount, address, overrides).then(waitForSuccess);
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.approveUniTokens}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.approveRskSwapTokens}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
    */
-  approveUniTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void> {
-    return this.send.approveUniTokens(allowance, overrides).then(waitForSuccess);
+  approveRskSwapTokens(allowance?: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void> {
+    return this.send.approveRskSwapTokens(allowance, overrides).then(waitForSuccess);
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.stakeUniTokens}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.stakeRskSwapTokens}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
    */
-  stakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void> {
-    return this.send.stakeUniTokens(amount, overrides).then(waitForSuccess);
+  stakeRskSwapTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void> {
+    return this.send.stakeRskSwapTokens(amount, overrides).then(waitForSuccess);
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.unstakeUniTokens}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.unstakeRskSwapTokens}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
    */
-  unstakeUniTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void> {
-    return this.send.unstakeUniTokens(amount, overrides).then(waitForSuccess);
+  unstakeRskSwapTokens(amount: Decimalish, overrides?: BitcoinsTransactionOverrides): Promise<void> {
+    return this.send.unstakeRskSwapTokens(amount, overrides).then(waitForSuccess);
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.withdrawMPRewardFromLiquidityMining}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.withdrawMPRewardFromLiquidityMining}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -616,7 +616,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
   }
 
   /**
-   * {@inheritDoc @liquity/lib-base#TransactableMoneyp.exitLiquidityMining}
+   * {@inheritDoc @moneyprotocol/lib-base#TransactableMoneyp.exitLiquidityMining}
    *
    * @throws
    * Throws {@link BitcoinsTransactionFailedError} in case of transaction failure.
@@ -627,7 +627,7 @@ export class BitcoinsMoneyp implements ReadableBitcoinsMoneyp, TransactableMoney
 }
 
 /**
- * Variant of {@link BitcoinsMoneyp} that exposes a {@link @liquity/lib-base#MoneypStore}.
+ * Variant of {@link BitcoinsMoneyp} that exposes a {@link @moneyprotocol/lib-base#MoneypStore}.
  *
  * @public
  */

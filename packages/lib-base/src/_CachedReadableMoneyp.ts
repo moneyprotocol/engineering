@@ -129,17 +129,17 @@ export class _CachedReadableMoneyp<T extends unknown[]>
     );
   }
 
-  async getUniTokenBalance(address?: string, ...extraParams: T): Promise<Decimal> {
+  async getRskSwapTokenBalance(address?: string, ...extraParams: T): Promise<Decimal> {
     return (
-      this._cache.getUniTokenBalance(address, ...extraParams) ??
-      this._readable.getUniTokenBalance(address, ...extraParams)
+      this._cache.getRskSwapTokenBalance(address, ...extraParams) ??
+      this._readable.getRskSwapTokenBalance(address, ...extraParams)
     );
   }
 
-  async getUniTokenAllowance(address?: string, ...extraParams: T): Promise<Decimal> {
+  async getRskSwapTokenAllowance(address?: string, ...extraParams: T): Promise<Decimal> {
     return (
-      this._cache.getUniTokenAllowance(address, ...extraParams) ??
-      this._readable.getUniTokenAllowance(address, ...extraParams)
+      this._cache.getRskSwapTokenAllowance(address, ...extraParams) ??
+      this._readable.getRskSwapTokenAllowance(address, ...extraParams)
     );
   }
 
@@ -157,10 +157,10 @@ export class _CachedReadableMoneyp<T extends unknown[]>
     );
   }
 
-  async getTotalStakedUniTokens(...extraParams: T): Promise<Decimal> {
+  async getTotalStakedRskSwapTokens(...extraParams: T): Promise<Decimal> {
     return (
-      this._cache.getTotalStakedUniTokens(...extraParams) ??
-      this._readable.getTotalStakedUniTokens(...extraParams)
+      this._cache.getTotalStakedRskSwapTokens(...extraParams) ??
+      this._readable.getTotalStakedRskSwapTokens(...extraParams)
     );
   }
 

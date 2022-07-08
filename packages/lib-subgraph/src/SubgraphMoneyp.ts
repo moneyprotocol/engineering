@@ -15,7 +15,7 @@ import {
   VaultWithPendingRedistribution,
   UserVault,
   _emptyVault
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import { OrderDirection } from "../types/globalTypes";
 import { Global } from "../types/Global";
@@ -340,11 +340,11 @@ export class SubgraphMoneyp implements ReadableMoneyp, ObservableMoneyp {
     throw new Error("Method not implemented.");
   }
 
-  getUniTokenBalance(address?: string): Promise<Decimal> {
+  getRskSwapTokenBalance(address?: string): Promise<Decimal> {
     throw new Error("Method not implemented.");
   }
 
-  getUniTokenAllowance(address?: string): Promise<Decimal> {
+  getRskSwapTokenAllowance(address?: string): Promise<Decimal> {
     throw new Error("Method not implemented.");
   }
 
@@ -360,7 +360,7 @@ export class SubgraphMoneyp implements ReadableMoneyp, ObservableMoneyp {
     throw new Error("Method not implemented.");
   }
 
-  getTotalStakedUniTokens(): Promise<Decimal> {
+  getTotalStakedRskSwapTokens(): Promise<Decimal> {
     throw new Error("Method not implemented.");
   }
 

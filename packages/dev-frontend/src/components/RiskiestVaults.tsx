@@ -8,8 +8,8 @@ import {
   CRITICAL_COLLATERAL_RATIO,
   UserVault,
   Decimal
-} from "@liquity/lib-base";
-import { BlockPolledMoneypStoreState } from "@liquity/lib-ethers";
+} from "@moneyprotocol/lib-base";
+import { BlockPolledMoneypStoreState } from "@moneyprotocol/lib-ethers";
 import { useMoneypSelector } from "@liquity/lib-react";
 
 import { shortenAddress } from "../utils/shortenAddress";

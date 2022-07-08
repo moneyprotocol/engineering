@@ -9,7 +9,7 @@ import {
   Vault,
   MoneypStoreState,
   BPD_LIQUIDATION_RESERVE
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@liquity/lib-react";
 
 import { COIN } from "../../strings";

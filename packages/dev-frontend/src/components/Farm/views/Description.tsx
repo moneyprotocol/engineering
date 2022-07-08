@@ -3,7 +3,7 @@ import { Text } from "theme-ui";
 import { useMoneyp } from "../../../hooks/MoneypContext";
 import { LP } from "../../../strings";
 import { Transaction } from "../../Transaction";
-import { Decimal } from "@liquity/lib-base";
+import { Decimal } from "@moneyprotocol/lib-base";
 import { ActionDescription } from "../../ActionDescription";
 import { useValidationState } from "../context/useValidationState";
 
@@ -34,14 +34,14 @@ export const Description: React.FC<DescriptionProps> = ({ amount }) => {
   return (
     <ActionDescription>
       {isWithdrawing && (
-        <Transaction id={transactionId} send={moneyp.unstakeUniTokens.bind(moneyp, amountChanged)}>
+        <Transaction id={transactionId} send={moneyp.unstakeRskSwapTokens.bind(moneyp, amountChanged)}>
           <Text>
             You are unstaking {amountChanged.prettify(4)} {LP}
           </Text>
         </Transaction>
       )}
       {!isWithdrawing && (
-        <Transaction id={transactionId} send={moneyp.stakeUniTokens.bind(moneyp, amountChanged)}>
+        <Transaction id={transactionId} send={moneyp.stakeRskSwapTokens.bind(moneyp, amountChanged)}>
           <Text>
             You are staking {amountChanged.prettify(4)} {LP}
           </Text>

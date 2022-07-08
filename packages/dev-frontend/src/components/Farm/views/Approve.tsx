@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Button } from "theme-ui";
-import { Decimal } from "@liquity/lib-base";
+import { Decimal } from "@moneyprotocol/lib-base";
 import { useMoneyp } from "../../../hooks/MoneypContext";
 import { Transaction, useMyTransactionState } from "../../Transaction";
 import { useFarmView } from "../context/FarmViewContext";
@@ -34,7 +34,7 @@ export const Approve: React.FC<ApproveProps> = ({ amount }) => {
   return (
     <Transaction
       id={transactionId}
-      send={moneyp.approveUniTokens.bind(moneyp, undefined)}
+      send={moneyp.approveRskSwapTokens.bind(moneyp, undefined)}
       showFailure="asTooltip"
       tooltipPlacement="bottom"
     >

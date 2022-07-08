@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
 
-import { Decimal, BPD_MINIMUM_NET_DEBT, Vault } from "@liquity/lib-base";
+import { Decimal, BPD_MINIMUM_NET_DEBT, Vault } from "@moneyprotocol/lib-base";
 
 import App from "./App";
 

@@ -11,7 +11,7 @@ import {
   VaultClosureDetails,
   VaultCreationDetails,
   VaultCreationParams
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import {
   BitcoinsTransactionOverrides,
@@ -28,7 +28,7 @@ import {
 const sendTransaction = <T>(tx: PopulatedBitcoinsMoneypTransaction<T>) => tx.send();
 
 /**
- * Bitcoins-based implementation of {@link @liquity/lib-base#SendableMoneyp}.
+ * Bitcoins-based implementation of {@link @moneyprotocol/lib-base#SendableMoneyp}.
  *
  * @public
  */
@@ -40,7 +40,7 @@ export class SendableBitcoinsMoneyp
     this._populate = populatable;
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.openVault} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.openVault} */
   openVault(
     params: VaultCreationParams<Decimalish>,
     maxBorrowingRate?: Decimalish,
@@ -49,14 +49,14 @@ export class SendableBitcoinsMoneyp
     return this._populate.openVault(params, maxBorrowingRate, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.closeVault} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.closeVault} */
   closeVault(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<VaultClosureDetails>> {
     return this._populate.closeVault(overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.adjustVault} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.adjustVault} */
   adjustVault(
     params: VaultAdjustmentParams<Decimalish>,
     maxBorrowingRate?: Decimalish,
@@ -65,7 +65,7 @@ export class SendableBitcoinsMoneyp
     return this._populate.adjustVault(params, maxBorrowingRate, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.depositCollateral} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.depositCollateral} */
   depositCollateral(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -73,7 +73,7 @@ export class SendableBitcoinsMoneyp
     return this._populate.depositCollateral(amount, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.withdrawCollateral} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.withdrawCollateral} */
   withdrawCollateral(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -81,7 +81,7 @@ export class SendableBitcoinsMoneyp
     return this._populate.withdrawCollateral(amount, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.borrowBPD} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.borrowBPD} */
   borrowBPD(
     amount: Decimalish,
     maxBorrowingRate?: Decimalish,
@@ -90,7 +90,7 @@ export class SendableBitcoinsMoneyp
     return this._populate.borrowBPD(amount, maxBorrowingRate, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.repayBPD} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.repayBPD} */
   repayBPD(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -106,7 +106,7 @@ export class SendableBitcoinsMoneyp
     return this._populate.setPrice(price, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.liquidate} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.liquidate} */
   liquidate(
     address: string | string[],
     overrides?: BitcoinsTransactionOverrides
@@ -114,7 +114,7 @@ export class SendableBitcoinsMoneyp
     return this._populate.liquidate(address, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.liquidateUpTo} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.liquidateUpTo} */
   liquidateUpTo(
     maximumNumberOfVaultsToLiquidate: number,
     overrides?: BitcoinsTransactionOverrides
@@ -124,7 +124,7 @@ export class SendableBitcoinsMoneyp
       .then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.depositBPDInStabilityPool} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.depositBPDInStabilityPool} */
   depositBPDInStabilityPool(
     amount: Decimalish,
     frontendTag?: string,
@@ -135,7 +135,7 @@ export class SendableBitcoinsMoneyp
       .then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.withdrawBPDFromStabilityPool} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.withdrawBPDFromStabilityPool} */
   withdrawBPDFromStabilityPool(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -143,21 +143,21 @@ export class SendableBitcoinsMoneyp
     return this._populate.withdrawBPDFromStabilityPool(amount, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.withdrawGainsFromStabilityPool} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.withdrawGainsFromStabilityPool} */
   withdrawGainsFromStabilityPool(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<StabilityPoolGainsWithdrawalDetails>> {
     return this._populate.withdrawGainsFromStabilityPool(overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.transferCollateralGainToVault} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.transferCollateralGainToVault} */
   transferCollateralGainToVault(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<CollateralGainTransferDetails>> {
     return this._populate.transferCollateralGainToVault(overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.sendBPD} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.sendBPD} */
   sendBPD(
     toAddress: string,
     amount: Decimalish,
@@ -166,7 +166,7 @@ export class SendableBitcoinsMoneyp
     return this._populate.sendBPD(toAddress, amount, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.sendMP} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.sendMP} */
   sendMP(
     toAddress: string,
     amount: Decimalish,
@@ -175,7 +175,7 @@ export class SendableBitcoinsMoneyp
     return this._populate.sendMP(toAddress, amount, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.redeemBPD} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.redeemBPD} */
   redeemBPD(
     amount: Decimalish,
     maxRedemptionRate?: Decimalish,
@@ -184,14 +184,14 @@ export class SendableBitcoinsMoneyp
     return this._populate.redeemBPD(amount, maxRedemptionRate, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.claimCollateralSurplus} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.claimCollateralSurplus} */
   claimCollateralSurplus(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<void>> {
     return this._populate.claimCollateralSurplus(overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.stakeMP} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.stakeMP} */
   stakeMP(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -199,7 +199,7 @@ export class SendableBitcoinsMoneyp
     return this._populate.stakeMP(amount, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.unstakeMP} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.unstakeMP} */
   unstakeMP(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -207,14 +207,14 @@ export class SendableBitcoinsMoneyp
     return this._populate.unstakeMP(amount, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.withdrawGainsFromStaking} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.withdrawGainsFromStaking} */
   withdrawGainsFromStaking(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<void>> {
     return this._populate.withdrawGainsFromStaking(overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.registerFrontend} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.registerFrontend} */
   registerFrontend(
     kickbackRate: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -223,46 +223,46 @@ export class SendableBitcoinsMoneyp
   }
 
   /** @internal */
-  _mintUniToken(
+  _mintRskSwapToken(
     amount: Decimalish,
     address?: string,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<void>> {
-    return this._populate._mintUniToken(amount, address, overrides).then(sendTransaction);
+    return this._populate._mintRskSwapToken(amount, address, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.approveUniTokens} */
-  approveUniTokens(
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.approveRskSwapTokens} */
+  approveRskSwapTokens(
     allowance?: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<void>> {
-    return this._populate.approveUniTokens(allowance, overrides).then(sendTransaction);
+    return this._populate.approveRskSwapTokens(allowance, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.stakeUniTokens} */
-  stakeUniTokens(
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.stakeRskSwapTokens} */
+  stakeRskSwapTokens(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<void>> {
-    return this._populate.stakeUniTokens(amount, overrides).then(sendTransaction);
+    return this._populate.stakeRskSwapTokens(amount, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.unstakeUniTokens} */
-  unstakeUniTokens(
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.unstakeRskSwapTokens} */
+  unstakeRskSwapTokens(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<void>> {
-    return this._populate.unstakeUniTokens(amount, overrides).then(sendTransaction);
+    return this._populate.unstakeRskSwapTokens(amount, overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.withdrawMPRewardFromLiquidityMining} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.withdrawMPRewardFromLiquidityMining} */
   withdrawMPRewardFromLiquidityMining(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<void>> {
     return this._populate.withdrawMPRewardFromLiquidityMining(overrides).then(sendTransaction);
   }
 
-  /** {@inheritDoc @liquity/lib-base#SendableMoneyp.exitLiquidityMining} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SendableMoneyp.exitLiquidityMining} */
   exitLiquidityMining(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<SentBitcoinsMoneypTransaction<void>> {

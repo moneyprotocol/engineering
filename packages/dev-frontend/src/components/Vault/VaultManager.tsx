@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { Flex, Button } from "theme-ui";
 
-import { MoneypStoreState, Decimal, Vault, Decimalish, BPD_MINIMUM_DEBT } from "@liquity/lib-base";
+import { MoneypStoreState, Decimal, Vault, Decimalish, BPD_MINIMUM_DEBT } from "@moneyprotocol/lib-base";
 
 import { MoneypStoreUpdate, useMoneypReducer, useMoneypSelector } from "@liquity/lib-react";
 
