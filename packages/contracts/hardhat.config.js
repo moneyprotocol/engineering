@@ -5,7 +5,8 @@ require("solidity-coverage");
 require("hardhat-gas-reporter");
 
 const accounts = require("./hardhatAccountsList2k.js");
-const accountsList = accounts.accountsList;
+// const accountsList = accounts.accountsList
+const accountsList = [];
 
 const fs = require("fs");
 const getSecret = (secretKey, defaultValue = "") => {

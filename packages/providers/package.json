@@ -1,6 +1,6 @@
 {
   "name": "@moneyprotocol/providers",
-  "version": "1.0.0",
+  "version": "5.4.3-stable-testnet",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -10,11 +10,11 @@
     "dist"
   ],
   "devDependencies": {
-    "ethers": "^5.0.0",
+    "ethers": "5.4.3",
     "ts-node": "^9.1.1",
     "typescript": "~4.1.0"
   },
   "peerDependencies": {
-    "ethers": "^5.0.0"
+    "ethers": "5.4.3"
   }
 }
