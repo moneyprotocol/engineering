@@ -102,9 +102,9 @@
       - [Build dev-frontend for production](#build-dev-frontend-for-production)
 
 
-## Liquity Overview
+## Money Protocol Overview
 
-Liquity is a collateralized debt platform. Users can lock up Ether, and issue stablecoin tokens (LUSD) to their own Ethereum address, and subsequently transfer those tokens to any other Ethereum address. The individual collateralized debt positions are called Troves.
+Money Protocol is a collateralized debt platform. Users can lock up RBTC, and issue stablecoin tokens BPD to their own RSK address, and subsequently transfer those tokens to any other Ethereum address. The individual collateralized debt positions are called Troves.
 
 The stablecoin tokens are economically geared towards maintaining value of 1 LUSD = \$1 USD, due to the following properties:
 
