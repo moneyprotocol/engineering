@@ -10,6 +10,7 @@ const th = testHelpers.TestHelper
 
 const { dec, assertRevert, toBN } = th
 
+// [MP] TODO: update these tests - setStatus() is removed from PriceFeed contract
 contract('PriceFeed', async accounts => {
 
   const [owner, alice] = accounts;

@@ -2,8 +2,8 @@
 
 pragma solidity 0.6.11;
 
+import "./Interfaces/IExternalPriceFeed.sol";
 import "./Interfaces/IPriceFeed.sol";
-import "./Interfaces/IMOCState.sol";
 import "./Dependencies/Ownable.sol";
 import "./Dependencies/CheckContract.sol";
 
@@ -16,30 +16,49 @@ import "./Dependencies/CheckContract.sol";
  * Chainlink oracle.
  */
 contract PriceFeed is Ownable, CheckContract, IPriceFeed {
-    IMoCState mocState;
-
     string public constant NAME = "PriceFeed";
+
+    IExternalPriceFeed[2] priceFeeds;
 
     uint256 public lastGoodPrice;
 
     event LastGoodPriceUpdated(uint256 _lastGoodPrice);
-
-    // [MP] TODO: revisit this
-    enum Status {
-        mocWorking
-    }
-
-    // The current status of the PriceFeed, which determines the conditions for the next price fetch attempt
-    Status public status;
+    event PriceFeedBroken(uint8 index, address priceFeedAddress);
+    event PriceFeedUpdated(uint8 index, address newPriceFeedAddress);
 
     // --- Dependency setters ---
 
-    function setAddresses(address _mocStateAddress) external onlyOwner {
-        checkContract(_mocStateAddress);
+    function setAddresses(address[] memory priceFeedAddresses)
+        external
+        onlyOwner
+    {
+        require(
+            priceFeedAddresses.length == priceFeeds.length,
+            "PriceFeed must have 2 price feeds"
+        );
 
-        mocState = IMoCState(_mocStateAddress);
+        for (uint8 i = 0; i < priceFeedAddresses.length; i++) {
+            uint256 latestPrice = setExternalPriceFeed(
+                i,
+                priceFeedAddresses[i]
+            );
+            lastGoodPrice = latestPrice;
+            emit LastGoodPriceUpdated(lastGoodPrice);
+        }
 
         _renounceOwnership();
+    }
+
+    function setExternalPriceFeed(
+        uint8 index,
+        address _externalPriceFeedAddress
+    ) internal returns (uint256) {
+        checkContract(_externalPriceFeedAddress);
+        priceFeeds[index] = IExternalPriceFeed(_externalPriceFeedAddress);
+        (uint256 price, bool success) = priceFeeds[index].latestAnswer();
+        require(success, "Price feed is not working");
+        emit PriceFeedUpdated(index, _externalPriceFeedAddress);
+        return price;
     }
 
     // --- Functions ---
@@ -57,8 +76,15 @@ contract PriceFeed is Ownable, CheckContract, IPriceFeed {
      *
      */
     function fetchPrice() external override returns (uint256) {
-        lastGoodPrice = mocState.getBitcoinPrice();
-        emit LastGoodPriceUpdated(lastGoodPrice);
+        for (uint8 i = 0; i < priceFeeds.length; i++) {
+            (uint256 price, bool success) = priceFeeds[i].latestAnswer();
+            if (success) {
+                lastGoodPrice = price;
+                emit LastGoodPriceUpdated(lastGoodPrice);
+                return price;
+            }
+            emit PriceFeedBroken(i, address(priceFeeds[i]));
+        }
         return lastGoodPrice;
     }
 }
