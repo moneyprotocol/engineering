@@ -1230,12 +1230,14 @@ interface PriceFeedCalls {
   isOwner(_overrides?: CallOverrides): Promise<boolean>;
   lastGoodPrice(_overrides?: CallOverrides): Promise<BigNumber>;
   owner(_overrides?: CallOverrides): Promise<string>;
-  status(_overrides?: CallOverrides): Promise<number>;
 }
 
 interface PriceFeedTransactions {
   fetchPrice(_overrides?: Overrides): Promise<BigNumber>;
-  setAddresses(_mocStateAddress: string, _overrides?: Overrides): Promise<void>;
+  setAddresses(
+    priceFeedAddresses: string[],
+    _overrides?: Overrides
+  ): Promise<void>;
 }
 
 export interface PriceFeed
@@ -1246,6 +1248,8 @@ export interface PriceFeed
       previousOwner?: string | null,
       newOwner?: string | null
     ): EventFilter;
+    PriceFeedBroken(index?: null, priceFeedAddress?: null): EventFilter;
+    PriceFeedUpdated(index?: null, newPriceFeedAddress?: null): EventFilter;
   };
   extractEvents(
     logs: Log[],
@@ -1255,6 +1259,14 @@ export interface PriceFeed
     logs: Log[],
     name: "OwnershipTransferred"
   ): _TypedLogDescription<{ previousOwner: string; newOwner: string }>[];
+  extractEvents(
+    logs: Log[],
+    name: "PriceFeedBroken"
+  ): _TypedLogDescription<{ index: number; priceFeedAddress: string }>[];
+  extractEvents(
+    logs: Log[],
+    name: "PriceFeedUpdated"
+  ): _TypedLogDescription<{ index: number; newPriceFeedAddress: string }>[];
 }
 
 interface PriceFeedTestnetCalls {
@@ -1284,9 +1296,7 @@ interface SortedVaultsCalls {
   NAME(_overrides?: CallOverrides): Promise<string>;
   borrowerOperationsAddress(_overrides?: CallOverrides): Promise<string>;
   contains(_id: string, _overrides?: CallOverrides): Promise<boolean>;
-  data(
-    _overrides?: CallOverrides
-  ): Promise<{
+  data(_overrides?: CallOverrides): Promise<{
     head: string;
     tail: string;
     maxSize: BigNumber;

@@ -10,7 +10,4 @@ contract PriceFeedTester is PriceFeed {
     //     lastGoodPrice = _lastGoodPrice;
     // }
 
-    // function setStatus(Status _status) external {
-    //     status = _status;
-    // }
 }
