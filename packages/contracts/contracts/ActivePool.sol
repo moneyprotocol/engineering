@@ -11,7 +11,7 @@ import "./Dependencies/console.sol";
 /*
  * The Active Pool holds the RBTC collateral and BPD debt (but not BPD tokens) for all active vaults.
  *
- * When a vault is liquidated, it's RBTC and BPD debt are transferred from the Active Pool, to either the
+ * When a vault is liquidated, its RBTC and BPD debt are transferred from the Active Pool, to either the
  * Stability Pool, the Default Pool, or both, depending on the liquidation conditions.
  *
  */
@@ -68,7 +68,7 @@ contract ActivePool is Ownable, CheckContract, IActivePool {
     /*
     * Returns the RBTC state variable.
     *
-    *Not necessarily equal to the the contract's raw RBTC balance - bitcoin can be forcibly sent to contracts.
+    *Not necessarily equal to the contract's raw RBTC balance - bitcoin can be forcibly sent to contracts.
     */
     function getRBTC() external view override returns (uint) {
         return RBTC;
