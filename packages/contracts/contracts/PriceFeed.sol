@@ -8,12 +8,12 @@ import "./Dependencies/Ownable.sol";
 import "./Dependencies/CheckContract.sol";
 
 /*
- * PriceFeed for mainnet deployment, to be connected to Chainlink's live ETH:USD aggregator reference
- * contract, and a wrapper contract TellorCaller, which connects to TellorMaster contract.
+ * PriceFeed for mainnet deployment, to be connected to MoneyOnChain live RBTC/USD aggregator reference
+ * contract and RSK Oracle contract for real-time RBTC price data.
  *
- * The PriceFeed uses Chainlink as primary oracle, and Tellor as fallback. It contains logic for
+ * The PriceFeed uses MoneyOnChain (MOC) as primary oracle, and RSKOracle as fallback. It contains logic for
  * switching oracles based on oracle failures, timeouts, and conditions for returning to the primary
- * Chainlink oracle.
+ * MOC oracle.
  */
 contract PriceFeed is Ownable, CheckContract, IPriceFeed {
     IMoCState mocState;
@@ -46,14 +46,14 @@ contract PriceFeed is Ownable, CheckContract, IPriceFeed {
 
     /*
      * fetchPrice():
-     * Returns the latest price obtained from the Oracle. Called by Liquity functions that require a current price.
+     * Returns the latest price obtained from the Oracle. Called by Money Protocol functions that require a current price.
      *
      * Also callable by anyone externally.
      *
-     * Non-view function - it stores the last good price seen by Liquity.
+     * Non-view function - it stores the last good price seen by Money Protocol.
      *
-     * Uses a main oracle (Chainlink) and a fallback oracle (Tellor) in case Chainlink fails. If both fail,
-     * it uses the last good price seen by Liquity.
+     * Uses a main oracle (MOC) and a fallback oracle (RSK Oracle) in case MOC fails. If both fail,
+     * it uses the last good price seen by Money Protocol.
      *
      */
     function fetchPrice() external override returns (uint256) {
