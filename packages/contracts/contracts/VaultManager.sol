@@ -680,7 +680,7 @@ contract VaultManager is MoneypBase, Ownable, CheckContract, IVaultManager {
 
     /*
     * This function is used when the batch liquidation sequence starts during Recovery Mode. However, it
-    * handle the case where the system *leaves* Recovery Mode, part way through the liquidation sequence
+    * handles the case where the system *leaves* Recovery Mode, part way through the liquidation sequence
     */
     function _getTotalFromBatchLiquidate_RecoveryMode
     (
