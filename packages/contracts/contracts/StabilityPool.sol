@@ -30,7 +30,7 @@ import "./Dependencies/console.sol";
  * of the total BPD in the Stability Pool, depletes 40% of each deposit.
  *
  * A deposit that has experienced a series of liquidations is termed a "compounded deposit": each liquidation depletes the deposit,
- * multiplying it by some factor in range ]0,1[
+ * multiplying it by some factor in range [0,1]
  *
  *
  * --- IMPLEMENTATION ---
@@ -44,8 +44,6 @@ import "./Dependencies/console.sol";
  * and accumulated RBTC gains over time, as liquidations occur, using just these two variables P and S. When depositors join the
  * Stability Pool, they get a snapshot of the latest P and S: P_t and S_t, respectively.
  *
- * The formula for a depositor's accumulated RBTC gain is derived here:
- * https://github.com/moneyp/dev/blob/main/packages/contracts/mathProofs/Scalable%20Compounding%20Stability%20Pool%20Deposits.pdf
  *
  * For a given deposit d_t, the ratio P/P_t tells us the factor by which a deposit has decreased since it joined the Stability Pool,
  * and the term d_t * (S - S_t)/P_t gives us the deposit's total accumulated RBTC gain.
@@ -123,11 +121,6 @@ import "./Dependencies/console.sol";
  * deposit is defined as being 0 once it has spanned more than one scale change.
  *
  *
- * --- UPDATING P WHEN A LIQUIDATION OCCURS ---
- *
- * Please see the implementation spec in the proof document, which closely follows on from the compounded deposit / RBTC gain derivations:
- * https://github.com/moneyp/moneyp/blob/master/papers/Scalable_Reward_Distribution_with_Compounding_Stakes.pdf
- *
  *
  * --- MP ISSUANCE TO STABILITY POOL DEPOSITORS ---
  *
@@ -137,9 +130,7 @@ import "./Dependencies/console.sol";
  *
  * All deposits earn a share of the issued MP in proportion to the deposit as a share of total deposits. The MP earned
  * by a given deposit, is split between the depositor and the front end through which the deposit was made, based on the front end's kickbackRate.
- *
- * Please see the system Readme for an overview:
- * https://github.com/moneyp/dev/blob/main/README.md#mp-issuance-to-stability-providers
+ * 
  *
  * We use the same mathematical product-sum approach to track MP gains for depositors, where 'G' is the sum corresponding to MP gains.
  * The product P (and snapshot P_t) is re-used, as the ratio P/P_t tracks a deposit's depletion due to liquidations.
