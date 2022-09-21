@@ -30,7 +30,7 @@ import "./Dependencies/console.sol";
  * of the total BPD in the Stability Pool, depletes 40% of each deposit.
  *
  * A deposit that has experienced a series of liquidations is termed a "compounded deposit": each liquidation depletes the deposit,
- * multiplying it by some factor in range [0,1]
+ * multiplying it by some factor in range ]0,1[
  *
  *
  * --- IMPLEMENTATION ---
