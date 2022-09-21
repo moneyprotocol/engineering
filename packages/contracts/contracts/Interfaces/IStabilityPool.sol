@@ -18,9 +18,6 @@ pragma solidity 0.6.11;
  * A deposit that has experienced a series of liquidations is termed a "compounded deposit": each liquidation depletes the deposit,
  * multiplying it by some factor in range ]0,1[
  *
- * Please see the implementation spec in the proof document, which closely follows on from the compounded deposit / RBTC gain derivations:
- * https://github.com/moneyp/moneyp/blob/master/papers/Scalable_Reward_Distribution_with_Compounding_Stakes.pdf
- *
  * --- MP ISSUANCE TO STABILITY POOL DEPOSITORS ---
  *
  * An MP issuance event occurs at every deposit operation, and every liquidation.
@@ -30,8 +27,6 @@ pragma solidity 0.6.11;
  * All deposits earn a share of the issued MP in proportion to the deposit as a share of total deposits. The MP earned
  * by a given deposit, is split between the depositor and the front end through which the deposit was made, based on the front end's kickbackRate.
  *
- * Please see the system Readme for an overview:
- * https://github.com/moneyp/dev/blob/main/README.md#mp-issuance-to-stability-providers
  */
 interface IStabilityPool {
 
