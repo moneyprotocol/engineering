@@ -10,10 +10,10 @@ import "../Interfaces/IMPToken.sol";
 * to the LockupContract's constructor. The contract's balance can be withdrawn by the beneficiary when block.timestamp > unlockTime. 
 * At construction, the contract checks that unlockTime is at least one year later than the Moneyp system's deployment time. 
 
-* Within the first year from deployment, the deployer of the MPToken (Moneyp AG's address) may transfer MP only to valid 
+* Within the first year from deployment, the deployer of the MPToken (Money Protocol core team) may transfer MP only to valid 
 * LockupContracts, and no other addresses (this is enforced in MPToken.sol's transfer() function).
 * 
-* The above two restrictions ensure that until one year after system deployment, MP tokens originating from Moneyp AG cannot 
+* The above two restrictions ensure that until one year after system deployment, MP tokens originating from Money Protocol core team cannot 
 * enter circulating supply and cannot be staked to earn system revenue.
 */
 contract LockupContract {
