@@ -41,19 +41,25 @@ async function mainnetDeploy(configParams) {
   const moneypCore = await mdh.deployMoneypCoreMainnet(configParams.externalAddrs.TELLOR_MASTER, deploymentState)
   await mdh.logContractObjects(moneypCore)
 
+  console.log('--- 1')
+
   // Check Uniswap Pair BPD-RBTC pair before pair creation
   let BPDWRBTCPairAddr = await uniswapV2Factory.getPair(moneypCore.bpdToken.address, configParams.externalAddrs.RBTC_ERC20)
   let WRBTCBPDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.RBTC_ERC20, moneypCore.bpdToken.address)
   assert.equal(BPDWRBTCPairAddr, WRBTCBPDPairAddr)
 
+  console.log('--- 2')
 
   if (BPDWRBTCPairAddr == th.ZERO_ADDRESS) {
+    console.log('--- 3')
     // Deploy RskSwapPool for BPD-WRBTC
     await mdh.sendAndWaitForTransaction(uniswapV2Factory.createPair(
       configParams.externalAddrs.RBTC_ERC20,
       moneypCore.bpdToken.address,
       { gasPrice }
     ))
+
+    console.log('--- 4')
 
     // Check Uniswap Pair BPD-WRBTC pair after pair creation (forwards and backwards should have same address)
     BPDWRBTCPairAddr = await uniswapV2Factory.getPair(moneypCore.bpdToken.address, configParams.externalAddrs.RBTC_ERC20)
@@ -63,8 +69,12 @@ async function mainnetDeploy(configParams) {
     assert.equal(WRBTCBPDPairAddr, BPDWRBTCPairAddr)
   }
 
+  console.log('--- 5')
+
   // Deploy RskSwapPool
   const rskSwapPool = await mdh.deployRskSwapPoolMainnet(deploymentState)
+
+  console.log('--- 6')
 
   // Deploy MP Contracts
   const MPContracts = await mdh.deployMPContractsMainnet(
@@ -74,18 +84,26 @@ async function mainnetDeploy(configParams) {
     deploymentState,
   )
 
+  console.log('--- 7')
+
   // Connect all core contracts up
-  await mdh.connectCoreContractsMainnet(moneypCore, MPContracts, configParams.externalAddrs.CHAINLINK_RBTCUSD_PROXY)
+  await mdh.connectCoreContractsMainnet(moneypCore, MPContracts, configParams.externalAddrs.MOC_ORACLE)
+  console.log('--- 7  1')
   await mdh.connectMPContractsMainnet(MPContracts)
+  console.log('--- 7  2')
   await mdh.connectMPContractsToCoreMainnet(MPContracts, moneypCore)
+
+  console.log('--- 8')
 
   // Deploy a read-only multi-vault getter
   const multiVaultGetter = await mdh.deployMultiVaultGetterMainnet(moneypCore, deploymentState)
 
+  console.log('--- 9')
   // Connect RskSwapPool to MPToken and the BPD-WRBTC pair address, with a 6 week duration
   const LPRewardsDuration = timeVals.SECONDS_IN_SIX_WEEKS
   await mdh.connectRskSwapPoolMainnet(rskSwapPool, MPContracts, BPDWRBTCPairAddr, LPRewardsDuration)
 
+  console.log('--- 10')
   // Log MP and RskSwapPool addresses
   await mdh.logContractObjects(MPContracts)
   console.log(`RskSwapPool address: ${rskSwapPool.address}`)
@@ -95,6 +113,7 @@ async function mainnetDeploy(configParams) {
 
   console.log(`time now: ${now}`)
   const oneYearFromNow = (now + timeVals.SECONDS_IN_ONE_YEAR).toString()
+  // TODO: change this to test
   console.log(`time oneYearFromNow: ${oneYearFromNow}`)
 
   // Deploy LockupContracts - one for each beneficiary
@@ -112,6 +131,11 @@ async function mainnetDeploy(configParams) {
     } else {
       const txReceipt = await mdh.sendAndWaitForTransaction(MPContracts.lockupContractFactory.deployLockupContract(investorAddr, oneYearFromNow, { gasPrice }))
 
+      console.log('--------')
+      console.log(JSON.stringify(txReceipt));
+      console.log('--------')
+      console.log(JSON.stringify(txReceipt.logs));
+      console.log('--------')
       const address = await txReceipt.logs[0].address // The deployment event emitted from the LC itself is is the first of two events, so this is its address 
       lockupContracts[investor] = new ethers.Contract(
         address,
@@ -127,7 +151,7 @@ async function mainnetDeploy(configParams) {
       mdh.saveDeployment(deploymentState)
     }
 
-    // verify
+    // [MP] TODO: set SCAN BASE URL to verify contract after deployment
     if (configParams.ASDFGSCAN_BASE_URL) {
       await mdh.verifyContract(investor, deploymentState)
     }
@@ -137,20 +161,20 @@ async function mainnetDeploy(configParams) {
 
   // Check chainlink proxy price ---
 
-  const chainlinkProxy = new ethers.Contract(
-    configParams.externalAddrs.CHAINLINK_RBTCUSD_PROXY,
-    ChainlinkAggregatorV3Interface,
-    deployerWallet
-  )
+  // const chainlinkProxy = new ethers.Contract(
+  //   configParams.externalAddrs.CHAINLINK_RBTCUSD_PROXY,
+  //   ChainlinkAggregatorV3Interface,
+  //   deployerWallet
+  // )
 
   // Get latest price
-  let chainlinkPrice = await chainlinkProxy.latestAnswer()
-  console.log(`current Chainlink price: ${chainlinkPrice}`)
+  // let chainlinkPrice = await chainlinkProxy.latestAnswer()
+  // console.log(`current Chainlink price: ${chainlinkPrice}`)
 
   // // TODO: Check Tellor price directly (through TellorCaller)
-  let tellorPriceResponse = await moneypCore.tellorCaller.getTellorCurrentValue(1) // id == 1: the RBTC-USD request ID
-  console.log(`current Tellor price: ${tellorPriceResponse[1]}`)
-  console.log(`current Tellor timestamp: ${tellorPriceResponse[2]}`)
+  // let tellorPriceResponse = await moneypCore.tellorCaller.getTellorCurrentValue(1) // id == 1: the RBTC-USD request ID
+  // console.log(`current Tellor price: ${tellorPriceResponse[1]}`)
+  // console.log(`current Tellor timestamp: ${tellorPriceResponse[2]}`)
 
   // --- Lockup Contracts ---
   console.log("LOCKUP CONTRACT CHECKS")
@@ -180,6 +204,7 @@ async function mainnetDeploy(configParams) {
   // --- MP allowances of different addresses ---
   console.log("INITIAL MP BALANCES")
   // RskSwapPool
+  console.log(JSON.stringify(MPContracts.mpToken))
   const rskSwapPoolMPBal = await MPContracts.mpToken.balanceOf(rskSwapPool.address)
   // TODO: Uncomment for real launch assert.equal(rskSwapPoolMPBal.toString(), '1333333333333333333333333')
   th.logBN('RskSwapPool MP balance       ', rskSwapPoolMPBal)
@@ -202,20 +227,20 @@ async function mainnetDeploy(configParams) {
   // --- PriceFeed ---
   console.log("PRICEFEED CHECKS")
   // Check Pricefeed's status and last good price
-  const lastGoodPrice = await moneypCore.priceFeed.lastGoodPrice()
-  const priceFeedInitialStatus = await moneypCore.priceFeed.status()
-  th.logBN('PriceFeed first stored price', lastGoodPrice)
-  console.log(`PriceFeed initial status: ${priceFeedInitialStatus}`)
+  // const lastGoodPrice = await moneypCore.priceFeed.lastGoodPrice()
+  // const priceFeedInitialStatus = await moneypCore.priceFeed.status()
+  // th.logBN('PriceFeed first stored price', lastGoodPrice)
+  // console.log(`PriceFeed initial status: ${priceFeedInitialStatus}`)
 
-  // Check PriceFeed's & TellorCaller's stored addresses
-  const priceFeedCLAddress = await moneypCore.priceFeed.priceAggregator()
-  const priceFeedTellorCallerAddress = await moneypCore.priceFeed.tellorCaller()
-  assert.equal(priceFeedCLAddress, configParams.externalAddrs.CHAINLINK_RBTCUSD_PROXY)
-  assert.equal(priceFeedTellorCallerAddress, moneypCore.tellorCaller.address)
+  // // Check PriceFeed's & TellorCaller's stored addresses
+  // const priceFeedCLAddress = await moneypCore.priceFeed.priceAggregator()
+  // const priceFeedTellorCallerAddress = await moneypCore.priceFeed.tellorCaller()
+  // assert.equal(priceFeedCLAddress, configParams.externalAddrs.CHAINLINK_RBTCUSD_PROXY)
+  // assert.equal(priceFeedTellorCallerAddress, moneypCore.tellorCaller.address)
 
   // Check Tellor address
-  const tellorCallerTellorMasterAddress = await moneypCore.tellorCaller.tellor()
-  assert.equal(tellorCallerTellorMasterAddress, configParams.externalAddrs.TELLOR_MASTER)
+  // const tellorCallerTellorMasterAddress = await moneypCore.tellorCaller.tellor()
+  // assert.equal(tellorCallerTellorMasterAddress, configParams.externalAddrs.TELLOR_MASTER)
 
   // --- RskSwapPool ---
 
@@ -227,8 +252,10 @@ async function mainnetDeploy(configParams) {
   // --- Sorted Vaults ---
 
   // Check max size
-  const sortedVaultsMaxSize = (await moneypCore.sortedVaults.data())[2]
-  assert.equal(sortedVaultsMaxSize, '115792089237316195423570985008687907853269984665640564039457584007913129639935')
+  console.log(JSON.stringify(await moneypCore.sortedVaults.data()));
+  console.log('--------')
+  // const sortedVaultsMaxSize = (await moneypCore.sortedVaults.data())[2]
+  // assert.equal(sortedVaultsMaxSize, '115792089237316195423570985008687907853269984665640564039457584007913129639935')
 
   // --- VaultManager ---
 
@@ -243,8 +270,8 @@ async function mainnetDeploy(configParams) {
   // Open vault if not yet opened
   const vaultStatus = await moneypCore.vaultManager.getVaultStatus(deployerWallet.address)
   if (vaultStatus.toString() != '1') {
-    let _3kBPDWithdrawal = th.dec(3000, 18) // 3000 BPD
-    let _3RBTCcoll = th.dec(3, 'ether') // 3 RBTC
+    let _3kBPDWithdrawal = th.dec(2000, 18) // 2000 BPD
+    let _3RBTCcoll = th.dec(0.2, 'ether') // .2 RBTC = (19500) = 3911 BPD
     console.log('Opening vault...')
     await mdh.sendAndWaitForTransaction(
       moneypCore.borrowerOperations.openVault(
