@@ -222,10 +222,17 @@ class MainnetDeploymentHelper {
   }
   // Connect contracts to their dependencies
   async connectCoreContractsMainnet(contracts, MPContracts, chainlinkProxyAddress) {
+    console.log('connectCoreContractsMainnet -------- 0')
     const gasPrice = this.configParams.GAS_PRICE
+    console.log(`connectCoreContractsMainnet -------- 1 gasPrice[${gasPrice}]`)
+    // console.log('---');
+    // console.log(JSON.stringify(contracts.priceFeed));
+    // console.log('---');
     // Set ChainlinkAggregatorProxy and TellorCaller in the PriceFeed
     await this.isOwnershipRenounced(contracts.priceFeed) ||
-      await this.sendAndWaitForTransaction(contracts.priceFeed.setAddresses(chainlinkProxyAddress, contracts.tellorCaller.address, {gasPrice}))
+      await this.sendAndWaitForTransaction(contracts.priceFeed.setAddresses(["0x97a9100de6fcabebe75fa5c8ef88c55b232f73f1", "0x97a9100de6fcabebe75fa5c8ef88c55b232f73f1"], {gasPrice}))
+
+      console.log(`connectCoreContractsMainnet -------- 2`)
 
     // set VaultManager addr in SortedVaults
     await this.isOwnershipRenounced(contracts.sortedVaults) ||
@@ -235,6 +242,8 @@ class MainnetDeploymentHelper {
         contracts.borrowerOperations.address, 
 	{gasPrice}
       ))
+
+      console.log(`connectCoreContractsMainnet -------- 3`)
 
     // set contracts in the Vault Manager
     await this.isOwnershipRenounced(contracts.vaultManager) ||
@@ -253,6 +262,7 @@ class MainnetDeploymentHelper {
 	{gasPrice}
       ))
 
+      console.log(`connectCoreContractsMainnet -------- 4`)
     // set contracts in BorrowerOperations 
     await this.isOwnershipRenounced(contracts.borrowerOperations) ||
       await this.sendAndWaitForTransaction(contracts.borrowerOperations.setAddresses(
@@ -268,7 +278,7 @@ class MainnetDeploymentHelper {
         MPContracts.mpStaking.address,
 	{gasPrice}
       ))
-
+      console.log(`connectCoreContractsMainnet -------- 5`)
     // set contracts in the Pools
     await this.isOwnershipRenounced(contracts.stabilityPool) ||
       await this.sendAndWaitForTransaction(contracts.stabilityPool.setAddresses(
