@@ -15,12 +15,12 @@ const externalAddrs  = {
 const moneypAddrs = {
   GENERAL_SAFE:"0x8be7e24263c199ebfcfd6aebca83f8d7ed85a5dd", // TODO - 
   MP_SAFE:"0x20c81d658aae3a8580d990e441a9ef2c9809be74", // TODO - 
-  DEPLOYER: "0xd1C775899DAeB0af9644cAb2fE9AAC3F1af99F4F" // Mainnet TEST deployment address
+  DEPLOYER: "0xb9f6743674Eab7CDf2714a0341D731d2F4395094" // Mainnet TEST deployment address
 }
 
 const beneficiaries = {
-  ACCOUNT_2: "0x7E701726f21C39cb60221cD75f769F96285CAbca",  
-  ACCOUNT_3: "0xd1C775899DAeB0af9644cAb2fE9AAC3F1af99F4F",
+  ACCOUNT_2: "0x774bbfd4D640ad5EcCCADce45daCa741AC79CefB",  
+  ACCOUNT_3: "0xC6d15E60dBd01F694d6d955e205Df10C5fa9c417",
 }
 
 const OUTPUT_FILE = './mainnetDeployment/mainnetDeploymentOutput.json'
