@@ -55,28 +55,28 @@
     "address": "0xD55795dAa6e90E9C5a815c54c4A79118371b882f",
     "txHash": "0xf4be5d0d6a8211ccc3baea821735ef2f1e6bba847be052ad4dfab4d800e5d8cc"
   },
-  "lockupContractFactory": {
-    "address": "0x423E4b4dEB901f9969dee997AE7b430ad458C268",
-    "txHash": "0xcebf2ffc345a4b5612ebfa99ae62404c227e809b15aedebe503356774ef3d3cc"
-  },
   "communityIssuance": {
     "address": "0x2BED718Dc12B32fA9315623072cC2E3C3EC4A61B",
     "txHash": "0xe6a902193d40e5db83a582c4e756be146a1ef366b17d336283717b77dce36c82"
-  },
-  "mpToken": {
-    "address": "0x4B84FBFdE9fBdB1B1ba797d02e3faDE6ee8c8bC4",
-    "txHash": "0x8cb34f75ea0c05b2a26b210cf929dec4253a79b497e35f99c00fc4b3b8281f65"
   },
   "multiVaultGetter": {
     "address": "0x355535E15b9577Ba9523d5e1f4A55c4638DD6beF",
     "txHash": "0xb70d150da5a7e88fc54e9edee90d023d6aefcf006fc4a3fecba3988508d003d0"
   },
+  "lockupContractFactory": {
+    "address": "0xb99C11a25734b11aa8bC125c1Ffc32AcFB57fB13",
+    "txHash": "0x12b7c1d8d2545137d07d37b07131682a2c047bc0a0abc5680156a26861325bb9"
+  },
   "ACCOUNT_2": {
-    "address": "0x17456613330E6ad0FAd6c37f02782cfd16295585",
-    "txHash": "0xc2dfc7e71e63f87d651f8d8ad291a8d8e0ae40a40a9ab0c730044bec897093ee"
+    "address": "0xD22e974C9f159e885979993cE6d17fF5C26c72c7",
+    "txHash": "0xaff7caf2fd0fbca8ebe98e75ee6e0af7436eac34e01f79c376e776dc86bad79b"
   },
   "ACCOUNT_3": {
-    "address": "0xdE0C69F40Bd6Aa1bea05f441FC215dC0c4985ff9",
-    "txHash": "0xe0d5209e49259bdd747e6e32cde015d7de8547dbef15b5ae4d04d9e1cbfdcc8a"
+    "address": "0x06DD69e6A3B32276781aa9FD5cD715778daCE79D",
+    "txHash": "0x63d5ea3e33855736fb5305c981ba865b3c8f39334af5ef58c1cd30da5b425e5f"
+  },
+  "mpToken": {
+    "address": "0x4e79e6666a0fCF0e3160AED090fE9EF44A6db728",
+    "txHash": "0x34646aa32fb22fef04c0bb193ec664fc1110f883b1fe7fb812fa8addae6ff370"
   }
 }
