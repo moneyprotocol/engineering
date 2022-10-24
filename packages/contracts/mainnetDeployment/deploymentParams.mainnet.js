@@ -1,8 +1,4 @@
 const externalAddrs  = {
-  // https://data.chain.link/eth-usd
-  CHAINLINK_RBTCUSD_PROXY: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419", 
-  // https://docs.tellor.io/tellor/integration/reference-page
-  TELLOR_MASTER:"0x88dF592F8eb5D7Bd38bFeF7dEb0fBc02cf3778a0",
   // https://uniswap.org/docs/v2/smart-contracts/factory/
   UNISWAP_V2_FACTORY: "0xfaa7762f551bba9b0eba34d6443d49d0a577c0e1",
   UNIWAP_V2_ROUTER02: "0xf55c496bb1058690DB1401c4b9C19F3f44374961",
@@ -13,14 +9,26 @@ const externalAddrs  = {
 }
 
 const moneypAddrs = {
-  GENERAL_SAFE:"0x8be7e24263c199ebfcfd6aebca83f8d7ed85a5dd", // TODO - 
-  MP_SAFE:"0x20c81d658aae3a8580d990e441a9ef2c9809be74", // TODO - 
-  DEPLOYER: "0xb9f6743674Eab7CDf2714a0341D731d2F4395094" // Mainnet TEST deployment address
+  // to be passed to MPToken as the bounties/hackathons address
+  GENERAL_SAFE: "0xe0C25A64f71E9E9ECABE09ADBb8c1Bb1d9cE5513",
+
+  // to be passed to MPToken as the MP multisig address
+  MP_SAFE: "0x14986801Bd0F2e5ec98cf412526360fC9ae71c80",
+
+  // Testnet deployer address
+  DEPLOYER: "0xb9f6743674Eab7CDf2714a0341D731d2F4395094"
 }
 
+// Beneficiaries for lockup contracts. 
 const beneficiaries = {
-  ACCOUNT_2: "0x774bbfd4D640ad5EcCCADce45daCa741AC79CefB",  
-  ACCOUNT_3: "0xC6d15E60dBd01F694d6d955e205Df10C5fa9c417",
+  // Account 2 wallet address
+  ACCOUNT_2: "0xB4898fc16851B81a2CC4F2303B74077833594D02",
+
+  // Beneficiary 1 wallet address
+  BENEFICIARY_1: "0xF764064E59344e6173BA05C85682c0dc12537c15",
+
+  // Beneficiary 2 wallet address
+  BENEFICIARY_2: "0xDF15e7aF6684aBb52A7ccB7461C2E00CcbC08c33",
 }
 
 const OUTPUT_FILE = './mainnetDeployment/mainnetDeploymentOutput.json'

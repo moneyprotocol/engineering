@@ -63,7 +63,7 @@ class MainnetDeploymentHelper {
     return contract
   }
 
-  async deployMoneypCoreMainnet(tellorMasterAddr, deploymentState) {
+  async deployMoneypCoreMainnet(deploymentState) {
     // Get contract factories
     const priceFeedFactory = await this.getFactory("PriceFeed")
     const sortedVaultsFactory = await this.getFactory("SortedVaults")
@@ -76,7 +76,6 @@ class MainnetDeploymentHelper {
     const borrowerOperationsFactory = await this.getFactory("BorrowerOperations")
     const hintHelpersFactory = await this.getFactory("HintHelpers")
     const bpdTokenFactory = await this.getFactory("BPDToken")
-    // const tellorCallerFactory = await this.getFactory("TellorCaller")
 
     // Deploy txs
     const priceFeed = await this.loadOrDeploy(priceFeedFactory, 'priceFeed', deploymentState)
@@ -89,7 +88,6 @@ class MainnetDeploymentHelper {
     const collSurplusPool = await this.loadOrDeploy(collSurplusPoolFactory, 'collSurplusPool', deploymentState)
     const borrowerOperations = await this.loadOrDeploy(borrowerOperationsFactory, 'borrowerOperations', deploymentState)
     const hintHelpers = await this.loadOrDeploy(hintHelpersFactory, 'hintHelpers', deploymentState)
-    // const tellorCaller = await this.loadOrDeploy(tellorCallerFactory, 'tellorCaller', deploymentState, [tellorMasterAddr])
 
     const bpdTokenParams = [
       vaultManager.address,
@@ -116,7 +114,6 @@ class MainnetDeploymentHelper {
       await this.verifyContract('collSurplusPool', deploymentState)
       await this.verifyContract('borrowerOperations', deploymentState)
       await this.verifyContract('hintHelpers', deploymentState)
-      // await this.verifyContract('tellorCaller', deploymentState, [tellorMasterAddr])
       await this.verifyContract('bpdToken', deploymentState, bpdTokenParams)
     }
 
@@ -132,7 +129,6 @@ class MainnetDeploymentHelper {
       collSurplusPool,
       borrowerOperations,
       hintHelpers,
-      // tellorCaller
     }
     return coreContracts
   }
@@ -222,18 +218,14 @@ class MainnetDeploymentHelper {
     return owner == ZERO_ADDRESS
   }
   // Connect contracts to their dependencies
-  async connectCoreContractsMainnet(contracts, MPContracts, chainlinkProxyAddress) {
-    console.log('connectCoreContractsMainnet -------- 0')
+  async connectCoreContractsMainnet(contracts, MPContracts, addresses) {
     const gasPrice = this.configParams.GAS_PRICE
-    console.log(`connectCoreContractsMainnet -------- 1 gasPrice[${gasPrice}]`)
     // console.log('---');
     // console.log(JSON.stringify(contracts.priceFeed));
     // console.log('---');
     // Set ChainlinkAggregatorProxy and TellorCaller in the PriceFeed
     await this.isOwnershipRenounced(contracts.priceFeed) ||
-      await this.sendAndWaitForTransaction(contracts.priceFeed.setAddresses(["0x97a9100de6fcabebe75fa5c8ef88c55b232f73f1", "0x97a9100de6fcabebe75fa5c8ef88c55b232f73f1"], {gasPrice}))
-
-      console.log(`connectCoreContractsMainnet -------- 2`)
+      await this.sendAndWaitForTransaction(contracts.priceFeed.setAddresses(addresses, {gasPrice}))
 
     // set VaultManager addr in SortedVaults
     await this.isOwnershipRenounced(contracts.sortedVaults) ||
@@ -243,8 +235,6 @@ class MainnetDeploymentHelper {
         contracts.borrowerOperations.address, 
 	{gasPrice}
       ))
-
-      console.log(`connectCoreContractsMainnet -------- 3`)
 
     // set contracts in the Vault Manager
     await this.isOwnershipRenounced(contracts.vaultManager) ||
@@ -262,8 +252,6 @@ class MainnetDeploymentHelper {
         MPContracts.mpStaking.address,
 	{gasPrice}
       ))
-
-      console.log(`connectCoreContractsMainnet -------- 4`)
     // set contracts in BorrowerOperations 
     await this.isOwnershipRenounced(contracts.borrowerOperations) ||
       await this.sendAndWaitForTransaction(contracts.borrowerOperations.setAddresses(
@@ -279,7 +267,6 @@ class MainnetDeploymentHelper {
         MPContracts.mpStaking.address,
 	{gasPrice}
       ))
-      console.log(`connectCoreContractsMainnet -------- 5`)
     // set contracts in the Pools
     await this.isOwnershipRenounced(contracts.stabilityPool) ||
       await this.sendAndWaitForTransaction(contracts.stabilityPool.setAddresses(
