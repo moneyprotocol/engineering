@@ -17,11 +17,12 @@ async function mainnetDeploy(configParams) {
 
   const deploymentState = mdh.loadPreviousDeployment()
 
-  console.log(`deployer address: ${deployerWallet.address}`)
+  console.log(`Deployer address: ${deployerWallet.address}`)
   assert.equal(deployerWallet.address, configParams.moneypAddrs.DEPLOYER)
+  console.log(`Account 2 address: ${account2Wallet.address}`)
   assert.equal(account2Wallet.address, configParams.beneficiaries.ACCOUNT_2)
   let deployerRBTCBalance = await ethers.provider.getBalance(deployerWallet.address)
-  console.log(`deployerRBTCBalance before: ${ethers.utils.formatEther(deployerRBTCBalance)}`)
+  console.log(`Deployer TRBTC Balance before deployments: ${ethers.utils.formatEther(deployerRBTCBalance)}`)
 
   // Get UniswaV2Factory instance at its deployed address
   const uniswapV2Factory = new ethers.Contract(
@@ -34,32 +35,22 @@ async function mainnetDeploy(configParams) {
   const uniAllPairsLength = await uniswapV2Factory.allPairsLength()
   console.log(`Uniswap Factory number of pairs: ${uniAllPairsLength}`)
 
-  deployerRBTCBalance = await ethers.provider.getBalance(deployerWallet.address)
-  console.log(`deployer's RBTC balance before deployments: ${deployerRBTCBalance}`)
-
   // Deploy core logic contracts
-  const moneypCore = await mdh.deployMoneypCoreMainnet(configParams.externalAddrs.TELLOR_MASTER, deploymentState)
+  const moneypCore = await mdh.deployMoneypCoreMainnet(deploymentState)
   await mdh.logContractObjects(moneypCore)
-
-  console.log('--- 1')
 
   // Check Uniswap Pair BPD-RBTC pair before pair creation
   let BPDWRBTCPairAddr = await uniswapV2Factory.getPair(moneypCore.bpdToken.address, configParams.externalAddrs.RBTC_ERC20)
   let WRBTCBPDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.RBTC_ERC20, moneypCore.bpdToken.address)
   assert.equal(BPDWRBTCPairAddr, WRBTCBPDPairAddr)
 
-  console.log('--- 2')
-
   if (BPDWRBTCPairAddr == th.ZERO_ADDRESS) {
-    console.log('--- 3')
     // Deploy RskSwapPool for BPD-WRBTC
     await mdh.sendAndWaitForTransaction(uniswapV2Factory.createPair(
       configParams.externalAddrs.RBTC_ERC20,
       moneypCore.bpdToken.address,
       { gasPrice }
     ))
-
-    console.log('--- 4')
 
     // Check Uniswap Pair BPD-WRBTC pair after pair creation (forwards and backwards should have same address)
     BPDWRBTCPairAddr = await uniswapV2Factory.getPair(moneypCore.bpdToken.address, configParams.externalAddrs.RBTC_ERC20)
@@ -69,12 +60,8 @@ async function mainnetDeploy(configParams) {
     assert.equal(WRBTCBPDPairAddr, BPDWRBTCPairAddr)
   }
 
-  console.log('--- 5')
-
   // Deploy RskSwapPool
   const rskSwapPool = await mdh.deployRskSwapPoolMainnet(deploymentState)
-
-  console.log('--- 6')
 
   // Deploy MP Contracts
   const MPContracts = await mdh.deployMPContractsMainnet(
@@ -84,26 +71,18 @@ async function mainnetDeploy(configParams) {
     deploymentState,
   )
 
-  console.log('--- 7')
-
   // Connect all core contracts up
-  await mdh.connectCoreContractsMainnet(moneypCore, MPContracts, configParams.externalAddrs.MOC_ORACLE)
-  console.log('--- 7  1')
+  await mdh.connectCoreContractsMainnet(moneypCore, MPContracts, [configParams.externalAddrs.RSK_ORACLE])
   await mdh.connectMPContractsMainnet(MPContracts)
-  console.log('--- 7  2')
   await mdh.connectMPContractsToCoreMainnet(MPContracts, moneypCore)
-
-  console.log('--- 8')
 
   // Deploy a read-only multi-vault getter
   const multiVaultGetter = await mdh.deployMultiVaultGetterMainnet(moneypCore, deploymentState)
 
-  console.log('--- 9')
   // Connect RskSwapPool to MPToken and the BPD-WRBTC pair address, with a 6 week duration
   const LPRewardsDuration = timeVals.SECONDS_IN_SIX_WEEKS
   await mdh.connectRskSwapPoolMainnet(rskSwapPool, MPContracts, BPDWRBTCPairAddr, LPRewardsDuration)
 
-  console.log('--- 10')
   // Log MP and RskSwapPool addresses
   await mdh.logContractObjects(MPContracts)
   console.log(`RskSwapPool address: ${rskSwapPool.address}`)
@@ -247,8 +226,6 @@ async function mainnetDeploy(configParams) {
   // --- Sorted Vaults ---
 
   // Check max size
-  console.log(JSON.stringify(await moneypCore.sortedVaults.data()));
-  console.log('--------')
   // const sortedVaultsMaxSize = (await moneypCore.sortedVaults.data())[2]
   // assert.equal(sortedVaultsMaxSize, '115792089237316195423570985008687907853269984665640564039457584007913129639935')
 
@@ -267,7 +244,7 @@ async function mainnetDeploy(configParams) {
   if (vaultStatus.toString() != '1') {
     let _3kBPDWithdrawal = th.dec(2000, 18) // 2000 BPD
     let _3RBTCcoll = th.dec(2, 17) // .2 RBTC = (19500) = 3911 BPD
-    console.log('Opening vault...')
+    console.log('Deployer opening vault...')
     await mdh.sendAndWaitForTransaction(
       moneypCore.borrowerOperations.openVault(
         th._100pct,
