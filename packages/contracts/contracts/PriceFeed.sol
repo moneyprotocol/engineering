@@ -8,12 +8,8 @@ import "./Dependencies/Ownable.sol";
 import "./Dependencies/CheckContract.sol";
 
 /*
- * PriceFeed for mainnet deployment, to be connected to MoneyOnChain live RBTC/USD aggregator reference
- * contract and RSK Oracle contract for real-time RBTC price data.
- *
- * The PriceFeed uses MoneyOnChain (MOC) as primary oracle, and RSKOracle as fallback. It contains logic for
- * switching oracles based on oracle failures, timeouts, and conditions for returning to the primary
- * MOC oracle.
+ * The PriceFeed uses MOC as primary oracle, and RSK Oracle as fallback. It contains logic for
+ * switching oracles based on oracle failures.
  */
 contract PriceFeed is Ownable, CheckContract, IPriceFeed {
     string public constant NAME = "PriceFeed";
@@ -71,7 +67,7 @@ contract PriceFeed is Ownable, CheckContract, IPriceFeed {
      *
      * Non-view function - it stores the last good price seen by Money Protocol.
      *
-     * Uses a main oracle (MOC) and a fallback oracle (RSK Oracle) in case MOC fails. If both fail,
+     * Uses a main oracle (MOC) and a fallback oracle (RSK) in case MOC fails. If both fail,
      * it uses the last good price seen by Money Protocol.
      *
      */
