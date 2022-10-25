@@ -36,52 +36,38 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "enum PriceFeed.Status",
-        "name": "newStatus",
+        "internalType": "uint8",
+        "name": "index",
         "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "priceFeedAddress",
+        "type": "address"
       }
     ],
-    "name": "PriceFeedStatusChanged",
+    "name": "PriceFeedBroken",
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "DECIMAL_PRECISION",
-    "outputs": [
+    "anonymous": false,
+    "inputs": [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "index",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newPriceFeedAddress",
+        "type": "address"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "MAX_PRICE_DEVIATION_FROM_PREVIOUS_ROUND",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "MAX_PRICE_DIFFERENCE_BETWEEN_ORACLES",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "name": "PriceFeedUpdated",
+    "type": "event"
   },
   {
     "inputs": [],
@@ -91,58 +77,6 @@
         "internalType": "string",
         "name": "",
         "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "RBTCUSD_TELLOR_REQ_ID",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "TARGET_DIGITS",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "TELLOR_DIGITS",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "TIMEOUT",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -201,60 +135,16 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "priceAggregator",
-    "outputs": [
-      {
-        "internalType": "contract AggregatorV3Interface",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_priceAggregatorAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_tellorCallerAddress",
-        "type": "address"
+        "internalType": "address[]",
+        "name": "priceFeedAddresses",
+        "type": "address[]"
       }
     ],
     "name": "setAddresses",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "status",
-    "outputs": [
-      {
-        "internalType": "enum PriceFeed.Status",
-        "name": "",
-        "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "tellorCaller",
-    "outputs": [
-      {
-        "internalType": "contract ITellorCaller",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   }
 ]
