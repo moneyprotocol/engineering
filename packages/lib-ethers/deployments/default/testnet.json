@@ -4,7 +4,7 @@
   "deploymentDate": 1666597186000,
   "bootstrapPeriod": 2592000,
   "totalStabilityPoolMPReward": "167705382",
-  "_priceFeedIsTestnet": false,
+  "_priceFeedIsTestnet": true,
   "_rskSwapTokenIsMock": false,
   "_isDev": false,
   "addresses": {
