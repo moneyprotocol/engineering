@@ -141,11 +141,11 @@ const config: HardhatUserConfig = {
       timeout: 1000000
   },
 
-    ...infuraNetwork("ropsten"),
-    ...infuraNetwork("rinkeby"),
-    ...infuraNetwork("goerli"),
-    ...infuraNetwork("kovan"),
-    ...infuraNetwork("mainnet")
+    // ...infuraNetwork("ropsten"),
+    // ...infuraNetwork("rinkeby"),
+    // ...infuraNetwork("goerli"),
+    // ...infuraNetwork("kovan"),
+    // ...infuraNetwork("mainnet")
   },
 
   paths: {

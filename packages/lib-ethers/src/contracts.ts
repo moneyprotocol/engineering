@@ -179,7 +179,7 @@ export const _priceFeedIsTestnet = (
 ): priceFeed is PriceFeedTestnet => "setPrice" in priceFeed;
 
 /** @internal */
-export const _uniTokenIsMock = (uniToken: IERC20 | ERC20Mock): uniToken is ERC20Mock =>
+export const _rskSwapTokenIsMock = (uniToken: IERC20 | ERC20Mock): uniToken is ERC20Mock =>
   "mint" in uniToken;
 
 type MoneypContractsKey = keyof _MoneypContracts;
@@ -227,16 +227,16 @@ export interface _MoneypDeploymentJSON {
   readonly bootstrapPeriod: number;
   readonly totalStabilityPoolMPReward: string;
   readonly _priceFeedIsTestnet: boolean;
-  readonly _uniTokenIsMock: boolean;
+  readonly _rskSwapTokenIsMock: boolean;
   readonly _isDev: boolean;
 }
 
 /** @internal */
 export const _connectToContracts = (
   signerOrProvider: BitcoinsSigner | BitcoinsProvider,
-  { addresses, _priceFeedIsTestnet, _uniTokenIsMock }: _MoneypDeploymentJSON
+  { addresses, _priceFeedIsTestnet, _rskSwapTokenIsMock }: _MoneypDeploymentJSON
 ): _MoneypContracts => {
-  const abi = getAbi(_priceFeedIsTestnet, _uniTokenIsMock);
+  const abi = getAbi(_priceFeedIsTestnet, _rskSwapTokenIsMock);
 
   return mapMoneypContracts(
     addresses,
