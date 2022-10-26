@@ -48,7 +48,7 @@ import {
   _requireSigner
 } from "./BitcoinsMoneypConnection";
 
-import { _priceFeedIsTestnet, _uniTokenIsMock } from "./contracts";
+import { _priceFeedIsTestnet, _rskSwapTokenIsMock } from "./contracts";
 import { logsToString } from "./parseLogs";
 import { ReadableBitcoinsMoneyp } from "./ReadableBitcoinsMoneyp";
 
@@ -1011,7 +1011,7 @@ export class PopulatableBitcoinsMoneyp
     address ??= _requireAddress(this._readable.connection, overrides);
     const { uniToken } = _getContracts(this._readable.connection);
 
-    if (!_uniTokenIsMock(uniToken)) {
+    if (!_rskSwapTokenIsMock(uniToken)) {
       throw new Error("_mintUniToken() unavailable on this deployment of Moneyp");
     }
 

@@ -330,7 +330,7 @@ export const deployAndSetupContracts = async (
     bootstrapPeriod: 0,
     totalStabilityPoolMPReward: "0",
     _priceFeedIsTestnet,
-    _uniTokenIsMock: !wethAddress,
+    _rskSwapTokenIsMock: !wethAddress,
     _isDev,
 
     addresses: await deployContracts(

@@ -543,25 +543,15 @@ export interface MultiVaultGetter
 }
 
 interface PriceFeedCalls {
-  DECIMAL_PRECISION(_overrides?: CallOverrides): Promise<BigNumber>;
-  MAX_PRICE_DEVIATION_FROM_PREVIOUS_ROUND(_overrides?: CallOverrides): Promise<BigNumber>;
-  MAX_PRICE_DIFFERENCE_BETWEEN_ORACLES(_overrides?: CallOverrides): Promise<BigNumber>;
   NAME(_overrides?: CallOverrides): Promise<string>;
-  RBTCUSD_TELLOR_REQ_ID(_overrides?: CallOverrides): Promise<BigNumber>;
-  TARGET_DIGITS(_overrides?: CallOverrides): Promise<BigNumber>;
-  TELLOR_DIGITS(_overrides?: CallOverrides): Promise<BigNumber>;
-  TIMEOUT(_overrides?: CallOverrides): Promise<BigNumber>;
   isOwner(_overrides?: CallOverrides): Promise<boolean>;
   lastGoodPrice(_overrides?: CallOverrides): Promise<BigNumber>;
   owner(_overrides?: CallOverrides): Promise<string>;
-  priceAggregator(_overrides?: CallOverrides): Promise<string>;
-  status(_overrides?: CallOverrides): Promise<number>;
-  tellorCaller(_overrides?: CallOverrides): Promise<string>;
 }
 
 interface PriceFeedTransactions {
   fetchPrice(_overrides?: Overrides): Promise<BigNumber>;
-  setAddresses(_priceAggregatorAddress: string, _tellorCallerAddress: string, _overrides?: Overrides): Promise<void>;
+  setAddresses(priceFeedAddresses: string[], _overrides?: Overrides): Promise<void>;
 }
 
 export interface PriceFeed
@@ -569,11 +559,13 @@ export interface PriceFeed
   readonly filters: {
     LastGoodPriceUpdated(_lastGoodPrice?: null): EventFilter;
     OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): EventFilter;
-    PriceFeedStatusChanged(newStatus?: null): EventFilter;
+    PriceFeedBroken(index?: null, priceFeedAddress?: null): EventFilter;
+    PriceFeedUpdated(index?: null, newPriceFeedAddress?: null): EventFilter;
   };
   extractEvents(logs: Log[], name: "LastGoodPriceUpdated"): _TypedLogDescription<{ _lastGoodPrice: BigNumber }>[];
   extractEvents(logs: Log[], name: "OwnershipTransferred"): _TypedLogDescription<{ previousOwner: string; newOwner: string }>[];
-  extractEvents(logs: Log[], name: "PriceFeedStatusChanged"): _TypedLogDescription<{ newStatus: number }>[];
+  extractEvents(logs: Log[], name: "PriceFeedBroken"): _TypedLogDescription<{ index: number; priceFeedAddress: string }>[];
+  extractEvents(logs: Log[], name: "PriceFeedUpdated"): _TypedLogDescription<{ index: number; newPriceFeedAddress: string }>[];
 }
 
 interface PriceFeedTestnetCalls {
