@@ -54,14 +54,27 @@ module.exports = {
             runs: 100,
           },
         },
-      },
-      {
-        version: "0.5.17",
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 100,
-          },
+        // mainnet: {
+        //     url: alchemyUrl(),
+        //     gasPrice: 150000000000,
+        //     accounts: [
+        //         getSecret('DEPLOYER_PRIVATEKEY', '0x60ddfe7f579ab6867cbe7a2dc03853dc141d7a4ab6dbefc0dae2d2b1bd4e487f'),
+        //         getSecret('ACCOUNT2_PRIVATEKEY', '0x3ec7cedbafd0cb9ec05bf9f7ccfa1e8b42b3e3a02c75addfccbfeb328d1b383b')
+        //     ]
+        // },
+        testnet: {
+          chainId: 31,
+          url: "https://public-node.testnet.rsk.co/",
+          accounts: [
+            getSecret(
+              "DEPLOYER_PRIVATEKEY",
+              "317b799b347a0e3a2b233bf1dfaf3fb90de3f516108165a87f8f1ac5648b2348"
+            ),
+            getSecret(
+              "ACCOUNT2_PRIVATEKEY",
+              "317b799b347a0e3a2b233bf1dfaf3fb90de3f516108165a87f8f1ac5648b2348"
+            ),
+          ],
         },
       },
       {
