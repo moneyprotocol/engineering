@@ -1,9 +1,9 @@
-# Liquity System Summary
+# Money Protocol System Summary
 
 ![Tests](https://github.com/liquity/dev/workflows/CI/badge.svg) [![Frontend status](https://img.shields.io/uptimerobot/status/m785036778-7edf816c69dafd2d19c45491?label=Frontend&logo=nginx&logoColor=white)](https://devui.liquity.org/internal) ![uptime](https://img.shields.io/uptimerobot/ratio/7/m785036778-7edf816c69dafd2d19c45491) [![Discord](https://img.shields.io/discord/700620821198143498?label=join%20chat&logo=discord&logoColor=white)](https://discord.gg/2up5U32) [![Docker Pulls](https://img.shields.io/docker/pulls/liquity/dev-frontend?label=dev-frontend%20pulls&logo=docker&logoColor=white)](https://hub.docker.com/r/liquity/dev-frontend)
 
 - [Disclaimer](#disclaimer)
-- [Liquity System Summary](#liquity-system-summary)
+- [Money Protocol System Summary](#mp-system-summary)
   - [Liquity Overview](#liquity-overview)
   - [Liquidation and the Stability Pool](#liquidation-and-the-stability-pool)
     - [Liquidation gas costs](#liquidation-gas-costs)
@@ -102,9 +102,9 @@
       - [Build dev-frontend for production](#build-dev-frontend-for-production)
 
 
-## Liquity Overview
+## Money Protocol Overview
 
-Liquity is a collateralized debt platform. Users can lock up Ether, and issue stablecoin tokens (LUSD) to their own Ethereum address, and subsequently transfer those tokens to any other Ethereum address. The individual collateralized debt positions are called Troves.
+Money Protocol is a collateralized debt platform. Users can lock up RBTC, and issue stablecoin tokens BPD to their own RSK address, and subsequently transfer those tokens to any other Ethereum address. The individual collateralized debt positions are called Troves.
 
 The stablecoin tokens are economically geared towards maintaining value of 1 LUSD = \$1 USD, due to the following properties:
 

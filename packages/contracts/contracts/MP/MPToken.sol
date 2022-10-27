@@ -24,17 +24,17 @@ import "../Dependencies/console.sol";
 *
 * 2) sendToMPStaking(): callable only by Moneyp core contracts, which move MP tokens from user -> MPStaking contract.
 *
-* 3) Supply hard-capped at 100 million
+* 3) Supply hard-capped at 500 million
 *
 * 4) CommunityIssuance and LockupContractFactory addresses are set at deployment
 *
-* 5) The bug bounties / hackathons allocation of 2 million tokens is minted at deployment to an EOA
+* 5) The bug bounties / hackathons allocation of 10,481,586 tokens is minted at deployment to an EOA
 
-* 6) 32 million tokens are minted at deployment to the CommunityIssuance contract
+* 6) 167,705,382 tokens are minted at deployment to the CommunityIssuance contract
 *
-* 7) The LP rewards allocation of (1 + 1/3) million tokens is minted at deployent to a Staking contract
+* 7) The LP rewards allocation of 6,987,723 million tokens is minted at deployent to a Staking contract
 *
-* 8) (64 + 2/3) million tokens are minted at deployment to the Moneyp multisig
+* 8) 314,825,309 tokens are minted at deployment to the Moneyp multisig
 *
 * 9) Until one year from deployment:
 * -Moneyp multisig may only transfer() tokens to LockupContracts that have been deployed via & registered in the 
@@ -145,7 +145,7 @@ contract MPToken is CheckContract, IMPToken {
         lpRewardsEntitlement = _lpRewardsEntitlement;
         _mint(_lpRewardsAddress, _lpRewardsEntitlement);
         
-        // Allocate the remainder to the MP Multisig: (500 - 2 - 32 - 1.33) million = 64.66 million
+        // Allocate the remainder to the MP Multisig: 500,000,000 - 10,481,586 - 167,705,382 - 6,987,723 = 314,825,309
         uint multisigEntitlement = _1_MILLION.mul(500)
             .sub(bountyEntitlement)
             .sub(depositorsAndFrontEndsEntitlement)
