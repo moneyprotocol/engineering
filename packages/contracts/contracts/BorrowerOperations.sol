@@ -111,7 +111,7 @@ contract BorrowerOperations is MoneypBase, Ownable, CheckContract, IBorrowerOper
         override
         onlyOwner
     {
-        // This makes impossible to open a vault with zero withdrawn BPD
+        // This makes it impossible to open a vault with zero withdrawn BPD
         assert(MIN_NET_DEBT > 0);
 
         checkContract(_vaultManagerAddress);

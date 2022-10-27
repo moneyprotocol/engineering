@@ -22,7 +22,7 @@ contract MPStaking is IMPStaking, Ownable, CheckContract, BaseMath {
     uint public totalMPStaked;
 
     uint public F_RBTC;  // Running sum of RBTC fees per-MP-staked
-    uint public F_BPD; // Running sum of MP fees per-MP-staked
+    uint public F_BPD; // Running sum of BPD fees per-MP-staked
 
     // User snapshots of F_RBTC and F_BPD, taken at the point at which their latest deposit was made
     mapping (address => Snapshot) public snapshots; 
