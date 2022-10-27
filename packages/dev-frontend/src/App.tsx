@@ -62,7 +62,7 @@ const App = () => {
       <Heading sx={{ mb: 3 }}>
         Moneyp is not yet deployed to {chainId === 1 ? "mainnet" : "this network"}.
       </Heading>
-      Please switch to Ropsten, Rinkeby, Kovan, RSK Testnet or Görli.
+      Please switch to RSK Testnet.
     </Flex>
   );
 
