@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
   "contractName": "LPTokenWrapper",
-  "sourceName": "contracts/LPRewards/Unipool.sol",
+  "sourceName": "contracts/LPRewards/RskSwapPool.sol",
   "abi": [
     {
       "inputs": [
@@ -50,7 +50,7 @@
     },
     {
       "inputs": [],
-      "name": "uniToken",
+      "name": "rskSwapToken",
       "outputs": [
         {
           "internalType": "contract IERC20",

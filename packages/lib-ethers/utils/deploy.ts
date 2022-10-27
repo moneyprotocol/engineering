@@ -2,7 +2,7 @@ import { Signer } from "@ethersproject/abstract-signer";
 import { ContractTransaction, ContractFactory, Overrides } from "@ethersproject/contracts";
 import { Wallet } from "@ethersproject/wallet";
 
-import { Decimal } from "@liquity/lib-base";
+import { Decimal } from "@moneyprotocol/lib-base";
 
 import {
   _MoneypContractAddresses,
@@ -57,7 +57,7 @@ const deployContracts = async (
   getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
   priceFeedIsTestnet = true,
   overrides?: Overrides
-): Promise<Omit<_MoneypContractAddresses, "uniToken">> => {
+): Promise<Omit<_MoneypContractAddresses, "rskSwapToken">> => {
   const addresses = {
     activePool: await deployContract(deployer, getContractFactory, "ActivePool", { ...overrides }),
     borrowerOperations: await deployContract(deployer, getContractFactory, "BorrowerOperations", {
@@ -96,7 +96,7 @@ const deployContracts = async (
     gasPool: await deployContract(deployer, getContractFactory, "GasPool", {
       ...overrides
     }),
-    unipool: await deployContract(deployer, getContractFactory, "Unipool", { ...overrides })
+    rskSwapPool: await deployContract(deployer, getContractFactory, "RskSwapPool", { ...overrides })
   };
 
   return {
@@ -119,7 +119,7 @@ const deployContracts = async (
       addresses.mpStaking,
       addresses.lockupContractFactory,
       Wallet.createRandom().address, // _bountyAddress (TODO: parameterize this)
-      addresses.unipool, // _lpRewardsAddress
+      addresses.rskSwapPool, // _lpRewardsAddress
       Wallet.createRandom().address, // _multisigAddress (TODO: parameterize this)
       { ...overrides }
     ),
@@ -160,8 +160,8 @@ const connectContracts = async (
     sortedVaults,
     stabilityPool,
     gasPool,
-    unipool,
-    uniToken
+    rskSwapPool,
+    rskSwapToken
   }: _MoneypContracts,
   deployer: Signer,
   overrides?: Overrides
@@ -274,7 +274,7 @@ const connectContracts = async (
       }),
 
     nonce =>
-      unipool.setParams(mpToken.address, uniToken.address, 2 * 30 * 24 * 60 * 60, {
+      rskSwapPool.setParams(mpToken.address, rskSwapToken.address, 2 * 30 * 24 * 60 * 60, {
         ...overrides,
         nonce
       })
@@ -291,7 +291,7 @@ const connectContracts = async (
   }
 };
 
-const deployMockUniToken = (
+const deployMockRskSwapToken = (
   deployer: Signer,
   getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
   overrides?: Overrides
@@ -312,7 +312,7 @@ export const deployAndSetupContracts = async (
   getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
   _priceFeedIsTestnet = true,
   _isDev = true,
-  wethAddress?: string,
+  wrbtcAddress?: string,
   overrides?: Overrides
 ): Promise<_MoneypDeploymentJSON> => {
   if (!deployer.provider) {
@@ -321,7 +321,7 @@ export const deployAndSetupContracts = async (
 
   log("Deploying contracts...");
   log();
-  log(`wethAddress: ${wethAddress}`);
+  log(`wrbtcAddress: ${wrbtcAddress}`);
 
   const deployment: _MoneypDeploymentJSON = {
     chainId: await deployer.getChainId(),
@@ -330,7 +330,7 @@ export const deployAndSetupContracts = async (
     bootstrapPeriod: 0,
     totalStabilityPoolMPReward: "0",
     _priceFeedIsTestnet,
-    _rskSwapTokenIsMock: !wethAddress,
+    _rskSwapTokenIsMock: !wrbtcAddress,
     _isDev,
 
     addresses: await deployContracts(
@@ -341,9 +341,9 @@ export const deployAndSetupContracts = async (
     ).then(async addresses => ({
       ...addresses,
 
-      uniToken: await (wethAddress
-        ? createUniswapV2Pair(deployer, wethAddress, addresses.bpdToken)
-        : deployMockUniToken(deployer, getContractFactory, overrides))
+      rskSwapToken: await (wrbtcAddress
+        ? createUniswapV2Pair(deployer, wrbtcAddress, addresses.bpdToken)
+        : deployMockRskSwapToken(deployer, getContractFactory, overrides))
     }))
   };
 

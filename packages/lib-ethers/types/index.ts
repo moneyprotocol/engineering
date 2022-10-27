@@ -878,7 +878,7 @@ export interface VaultManager
   extractEvents(logs: Log[], name: "VaultUpdated"): _TypedLogDescription<{ _borrower: string; _debt: BigNumber; _coll: BigNumber; _stake: BigNumber; _operation: number }>[];
 }
 
-interface UnipoolCalls {
+interface RskSwapPoolCalls {
   NAME(_overrides?: CallOverrides): Promise<string>;
   balanceOf(account: string, _overrides?: CallOverrides): Promise<BigNumber>;
   duration(_overrides?: CallOverrides): Promise<BigNumber>;
@@ -893,35 +893,35 @@ interface UnipoolCalls {
   rewardPerTokenStored(_overrides?: CallOverrides): Promise<BigNumber>;
   rewardRate(_overrides?: CallOverrides): Promise<BigNumber>;
   rewards(arg0: string, _overrides?: CallOverrides): Promise<BigNumber>;
+  rskSwapToken(_overrides?: CallOverrides): Promise<string>;
   totalSupply(_overrides?: CallOverrides): Promise<BigNumber>;
-  uniToken(_overrides?: CallOverrides): Promise<string>;
   userRewardPerTokenPaid(arg0: string, _overrides?: CallOverrides): Promise<BigNumber>;
 }
 
-interface UnipoolTransactions {
+interface RskSwapPoolTransactions {
   claimReward(_overrides?: Overrides): Promise<void>;
-  setParams(_mpTokenAddress: string, _uniTokenAddress: string, _duration: BigNumberish, _overrides?: Overrides): Promise<void>;
+  setParams(_mpTokenAddress: string, _rskSwapTokenAddress: string, _duration: BigNumberish, _overrides?: Overrides): Promise<void>;
   stake(amount: BigNumberish, _overrides?: Overrides): Promise<void>;
   withdraw(amount: BigNumberish, _overrides?: Overrides): Promise<void>;
   withdrawAndClaim(_overrides?: Overrides): Promise<void>;
 }
 
-export interface Unipool
-  extends _TypedMoneypContract<UnipoolCalls, UnipoolTransactions> {
+export interface RskSwapPool
+  extends _TypedMoneypContract<RskSwapPoolCalls, RskSwapPoolTransactions> {
   readonly filters: {
     MPTokenAddressChanged(_mpTokenAddress?: null): EventFilter;
     OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): EventFilter;
     RewardAdded(reward?: null): EventFilter;
     RewardPaid(user?: string | null, reward?: null): EventFilter;
+    RskSwapTokenAddressChanged(_rskSwapTokenAddress?: null): EventFilter;
     Staked(user?: string | null, amount?: null): EventFilter;
-    UniTokenAddressChanged(_uniTokenAddress?: null): EventFilter;
     Withdrawn(user?: string | null, amount?: null): EventFilter;
   };
   extractEvents(logs: Log[], name: "MPTokenAddressChanged"): _TypedLogDescription<{ _mpTokenAddress: string }>[];
   extractEvents(logs: Log[], name: "OwnershipTransferred"): _TypedLogDescription<{ previousOwner: string; newOwner: string }>[];
   extractEvents(logs: Log[], name: "RewardAdded"): _TypedLogDescription<{ reward: BigNumber }>[];
   extractEvents(logs: Log[], name: "RewardPaid"): _TypedLogDescription<{ user: string; reward: BigNumber }>[];
+  extractEvents(logs: Log[], name: "RskSwapTokenAddressChanged"): _TypedLogDescription<{ _rskSwapTokenAddress: string }>[];
   extractEvents(logs: Log[], name: "Staked"): _TypedLogDescription<{ user: string; amount: BigNumber }>[];
-  extractEvents(logs: Log[], name: "UniTokenAddressChanged"): _TypedLogDescription<{ _uniTokenAddress: string }>[];
   extractEvents(logs: Log[], name: "Withdrawn"): _TypedLogDescription<{ user: string; amount: BigNumber }>[];
 }

@@ -1,4 +1,3 @@
-
 // const PriceFeed = artifacts.require("./PriceFeedTester.sol")
 // const PriceFeedTestnet = artifacts.require("./PriceFeedTestnet.sol")
 // const MockChainlink = artifacts.require("./MockAggregator.sol")
@@ -259,6 +258,7 @@
 //     await setAddresses()
 //     const statusBefore = await priceFeed.status()
 //     assert.equal(statusBefore, '0') // status 0: Chainlink working
+
 
 //     await mockChainlink.setPrevPrice(dec(999, 8))
 //     await mockChainlink.setPrice(dec(999, 8))

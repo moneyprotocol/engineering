@@ -17,7 +17,7 @@ import {
  * A transaction that has been prepared for sending.
  *
  * @remarks
- * Implemented by {@link @liquity/lib-ethers#PopulatedBitcoinsMoneypTransaction}.
+ * Implemented by {@link @moneyprotocol/lib-ethers#PopulatedBitcoinsMoneypTransaction}.
  *
  * @public
  */
@@ -31,7 +31,7 @@ export interface PopulatedMoneypTransaction<
   /**
    * Send the transaction.
    *
-   * @returns An object that implements {@link @liquity/lib-base#SentMoneypTransaction}.
+   * @returns An object that implements {@link @moneyprotocol/lib-base#SentMoneypTransaction}.
    */
   send(): Promise<T>;
 }
@@ -42,16 +42,16 @@ export interface PopulatedMoneypTransaction<
  * @remarks
  * The Moneyp protocol fulfills redemptions by repaying the debt of Vaults in ascending order of
  * their collateralization ratio, and taking a portion of their collateral in exchange. Due to the
- * {@link @liquity/lib-base#BPD_MINIMUM_DEBT | minimum debt} requirement that Vaults must fulfill,
+ * {@link @moneyprotocol/lib-base#BPD_MINIMUM_DEBT | minimum debt} requirement that Vaults must fulfill,
  * some BPD amounts are not possible to redeem exactly.
  *
- * When {@link @liquity/lib-base#PopulatableMoneyp.redeemBPD | redeemBPD()} is called with an
+ * When {@link @moneyprotocol/lib-base#PopulatableMoneyp.redeemBPD | redeemBPD()} is called with an
  * amount that can't be fully redeemed, the amount will be truncated (see the `redeemableBPDAmount`
  * property). When this happens, the redeemer can either redeem the truncated amount by sending the
  * transaction unchanged, or prepare a new transaction by
- * {@link @liquity/lib-base#PopulatedRedemption.increaseAmountByMinimumNetDebt | increasing the amount}
+ * {@link @moneyprotocol/lib-base#PopulatedRedemption.increaseAmountByMinimumNetDebt | increasing the amount}
  * to the next lowest possible value, which is the sum of the truncated amount and
- * {@link @liquity/lib-base#BPD_MINIMUM_NET_DEBT}.
+ * {@link @moneyprotocol/lib-base#BPD_MINIMUM_NET_DEBT}.
  *
  * @public
  */
@@ -74,7 +74,7 @@ export interface PopulatedRedemption<P = unknown, S = unknown, R = unknown>
    * value.
    *
    * @param maxRedemptionRate - Maximum acceptable
-   *                            {@link @liquity/lib-base#Fees.redemptionRate | redemption rate} to
+   *                            {@link @moneyprotocol/lib-base#Fees.redemptionRate | redemption rate} to
    *                            use in the new transaction.
    *
    * @remarks
@@ -103,7 +103,7 @@ export type _PopulatableFrom<T, P> = {
  * The functions return an object implementing {@link PopulatedMoneypTransaction}, which can be
  * used to send the transaction and get a {@link SentMoneypTransaction}.
  *
- * Implemented by {@link @liquity/lib-ethers#PopulatableBitcoinsMoneyp}.
+ * Implemented by {@link @moneyprotocol/lib-ethers#PopulatableBitcoinsMoneyp}.
  *
  * @public
  */
@@ -273,18 +273,18 @@ export interface PopulatableMoneyp<R = unknown, S = unknown, P = unknown>
     PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>
   >;
 
-  /** {@inheritDoc TransactableMoneyp.approveUniTokens} */
-  approveUniTokens(
+  /** {@inheritDoc TransactableMoneyp.approveRskSwapTokens} */
+  approveRskSwapTokens(
     allowance?: Decimalish
   ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
 
-  /** {@inheritDoc TransactableMoneyp.stakeUniTokens} */
-  stakeUniTokens(
+  /** {@inheritDoc TransactableMoneyp.stakeRskSwapTokens} */
+  stakeRskSwapTokens(
     amount: Decimalish
   ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
 
-  /** {@inheritDoc TransactableMoneyp.unstakeUniTokens} */
-  unstakeUniTokens(
+  /** {@inheritDoc TransactableMoneyp.unstakeRskSwapTokens} */
+  unstakeRskSwapTokens(
     amount: Decimalish
   ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
 

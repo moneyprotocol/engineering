@@ -31,7 +31,7 @@ import {
   _normalizeVaultCreation,
   _pendingReceipt,
   _successfulReceipt
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import {
   BitcoinsPopulatedTransaction,
@@ -75,7 +75,7 @@ const addGasForPotentialListTraversal = (gas: BigNumber) => gas.add(25000);
 
 const addGasForMPIssuance = (gas: BigNumber) => gas.add(50000);
 
-const addGasForUnipoolRewardUpdate = (gas: BigNumber) => gas.add(20000);
+const addGasForRskSwapPoolRewardUpdate = (gas: BigNumber) => gas.add(20000);
 
 // To get the best entropy available, we'd do something like:
 //
@@ -149,14 +149,14 @@ export class SentBitcoinsMoneypTransaction<T = unknown>
       : _pendingReceipt;
   }
 
-  /** {@inheritDoc @liquity/lib-base#SentMoneypTransaction.getReceipt} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SentMoneypTransaction.getReceipt} */
   async getReceipt(): Promise<MoneypReceipt<BitcoinsTransactionReceipt, T>> {
     return this._receiptFrom(
       await _getProvider(this._connection).getTransactionReceipt(this.rawSentTransaction.hash)
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#SentMoneypTransaction.waitForReceipt} */
+  /** {@inheritDoc @moneyprotocol/lib-base#SentMoneypTransaction.waitForReceipt} */
   async waitForReceipt(): Promise<MinedReceipt<BitcoinsTransactionReceipt, T>> {
     const receipt = this._receiptFrom(
       await _getProvider(this._connection).waitForTransaction(this.rawSentTransaction.hash)
@@ -195,7 +195,7 @@ export class PopulatedBitcoinsMoneypTransaction<T = unknown>
     this._parse = parse;
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatedMoneypTransaction.send} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatedMoneypTransaction.send} */
   async send(): Promise<SentBitcoinsMoneypTransaction<T>> {
     return new SentBitcoinsMoneypTransaction(
       await _requireSigner(this._connection).sendTransaction(this.rawPopulatedTransaction),
@@ -206,7 +206,7 @@ export class PopulatedBitcoinsMoneypTransaction<T = unknown>
 }
 
 /**
- * {@inheritDoc @liquity/lib-base#PopulatedRedemption}
+ * {@inheritDoc @moneyprotocol/lib-base#PopulatedRedemption}
  *
  * @public
  */
@@ -218,13 +218,13 @@ export class PopulatedBitcoinsRedemption
       BitcoinsTransactionResponse,
       BitcoinsTransactionReceipt
     > {
-  /** {@inheritDoc @liquity/lib-base#PopulatedRedemption.attemptedBPDAmount} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatedRedemption.attemptedBPDAmount} */
   readonly attemptedBPDAmount: Decimal;
 
-  /** {@inheritDoc @liquity/lib-base#PopulatedRedemption.redeemableBPDAmount} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatedRedemption.redeemableBPDAmount} */
   readonly redeemableBPDAmount: Decimal;
 
-  /** {@inheritDoc @liquity/lib-base#PopulatedRedemption.isTruncated} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatedRedemption.isTruncated} */
   readonly isTruncated: boolean;
 
   private readonly _increaseAmountByMinimumNetDebt?: (
@@ -264,7 +264,7 @@ export class PopulatedBitcoinsRedemption
     this._increaseAmountByMinimumNetDebt = increaseAmountByMinimumNetDebt;
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatedRedemption.increaseAmountByMinimumNetDebt} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatedRedemption.increaseAmountByMinimumNetDebt} */
   increaseAmountByMinimumNetDebt(
     maxRedemptionRate?: Decimalish
   ): Promise<PopulatedBitcoinsRedemption> {
@@ -287,7 +287,7 @@ export interface _VaultChangeWithFees<T> {
 }
 
 /**
- * Bitcoins-based implementation of {@link @liquity/lib-base#PopulatableMoneyp}.
+ * Bitcoins-based implementation of {@link @moneyprotocol/lib-base#PopulatableMoneyp}.
  *
  * @public
  */
@@ -588,7 +588,7 @@ export class PopulatableBitcoinsMoneyp
     ];
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.openVault} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.openVault} */
   async openVault(
     params: VaultCreationParams<Decimalish>,
     maxBorrowingRate?: Decimalish,
@@ -620,7 +620,7 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.closeVault} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.closeVault} */
   async closeVault(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<VaultClosureDetails>> {
@@ -631,7 +631,7 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.depositCollateral} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.depositCollateral} */
   depositCollateral(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -639,7 +639,7 @@ export class PopulatableBitcoinsMoneyp
     return this.adjustVault({ depositCollateral: amount }, undefined, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.withdrawCollateral} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.withdrawCollateral} */
   withdrawCollateral(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -647,7 +647,7 @@ export class PopulatableBitcoinsMoneyp
     return this.adjustVault({ withdrawCollateral: amount }, undefined, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.borrowBPD} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.borrowBPD} */
   borrowBPD(
     amount: Decimalish,
     maxBorrowingRate?: Decimalish,
@@ -656,7 +656,7 @@ export class PopulatableBitcoinsMoneyp
     return this.adjustVault({ borrowBPD: amount }, maxBorrowingRate, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.repayBPD} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.repayBPD} */
   repayBPD(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -664,7 +664,7 @@ export class PopulatableBitcoinsMoneyp
     return this.adjustVault({ repayBPD: amount }, undefined, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.adjustVault} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.adjustVault} */
   async adjustVault(
     params: VaultAdjustmentParams<Decimalish>,
     maxBorrowingRate?: Decimalish,
@@ -706,7 +706,7 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.claimCollateralSurplus} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.claimCollateralSurplus} */
   async claimCollateralSurplus(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
@@ -733,7 +733,7 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.liquidate} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.liquidate} */
   async liquidate(
     address: string | string[],
     overrides?: BitcoinsTransactionOverrides
@@ -759,7 +759,7 @@ export class PopulatableBitcoinsMoneyp
     }
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.liquidateUpTo} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.liquidateUpTo} */
   async liquidateUpTo(
     maximumNumberOfVaultsToLiquidate: number,
     overrides?: BitcoinsTransactionOverrides
@@ -775,7 +775,7 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.depositBPDInStabilityPool} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.depositBPDInStabilityPool} */
   async depositBPDInStabilityPool(
     amount: Decimalish,
     frontendTag?: string,
@@ -795,7 +795,7 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.withdrawBPDFromStabilityPool} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.withdrawBPDFromStabilityPool} */
   async withdrawBPDFromStabilityPool(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -811,7 +811,7 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.withdrawGainsFromStabilityPool} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.withdrawGainsFromStabilityPool} */
   async withdrawGainsFromStabilityPool(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<StabilityPoolGainsWithdrawalDetails>> {
@@ -826,7 +826,7 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.transferCollateralGainToVault} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.transferCollateralGainToVault} */
   async transferCollateralGainToVault(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<CollateralGainTransferDetails>> {
@@ -849,7 +849,7 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.sendBPD} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.sendBPD} */
   async sendBPD(
     toAddress: string,
     amount: Decimalish,
@@ -867,7 +867,7 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.sendMP} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.sendMP} */
   async sendMP(
     toAddress: string,
     amount: Decimalish,
@@ -885,7 +885,7 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.redeemBPD} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.redeemBPD} */
   async redeemBPD(
     amount: Decimalish,
     maxRedemptionRate?: Decimalish,
@@ -955,7 +955,7 @@ export class PopulatableBitcoinsMoneyp
     return populateRedemption(attemptedBPDAmount, maxRedemptionRate, truncatedAmount, partialHints);
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.stakeMP} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.stakeMP} */
   async stakeMP(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -967,7 +967,7 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.unstakeMP} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.unstakeMP} */
   async unstakeMP(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -979,14 +979,14 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.withdrawGainsFromStaking} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.withdrawGainsFromStaking} */
   withdrawGainsFromStaking(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     return this.unstakeMP(Decimal.ZERO, overrides);
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.registerFrontend} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.registerFrontend} */
   async registerFrontend(
     kickbackRate: Decimalish,
     overrides?: BitcoinsTransactionOverrides
@@ -1003,20 +1003,20 @@ export class PopulatableBitcoinsMoneyp
   }
 
   /** @internal */
-  async _mintUniToken(
+  async _mintRskSwapToken(
     amount: Decimalish,
     address?: string,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
     address ??= _requireAddress(this._readable.connection, overrides);
-    const { uniToken } = _getContracts(this._readable.connection);
+    const { rskSwapToken } = _getContracts(this._readable.connection);
 
-    if (!_rskSwapTokenIsMock(uniToken)) {
-      throw new Error("_mintUniToken() unavailable on this deployment of Moneyp");
+    if (!_rskSwapTokenIsMock(rskSwapToken)) {
+      throw new Error("_mintRskSwapToken() unavailable on this deployment of Moneyp");
     }
 
     return this._wrapSimpleTransaction(
-      await uniToken.estimateAndPopulate.mint(
+      await rskSwapToken.estimateAndPopulate.mint(
         { ...overrides },
         id,
         address,
@@ -1025,76 +1025,76 @@ export class PopulatableBitcoinsMoneyp
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.approveUniTokens} */
-  async approveUniTokens(
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.approveRskSwapTokens} */
+  async approveRskSwapTokens(
     allowance?: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { uniToken, unipool } = _getContracts(this._readable.connection);
+    const { rskSwapToken, rskSwapPool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
-      await uniToken.estimateAndPopulate.approve(
+      await rskSwapToken.estimateAndPopulate.approve(
         { ...overrides },
         id,
-        unipool.address,
+        rskSwapPool.address,
         Decimal.from(allowance ?? Decimal.INFINITY).hex
       )
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.stakeUniTokens} */
-  async stakeUniTokens(
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.stakeRskSwapTokens} */
+  async stakeRskSwapTokens(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { unipool } = _getContracts(this._readable.connection);
+    const { rskSwapPool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
-      await unipool.estimateAndPopulate.stake(
+      await rskSwapPool.estimateAndPopulate.stake(
         { ...overrides },
-        addGasForUnipoolRewardUpdate,
+        addGasForRskSwapPoolRewardUpdate,
         Decimal.from(amount).hex
       )
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.unstakeUniTokens} */
-  async unstakeUniTokens(
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.unstakeRskSwapTokens} */
+  async unstakeRskSwapTokens(
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { unipool } = _getContracts(this._readable.connection);
+    const { rskSwapPool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
-      await unipool.estimateAndPopulate.withdraw(
+      await rskSwapPool.estimateAndPopulate.withdraw(
         { ...overrides },
-        addGasForUnipoolRewardUpdate,
+        addGasForRskSwapPoolRewardUpdate,
         Decimal.from(amount).hex
       )
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.withdrawMPRewardFromLiquidityMining} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.withdrawMPRewardFromLiquidityMining} */
   async withdrawMPRewardFromLiquidityMining(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { unipool } = _getContracts(this._readable.connection);
+    const { rskSwapPool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
-      await unipool.estimateAndPopulate.claimReward({ ...overrides }, addGasForUnipoolRewardUpdate)
+      await rskSwapPool.estimateAndPopulate.claimReward({ ...overrides }, addGasForRskSwapPoolRewardUpdate)
     );
   }
 
-  /** {@inheritDoc @liquity/lib-base#PopulatableMoneyp.exitLiquidityMining} */
+  /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.exitLiquidityMining} */
   async exitLiquidityMining(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { unipool } = _getContracts(this._readable.connection);
+    const { rskSwapPool } = _getContracts(this._readable.connection);
 
     return this._wrapSimpleTransaction(
-      await unipool.estimateAndPopulate.withdrawAndClaim(
+      await rskSwapPool.estimateAndPopulate.withdrawAndClaim(
         { ...overrides },
-        addGasForUnipoolRewardUpdate
+        addGasForRskSwapPoolRewardUpdate
       )
     );
   }
