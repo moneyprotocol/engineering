@@ -17,7 +17,7 @@ import {
  * A transaction that has already been sent.
  *
  * @remarks
- * Implemented by {@link @liquity/lib-ethers#SentBitcoinsMoneypTransaction}.
+ * Implemented by {@link @moneyprotocol/lib-ethers#SentBitcoinsMoneypTransaction}.
  *
  * @public
  */
@@ -29,7 +29,7 @@ export interface SentMoneypTransaction<S = unknown, T extends MoneypReceipt = Mo
    * Check whether the transaction has been mined, and whether it was successful.
    *
    * @remarks
-   * Unlike {@link @liquity/lib-base#SentMoneypTransaction.waitForReceipt | waitForReceipt()},
+   * Unlike {@link @moneyprotocol/lib-base#SentMoneypTransaction.waitForReceipt | waitForReceipt()},
    * this function doesn't wait for the transaction to be mined.
    */
   getReceipt(): Promise<T>;
@@ -37,8 +37,8 @@ export interface SentMoneypTransaction<S = unknown, T extends MoneypReceipt = Mo
   /**
    * Wait for the transaction to be mined, and check whether it was successful.
    *
-   * @returns Either a {@link @liquity/lib-base#FailedReceipt} or a
-   *          {@link @liquity/lib-base#SuccessfulReceipt}.
+   * @returns Either a {@link @moneyprotocol/lib-base#FailedReceipt} or a
+   *          {@link @moneyprotocol/lib-base#SuccessfulReceipt}.
    */
   waitForReceipt(): Promise<Extract<T, MinedReceipt>>;
 }
@@ -136,7 +136,7 @@ export type _SendableFrom<T, R, S> = {
  * The functions return an object implementing {@link SentMoneypTransaction}, which can be used
  * to monitor the transaction and get its details when it succeeds.
  *
- * Implemented by {@link @liquity/lib-ethers#SendableBitcoinsMoneyp}.
+ * Implemented by {@link @moneyprotocol/lib-ethers#SendableBitcoinsMoneyp}.
  *
  * @public
  */

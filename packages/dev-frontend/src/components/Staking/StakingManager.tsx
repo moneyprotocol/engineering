@@ -7,7 +7,7 @@ import {
   MoneypStoreState,
   MPStake,
   MPStakeChange
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import { MoneypStoreUpdate, useMoneypReducer, useMoneypSelector } from "@liquity/lib-react";
 
