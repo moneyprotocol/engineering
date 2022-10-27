@@ -83,8 +83,8 @@ module.exports = {
             chainId: 31,
             url: 'https://public-node.testnet.rsk.co/',
             accounts: [
-              getSecret('DEPLOYER_PRIVATEKEY'),
-              getSecret('ACCOUNT2_PRIVATEKEY')
+              getSecret('DEPLOYER_PRIVATEKEY', '317b799b347a0e3a2b233bf1dfaf3fb90de3f516108165a87f8f1ac5648b2348'),
+              getSecret('ACCOUNT2_PRIVATEKEY', '317b799b347a0e3a2b233bf1dfaf3fb90de3f516108165a87f8f1ac5648b2348')
           ]
         },
     },
