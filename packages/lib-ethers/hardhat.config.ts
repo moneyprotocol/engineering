@@ -78,9 +78,12 @@ try {
 const oracleAddresses = {
   mainnet: {
     moc: "0xb9C42EFc8ec54490a37cA91c423F7285Fa01e257",
+    // [MP] TODO: change this to mainnet oracle address
+    rsk: "0x97a9100de6fcabebe75fa5c8ef88c55b232f73f1"
   },
   testnet: {
-    moc: '0x0adb40132cB0ffcEf6ED81c26A1881e214100555',
+    moc: '0x97a9100de6fcabebe75fa5c8ef88c55b232f73f1',
+    rsk: "0x97a9100de6fcabebe75fa5c8ef88c55b232f73f1"
   }
 };
 
@@ -247,21 +250,23 @@ task("deploy", "Deploys the contracts to the network")
         assert(!_priceFeedIsTestnet(contracts.priceFeed));
 
         if (hasOracles(env.network.name)) {
-          const tellorCallerAddress = await deployTellorCaller(
-            deployer,
-            getContractFactory(env),
-            oracleAddresses[env.network.name].moc,
-            overrides
-          );
+          // [MP] TODO: check if we need to deploy caller contract
+          // const rskCallerAddress = await deployTellorCaller(
+          //   deployer,
+          //   getContractFactory(env),
+          //   oracleAddresses[env.network.name].rsk,
+          //   overrides
+          // );
 
           console.log(`Hooking up PriceFeed with oracles ...`);
 
           const tx = await contracts.priceFeed.setAddresses(
-            oracleAddresses[env.network.name].moc,
+            [oracleAddresses[env.network.name].moc,
+            oracleAddresses[env.network.name].rsk],
             overrides
           );
 
-          console.log(`Setting pricefeed address: ${oracleAddresses[env.network.name].moc}`);
+          console.log(`Setting pricefeed address: moc[${oracleAddresses[env.network.name].moc}], rsk[${oracleAddresses[env.network.name].rsk}]`);
 
           await tx.wait();
         }
