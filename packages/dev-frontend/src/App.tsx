@@ -2,7 +2,7 @@ import React from "react";
 import { Web3ReactProvider } from "@web3-react/core";
 import { Flex, Spinner, Heading, ThemeProvider } from "theme-ui";
 
-import { BatchedWebSocketAugmentedWeb3Provider } from "@liquity/providers";
+import { BatchedWebSocketAugmentedWeb3Provider } from "@moneyprotocol/providers";
 import { MoneypProvider } from "./hooks/MoneypContext";
 import { WalletConnector } from "./components/WalletConnector";
 import { TransactionProvider } from "./components/Transaction";

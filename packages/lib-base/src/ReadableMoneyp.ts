@@ -48,7 +48,7 @@ export interface VaultListingParams {
  * Read the state of the Moneyp protocol.
  *
  * @remarks
- * Implemented by {@link @liquity/lib-ethers#BitcoinsMoneyp}.
+ * Implemented by {@link @moneyprotocol/lib-ethers#BitcoinsMoneyp}.
  *
  * @public
  */
@@ -57,7 +57,7 @@ export interface ReadableMoneyp {
    * Get the total collateral and debt per stake that has been liquidated through redistribution.
    *
    * @remarks
-   * Needed when dealing with instances of {@link @liquity/lib-base#VaultWithPendingRedistribution}.
+   * Needed when dealing with instances of {@link @moneyprotocol/lib-base#VaultWithPendingRedistribution}.
    */
   getTotalRedistributed(): Promise<Vault>;
 
@@ -68,7 +68,7 @@ export interface ReadableMoneyp {
    *
    * @remarks
    * The current state of a Vault can be fetched using
-   * {@link @liquity/lib-base#ReadableMoneyp.getVault | getVault()}.
+   * {@link @moneyprotocol/lib-base#ReadableMoneyp.getVault | getVault()}.
    */
   getVaultBeforeRedistribution(address?: string): Promise<VaultWithPendingRedistribution>;
 
@@ -170,7 +170,7 @@ export interface ReadableMoneyp {
    * When a Vault gets liquidated or redeemed, any collateral it has above 110% (in case of
    * liquidation) or 100% collateralization (in case of redemption) gets sent to a pool, where it
    * can be withdrawn from using
-   * {@link @liquity/lib-base#TransactableMoneyp.claimCollateralSurplus | claimCollateralSurplus()}.
+   * {@link @moneyprotocol/lib-base#TransactableMoneyp.claimCollateralSurplus | claimCollateralSurplus()}.
    */
   getCollateralSurplusBalance(address?: string): Promise<Decimal>;
 

@@ -161,7 +161,7 @@ export interface CollateralGainTransferDetails extends StabilityPoolGainsWithdra
  * The functions return the details of the transaction (if any), or throw an implementation-specific
  * subclass of {@link TransactionFailedError} in case of transaction failure.
  *
- * Implemented by {@link @liquity/lib-ethers#BitcoinsMoneyp}.
+ * Implemented by {@link @moneyprotocol/lib-ethers#BitcoinsMoneyp}.
  *
  * @public
  */
@@ -171,7 +171,7 @@ export interface TransactableMoneyp {
    *
    * @param params - How much to deposit and borrow.
    * @param maxBorrowingRate - Maximum acceptable
-   *                           {@link @liquity/lib-base#Fees.borrowingRate | borrowing rate}.
+   *                           {@link @moneyprotocol/lib-base#Fees.borrowingRate | borrowing rate}.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -198,7 +198,7 @@ export interface TransactableMoneyp {
    *
    * @param params - Parameters of the adjustment.
    * @param maxBorrowingRate - Maximum acceptable
-   *                           {@link @liquity/lib-base#Fees.borrowingRate | borrowing rate} if
+   *                           {@link @moneyprotocol/lib-base#Fees.borrowingRate | borrowing rate} if
    *                           `params` includes `borrowBPD`.
    *
    * @throws
@@ -206,7 +206,7 @@ export interface TransactableMoneyp {
    *
    * @remarks
    * The transaction will fail if the Vault's debt would fall below
-   * {@link @liquity/lib-base#BPD_MINIMUM_DEBT}.
+   * {@link @moneyprotocol/lib-base#BPD_MINIMUM_DEBT}.
    *
    * If `maxBorrowingRate` is omitted, the current borrowing rate plus 0.5% is used as maximum
    * acceptable rate.
@@ -255,7 +255,7 @@ export interface TransactableMoneyp {
    *
    * @param amount - The amount of BPD to borrow.
    * @param maxBorrowingRate - Maximum acceptable
-   *                           {@link @liquity/lib-base#Fees.borrowingRate | borrowing rate}.
+   *                           {@link @moneyprotocol/lib-base#Fees.borrowingRate | borrowing rate}.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -322,8 +322,8 @@ export interface TransactableMoneyp {
    * The `frontendTag` parameter is only effective when making a new deposit.
    *
    * As a side-effect, the transaction will also pay out an existing Stability Deposit's
-   * {@link @liquity/lib-base#StabilityDeposit.collateralGain | collateral gain} and
-   * {@link @liquity/lib-base#StabilityDeposit.mpReward | MP reward}.
+   * {@link @moneyprotocol/lib-base#StabilityDeposit.collateralGain | collateral gain} and
+   * {@link @moneyprotocol/lib-base#StabilityDeposit.mpReward | MP reward}.
    */
   depositBPDInStabilityPool(
     amount: Decimalish,
@@ -340,14 +340,14 @@ export interface TransactableMoneyp {
    *
    * @remarks
    * As a side-effect, the transaction will also pay out the Stability Deposit's
-   * {@link @liquity/lib-base#StabilityDeposit.collateralGain | collateral gain} and
-   * {@link @liquity/lib-base#StabilityDeposit.mpReward | MP reward}.
+   * {@link @moneyprotocol/lib-base#StabilityDeposit.collateralGain | collateral gain} and
+   * {@link @moneyprotocol/lib-base#StabilityDeposit.mpReward | MP reward}.
    */
   withdrawBPDFromStabilityPool(amount: Decimalish): Promise<StabilityDepositChangeDetails>;
 
   /**
-   * Withdraw {@link @liquity/lib-base#StabilityDeposit.collateralGain | collateral gain} and
-   * {@link @liquity/lib-base#StabilityDeposit.mpReward | MP reward} from Stability Deposit.
+   * Withdraw {@link @moneyprotocol/lib-base#StabilityDeposit.collateralGain | collateral gain} and
+   * {@link @moneyprotocol/lib-base#StabilityDeposit.mpReward | MP reward} from Stability Deposit.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -355,7 +355,7 @@ export interface TransactableMoneyp {
   withdrawGainsFromStabilityPool(): Promise<StabilityPoolGainsWithdrawalDetails>;
 
   /**
-   * Transfer {@link @liquity/lib-base#StabilityDeposit.collateralGain | collateral gain} from
+   * Transfer {@link @moneyprotocol/lib-base#StabilityDeposit.collateralGain | collateral gain} from
    * Stability Deposit to Vault.
    *
    * @throws
@@ -365,7 +365,7 @@ export interface TransactableMoneyp {
    * The collateral gain is transfered to the Vault as additional collateral.
    *
    * As a side-effect, the transaction will also pay out the Stability Deposit's
-   * {@link @liquity/lib-base#StabilityDeposit.mpReward | MP reward}.
+   * {@link @moneyprotocol/lib-base#StabilityDeposit.mpReward | MP reward}.
    */
   transferCollateralGainToVault(): Promise<CollateralGainTransferDetails>;
 
@@ -396,7 +396,7 @@ export interface TransactableMoneyp {
    *
    * @param amount - Amount of BPD to be redeemed.
    * @param maxRedemptionRate - Maximum acceptable
-   *                            {@link @liquity/lib-base#Fees.redemptionRate | redemption rate}.
+   *                            {@link @moneyprotocol/lib-base#Fees.redemptionRate | redemption rate}.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -411,7 +411,7 @@ export interface TransactableMoneyp {
    * Claim leftover collateral after a liquidation or redemption.
    *
    * @remarks
-   * Use {@link @liquity/lib-base#ReadableMoneyp.getCollateralSurplusBalance | getCollateralSurplusBalance()}
+   * Use {@link @moneyprotocol/lib-base#ReadableMoneyp.getCollateralSurplusBalance | getCollateralSurplusBalance()}
    * to check the amount of collateral available for withdrawal.
    *
    * @throws
@@ -429,8 +429,8 @@ export interface TransactableMoneyp {
    *
    * @remarks
    * As a side-effect, the transaction will also pay out an existing MP stake's
-   * {@link @liquity/lib-base#MPStake.collateralGain | collateral gain} and
-   * {@link @liquity/lib-base#MPStake.bpdGain | BPD gain}.
+   * {@link @moneyprotocol/lib-base#MPStake.collateralGain | collateral gain} and
+   * {@link @moneyprotocol/lib-base#MPStake.bpdGain | BPD gain}.
    */
   stakeMP(amount: Decimalish): Promise<void>;
 
@@ -444,14 +444,14 @@ export interface TransactableMoneyp {
    *
    * @remarks
    * As a side-effect, the transaction will also pay out the MP stake's
-   * {@link @liquity/lib-base#MPStake.collateralGain | collateral gain} and
-   * {@link @liquity/lib-base#MPStake.bpdGain | BPD gain}.
+   * {@link @moneyprotocol/lib-base#MPStake.collateralGain | collateral gain} and
+   * {@link @moneyprotocol/lib-base#MPStake.bpdGain | BPD gain}.
    */
   unstakeMP(amount: Decimalish): Promise<void>;
 
   /**
-   * Withdraw {@link @liquity/lib-base#MPStake.collateralGain | collateral gain} and
-   * {@link @liquity/lib-base#MPStake.bpdGain | BPD gain} from MP stake.
+   * Withdraw {@link @moneyprotocol/lib-base#MPStake.collateralGain | collateral gain} and
+   * {@link @moneyprotocol/lib-base#MPStake.bpdGain | BPD gain} from MP stake.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.
@@ -460,14 +460,14 @@ export interface TransactableMoneyp {
 
   /**
    * Allow the liquidity mining contract to use Uniswap RBTC/BPD LP tokens for
-   * {@link @liquity/lib-base#TransactableMoneyp.stakeRskSwapTokens | staking}.
+   * {@link @moneyprotocol/lib-base#TransactableMoneyp.stakeRskSwapTokens | staking}.
    *
    * @param allowance - Maximum amount of LP tokens that will be transferrable to liquidity mining
    *                    (`2^256 - 1` by default).
    *
    * @remarks
    * Must be performed before calling
-   * {@link @liquity/lib-base#TransactableMoneyp.stakeRskSwapTokens | stakeRskSwapTokens()}.
+   * {@link @moneyprotocol/lib-base#TransactableMoneyp.stakeRskSwapTokens | stakeRskSwapTokens()}.
    *
    * @throws
    * Throws {@link TransactionFailedError} in case of transaction failure.

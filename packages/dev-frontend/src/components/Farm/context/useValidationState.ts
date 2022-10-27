@@ -1,4 +1,4 @@
-import { Decimal, MoneypStoreState } from "@liquity/lib-base";
+import { Decimal, MoneypStoreState } from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@liquity/lib-react";
 
 const selector = ({

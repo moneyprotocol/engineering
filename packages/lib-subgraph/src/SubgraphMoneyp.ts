@@ -15,7 +15,7 @@ import {
   VaultWithPendingRedistribution,
   UserVault,
   _emptyVault
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import { OrderDirection } from "../types/globalTypes";
 import { Global } from "../types/Global";

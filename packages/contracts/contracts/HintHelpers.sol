@@ -51,7 +51,7 @@ contract HintHelpers is MoneypBase, Ownable, CheckContract {
      *  - `firstRedemptionHint` is the address of the first Vault with ICR >= MCR (i.e. the first Vault that will be redeemed).
      *  - `partialRedemptionHintNICR` is the final nominal ICR of the last Vault of the sequence after being hit by partial redemption,
      *     or zero in case of no partial redemption.
-     *  - `truncatedBPDamount` is the maximum amount that can be redeemed out of the the provided `_BPDamount`. This can be lower than
+     *  - `truncatedBPDamount` is the maximum amount that can be redeemed out of the provided `_BPDamount`. This can be lower than
      *    `_BPDamount` when redeeming the full amount would leave the last Vault of the redemption sequence with less net debt than the
      *    minimum allowed value (i.e. MIN_NET_DEBT).
      *
