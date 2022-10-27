@@ -1,6 +1,6 @@
 import React from "react";
 import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@liquity/lib-react";
+import { useMoneypSelector } from "@moneyprotocol/lib-react";
 import { Container, Flex, Box } from "theme-ui";
 import { AddressZero } from "@ethersproject/constants";
 import { useMoneyp } from "../hooks/MoneypContext";

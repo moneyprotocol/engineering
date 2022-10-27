@@ -3,7 +3,7 @@ import { Flex, Button } from "theme-ui";
 
 import { MoneypStoreState, Decimal, Vault, Decimalish, BPD_MINIMUM_DEBT } from "@moneyprotocol/lib-base";
 
-import { MoneypStoreUpdate, useMoneypReducer, useMoneypSelector } from "@liquity/lib-react";
+import { MoneypStoreUpdate, useMoneypReducer, useMoneypSelector } from "@moneyprotocol/lib-react";
 
 import { ActionDescription } from "../ActionDescription";
 import { useMyTransactionState } from "../Transaction";

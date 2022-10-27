@@ -9,7 +9,7 @@ import {
   MPStakeChange
 } from "@moneyprotocol/lib-base";
 
-import { MoneypStoreUpdate, useMoneypReducer, useMoneypSelector } from "@liquity/lib-react";
+import { MoneypStoreUpdate, useMoneypReducer, useMoneypSelector } from "@moneyprotocol/lib-react";
 
 import { GT, COIN } from "../../strings";
 

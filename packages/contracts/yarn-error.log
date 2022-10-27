@@ -18,7 +18,7 @@ Trace:
 
 npm manifest: 
   {
-    "name": "@liquity/contracts",
+    "name": "@moneyprotocol/contracts",
     "version": "1.0.0",
     "private": true,
     "description": "",

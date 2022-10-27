@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Card, Heading, Box, Flex, Button } from "theme-ui";
-import { useMoneypSelector } from "@liquity/lib-react";
+import { useMoneypSelector } from "@moneyprotocol/lib-react";
 import { MoneypStoreState } from "@moneyprotocol/lib-base";
 import { DisabledEditableRow } from "./Editor";
 import { useVaultView } from "./context/VaultViewContext";

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { Card, Heading, Box, Flex, Button } from "theme-ui";
 
 import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@liquity/lib-react";
+import { useMoneypSelector } from "@moneyprotocol/lib-react";
 
 import { COIN, GT } from "../../strings";
 import { Icon } from "../Icon";

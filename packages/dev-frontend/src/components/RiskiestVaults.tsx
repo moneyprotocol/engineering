@@ -10,7 +10,7 @@ import {
   Decimal
 } from "@moneyprotocol/lib-base";
 import { BlockPolledMoneypStoreState } from "@moneyprotocol/lib-ethers";
-import { useMoneypSelector } from "@liquity/lib-react";
+import { useMoneypSelector } from "@moneyprotocol/lib-react";
 
 import { shortenAddress } from "../utils/shortenAddress";
 import { useMoneyp } from "../hooks/MoneypContext";

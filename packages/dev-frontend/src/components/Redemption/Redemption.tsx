@@ -1,5 +1,5 @@
 import { BlockPolledMoneypStoreState } from "@moneyprotocol/lib-ethers";
-import { useMoneypSelector } from "@liquity/lib-react";
+import { useMoneypSelector } from "@moneyprotocol/lib-react";
 
 import { useMoneyp } from "../../hooks/MoneypContext";
 import { DisabledRedemption } from "./DisabledRedemption";
