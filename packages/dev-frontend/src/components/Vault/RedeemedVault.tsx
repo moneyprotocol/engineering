@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Card, Heading, Box, Button, Flex } from "theme-ui";
 import { CollateralSurplusAction } from "../CollateralSurplusAction";
 import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@liquity/lib-react";
+import { useMoneypSelector } from "@moneyprotocol/lib-react";
 import { useVaultView } from "./context/VaultViewContext";
 import { InfoMessage } from "../InfoMessage";
 

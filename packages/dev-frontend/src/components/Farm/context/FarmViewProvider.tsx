@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { MoneypStoreState, Decimal } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@liquity/lib-react";
+import { useMoneypSelector } from "@moneyprotocol/lib-react";
 import { FarmViewContext } from "./FarmViewContext";
 import { transitions } from "./transitions";
 import type { FarmView, FarmEvent } from "./transitions";

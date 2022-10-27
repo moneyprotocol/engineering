@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { Button, Flex } from "theme-ui";
 
 import { Decimal, Decimalish, MoneypStoreState } from "@moneyprotocol/lib-base";
-import { MoneypStoreUpdate, useMoneypReducer, useMoneypSelector } from "@liquity/lib-react";
+import { MoneypStoreUpdate, useMoneypReducer, useMoneypSelector } from "@moneyprotocol/lib-react";
 
 import { COIN } from "../../strings";
 

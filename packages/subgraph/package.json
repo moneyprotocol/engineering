@@ -1,5 +1,5 @@
 {
-  "name": "@liquity/subgraph",
+  "name": "@moneyprotocol/subgraph",
   "version": "0.1.0",
   "private": true,
   "scripts": {

@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Heading, Link, Box, Text } from "theme-ui";
 import { AddressZero } from "@ethersproject/constants";
 import { Decimal, Percent, MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@liquity/lib-react";
+import { useMoneypSelector } from "@moneyprotocol/lib-react";
 
 import { useMoneyp } from "../hooks/MoneypContext";
 import { COIN, GT } from "../strings";

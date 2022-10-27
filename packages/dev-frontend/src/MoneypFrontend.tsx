@@ -4,7 +4,7 @@ import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { Wallet } from "@ethersproject/wallet";
 
 import { Decimal, Difference, Vault } from "@moneyprotocol/lib-base";
-import { MoneypStoreProvider } from "@liquity/lib-react";
+import { MoneypStoreProvider } from "@moneyprotocol/lib-react";
 
 import { useMoneyp } from "./hooks/MoneypContext";
 import { TransactionMonitor } from "./components/Transaction";

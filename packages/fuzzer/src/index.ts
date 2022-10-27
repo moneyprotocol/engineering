@@ -15,7 +15,7 @@ import {
 } from "@moneyprotocol/lib-base";
 
 import { EthersLiquity as Liquity } from "@moneyprotocol/lib-ethers";
-import { SubgraphLiquity } from "@liquity/lib-subgraph";
+import { SubgraphLiquity } from "@moneyprotocol/lib-subgraph";
 
 import {
   checkPoolBalances,

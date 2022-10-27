@@ -13,7 +13,7 @@ import {
   LUSD_LIQUIDATION_RESERVE
 } from "@moneyprotocol/lib-base";
 import { EthersLiquity, ReadableEthersLiquity } from "@moneyprotocol/lib-ethers";
-import { SubgraphLiquity } from "@liquity/lib-subgraph";
+import { SubgraphLiquity } from "@moneyprotocol/lib-subgraph";
 
 export const objToString = (o: Record<string, unknown>) =>
   "{ " +

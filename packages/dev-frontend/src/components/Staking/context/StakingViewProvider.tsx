@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 import { MoneypStoreState, MPStake } from "@moneyprotocol/lib-base";
-import { MoneypStoreUpdate, useMoneypReducer } from "@liquity/lib-react";
+import { MoneypStoreUpdate, useMoneypReducer } from "@moneyprotocol/lib-react";
 
 import { useMyTransactionState } from "../../Transaction";
 

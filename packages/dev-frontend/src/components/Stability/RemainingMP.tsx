@@ -2,7 +2,7 @@ import React from "react";
 import { Flex } from "theme-ui";
 
 import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@liquity/lib-react";
+import { useMoneypSelector } from "@moneyprotocol/lib-react";
 
 const selector = ({ remainingStabilityPoolMPReward }: MoneypStoreState) => ({
   remainingStabilityPoolMPReward
