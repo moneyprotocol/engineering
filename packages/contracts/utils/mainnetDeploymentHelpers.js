@@ -49,6 +49,7 @@ class MainnetDeploymentHelper {
       );
     }
 
+    console.log(`Deploying contract ${name}...`)
     const contract = await factory.deploy(...params, {gasPrice: this.configParams.GAS_PRICE})
     await this.deployerWallet.provider.waitForTransaction(contract.deployTransaction.hash, this.configParams.TX_CONFIRMATIONS)
 
@@ -62,7 +63,7 @@ class MainnetDeploymentHelper {
     return contract
   }
 
-  async deployMoneypCoreMainnet(tellorMasterAddr, deploymentState) {
+  async deployMoneypCoreMainnet(deploymentState) {
     // Get contract factories
     const priceFeedFactory = await this.getFactory("PriceFeed")
     const sortedVaultsFactory = await this.getFactory("SortedVaults")
@@ -75,7 +76,6 @@ class MainnetDeploymentHelper {
     const borrowerOperationsFactory = await this.getFactory("BorrowerOperations")
     const hintHelpersFactory = await this.getFactory("HintHelpers")
     const bpdTokenFactory = await this.getFactory("BPDToken")
-    const tellorCallerFactory = await this.getFactory("TellorCaller")
 
     // Deploy txs
     const priceFeed = await this.loadOrDeploy(priceFeedFactory, 'priceFeed', deploymentState)
@@ -88,7 +88,6 @@ class MainnetDeploymentHelper {
     const collSurplusPool = await this.loadOrDeploy(collSurplusPoolFactory, 'collSurplusPool', deploymentState)
     const borrowerOperations = await this.loadOrDeploy(borrowerOperationsFactory, 'borrowerOperations', deploymentState)
     const hintHelpers = await this.loadOrDeploy(hintHelpersFactory, 'hintHelpers', deploymentState)
-    const tellorCaller = await this.loadOrDeploy(tellorCallerFactory, 'tellorCaller', deploymentState, [tellorMasterAddr])
 
     const bpdTokenParams = [
       vaultManager.address,
@@ -115,7 +114,6 @@ class MainnetDeploymentHelper {
       await this.verifyContract('collSurplusPool', deploymentState)
       await this.verifyContract('borrowerOperations', deploymentState)
       await this.verifyContract('hintHelpers', deploymentState)
-      await this.verifyContract('tellorCaller', deploymentState, [tellorMasterAddr])
       await this.verifyContract('bpdToken', deploymentState, bpdTokenParams)
     }
 
@@ -131,7 +129,6 @@ class MainnetDeploymentHelper {
       collSurplusPool,
       borrowerOperations,
       hintHelpers,
-      tellorCaller
     }
     return coreContracts
   }
@@ -221,11 +218,14 @@ class MainnetDeploymentHelper {
     return owner == ZERO_ADDRESS
   }
   // Connect contracts to their dependencies
-  async connectCoreContractsMainnet(contracts, MPContracts, chainlinkProxyAddress) {
+  async connectCoreContractsMainnet(contracts, MPContracts, addresses) {
     const gasPrice = this.configParams.GAS_PRICE
+    // console.log('---');
+    // console.log(JSON.stringify(contracts.priceFeed));
+    // console.log('---');
     // Set ChainlinkAggregatorProxy and TellorCaller in the PriceFeed
     await this.isOwnershipRenounced(contracts.priceFeed) ||
-      await this.sendAndWaitForTransaction(contracts.priceFeed.setAddresses(chainlinkProxyAddress, contracts.tellorCaller.address, {gasPrice}))
+      await this.sendAndWaitForTransaction(contracts.priceFeed.setAddresses(addresses, {gasPrice}))
 
     // set VaultManager addr in SortedVaults
     await this.isOwnershipRenounced(contracts.sortedVaults) ||
@@ -252,7 +252,6 @@ class MainnetDeploymentHelper {
         MPContracts.mpStaking.address,
 	{gasPrice}
       ))
-
     // set contracts in BorrowerOperations 
     await this.isOwnershipRenounced(contracts.borrowerOperations) ||
       await this.sendAndWaitForTransaction(contracts.borrowerOperations.setAddresses(
@@ -268,7 +267,6 @@ class MainnetDeploymentHelper {
         MPContracts.mpStaking.address,
 	{gasPrice}
       ))
-
     // set contracts in the Pools
     await this.isOwnershipRenounced(contracts.stabilityPool) ||
       await this.sendAndWaitForTransaction(contracts.stabilityPool.setAddresses(
@@ -318,7 +316,7 @@ class MainnetDeploymentHelper {
   async connectMPContractsMainnet(MPContracts) {
     const gasPrice = this.configParams.GAS_PRICE
     // Set MPToken address in LCF
-    await this.isOwnershipRenounced(MPContracts.mpStaking) ||
+    await this.isOwnershipRenounced(MPContracts.lockupContractFactory) ||
       await this.sendAndWaitForTransaction(MPContracts.lockupContractFactory.setMPTokenAddress(MPContracts.mpToken.address, {gasPrice}))
   }
 
