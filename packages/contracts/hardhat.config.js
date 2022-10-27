@@ -19,15 +19,6 @@ const getSecret = (secretKey, defaultValue='') => {
 
     return secret
 }
-// let mnemonic = '';
-// try {
-//   mnemonic = fs.readFileSync('.testnet.seed-phrase').toString().trim();
-//   if (!mnemonic || mnemonic.split(' ').length !== 12) {
-//     console.log('unable to retrieve mnemonic from .secret');
-//   }
-// } catch (e) {
-//   //
-// }
 
 const alchemyUrl = () => {
     return `https://eth-mainnet.alchemyapi.io/v2/${getSecret('alchemyAPIKey')}`
@@ -96,11 +87,6 @@ module.exports = {
               getSecret('ACCOUNT2_PRIVATEKEY')
           ]
         },
-        // rinkeby: {
-        //     url: alchemyUrlRinkeby(),
-        //     gas: 10000000,  // tx gas limit
-        //     accounts: [getSecret('RINKEBY_DEPLOYER_PRIVATEKEY', '0x60ddfe7f579ab6867cbe7a2dc03853dc141d7a4ab6dbefc0dae2d2b1bd4e487f')]
-        // },
     },
     etherscan: {
         apiKey: getSecret("ASDFGSCAN_API_KEY")

@@ -5,10 +5,6 @@ import { Signer } from "@ethersproject/abstract-signer";
 import { Decimal } from "@moneyprotocol/lib-base";
 
 import devOrNull from "../deployments/dev.json";
-import goerli from "../deployments/goerli.json";
-import kovan from "../deployments/kovan.json";
-import rinkeby from "../deployments/rinkeby.json";
-import ropsten from "../deployments/ropsten.json";
 import testnet from "../deployments/default/testnet.json";
 
 import { BitcoinsProvider, BitcoinsSigner } from "./types";
@@ -24,13 +20,7 @@ import { _connectToMulticall, _Multicall } from "./_Multicall";
 
 const dev = devOrNull as _MoneypDeploymentJSON | null;
 
-const deployments: {
-  [chainId: number]: _MoneypDeploymentJSON | undefined;
-} = {
-  [ropsten.chainId]: ropsten,
-  [rinkeby.chainId]: rinkeby,
-  [goerli.chainId]: goerli,
-  [kovan.chainId]: kovan,
+const deployments: any = {
   [testnet.chainId]: testnet,
 
   ...(dev !== null ? { [dev.chainId]: dev } : {})
