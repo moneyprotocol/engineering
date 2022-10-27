@@ -220,9 +220,7 @@ task("deploy", "Deploys the contracts to the network")
       const overrides = { gasPrice: gasPrice && Decimal.from(gasPrice).div(1000000000).hex };
       const [deployer] = await env.ethers.getSigners();
 
-      // [MP] TODO: set this dynamically
-      useRealPriceFeed = true;
-      // useRealPriceFeed ??= env.network.name === "mainnet";
+      useRealPriceFeed = false;
 
       if (useRealPriceFeed && !hasOracles(env.network.name)) {
         throw new Error(`PriceFeed not supported on ${env.network.name}`);
