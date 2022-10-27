@@ -5,7 +5,7 @@
   "bootstrapPeriod": 1209600,
   "totalStabilityPoolMPReward": "32000000",
   "_priceFeedIsTestnet": true,
-  "_uniTokenIsMock": false,
+  "_rskSwapTokenIsMock": false,
   "_isDev": false,
   "addresses": {
     "activePool": "0x793eac5ca8EaEcd6A3B5342e192Ecb57E11Ecd10",
@@ -21,10 +21,10 @@
     "sortedVaults": "0xa128D2ac6bed305fA2476c574dD676d4c5d2F067",
     "stabilityPool": "0xb59ab6a35Aa99f44cd51ce51652E5A7d83311663",
     "gasPool": "0x6864552538dA070737f8da1D358Fe3C9E0FcCB12",
-    "unipool": "0x0B1Ce0bF67433f89EddfcC5FdC954be12180B06c",
+    "rskSwapPool": "0x0B1Ce0bF67433f89EddfcC5FdC954be12180B06c",
     "bpdToken": "0xB1670E02a8A078072f328C4bc5Ad90B220f7a396",
     "mpToken": "0x18113C3F99c7E5e12853E6cb53932c7474e36a14",
     "multiVaultGetter": "0x8BC334272d1FF243e45A5454373AcA7B712B2E5B",
-    "uniToken": "0x6Ab4f8B0a8084F4a1d161Db6ef863CC814b2c7fB"
+    "rskSwapToken": "0x6Ab4f8B0a8084F4a1d161Db6ef863CC814b2c7fB"
   }
 }

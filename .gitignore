@@ -17,6 +17,7 @@ node_modules
 .eslintcache
 
 # seed phrases
+/packages/contracts/.testnet.seed-phrase
 /packages/lib-ethers/.testnet.seed-phrase
 
 # version files
@@ -25,3 +26,5 @@ node_modules
 
 # vscode files
 /.vscode/settings.json
+
+docs

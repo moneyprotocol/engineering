@@ -1,20 +1,20 @@
-import { Decimal, MoneypStoreState } from "@liquity/lib-base";
+import { Decimal, MoneypStoreState } from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@liquity/lib-react";
 
 const selector = ({
-  uniTokenBalance,
-  uniTokenAllowance,
+  rskSwapTokenBalance,
+  rskSwapTokenAllowance,
   liquidityMiningStake
 }: MoneypStoreState) => ({
-  uniTokenBalance,
-  uniTokenAllowance,
+  rskSwapTokenBalance,
+  rskSwapTokenAllowance,
   liquidityMiningStake
 });
 
 type FarmStakeValidation = {
   isValid: boolean;
   hasApproved: boolean;
-  hasEnoughUniToken: boolean;
+  hasEnoughRskSwapToken: boolean;
   isWithdrawing: boolean;
   amountChanged: Decimal;
   maximumStake: Decimal;
@@ -22,19 +22,19 @@ type FarmStakeValidation = {
 };
 
 export const useValidationState = (amount: Decimal): FarmStakeValidation => {
-  const { uniTokenBalance, uniTokenAllowance, liquidityMiningStake } = useMoneypSelector(selector);
+  const { rskSwapTokenBalance, rskSwapTokenAllowance, liquidityMiningStake } = useMoneypSelector(selector);
   const isWithdrawing = liquidityMiningStake.gt(amount);
   const amountChanged = isWithdrawing
     ? liquidityMiningStake.sub(amount)
     : Decimal.from(amount).sub(liquidityMiningStake);
-  const maximumStake = liquidityMiningStake.add(uniTokenBalance);
+  const maximumStake = liquidityMiningStake.add(rskSwapTokenBalance);
   const hasSetMaximumStake = amount.eq(maximumStake);
 
   if (isWithdrawing) {
     return {
       isValid: true,
       hasApproved: true,
-      hasEnoughUniToken: true,
+      hasEnoughRskSwapToken: true,
       isWithdrawing,
       amountChanged,
       maximumStake,
@@ -42,13 +42,13 @@ export const useValidationState = (amount: Decimal): FarmStakeValidation => {
     };
   }
 
-  const hasApproved = !uniTokenAllowance.isZero && uniTokenAllowance.gte(amountChanged);
-  const hasEnoughUniToken = !uniTokenBalance.isZero && uniTokenBalance.gte(amountChanged);
+  const hasApproved = !rskSwapTokenAllowance.isZero && rskSwapTokenAllowance.gte(amountChanged);
+  const hasEnoughRskSwapToken = !rskSwapTokenBalance.isZero && rskSwapTokenBalance.gte(amountChanged);
 
   return {
-    isValid: hasApproved && hasEnoughUniToken,
+    isValid: hasApproved && hasEnoughRskSwapToken,
     hasApproved,
-    hasEnoughUniToken,
+    hasEnoughRskSwapToken,
     isWithdrawing,
     amountChanged,
     maximumStake,

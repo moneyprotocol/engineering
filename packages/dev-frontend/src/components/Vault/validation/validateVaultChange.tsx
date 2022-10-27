@@ -8,7 +8,7 @@ import {
   MINIMUM_COLLATERAL_RATIO,
   CRITICAL_COLLATERAL_RATIO,
   MoneypStoreState
-} from "@liquity/lib-base";
+} from "@moneyprotocol/lib-base";
 
 import { COIN } from "../../../strings";
 

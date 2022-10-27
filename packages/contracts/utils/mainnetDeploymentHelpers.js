@@ -180,17 +180,17 @@ class MainnetDeploymentHelper {
     return MPContracts
   }
 
-  async deployUnipoolMainnet(deploymentState) {
-    const unipoolFactory = await this.getFactory("Unipool")
-    const unipool = await this.loadOrDeploy(unipoolFactory, 'unipool', deploymentState)
+  async deployRskSwapPoolMainnet(deploymentState) {
+    const rskSwapPoolFactory = await this.getFactory("RskSwapPool")
+    const rskSwapPool = await this.loadOrDeploy(rskSwapPoolFactory, 'rskSwapPool', deploymentState)
 
     if (!this.configParams.ASDFGSCAN_BASE_URL) {
       console.log('No Bitcoinscan Url defined, skipping verification')
     } else {
-      await this.verifyContract('unipool', deploymentState)
+      await this.verifyContract('rskSwapPool', deploymentState)
     }
 
-    return unipool
+    return rskSwapPool
   }
 
   async deployMultiVaultGetterMainnet(moneypCore, deploymentState) {
@@ -342,7 +342,7 @@ class MainnetDeploymentHelper {
       ))
   }
 
-  async connectUnipoolMainnet(uniPool, MPContracts, BPDWRBTCPairAddr, duration) {
+  async connectRskSwapPoolMainnet(uniPool, MPContracts, BPDWRBTCPairAddr, duration) {
     const gasPrice = this.configParams.GAS_PRICE
     await this.isOwnershipRenounced(uniPool) ||
       await this.sendAndWaitForTransaction(uniPool.setParams(MPContracts.mpToken.address, BPDWRBTCPairAddr, duration, {gasPrice}))

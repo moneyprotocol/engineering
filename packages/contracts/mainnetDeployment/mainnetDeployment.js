@@ -48,7 +48,7 @@ async function mainnetDeploy(configParams) {
 
 
   if (BPDWRBTCPairAddr == th.ZERO_ADDRESS) {
-    // Deploy Unipool for BPD-WRBTC
+    // Deploy RskSwapPool for BPD-WRBTC
     await mdh.sendAndWaitForTransaction(uniswapV2Factory.createPair(
       configParams.externalAddrs.RBTC_ERC20,
       moneypCore.bpdToken.address,
@@ -63,13 +63,13 @@ async function mainnetDeploy(configParams) {
     assert.equal(WRBTCBPDPairAddr, BPDWRBTCPairAddr)
   }
 
-  // Deploy Unipool
-  const unipool = await mdh.deployUnipoolMainnet(deploymentState)
+  // Deploy RskSwapPool
+  const rskSwapPool = await mdh.deployRskSwapPoolMainnet(deploymentState)
 
   // Deploy MP Contracts
   const MPContracts = await mdh.deployMPContractsMainnet(
     configParams.moneypAddrs.GENERAL_SAFE, // bounty address
-    unipool.address,  // lp rewards address
+    rskSwapPool.address,  // lp rewards address
     configParams.moneypAddrs.MP_SAFE, // multisig MP endowment address
     deploymentState,
   )
@@ -82,13 +82,13 @@ async function mainnetDeploy(configParams) {
   // Deploy a read-only multi-vault getter
   const multiVaultGetter = await mdh.deployMultiVaultGetterMainnet(moneypCore, deploymentState)
 
-  // Connect Unipool to MPToken and the BPD-WRBTC pair address, with a 6 week duration
+  // Connect RskSwapPool to MPToken and the BPD-WRBTC pair address, with a 6 week duration
   const LPRewardsDuration = timeVals.SECONDS_IN_SIX_WEEKS
-  await mdh.connectUnipoolMainnet(unipool, MPContracts, BPDWRBTCPairAddr, LPRewardsDuration)
+  await mdh.connectRskSwapPoolMainnet(rskSwapPool, MPContracts, BPDWRBTCPairAddr, LPRewardsDuration)
 
-  // Log MP and Unipool addresses
+  // Log MP and RskSwapPool addresses
   await mdh.logContractObjects(MPContracts)
-  console.log(`Unipool address: ${unipool.address}`)
+  console.log(`RskSwapPool address: ${rskSwapPool.address}`)
 
   let latestBlock = await ethers.provider.getBlockNumber()
   let now = (await ethers.provider.getBlock(latestBlock)).timestamp
@@ -179,10 +179,10 @@ async function mainnetDeploy(configParams) {
 
   // --- MP allowances of different addresses ---
   console.log("INITIAL MP BALANCES")
-  // Unipool
-  const unipoolMPBal = await MPContracts.mpToken.balanceOf(unipool.address)
-  // TODO: Uncomment for real launch assert.equal(unipoolMPBal.toString(), '1333333333333333333333333')
-  th.logBN('Unipool MP balance       ', unipoolMPBal)
+  // RskSwapPool
+  const rskSwapPoolMPBal = await MPContracts.mpToken.balanceOf(rskSwapPool.address)
+  // TODO: Uncomment for real launch assert.equal(rskSwapPoolMPBal.toString(), '1333333333333333333333333')
+  th.logBN('RskSwapPool MP balance       ', rskSwapPoolMPBal)
 
   // MP Safe
   const mpSafeBal = await MPContracts.mpToken.balanceOf(configParams.moneypAddrs.MP_SAFE)
@@ -217,11 +217,11 @@ async function mainnetDeploy(configParams) {
   const tellorCallerTellorMasterAddress = await moneypCore.tellorCaller.tellor()
   assert.equal(tellorCallerTellorMasterAddress, configParams.externalAddrs.TELLOR_MASTER)
 
-  // --- Unipool ---
+  // --- RskSwapPool ---
 
-  // Check Unipool's BPD-RBTC Uniswap Pair address
-  const unipoolUniswapPairAddr = await unipool.uniToken()
-  console.log(`Unipool's stored BPD-RBTC Uniswap Pair address: ${unipoolUniswapPairAddr}`)
+  // Check RskSwapPool's BPD-RBTC Uniswap Pair address
+  const rskSwapPoolUniswapPairAddr = await rskSwapPool.rskSwapToken()
+  console.log(`RskSwapPool's stored BPD-RBTC Uniswap Pair address: ${rskSwapPoolUniswapPairAddr}`)
 
   console.log("SYSTEM GLOBAL VARS CHECKS")
   // --- Sorted Vaults ---
@@ -357,31 +357,31 @@ async function mainnetDeploy(configParams) {
   deployerLPTokenBal = await BPDRBTCPair.balanceOf(deployerWallet.address)
   th.logBN("deployer's LP token balance", deployerLPTokenBal)
 
-  // Stake LP tokens in Unipool
+  // Stake LP tokens in RskSwapPool
   console.log(`BPDRBTCPair addr: ${BPDRBTCPair.address}`)
-  console.log(`Pair addr stored in Unipool: ${await unipool.uniToken()}`)
+  console.log(`Pair addr stored in RskSwapPool: ${await rskSwapPool.rskSwapToken()}`)
 
-  earnedMP = await unipool.earned(deployerWallet.address)
+  earnedMP = await rskSwapPool.earned(deployerWallet.address)
   th.logBN("deployer's farmed MP before staking LP tokens", earnedMP)
 
-  const deployerUnipoolStake = await unipool.balanceOf(deployerWallet.address)
-  if (deployerUnipoolStake.toString() == '0') {
-    console.log('Staking to Unipool...')
-    // Deployer approves Unipool
+  const deployerRskSwapPoolStake = await rskSwapPool.balanceOf(deployerWallet.address)
+  if (deployerRskSwapPoolStake.toString() == '0') {
+    console.log('Staking to RskSwapPool...')
+    // Deployer approves RskSwapPool
     await mdh.sendAndWaitForTransaction(
-      BPDRBTCPair.approve(unipool.address, deployerLPTokenBal, { gasPrice })
+      BPDRBTCPair.approve(rskSwapPool.address, deployerLPTokenBal, { gasPrice })
     )
 
-    await mdh.sendAndWaitForTransaction(unipool.stake(1, { gasPrice }))
+    await mdh.sendAndWaitForTransaction(rskSwapPool.stake(1, { gasPrice }))
   } else {
-    console.log('Already staked in Unipool')
+    console.log('Already staked in RskSwapPool')
   }
 
   console.log("wait 90 seconds before checking earnings... ")
   await configParams.waitFunction()
 
-  earnedMP = await unipool.earned(deployerWallet.address)
-  th.logBN("deployer's farmed MP from Unipool after waiting ~1.5mins", earnedMP)
+  earnedMP = await rskSwapPool.earned(deployerWallet.address)
+  th.logBN("deployer's farmed MP from RskSwapPool after waiting ~1.5mins", earnedMP)
 
   let deployerMPBal = await MPContracts.mpToken.balanceOf(deployerWallet.address)
   th.logBN("deployer MP Balance Before SP deposit", deployerMPBal)
@@ -542,9 +542,9 @@ async function mainnetDeploy(configParams) {
   const totalMPStaked = await MPContracts.mpStaking.totalMPStaked()
   th.logBN("Total MP staked", totalMPStaked)
 
-  // total LP tokens staked in Unipool
-  const totalLPTokensStaked = await unipool.totalSupply()
-  th.logBN("Total LP (BPD-RBTC) tokens staked in unipool", totalLPTokensStaked)
+  // total LP tokens staked in RskSwapPool
+  const totalLPTokensStaked = await rskSwapPool.totalSupply()
+  th.logBN("Total LP (BPD-RBTC) tokens staked in rskSwapPool", totalLPTokensStaked)
 
   // --- State variables ---
 

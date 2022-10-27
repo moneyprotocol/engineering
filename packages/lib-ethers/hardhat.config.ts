@@ -13,7 +13,7 @@ import { task, HardhatUserConfig, types, extendEnvironment } from "hardhat/confi
 import { HardhatRuntimeEnvironment, NetworkUserConfig } from "hardhat/types";
 import "@nomiclabs/hardhat-ethers";
 
-import { Decimal } from "@liquity/lib-base";
+import { Decimal } from "@moneyprotocol/lib-base";
 
 import { deployAndSetupContracts, deployTellorCaller, setSilent } from "./utils/deploy";
 import { _connectToContracts, _MoneypDeploymentJSON, _priceFeedIsTestnet } from "./src/contracts";
@@ -50,8 +50,7 @@ const generateRandomAccounts = (numberOfAccounts: number) => {
   return accounts;
 };
 
-// const deployerAccount = process.env.DEPLOYER_PRIVATE_KEY || Wallet.createRandom().privateKey;
-const deployerAccount = "0x7fa66cc85eb7558d53fc4f46eda11c4c70433bc96ac402c30f90617096d137d8";
+const deployerAccount = process.env.DEPLOYER_PRIVATE_KEY || Wallet.createRandom().privateKey;
 const devChainRichAccount = "0x4d5db4107d237df6a3d58ee5f70ae63d73d7658d4026f2eefd2f204c81682cb7";
 
 const infuraApiKey = "ad9cef41c9c844a7b54d10be24d416e5";
@@ -78,23 +77,17 @@ try {
 
 const oracleAddresses = {
   mainnet: {
-    chainlink: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
-    tellor: "0x88dF592F8eb5D7Bd38bFeF7dEb0fBc02cf3778a0"
+    moc: "0xb9C42EFc8ec54490a37cA91c423F7285Fa01e257",
   },
-  rinkeby: {
-    chainlink: "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e",
-    tellor: "0x88dF592F8eb5D7Bd38bFeF7dEb0fBc02cf3778a0" // Core
-  },
-  kovan: {
-    chainlink: "0x9326BFA02ADD2366b30bacB125260Af641031331",
-    tellor: "0x20374E579832859f180536A69093A126Db1c8aE9" // Playground
+  testnet: {
+    moc: '0x0adb40132cB0ffcEf6ED81c26A1881e214100555',
   }
 };
 
 const hasOracles = (network: string): network is keyof typeof oracleAddresses =>
   network in oracleAddresses;
 
-const wethAddresses = {
+const wrbtcAddresses = {
   mainnet: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
   ropsten: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
   rinkeby: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
@@ -103,7 +96,7 @@ const wethAddresses = {
   testnet: "0x09b6ca5e4496238a1f176aea6bb607db96c2286e"
 };
 
-const hasWETH = (network: string): network is keyof typeof wethAddresses => network in wethAddresses;
+const hasWRBTC = (network: string): network is keyof typeof wrbtcAddresses => network in wrbtcAddresses;
 
 const config: HardhatUserConfig = {
   networks: {
@@ -159,7 +152,7 @@ declare module "hardhat/types/runtime" {
     deployMoneyp: (
       deployer: Signer,
       useRealPriceFeed?: boolean,
-      wethAddress?: string,
+      wrbtcAddress?: string,
       overrides?: Overrides
     ) => Promise<_MoneypDeploymentJSON>;
   }
@@ -181,7 +174,7 @@ extendEnvironment(env => {
   env.deployMoneyp = async (
     deployer,
     useRealPriceFeed = false,
-    wethAddress = undefined,
+    wrbtcAddress = undefined,
     overrides?: Overrides
   ) => {
     const deployment = await deployAndSetupContracts(
@@ -189,7 +182,7 @@ extendEnvironment(env => {
       getContractFactory(env),
       !useRealPriceFeed,
       env.network.name === "dev",
-      wethAddress,
+      wrbtcAddress,
       overrides
     );
 
@@ -205,6 +198,7 @@ type DeployParams = {
 };
 
 const defaultChannel = process.env.CHANNEL || "default";
+const createUniswapPair = process.env.CREATE_UNISWAP_PAIR !== "false";
 
 task("deploy", "Deploys the contracts to the network")
   .addOptionalParam("channel", "Deployment channel to deploy into", defaultChannel, types.string)
@@ -217,8 +211,8 @@ task("deploy", "Deploys the contracts to the network")
   )
   .addOptionalParam(
     "createUniswapPair",
-    "Create a real Uniswap v2 WETH-BPD pair instead of a mock ERC20 token",
-    true,
+    "Create a real Uniswap v2 WRBTC-BPD pair instead of a mock ERC20 token",
+    createUniswapPair,
     types.boolean
   )
   .setAction(
@@ -226,24 +220,24 @@ task("deploy", "Deploys the contracts to the network")
       const overrides = { gasPrice: gasPrice && Decimal.from(gasPrice).div(1000000000).hex };
       const [deployer] = await env.ethers.getSigners();
 
-      useRealPriceFeed ??= env.network.name === "mainnet";
+      useRealPriceFeed = false;
 
       if (useRealPriceFeed && !hasOracles(env.network.name)) {
         throw new Error(`PriceFeed not supported on ${env.network.name}`);
       }
 
       console.log(`createUniswapPair? ${createUniswapPair}`);
-      let wethAddress: string | undefined = undefined;
+      let wrbtcAddress: string | undefined = undefined;
       if (createUniswapPair) {
-        if (!hasWETH(env.network.name)) {
-          throw new Error(`WETH not deployed on ${env.network.name}`);
+        if (!hasWRBTC(env.network.name)) {
+          throw new Error(`WRBTC not deployed on ${env.network.name}`);
         }
-        wethAddress = wethAddresses[env.network.name];
+        wrbtcAddress = wrbtcAddresses[env.network.name];
       }
 
       setSilent(false);
 
-      const deployment = await env.deployMoneyp(deployer, useRealPriceFeed, wethAddress, overrides);
+      const deployment = await env.deployMoneyp(deployer, useRealPriceFeed, wrbtcAddress, overrides);
 
       if (useRealPriceFeed) {
         const contracts = _connectToContracts(deployer, deployment);
@@ -254,17 +248,18 @@ task("deploy", "Deploys the contracts to the network")
           const tellorCallerAddress = await deployTellorCaller(
             deployer,
             getContractFactory(env),
-            oracleAddresses[env.network.name].tellor,
+            oracleAddresses[env.network.name].moc,
             overrides
           );
 
           console.log(`Hooking up PriceFeed with oracles ...`);
 
           const tx = await contracts.priceFeed.setAddresses(
-            oracleAddresses[env.network.name].chainlink,
-            tellorCallerAddress,
+            oracleAddresses[env.network.name].moc,
             overrides
           );
+
+          console.log(`Setting pricefeed address: ${oracleAddresses[env.network.name].moc}`);
 
           await tx.wait();
         }

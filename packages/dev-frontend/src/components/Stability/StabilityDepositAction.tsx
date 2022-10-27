@@ -1,5 +1,5 @@
 import { Button } from "theme-ui";
-import { Decimal, MoneypStoreState, StabilityDepositChange } from "@liquity/lib-base";
+import { Decimal, MoneypStoreState, StabilityDepositChange } from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@liquity/lib-react";
 
 import { useMoneyp } from "../../hooks/MoneypContext";
