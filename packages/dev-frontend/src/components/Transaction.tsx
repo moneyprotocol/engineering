@@ -240,7 +240,7 @@ export function Transaction<C extends React.ReactElement<ButtonlikeProps & Hover
 const tryToGetRevertReason = async (provider: Provider, hash: string) => {
   try {
     const tx = await provider.getTransaction(hash);
-    const result = await provider.call(tx, tx.blockNumber);
+    const result = await provider.call(tx as any, tx.blockNumber);
 
     if (hexDataLength(result) % 32 === 4 && hexDataSlice(result, 0, 4) === "0x08c379a0") {
       return (defaultAbiCoder.decode(["string"], hexDataSlice(result, 4)) as [string])[0];

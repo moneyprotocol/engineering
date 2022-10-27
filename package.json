@@ -49,7 +49,7 @@
     "docs:collect-sdk-apis": "node scripts/collect-sdk-apis.js",
     "docs:api-documenter": "api-documenter generate -i temp/sdk-apis -o docs/sdk",
     "fuzzer": "yarn workspace @moneyprotocol/fuzzer fuzzer",
-    "prepare": "run-s prepare:*",
+    "_prepare": "run-s prepare:*",
     "prepare:contracts": "yarn workspace @moneyprotocol/contracts prepare",
     "prepare:lib-base": "yarn workspace @moneyprotocol/lib-base prepare",
     "prepare:lib-ethers": "yarn workspace @moneyprotocol/lib-ethers prepare",
