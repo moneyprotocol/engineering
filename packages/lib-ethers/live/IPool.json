@@ -21,25 +21,12 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "address",
-          "name": "_newDefaultPoolAddress",
-          "type": "address"
-        }
-      ],
-      "name": "DefaultPoolAddressChanged",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
           "internalType": "uint256",
           "name": "_newBalance",
           "type": "uint256"
         }
       ],
-      "name": "RBTCBalanceUpdated",
+      "name": "BPDBalanceUpdated",
       "type": "event"
     },
     {
@@ -66,12 +53,25 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "address",
+          "name": "_newDefaultPoolAddress",
+          "type": "address"
+        }
+      ],
+      "name": "DefaultPoolAddressChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
           "internalType": "uint256",
           "name": "_newBalance",
           "type": "uint256"
         }
       ],
-      "name": "BPDBalanceUpdated",
+      "name": "RBTCBalanceUpdated",
       "type": "event"
     },
     {
@@ -102,7 +102,7 @@
     },
     {
       "inputs": [],
-      "name": "getRBTC",
+      "name": "getBPDDebt",
       "outputs": [
         {
           "internalType": "uint256",
@@ -115,7 +115,7 @@
     },
     {
       "inputs": [],
-      "name": "getBPDDebt",
+      "name": "getRBTC",
       "outputs": [
         {
           "internalType": "uint256",

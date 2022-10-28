@@ -22,11 +22,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_borrowerOperationsAddress",
+          "name": "_bpdTokenAddress",
           "type": "address"
         }
       ],
-      "name": "BorrowerOperationsAddressSet",
+      "name": "BPDTokenAddressSet",
       "type": "event"
     },
     {
@@ -53,12 +53,12 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "_F_RBTC",
-          "type": "uint256"
+          "internalType": "address",
+          "name": "_borrowerOperationsAddress",
+          "type": "address"
         }
       ],
-      "name": "F_RBTCUpdated",
+      "name": "BorrowerOperationsAddressSet",
       "type": "event"
     },
     {
@@ -79,12 +79,12 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "address",
-          "name": "_mpTokenAddress",
-          "type": "address"
+          "internalType": "uint256",
+          "name": "_F_RBTC",
+          "type": "uint256"
         }
       ],
-      "name": "MPTokenAddressSet",
+      "name": "F_RBTCUpdated",
       "type": "event"
     },
     {
@@ -93,11 +93,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_bpdTokenAddress",
+          "name": "_mpTokenAddress",
           "type": "address"
         }
       ],
-      "name": "BPDTokenAddressSet",
+      "name": "MPTokenAddressSet",
       "type": "event"
     },
     {
@@ -203,7 +203,7 @@
           "type": "address"
         }
       ],
-      "name": "getPendingRBTCGain",
+      "name": "getPendingBPDGain",
       "outputs": [
         {
           "internalType": "uint256",
@@ -222,7 +222,7 @@
           "type": "address"
         }
       ],
-      "name": "getPendingBPDGain",
+      "name": "getPendingRBTCGain",
       "outputs": [
         {
           "internalType": "uint256",
@@ -237,11 +237,11 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_RBTCFee",
+          "name": "_MPFee",
           "type": "uint256"
         }
       ],
-      "name": "increaseF_RBTC",
+      "name": "increaseF_BPD",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -250,11 +250,11 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_MPFee",
+          "name": "_RBTCFee",
           "type": "uint256"
         }
       ],
-      "name": "increaseF_BPD",
+      "name": "increaseF_RBTC",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

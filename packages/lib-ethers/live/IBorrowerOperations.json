@@ -20,6 +20,38 @@
       "anonymous": false,
       "inputs": [
         {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_borrower",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_BPDFee",
+          "type": "uint256"
+        }
+      ],
+      "name": "BPDBorrowingFeePaid",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_bpdTokenAddress",
+          "type": "address"
+        }
+      ],
+      "name": "BPDTokenAddressChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
           "indexed": false,
           "internalType": "address",
           "name": "_collSurplusPoolAddress",
@@ -66,38 +98,6 @@
         }
       ],
       "name": "MPStakingAddressChanged",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "_borrower",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "_BPDFee",
-          "type": "uint256"
-        }
-      ],
-      "name": "BPDBorrowingFeePaid",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "_bpdTokenAddress",
-          "type": "address"
-        }
-      ],
-      "name": "BPDTokenAddressChanged",
       "type": "event"
     },
     {
@@ -433,29 +433,6 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_amount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_upperHint",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_lowerHint",
-          "type": "address"
-        }
-      ],
-      "name": "withdrawColl",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
           "name": "_maxFee",
           "type": "uint256"
         },
@@ -476,6 +453,29 @@
         }
       ],
       "name": "withdrawBPD",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_upperHint",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_lowerHint",
+          "type": "address"
+        }
+      ],
+      "name": "withdrawColl",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
