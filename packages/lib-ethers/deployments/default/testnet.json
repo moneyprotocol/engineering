@@ -1,6 +1,6 @@
 {
   "chainId": 31,
-  "version": "defd3665ecf232dd6045eab70e5b54aa694718ab",
+  "version": "58e231ce4a623551e41d253b163a39da6e47c1cc",
   "deploymentDate": 1666597186000,
   "bootstrapPeriod": 2592000,
   "totalStabilityPoolMPReward": "167705382",
@@ -25,6 +25,6 @@
     "bpdToken": "0x4CA89A9299E1217D24CF4DfE618a6517C5998f79",
     "mpToken": "0xAd80ED0490f1D93C273345800A14A7Fe8792db83",
     "multiVaultGetter": "0x42C33979E6E0542578348aB6C6D2A541ccdC71b4",
-    "rskSwapToken": "0xAd80ED0490f1D93C273345800A14A7Fe8792db83"
+    "rskSwapToken": "0xC678890dCe48B427d0950158206B152A0596A51F"
   }
 }
