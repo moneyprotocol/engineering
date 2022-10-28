@@ -47,11 +47,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_mpStakingAddress",
+          "name": "_lockupContractFactoryAddress",
           "type": "address"
         }
       ],
-      "name": "MPStakingAddressSet",
+      "name": "LockupContractFactoryAddressSet",
       "type": "event"
     },
     {
@@ -60,11 +60,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_lockupContractFactoryAddress",
+          "name": "_MPStakingAddress",
           "type": "address"
         }
       ],
-      "name": "LockupContractFactoryAddressSet",
+      "name": "MPStakingAddressSet",
       "type": "event"
     },
     {

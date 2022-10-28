@@ -9,19 +9,6 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_mpTokenAddress",
-          "type": "address"
-        }
-      ],
-      "name": "MPTokenAddressSet",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
           "name": "_lockupContractAddress",
           "type": "address"
         },
@@ -45,6 +32,19 @@
         }
       ],
       "name": "LockupContractDeployedThroughFactory",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_mpTokenAddress",
+          "type": "address"
+        }
+      ],
+      "name": "MPTokenAddressSet",
       "type": "event"
     },
     {

@@ -22,6 +22,19 @@
         {
           "indexed": false,
           "internalType": "uint256",
+          "name": "_BPDDebt",
+          "type": "uint256"
+        }
+      ],
+      "name": "ActivePoolBPDDebtUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
           "name": "_RBTC",
           "type": "uint256"
         }
@@ -35,11 +48,30 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_BPDDebt",
+          "name": "_newBalance",
           "type": "uint256"
         }
       ],
-      "name": "ActivePoolBPDDebtUpdated",
+      "name": "BPDBalanceUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "BitcoinSent",
       "type": "event"
     },
     {
@@ -87,38 +119,6 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_to",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "_amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "BitcoinSent",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "_newBalance",
-          "type": "uint256"
-        }
-      ],
-      "name": "BPDBalanceUpdated",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
           "name": "_newStabilityPoolAddress",
           "type": "address"
         }
@@ -154,7 +154,7 @@
     },
     {
       "inputs": [],
-      "name": "getRBTC",
+      "name": "getBPDDebt",
       "outputs": [
         {
           "internalType": "uint256",
@@ -167,7 +167,7 @@
     },
     {
       "inputs": [],
-      "name": "getBPDDebt",
+      "name": "getRBTC",
       "outputs": [
         {
           "internalType": "uint256",

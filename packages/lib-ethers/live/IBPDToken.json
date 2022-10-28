@@ -34,19 +34,6 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_newBorrowerOperationsAddress",
-          "type": "address"
-        }
-      ],
-      "name": "BorrowerOperationsAddressChanged",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
           "name": "_user",
           "type": "address"
         },
@@ -58,6 +45,19 @@
         }
       ],
       "name": "BPDTokenBalanceUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_newBorrowerOperationsAddress",
+          "type": "address"
+        }
+      ],
+      "name": "BorrowerOperationsAddressChanged",
       "type": "event"
     },
     {

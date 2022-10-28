@@ -21,6 +21,19 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "address",
+          "name": "_newBPDTokenAddress",
+          "type": "address"
+        }
+      ],
+      "name": "BPDTokenAddressChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
           "internalType": "uint256",
           "name": "_baseRate",
           "type": "uint256"
@@ -86,32 +99,6 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "address",
-          "name": "_mpStakingAddress",
-          "type": "address"
-        }
-      ],
-      "name": "MPStakingAddressChanged",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "_mpTokenAddress",
-          "type": "address"
-        }
-      ],
-      "name": "MPTokenAddressChanged",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
           "internalType": "uint256",
           "name": "_B_RBTC",
           "type": "uint256"
@@ -124,19 +111,6 @@
         }
       ],
       "name": "LTermsUpdated",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "_newBPDTokenAddress",
-          "type": "address"
-        }
-      ],
-      "name": "BPDTokenAddressChanged",
       "type": "event"
     },
     {
@@ -181,6 +155,32 @@
         }
       ],
       "name": "Liquidation",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_mpStakingAddress",
+          "type": "address"
+        }
+      ],
+      "name": "MPStakingAddressChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_mpTokenAddress",
+          "type": "address"
+        }
+      ],
+      "name": "MPTokenAddressChanged",
       "type": "event"
     },
     {
@@ -437,6 +437,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "bpdToken",
+      "outputs": [
+        {
+          "internalType": "contract IBPDToken",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -672,7 +685,7 @@
           "type": "address"
         }
       ],
-      "name": "getPendingRBTCReward",
+      "name": "getPendingBPDDebtReward",
       "outputs": [
         {
           "internalType": "uint256",
@@ -691,7 +704,7 @@
           "type": "address"
         }
       ],
-      "name": "getPendingBPDDebtReward",
+      "name": "getPendingRBTCReward",
       "outputs": [
         {
           "internalType": "uint256",
@@ -986,19 +999,6 @@
       "outputs": [
         {
           "internalType": "contract IMPToken",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "bpdToken",
-      "outputs": [
-        {
-          "internalType": "contract IBPDToken",
           "name": "",
           "type": "address"
         }
