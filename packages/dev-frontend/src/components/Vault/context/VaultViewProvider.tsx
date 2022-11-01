@@ -111,5 +111,7 @@ export const VaultViewProvider: React.FC = props => {
     view,
     dispatchEvent
   };
+
+  console.log('[VaultViewProvider] vaultStatus:', vaultStatus);
   return <VaultViewContext.Provider value={provider}>{children}</VaultViewContext.Provider>;
 };

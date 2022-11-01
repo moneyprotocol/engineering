@@ -27,8 +27,11 @@ export const MoneypStoreProvider: React.FC<MoneypStoreProviderProps> = ({
   }, [store]);
 
   if (!loadedStore) {
+    console.log('[MoneypStoreProvider] loading...');
     return <>{loader}</>;
   }
+
+  console.log('[MoneypStoreProvider] loaded store:', loadedStore);
 
   return <MoneypStoreContext.Provider value={loadedStore}>{children}</MoneypStoreContext.Provider>;
 };

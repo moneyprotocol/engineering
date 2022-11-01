@@ -39,6 +39,16 @@ export const MoneypFrontend: React.FC<MoneypFrontendProps> = ({ loader }) => {
     Wallet
   });
 
+  console.log('[MoneypFrontend] window:', {
+    account,
+    provider,
+    moneyp,
+    Vault,
+    Decimal,
+    Difference,
+    Wallet
+  });
+
   return (
     <MoneypStoreProvider {...{ loader }} store={moneyp.store}>
       <Router>
