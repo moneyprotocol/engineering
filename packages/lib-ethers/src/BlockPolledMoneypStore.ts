@@ -190,14 +190,20 @@ export class BlockPolledMoneypStore extends MoneypStore<BlockPolledMoneypStoreEx
 
   /** @internal @override */
   protected _doStart(): () => void {
+    console.log('[BPMS] _doStart!');
     this._get().then(state => {
+      console.log('[BPMS] _get state:', state);
       if (!this._loaded) {
         this._load(...state);
       }
+    }).catch(error => {
+      console.error('[BPMS] _get error:', error);
     });
 
     const blockListener = async (blockTag: number) => {
+      console.log('[BPMS] blockListener blockTag:', blockTag);
       const state = await this._get(blockTag);
+      console.log('[BPMS] blockListener _get state:', state);
 
       if (this._loaded) {
         this._update(...state);

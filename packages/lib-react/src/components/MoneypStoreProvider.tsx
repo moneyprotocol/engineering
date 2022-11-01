@@ -16,8 +16,13 @@ export const MoneypStoreProvider: React.FC<MoneypStoreProviderProps> = ({
   const [loadedStore, setLoadedStore] = useState<MoneypStore>();
 
   useEffect(() => {
-    store.onLoaded = () => setLoadedStore(store);
+    console.log('[MoneypStoreProvider] useEffect store:', Object.assign({}, store));
+    store.onLoaded = () => {
+      console.log('[MoneypStoreProvider] store onLoaded:', Object.assign({}, store));
+      return setLoadedStore(store);
+    };
     const stop = store.start();
+    console.log('[MoneypStoreProvider] store started!');
 
     return () => {
       store.onLoaded = undefined;
