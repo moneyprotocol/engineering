@@ -238,14 +238,20 @@ export function Transaction<C extends React.ReactElement<ButtonlikeProps & Hover
 // Doesn't work on Kovan:
 // https://github.com/MetaMask/metamask-extension/issues/5579
 const tryToGetRevertReason = async (provider: Provider, hash: string) => {
+  console.log('[TransactionProvider] tryToGetRevertReason');
   try {
     const tx = await provider.getTransaction(hash);
+    console.log('[TransactionProvider] tryToGetRevertReason tx:', tx);
     const result = await provider.call(tx as any, tx.blockNumber);
+    console.log('[TransactionProvider] tryToGetRevertReason result:', result);
 
     if (hexDataLength(result) % 32 === 4 && hexDataSlice(result, 0, 4) === "0x08c379a0") {
-      return (defaultAbiCoder.decode(["string"], hexDataSlice(result, 4)) as [string])[0];
+      const _reason = (defaultAbiCoder.decode(["string"], hexDataSlice(result, 4)) as [string])[0];
+      console.log('[TransactionProvider] tryToGetRevertReason reason:', _reason);
+      return _reason;
     }
-  } catch {
+  } catch (exception) {
+    console.log('[TransactionProvider] tryToGetRevertReason exception:', exception);
     return undefined;
   }
 };

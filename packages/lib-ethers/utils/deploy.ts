@@ -118,9 +118,9 @@ const deployContracts = async (
       addresses.communityIssuance,
       addresses.mpStaking,
       addresses.lockupContractFactory,
-      Wallet.createRandom().address, // _bountyAddress (TODO: parameterize this)
+      '0xe0C25A64f71E9E9ECABE09ADBb8c1Bb1d9cE5513', // _bountyAddress (TODO: parameterize this)
       addresses.rskSwapPool, // _lpRewardsAddress
-      Wallet.createRandom().address, // _multisigAddress (TODO: parameterize this)
+      '0x14986801Bd0F2e5ec98cf412526360fC9ae71c80', // _multisigAddress (TODO: parameterize this)
       { ...overrides }
     ),
 
@@ -134,14 +134,6 @@ const deployContracts = async (
     )
   };
 };
-
-export const deployTellorCaller = (
-  deployer: Signer,
-  getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
-  tellorAddress: string,
-  overrides?: Overrides
-): Promise<string> =>
-  deployContract(deployer, getContractFactory, "TellorCaller", tellorAddress, { ...overrides });
 
 const connectContracts = async (
   {

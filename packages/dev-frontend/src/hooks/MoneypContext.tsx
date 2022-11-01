@@ -33,7 +33,7 @@ const wsParams = (network: string, infuraApiKey: string): [string, string] => [
   network
 ];
 
-const supportedNetworks = ["homestead", "kovan", "rinkeby", "ropsten", "goerli", "testnet"];
+const supportedNetworks = ["testnet"];
 
 export const MoneypProvider: React.FC<MoneypProviderProps> = ({
   children,
@@ -44,15 +44,30 @@ export const MoneypProvider: React.FC<MoneypProviderProps> = ({
   const [config, setConfig] = useState<MoneypFrontendConfig>();
 
   const connection = useMemo(() => {
+    
+    console.group();
+    console.log('[MoneypProvider] Creating connection...');
+    console.log('config:', config);
+    console.log('provider:', provider);
+    console.log('account:', account);
+    console.log('chainId:', chainId);
+
     if (config && provider && account && chainId) {
       try {
-        return _connectByChainId(provider, provider.getSigner(account), chainId, {
+        const _connection = _connectByChainId(provider, provider.getSigner(account), chainId, {
           userAddress: account,
           frontendTag: config.frontendTag,
           useStore: "blockPolled"
         });
-      } catch {}
+
+        console.log('connection:', _connection);
+        return _connection;
+      } catch (exception) {
+        console.log('exception:', exception);
+      }
     }
+
+    console.groupEnd();
   }, [config, provider, account, chainId]);
 
   useEffect(() => {
@@ -64,10 +79,12 @@ export const MoneypProvider: React.FC<MoneypProviderProps> = ({
       const { provider, chainId } = connection;
 
       if (isBatchedProvider(provider) && provider.chainId !== chainId) {
+        console.log('[MoneypProvider] isBatchedProvider: true');
         provider.chainId = chainId;
       }
 
       if (isWebSocketAugmentedProvider(provider)) {
+        console.log('[MoneypProvider] isWebSocketAugmentedProvider: true');
         const network = getNetwork(chainId);
 
         if (network.name && supportedNetworks.includes(network.name) && config.infuraApiKey) {
@@ -84,15 +101,19 @@ export const MoneypProvider: React.FC<MoneypProviderProps> = ({
   }, [config, connection]);
 
   if (!config || !provider || !account || !chainId) {
+    console.log('[MoneypProvider] loading...');
     return <>{loader}</>;
   }
 
   if (!connection) {
+    console.log('[MoneypProvider] No connection!');
     return unsupportedNetworkFallback ? <>{unsupportedNetworkFallback(chainId)}</> : null;
   }
 
   const moneyp = BitcoinsMoneyp._from(connection);
   moneyp.store.logging = true;
+
+  console.log('[MoneypProvider] moneyp:', moneyp);
 
   return (
     <MoneypContext.Provider value={{ config, account, provider, moneyp }}>
