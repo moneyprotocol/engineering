@@ -61,13 +61,13 @@ export const MoneypProvider: React.FC<MoneypProviderProps> = ({
         });
 
         console.log('connection:', _connection);
+        console.groupEnd();
         return _connection;
       } catch (exception) {
         console.log('exception:', exception);
+        console.groupEnd();
       }
     }
-
-    console.groupEnd();
   }, [config, provider, account, chainId]);
 
   useEffect(() => {
@@ -83,20 +83,20 @@ export const MoneypProvider: React.FC<MoneypProviderProps> = ({
         provider.chainId = chainId;
       }
 
-      if (isWebSocketAugmentedProvider(provider)) {
-        console.log('[MoneypProvider] isWebSocketAugmentedProvider: true');
-        const network = getNetwork(chainId);
+      // if (isWebSocketAugmentedProvider(provider)) {
+      //   console.log('[MoneypProvider] isWebSocketAugmentedProvider: true');
+      //   const network = getNetwork(chainId);
 
-        if (network.name && supportedNetworks.includes(network.name) && config.infuraApiKey) {
-          provider.openWebSocket(...wsParams(network.name, config.infuraApiKey));
-        } else if (connection._isDev) {
-          provider.openWebSocket(`ws://${window.location.hostname}:8546`, chainId);
-        }
+      //   if (network.name && supportedNetworks.includes(network.name) && config.infuraApiKey) {
+      //     provider.openWebSocket(...wsParams(network.name, config.infuraApiKey));
+      //   } else if (connection._isDev) {
+      //     provider.openWebSocket(`ws://${window.location.hostname}:8546`, chainId);
+      //   }
 
-        return () => {
-          provider.closeWebSocket();
-        };
-      }
+      //   return () => {
+      //     provider.closeWebSocket();
+      //   };
+      // }
     }
   }, [config, connection]);
 
