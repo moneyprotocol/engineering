@@ -101,54 +101,70 @@ export class BlockPolledMoneypStore extends MoneypStore<BlockPolledMoneypStoreEx
   ): Promise<[baseState: MoneypStoreBaseState, extraState: BlockPolledMoneypStoreExtraState]> {
     const { userAddress, frontendTag } = this.connection;
 
+    const errCatch = (key: string) => (err: unknown) => {
+      console.error(`[BPMS] _get ${blockTag} ${key}:`, err);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return err as any;
+    };
+
     const {
       blockTimestamp,
       createFees,
       calculateRemainingMP,
       ...baseState
     } = await promiseAllValues({
-      blockTimestamp: _getBlockTimestamp(this.connection, blockTag),
-      createFees: this._readable._getFeesFactory({ blockTag }),
+      blockTimestamp: _getBlockTimestamp(this.connection, blockTag)
+        .catch(errCatch('blockTimestamp')),
+      createFees: this._readable._getFeesFactory({ blockTag })
+        .catch(errCatch('createFees')),
       calculateRemainingMP: this._readable._getRemainingLiquidityMiningMPRewardCalculator({
         blockTag
-      }),
+      }).catch(errCatch('calculateRemainingMP')),
 
-      price: this._readable.getPrice({ blockTag }),
-      numberOfVaults: this._readable.getNumberOfVaults({ blockTag }),
-      totalRedistributed: this._readable.getTotalRedistributed({ blockTag }),
-      total: this._readable.getTotal({ blockTag }),
-      bpdInStabilityPool: this._readable.getBPDInStabilityPool({ blockTag }),
-      totalStakedMP: this._readable.getTotalStakedMP({ blockTag }),
-      _riskiestVaultBeforeRedistribution: this._getRiskiestVaultBeforeRedistribution({ blockTag }),
-      totalStakedRskSwapTokens: this._readable.getTotalStakedRskSwapTokens({ blockTag }),
+      price: this._readable.getPrice({ blockTag })
+        .catch(errCatch('price')),
+      numberOfVaults: this._readable.getNumberOfVaults({ blockTag })
+        .catch(errCatch('numberOfVaults')),
+      totalRedistributed: this._readable.getTotalRedistributed({ blockTag })
+        .catch(errCatch('totalRedistributed')),
+      total: this._readable.getTotal({ blockTag })
+        .catch(errCatch('total')),
+      bpdInStabilityPool: this._readable.getBPDInStabilityPool({ blockTag })
+        .catch(errCatch('bpdInStabilityPool')),
+      totalStakedMP: this._readable.getTotalStakedMP({ blockTag })
+        .catch(errCatch('totalStakedMP')),
+      _riskiestVaultBeforeRedistribution: this._getRiskiestVaultBeforeRedistribution({ blockTag })
+        .catch(errCatch('_riskiestVaultBeforeRedistribution')),
+      totalStakedRskSwapTokens: this._readable.getTotalStakedRskSwapTokens({ blockTag })
+        .catch(errCatch('totalStakedRskSwapTokens')),
       remainingStabilityPoolMPReward: this._readable.getRemainingStabilityPoolMPReward({
         blockTag
-      }),
+      }).catch(errCatch('remainingStabilityPoolMPReward')),
 
       frontend: frontendTag
-        ? this._readable.getFrontendStatus(frontendTag, { blockTag })
+        ? this._readable.getFrontendStatus(frontendTag, { blockTag }).catch(errCatch('frontend'))
         : { status: "unregistered" as const },
 
       ...(userAddress
         ? {
-            accountBalance: this._provider.getBalance(userAddress, blockTag).then(decimalify),
-            bpdBalance: this._readable.getBPDBalance(userAddress, { blockTag }),
-            mpBalance: this._readable.getMPBalance(userAddress, { blockTag }),
-            rskSwapTokenBalance: this._readable.getRskSwapTokenBalance(userAddress, { blockTag }),
-            rskSwapTokenAllowance: this._readable.getRskSwapTokenAllowance(userAddress, { blockTag }),
-            liquidityMiningStake: this._readable.getLiquidityMiningStake(userAddress, { blockTag }),
+            accountBalance: this._provider.getBalance(userAddress, blockTag).then(decimalify).catch(errCatch('accountBalance')),
+            bpdBalance: this._readable.getBPDBalance(userAddress, { blockTag }).catch(errCatch('bpdBalance')),
+            mpBalance: this._readable.getMPBalance(userAddress, { blockTag }).catch(errCatch('mpBalance')),
+            rskSwapTokenBalance: this._readable.getRskSwapTokenBalance(userAddress, { blockTag }).catch(errCatch('rskSwapTokenBalance')),
+            rskSwapTokenAllowance: this._readable.getRskSwapTokenAllowance(userAddress, { blockTag }).catch(errCatch('rskSwapTokenAllowance')),
+            liquidityMiningStake: this._readable.getLiquidityMiningStake(userAddress, { blockTag }).catch(errCatch('liquidityMiningStake')),
             liquidityMiningMPReward: this._readable.getLiquidityMiningMPReward(userAddress, {
               blockTag
-            }),
+            }).catch(errCatch('liquidityMiningMPReward')),
             collateralSurplusBalance: this._readable.getCollateralSurplusBalance(userAddress, {
               blockTag
-            }),
+            }).catch(errCatch('collateralSurplusBalance')),
             vaultBeforeRedistribution: this._readable.getVaultBeforeRedistribution(userAddress, {
               blockTag
-            }),
-            stabilityDeposit: this._readable.getStabilityDeposit(userAddress, { blockTag }),
-            mpStake: this._readable.getMPStake(userAddress, { blockTag }),
-            ownFrontend: this._readable.getFrontendStatus(userAddress, { blockTag })
+            }).catch(errCatch('vaultBeforeRedistribution')),
+            stabilityDeposit: this._readable.getStabilityDeposit(userAddress, { blockTag }).catch(errCatch('stabilityDeposit')),
+            mpStake: this._readable.getMPStake(userAddress, { blockTag }).catch(errCatch('mpStake')),
+            ownFrontend: this._readable.getFrontendStatus(userAddress, { blockTag }).catch(errCatch('ownFrontend')),
           }
         : {
             accountBalance: Decimal.ZERO,
