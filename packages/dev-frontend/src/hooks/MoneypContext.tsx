@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Provider } from "@ethersproject/abstract-provider";
-import { getNetwork } from "@ethersproject/networks";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 
-import { isBatchedProvider, isWebSocketAugmentedProvider } from "@moneyprotocol/providers";
+import { isBatchedProvider } from "@moneyprotocol/providers";
 import {
   BlockPolledMoneypStore,
   BitcoinsMoneyp,
@@ -27,13 +26,6 @@ type MoneypProviderProps = {
   loader?: React.ReactNode;
   unsupportedNetworkFallback?: (chainId: number) => React.ReactNode;
 };
-
-const wsParams = (network: string, infuraApiKey: string): [string, string] => [
-  `wss://${network === "homestead" ? "mainnet" : network}.infura.io/ws/v3/${infuraApiKey}`,
-  network
-];
-
-const supportedNetworks = ["testnet"];
 
 export const MoneypProvider: React.FC<MoneypProviderProps> = ({
   children,
