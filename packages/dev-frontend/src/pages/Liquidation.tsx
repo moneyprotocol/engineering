@@ -9,7 +9,7 @@ export const Liquidation: React.FC = () => (
   <Container variant="columns">
     <Container variant="left">
       <Card>
-        <Box sx={{ p: [2, 3] }}>
+        <Box sx={{ pt: '20px' }}>
           <InfoMessage title="Bot functionality">
             <Paragraph>This functionality is expected to be carried out by bots.</Paragraph>
             <Paragraph>

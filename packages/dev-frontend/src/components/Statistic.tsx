@@ -9,12 +9,12 @@ type StatisticProps = {
 
 export const Statistic: React.FC<StatisticProps> = ({ name, tooltip, children }) => {
   return (
-    <Flex sx={{ borderBottom: 1, borderColor: "rgba(0, 0, 0, 0.1)" }}>
-      <Flex sx={{ alignItems: "center", justifyContent: "flex-start", flex: 1.1, fontWeight: 200 }}>
+    <Flex sx={{ flexDirection: 'column', mb: '12px' }}>
+      <Flex sx={{ alignItems: "center", justifyContent: "flex-start", flex: 1.1, fontWeight: 200, color: '#777777', fontSize: '14px' }}>
         <Flex>{name}</Flex>
         <InfoIcon size="xs" tooltip={<Card variant="tooltip">{tooltip}</Card>} />
       </Flex>
-      <Flex sx={{ justifyContent: "flex-start", flex: 0.9, alignItems: "center" }}>{children}</Flex>
+      <Flex sx={{ justifyContent: "flex-start", flex: 0.9, alignItems: "center", fontSize: '16px' }}>{children}</Flex>
     </Flex>
   );
 };

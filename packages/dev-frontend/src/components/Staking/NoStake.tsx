@@ -11,7 +11,7 @@ export const NoStake: React.FC = () => {
   return (
     <Card>
       <Heading>Staking</Heading>
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: '20px' }}>
         <InfoMessage title={`You haven't staked ${GT} yet.`}>
           Stake {GT} to earn a share of borrowing and redemption fees.
         </InfoMessage>

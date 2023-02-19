@@ -5,16 +5,16 @@ export const Nav: React.FC = () => {
   return (
     <Box as="nav" sx={{ display: ["none", "flex"], alignItems: "center", flex: 1 }}>
       <Flex>
-        <Link to="/">Dashboard</Link>
-        <Link to="/farm">Farm</Link>
-      </Flex>
-      <Flex sx={{ justifyContent: "flex-end", mr: 3, flex: 1 }}>
-        <Link sx={{ fontSize: 1 }} to="/liquidation">
+        <Link to="/" sx={{fontWeight: "400"}}>Dashboard</Link>
+        <Link to="/farm" sx={{fontWeight: "400"}}>Farm</Link>
+        <Link to="/liquidation" sx={{fontWeight: "400"}}>
           Liquidation
         </Link>
-        <Link sx={{ fontSize: 1 }} to="/redemption">
+        <Link to="/redemption" sx={{fontWeight: "400"}}>
           Redemption
         </Link>
+      </Flex>
+      <Flex sx={{ justifyContent: "flex-end", mr: 3, flex: 1 }}>
       </Flex>
     </Box>
   );

@@ -1,48 +1,48 @@
-import React, { useCallback } from "react";
-import { Card, Heading, Box, Flex, Button } from "theme-ui";
-import { LP, GT } from "../../../../strings";
-import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
-import { Icon } from "../../../Icon";
-import { LoadingOverlay } from "../../../LoadingOverlay";
-import { useMyTransactionState } from "../../../Transaction";
-import { DisabledEditableRow, StaticRow } from "../../../Vault/Editor";
-import { useFarmView } from "../../context/FarmViewContext";
-import { RemainingMP } from "../RemainingMP";
-import { ClaimReward } from "./ClaimReward";
-import { UnstakeAndClaim } from "../UnstakeAndClaim";
-import { Yield } from "../Yield";
+import React, { useCallback } from 'react'
+import { Card, Heading, Box, Flex, Button } from 'theme-ui'
+import { LP, GT } from '../../../../strings'
+import { MoneypStoreState } from '@moneyprotocol/lib-base'
+import { useMoneypSelector } from '@moneyprotocol/lib-react'
+import { Icon } from '../../../Icon'
+import { LoadingOverlay } from '../../../LoadingOverlay'
+import { useMyTransactionState } from '../../../Transaction'
+import { DisabledEditableRow, StaticRow } from '../../../Vault/Editor'
+import { useFarmView } from '../../context/FarmViewContext'
+import { RemainingMP } from '../RemainingMP'
+import { ClaimReward } from './ClaimReward'
+import { UnstakeAndClaim } from '../UnstakeAndClaim'
+import { Yield } from '../Yield'
 
 const selector = ({ liquidityMiningStake, liquidityMiningMPReward }: MoneypStoreState) => ({
   liquidityMiningStake,
-  liquidityMiningMPReward
-});
-const transactionId = /farm-/i;
+  liquidityMiningMPReward,
+})
+const transactionId = /farm-/i
 
 export const Active: React.FC = () => {
-  const { dispatchEvent } = useFarmView();
-  const { liquidityMiningStake, liquidityMiningMPReward } = useMoneypSelector(selector);
+  const { dispatchEvent } = useFarmView()
+  const { liquidityMiningStake, liquidityMiningMPReward } = useMoneypSelector(selector)
 
   const handleAdjustPressed = useCallback(() => {
-    dispatchEvent("ADJUST_PRESSED");
-  }, [dispatchEvent]);
+    dispatchEvent('ADJUST_PRESSED')
+  }, [dispatchEvent])
 
-  const transactionState = useMyTransactionState(transactionId);
+  const transactionState = useMyTransactionState(transactionId)
   const isTransactionPending =
-    transactionState.type === "waitingForApproval" ||
-    transactionState.type === "waitingForConfirmation";
+    transactionState.type === 'waitingForApproval' ||
+    transactionState.type === 'waitingForConfirmation'
 
   return (
     <Card>
       <Heading>
         Liquidity farm
         {!isTransactionPending && (
-          <Flex sx={{ justifyContent: "flex-end" }}>
+          <Flex sx={{ justifyContent: 'flex-end' }}>
             <RemainingMP />
           </Flex>
         )}
       </Heading>
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: '20px' }}>
         <Box>
           <DisabledEditableRow
             label="Stake"
@@ -50,15 +50,15 @@ export const Active: React.FC = () => {
             amount={liquidityMiningStake.prettify(4)}
             unit={LP}
           />
-          <Flex sx={{ alignItems: "center" }}>
+          <Flex sx={{ alignItems: 'center' }}>
             <StaticRow
               label="Reward"
               inputId="farm-reward"
               amount={liquidityMiningMPReward.prettify(4)}
-              color={liquidityMiningMPReward.nonZero && "success"}
+              color={liquidityMiningMPReward.nonZero && 'blueSuccess'}
               unit={GT}
             />
-            <Flex sx={{ justifyContent: "flex-end", flex: 1 }}>
+            <Flex sx={{ justifyContent: 'flex-end', flex: 1 }}>
               <Yield />
             </Flex>
           </Flex>
@@ -77,5 +77,5 @@ export const Active: React.FC = () => {
       </Box>
       {isTransactionPending && <LoadingOverlay />}
     </Card>
-  );
-};
+  )
+}

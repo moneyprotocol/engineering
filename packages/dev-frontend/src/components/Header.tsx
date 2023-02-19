@@ -23,7 +23,14 @@ export const Header: React.FC = ({ children }) => {
   const isFrontendRegistered = frontendTag === AddressZero || frontend.status === "registered";
 
   return (
-    <Container variant="header">
+    <Container variant="header" sx={{padding: '0px !important', width: '100%',
+    '@media screen and (min-width: 700px)': {
+      mt: '55px',
+      padding: '24px !important',
+      border: '1px solid #E1E1E1',
+      borderRadius: '16px',
+      background: 'white !important'
+    },}}>
       <Flex sx={{ alignItems: "center", flex: 1 }}>
         <MoneypLogo height={logoHeight} />
 

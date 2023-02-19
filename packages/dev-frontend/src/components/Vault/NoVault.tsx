@@ -12,14 +12,15 @@ export const NoVault: React.FC = props => {
 
   return (
     <Card>
-      <Heading>Vault</Heading>
-      <Box sx={{ p: [2, 3] }}>
+      <Heading>Your Vault</Heading>
+      <Box sx={{ pt: '20px' }}>
         <InfoMessage title="You haven't borrowed any BPD yet.">
           You can borrow BPD by opening a Vault.
         </InfoMessage>
 
         <Flex variant="layout.actions">
-          <Button onClick={handleOpenVault}>Open Vault</Button>
+          <Button onClick={handleOpenVault}
+          className={'text-black black'}>Open Vault</Button>
         </Flex>
       </Box>
     </Card>

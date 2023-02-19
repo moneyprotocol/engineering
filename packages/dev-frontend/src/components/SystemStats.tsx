@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Heading, Link, Box, Text } from "theme-ui";
+import { Card, Heading, Link, Box, Text, Container } from "theme-ui";
 import { AddressZero } from "@ethersproject/constants";
 import { Decimal, Percent, MoneypStoreState } from "@moneyprotocol/lib-base";
 import { useMoneypSelector } from "@moneyprotocol/lib-react";
@@ -89,71 +89,86 @@ export const SystemStats: React.FC<SystemStatsProps> = ({ variant = "info", show
   const kickbackRatePct = frontendTag === AddressZero ? "100" : kickbackRate?.mul(100).prettify();
 
   return (
-    <Card {...{ variant }}>
+    <Card>
       {showBalances && <Balances />}
 
-      <Heading>Moneyp statistics</Heading>
+      <Heading>Moneyp Statistics</Heading>
 
-      <Heading as="h2" sx={{ mt: 3, fontWeight: "body" }}>
+      <Container sx={{ mt: 3, fontWeight: "400", fontSize: '16px', my: '10px' }}>
         Protocol
-      </Heading>
+      </Container>
 
-      <Statistic name="Borrowing fee" tooltip="TBD">
-        {borrowingFeePct.toString(2)}
-      </Statistic>
-      <Statistic name="Redemption fee" tooltip="TBD">
-        {redemptionFeePct.toString(2)}
-      </Statistic>
+      <Container variant="columns">
+        <Container variant="left">
+          <Statistic name="Borrowing Fee" tooltip="TBD">
+            {borrowingFeePct.toString(2)}
+          </Statistic>
 
-      <Statistic name="TVL" tooltip="TBD">
-        {total.collateral.shorten()} RBTC
-        <Text sx={{ fontSize: 1 }}>
-          &nbsp;(${Decimal.from(total.collateral.mul(price)).shorten()})
-        </Text>
-      </Statistic>
-      <Statistic name="Vaults" tooltip="TBD">
-        {Decimal.from(numberOfVaults).prettify(0)}
-      </Statistic>
-      <Statistic name="BPD" tooltip="TBD">
-        {total.debt.shorten()}
-      </Statistic>
-      {bpdInStabilityPoolPct && (
-        <Statistic name="Stability Pool BPD" tooltip="TBD">
-          {bpdInStabilityPool.shorten()}
-          <Text sx={{ fontSize: 1 }}>&nbsp;({bpdInStabilityPoolPct.toString(1)})</Text>
-        </Statistic>
-      )}
-      <Statistic name="Staked MP" tooltip="TBD">
-        {totalStakedMP.shorten()}
-      </Statistic>
-      <Statistic name="Collateral ratio" tooltip="TBD">
-        {totalCollateralRatioPct.prettify()}
-      </Statistic>
+          <Statistic name="TVL" tooltip="TBD">
+            {total.collateral.shorten()} RBTC
+            <Text sx={{ fontSize: 1 }}>
+              &nbsp;(${Decimal.from(total.collateral.mul(price)).shorten()})
+            </Text>
+          </Statistic>
+
+          <Statistic name="Vaults" tooltip="TBD">
+            {Decimal.from(numberOfVaults).prettify(0)}
+          </Statistic>
+
+          {bpdInStabilityPoolPct && (
+            <Statistic name="Stability Pool BPD" tooltip="TBD">
+              {bpdInStabilityPool.shorten()}
+              <Text sx={{ fontSize: 1 }}>&nbsp;({bpdInStabilityPoolPct.toString(1)})</Text>
+            </Statistic>
+          )}
+        </Container>
+
+        <Container variant="right">
+          <Statistic name="Redemption Fee" tooltip="TBD">
+            {redemptionFeePct.toString(2)}
+          </Statistic>
+
+          <Statistic name="BPD" tooltip="TBD">
+            {total.debt.shorten()}
+          </Statistic>
+
+          <Statistic name="Staked MP" tooltip="TBD">
+          {totalStakedMP.shorten()}
+          </Statistic>
+
+          <Statistic name="Collateral Ratio" tooltip="TBD">
+            {totalCollateralRatioPct.prettify()}
+          </Statistic>
+        </Container>
+      </Container>
+      
       {total.collateralRatioIsBelowCritical(price) && (
         <Box color="danger">The system is in recovery mode!</Box>
       )}
 
-      <Heading as="h2" sx={{ mt: 3, fontWeight: "body" }}>
+      <Container sx={{ mt: 3, pt: 3, borderTop: '1px solid #E2E4F1', fontWeight: "400", fontSize: '16px', my: '10px' }}>
         Frontend
-      </Heading>
+      </Container>
       {kickbackRatePct && (
         <Statistic name="Kickback rate" tooltip="TBD">
           {kickbackRatePct}%
         </Statistic>
       )}
 
-      <Box sx={{ mt: 3, opacity: 0.66 }}>
+      <Box sx={{ mt: 3, color: '#777777', fontWeight: '200' }}>
         <Box sx={{ fontSize: 0 }}>
           Contracts version: <GitHubCommit>{contractsVersion}</GitHubCommit>
         </Box>
-        <Box sx={{ fontSize: 0 }}>Deployed: {deploymentDate.toLocaleString()}</Box>
+        <Box sx={{ fontSize: 0 }}>Deployed: <Text sx={{ fontWeight: "400", color:'black' }}>{deploymentDate.toLocaleString()}</Text></Box>
         <Box sx={{ fontSize: 0 }}>
           Frontend version:{" "}
-          {process.env.NODE_ENV === "development" ? (
-            "development"
-          ) : (
-            <GitHubCommit>{process.env.REACT_APP_VERSION}</GitHubCommit>
-          )}
+          <Text sx={{ fontWeight: "400", color:'black' }}>
+            {process.env.NODE_ENV === "development" ? (
+              "development"
+            ) : (
+              <GitHubCommit>{process.env.REACT_APP_VERSION}</GitHubCommit>
+            )}
+          </Text>
         </Box>
       </Box>
     </Card>

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Heading, Box, Card, Button } from "theme-ui";
+import React, { useState } from "react"
+import { Heading, Box, Card, Button } from "theme-ui"
 
 import {
   Percent,
@@ -8,32 +8,32 @@ import {
   Decimal,
   Vault,
   MoneypStoreState,
-  BPD_LIQUIDATION_RESERVE
-} from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
+  BPD_LIQUIDATION_RESERVE,
+} from "@moneyprotocol/lib-base"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
-import { COIN } from "../../strings";
+import { COIN } from "../../strings"
 
-import { Icon } from "../Icon";
-import { EditableRow, StaticRow } from "./Editor";
-import { LoadingOverlay } from "../LoadingOverlay";
-import { CollateralRatio } from "./CollateralRatio";
-import { InfoIcon } from "../InfoIcon";
+import { ResetIcon } from "../shared/ResetIcon"
+import { EditableRow, StaticRow } from "./Editor"
+import { LoadingOverlay } from "../LoadingOverlay"
+import { CollateralRatio } from "./CollateralRatio"
+import { InfoIcon } from "../InfoIcon"
 
-const gasRoomRBTC = Decimal.from(0.1);
+const gasRoomRBTC = Decimal.from(0.1)
 
 type VaultEditorProps = {
-  original: Vault;
-  edited: Vault;
-  fee: Decimal;
-  borrowingRate: Decimal;
-  changePending: boolean;
+  original: Vault
+  edited: Vault
+  fee: Decimal
+  borrowingRate: Decimal
+  changePending: boolean
   dispatch: (
     action: { type: "setCollateral" | "setDebt"; newValue: Decimalish } | { type: "revert" }
-  ) => void;
-};
+  ) => void
+}
 
-const select = ({ price, accountBalance }: MoneypStoreState) => ({ price, accountBalance });
+const select = ({ price, accountBalance }: MoneypStoreState) => ({ price, accountBalance })
 
 export const VaultEditor: React.FC<VaultEditorProps> = ({
   children,
@@ -42,23 +42,23 @@ export const VaultEditor: React.FC<VaultEditorProps> = ({
   fee,
   borrowingRate,
   changePending,
-  dispatch
+  dispatch,
 }) => {
-  const { price, accountBalance } = useMoneypSelector(select);
+  const { price, accountBalance } = useMoneypSelector(select)
 
-  const editingState = useState<string>();
+  const editingState = useState<string>()
 
-  const feePct = new Percent(borrowingRate);
+  const feePct = new Percent(borrowingRate)
 
-  const originalCollateralRatio = !original.isEmpty ? original.collateralRatio(price) : undefined;
-  const collateralRatio = !edited.isEmpty ? edited.collateralRatio(price) : undefined;
-  const collateralRatioChange = Difference.between(collateralRatio, originalCollateralRatio);
+  const originalCollateralRatio = !original.isEmpty ? original.collateralRatio(price) : undefined
+  const collateralRatio = !edited.isEmpty ? edited.collateralRatio(price) : undefined
+  const collateralRatioChange = Difference.between(collateralRatio, originalCollateralRatio)
 
-  const maxEth = accountBalance.gt(gasRoomRBTC) ? accountBalance.sub(gasRoomRBTC) : Decimal.ZERO;
-  const maxCollateral = original.collateral.add(maxEth);
-  const collateralMaxedOut = edited.collateral.eq(maxCollateral);
+  const maxEth = accountBalance.gt(gasRoomRBTC) ? accountBalance.sub(gasRoomRBTC) : Decimal.ZERO
+  const maxCollateral = original.collateral.add(maxEth)
+  const collateralMaxedOut = edited.collateral.eq(maxCollateral)
 
-  const dirty = !edited.equals(original);
+  const dirty = !edited.equals(original)
 
   return (
     <Card>
@@ -70,12 +70,12 @@ export const VaultEditor: React.FC<VaultEditorProps> = ({
             sx={{ ":enabled:hover": { color: "danger" } }}
             onClick={() => dispatch({ type: "revert" })}
           >
-            <Icon name="history" size="lg" />
+            <ResetIcon />
           </Button>
         )}
       </Heading>
 
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: "20px" }}>
         <EditableRow
           label="Collateral"
           inputId="vault-collateral"
@@ -129,6 +129,7 @@ export const VaultEditor: React.FC<VaultEditorProps> = ({
           unit={COIN}
           infoIcon={
             <InfoIcon
+              size="xs"
               tooltip={
                 <Card variant="tooltip" sx={{ width: "240px" }}>
                   This is a one-time fee applied to your borrowed amount. It has 0% interest.
@@ -145,5 +146,5 @@ export const VaultEditor: React.FC<VaultEditorProps> = ({
 
       {changePending && <LoadingOverlay />}
     </Card>
-  );
-};
+  )
+}

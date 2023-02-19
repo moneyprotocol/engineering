@@ -1,31 +1,31 @@
-import React from "react";
-import { Card, Heading, Box, Flex } from "theme-ui";
-import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
-import { InfoMessage } from "../../../InfoMessage";
-import { UnstakeAndClaim } from "../UnstakeAndClaim";
-import { RemainingMP } from "../RemainingMP";
-import { StaticRow } from "../../../Vault/Editor";
-import { GT, LP } from "../../../../strings";
+import React from 'react'
+import { Card, Heading, Box, Flex } from 'theme-ui'
+import { MoneypStoreState } from '@moneyprotocol/lib-base'
+import { useMoneypSelector } from '@moneyprotocol/lib-react'
+import { InfoMessage } from '../../../InfoMessage'
+import { UnstakeAndClaim } from '../UnstakeAndClaim'
+import { RemainingMP } from '../RemainingMP'
+import { StaticRow } from '../../../Vault/Editor'
+import { GT, LP } from '../../../../strings'
 
 const selector = ({ liquidityMiningStake, liquidityMiningMPReward }: MoneypStoreState) => ({
   liquidityMiningStake,
-  liquidityMiningMPReward
-});
+  liquidityMiningMPReward,
+})
 
 export const Disabled: React.FC = () => {
-  const { liquidityMiningStake, liquidityMiningMPReward } = useMoneypSelector(selector);
-  const hasStake = !liquidityMiningStake.isZero;
+  const { liquidityMiningStake, liquidityMiningMPReward } = useMoneypSelector(selector)
+  const hasStake = !liquidityMiningStake.isZero
 
   return (
     <Card>
       <Heading>
         Liquidity farm
-        <Flex sx={{ justifyContent: "flex-end" }}>
+        <Flex sx={{ justifyContent: 'flex-end' }}>
           <RemainingMP />
         </Flex>
       </Heading>
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: '20px' }}>
         <InfoMessage title="Liquidity farming period has finished">
           <Flex>There are no more MP rewards left to farm</Flex>
         </InfoMessage>
@@ -42,7 +42,7 @@ export const Disabled: React.FC = () => {
                 label="Reward"
                 inputId="farm-reward"
                 amount={liquidityMiningMPReward.prettify(4)}
-                color={liquidityMiningMPReward.nonZero && "success"}
+                color={liquidityMiningMPReward.nonZero && 'blueSuccess'}
                 unit={GT}
               />
             </Box>
@@ -51,5 +51,5 @@ export const Disabled: React.FC = () => {
         )}
       </Box>
     </Card>
-  );
-};
+  )
+}

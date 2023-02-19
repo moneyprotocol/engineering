@@ -20,8 +20,8 @@ export const RedeemedVault: React.FC = () => {
 
   return (
     <Card>
-      <Heading>Vault</Heading>
-      <Box sx={{ p: [2, 3] }}>
+      <Heading>Your Vault</Heading>
+      <Box sx={{ pt: '20px' }}>
         <InfoMessage title="Your Vault has been redeemed.">
           {hasSurplusCollateral
             ? "Please reclaim your remaining collateral before opening a new Vault."

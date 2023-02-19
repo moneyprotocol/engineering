@@ -194,13 +194,13 @@ export const RiskiestVaults: React.FC<RiskiestVaultsProps> = ({ pageSize }) => {
       </Heading>
 
       {!vaults || vaults.length === 0 ? (
-        <Box sx={{ p: [2, 3] }}>
+        <Box sx={{ pt: '20px' }}>
           <Box sx={{ p: 4, fontSize: 3, textAlign: "center" }}>
             {!vaults ? "Loading..." : "There are no Vaults yet"}
           </Box>
         </Box>
       ) : (
-        <Box sx={{ p: [2, 3] }}>
+        <Box sx={{ pt: '20px' }}>
           <Box
             as="table"
             sx={{

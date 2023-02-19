@@ -56,11 +56,23 @@ export const MoneypFrontend: React.FC<MoneypFrontendProps> = ({ loader }) => {
           <StabilityViewProvider>
             <StakingViewProvider>
               <FarmViewProvider>
-                <Flex sx={{ flexDirection: "column", minHeight: "100%" }}>
-                  <Header>
-                    <UserAccount />
-                    <SystemStatsPopup />
-                  </Header>
+                <Flex sx={{ flexDirection: "column", minHeight: "100%",
+              }} className="bg-gradient">
+                  
+                  <Container
+                    variant="main"
+                    sx={{
+                      display: "flex",
+                      flexGrow: 1,
+                      flexDirection: "column",
+                      alignItems: "center"
+                    }}
+                  >
+                    <Header>
+                      <UserAccount />
+                      <SystemStatsPopup />
+                    </Header>
+                  </Container>
 
                   <Container
                     variant="main"

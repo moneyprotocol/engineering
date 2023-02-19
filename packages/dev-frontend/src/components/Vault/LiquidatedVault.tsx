@@ -20,8 +20,8 @@ export const LiquidatedVault: React.FC = () => {
 
   return (
     <Card>
-      <Heading>Vault</Heading>
-      <Box sx={{ p: [2, 3] }}>
+      <Heading>Your Vault</Heading>
+      <Box sx={{ pt: '20px' }}>
         <InfoMessage title="Your Vault has been liquidated.">
           {hasSurplusCollateral
             ? "Please reclaim your remaining collateral before opening a new Vault."

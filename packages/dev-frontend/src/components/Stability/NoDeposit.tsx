@@ -20,7 +20,7 @@ export const NoDeposit: React.FC = props => {
           <RemainingMP />
         </Flex>
       </Heading>
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: '20px' }}>
         <InfoMessage title="You have no BPD in the Stability Pool.">
           You can earn RBTC and MP rewards by depositing BPD.
         </InfoMessage>

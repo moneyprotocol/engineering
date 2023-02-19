@@ -1,45 +1,45 @@
-import React, { useCallback, useEffect } from "react";
-import { Card, Heading, Box, Flex, Button } from "theme-ui";
+import React, { useCallback, useEffect } from "react"
+import { Card, Heading, Box, Flex, Button } from "theme-ui"
 
-import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
+import { MoneypStoreState } from "@moneyprotocol/lib-base"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
-import { COIN, GT } from "../../strings";
-import { Icon } from "../Icon";
-import { LoadingOverlay } from "../LoadingOverlay";
-import { useMyTransactionState } from "../Transaction";
-import { DisabledEditableRow, StaticRow } from "../Vault/Editor";
-import { ClaimAndMove } from "./actions/ClaimAndMove";
-import { ClaimRewards } from "./actions/ClaimRewards";
-import { useStabilityView } from "./context/StabilityViewContext";
-import { RemainingMP } from "./RemainingMP";
-import { Yield } from "./Yield";
+import { COIN, GT } from "../../strings"
+import { Icon } from "../Icon"
+import { LoadingOverlay } from "../LoadingOverlay"
+import { useMyTransactionState } from "../Transaction"
+import { DisabledEditableRow, StaticRow } from "../Vault/Editor"
+import { ClaimAndMove } from "./actions/ClaimAndMove"
+import { ClaimRewards } from "./actions/ClaimRewards"
+import { useStabilityView } from "./context/StabilityViewContext"
+import { RemainingMP } from "./RemainingMP"
+import { Yield } from "./Yield"
 
-const selector = ({ stabilityDeposit, vault }: MoneypStoreState) => ({ stabilityDeposit, vault });
+const selector = ({ stabilityDeposit, vault }: MoneypStoreState) => ({ stabilityDeposit, vault })
 
 export const ActiveDeposit: React.FC = () => {
-  const { dispatchEvent } = useStabilityView();
-  const { stabilityDeposit, vault } = useMoneypSelector(selector);
+  const { dispatchEvent } = useStabilityView()
+  const { stabilityDeposit, vault } = useMoneypSelector(selector)
 
   const handleAdjustDeposit = useCallback(() => {
-    dispatchEvent("ADJUST_DEPOSIT_PRESSED");
-  }, [dispatchEvent]);
+    dispatchEvent("ADJUST_DEPOSIT_PRESSED")
+  }, [dispatchEvent])
 
-  const hasReward = !stabilityDeposit.mpReward.isZero;
-  const hasGain = !stabilityDeposit.collateralGain.isZero;
-  const hasVault = !vault.isEmpty;
+  const hasReward = !stabilityDeposit.mpReward.isZero
+  const hasGain = !stabilityDeposit.collateralGain.isZero
+  const hasVault = !vault.isEmpty
 
-  const transactionId = "stability-deposit";
-  const transactionState = useMyTransactionState(transactionId);
+  const transactionId = "stability-deposit"
+  const transactionState = useMyTransactionState(transactionId)
   const isWaitingForTransaction =
     transactionState.type === "waitingForApproval" ||
-    transactionState.type === "waitingForConfirmation";
+    transactionState.type === "waitingForConfirmation"
 
   useEffect(() => {
     if (transactionState.type === "confirmedOneShot") {
-      dispatchEvent("REWARDS_CLAIMED");
+      dispatchEvent("REWARDS_CLAIMED")
     }
-  }, [transactionState.type, dispatchEvent]);
+  }, [transactionState.type, dispatchEvent])
 
   return (
     <Card>
@@ -51,7 +51,7 @@ export const ActiveDeposit: React.FC = () => {
           </Flex>
         )}
       </Heading>
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: "20px" }}>
         <Box>
           <DisabledEditableRow
             label="Deposit"
@@ -64,7 +64,7 @@ export const ActiveDeposit: React.FC = () => {
             label="Liquidation gain"
             inputId="deposit-gain"
             amount={stabilityDeposit.collateralGain.prettify(4)}
-            color={stabilityDeposit.collateralGain.nonZero && "success"}
+            color={stabilityDeposit.collateralGain.nonZero && "blueSuccess"}
             unit="RBTC"
           />
 
@@ -73,7 +73,7 @@ export const ActiveDeposit: React.FC = () => {
               label="Reward"
               inputId="deposit-reward"
               amount={stabilityDeposit.mpReward.prettify()}
-              color={stabilityDeposit.mpReward.nonZero && "success"}
+              color={stabilityDeposit.mpReward.nonZero && "blueSuccess"}
               unit={GT}
             />
             <Flex sx={{ justifyContent: "flex-end", flex: 1 }}>
@@ -84,8 +84,7 @@ export const ActiveDeposit: React.FC = () => {
 
         <Flex variant="layout.actions">
           <Button variant="outline" onClick={handleAdjustDeposit}>
-            <Icon name="pen" size="sm" />
-            &nbsp;Adjust
+            Adjust
           </Button>
 
           <ClaimRewards disabled={!hasGain && !hasReward}>Claim RBTC and MP</ClaimRewards>
@@ -100,5 +99,5 @@ export const ActiveDeposit: React.FC = () => {
 
       {isWaitingForTransaction && <LoadingOverlay />}
     </Card>
-  );
-};
+  )
+}
