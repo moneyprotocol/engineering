@@ -1,16 +1,16 @@
-import React, { useCallback } from "react";
-import { Card, Heading, Box, Flex, Button } from "theme-ui";
-import { InfoMessage } from "../InfoMessage";
-import { useStabilityView } from "./context/StabilityViewContext";
-import { RemainingMP } from "./RemainingMP";
-import { Yield } from "./Yield";
+import React, { useCallback } from "react"
+import { Card, Heading, Box, Flex, Button } from "theme-ui"
+import { EmptyMessage } from "../shared"
+import { useStabilityView } from "./context/StabilityViewContext"
+import { RemainingMP } from "./RemainingMP"
+import { Yield } from "./Yield"
 
 export const NoDeposit: React.FC = props => {
-  const { dispatchEvent } = useStabilityView();
+  const { dispatchEvent } = useStabilityView()
 
   const handleOpenVault = useCallback(() => {
-    dispatchEvent("DEPOSIT_PRESSED");
-  }, [dispatchEvent]);
+    dispatchEvent("DEPOSIT_PRESSED")
+  }, [dispatchEvent])
 
   return (
     <Card>
@@ -20,10 +20,11 @@ export const NoDeposit: React.FC = props => {
           <RemainingMP />
         </Flex>
       </Heading>
-      <Box sx={{ p: [2, 3] }}>
-        <InfoMessage title="You have no BPD in the Stability Pool.">
-          You can earn RBTC and MP rewards by depositing BPD.
-        </InfoMessage>
+      <Box sx={{ pt: "20px" }}>
+        <EmptyMessage
+          title="You have no BPD in the Stability Pool."
+          message="You can earn RBTC and MP rewards by depositing BPD."
+        />
 
         <Flex variant="layout.actions">
           <Flex sx={{ justifyContent: "flex-start", flex: 1, alignItems: "center" }}>
@@ -33,5 +34,5 @@ export const NoDeposit: React.FC = props => {
         </Flex>
       </Box>
     </Card>
-  );
-};
+  )
+}

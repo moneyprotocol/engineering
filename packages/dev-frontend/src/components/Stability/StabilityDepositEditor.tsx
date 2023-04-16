@@ -1,39 +1,39 @@
-import React, { useState } from "react";
-import { Heading, Box, Card, Button } from "theme-ui";
+import React, { useState } from "react"
+import { Heading, Box, Card, Button } from "theme-ui"
 
-import { Decimal, Decimalish, StabilityDeposit, MoneypStoreState } from "@moneyprotocol/lib-base";
+import { Decimal, Decimalish, StabilityDeposit, MoneypStoreState } from "@moneyprotocol/lib-base"
 
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
-import { COIN, GT } from "../../strings";
+import { COIN, GT } from "../../strings"
 
-import { Icon } from "../Icon";
-import { EditableRow, StaticRow } from "../Vault/Editor";
-import { LoadingOverlay } from "../LoadingOverlay";
+import { EditableRow, StaticRow } from "../Vault/Editor"
+import { LoadingOverlay } from "../LoadingOverlay"
+import { ResetIcon } from "../shared/ResetIcon"
 
-const selectBPDBalance = ({ bpdBalance }: MoneypStoreState) => bpdBalance;
+const selectBPDBalance = ({ bpdBalance }: MoneypStoreState) => bpdBalance
 
 type StabilityDepositEditorProps = {
-  originalDeposit: StabilityDeposit;
-  editedBPD: Decimal;
-  changePending: boolean;
-  dispatch: (action: { type: "setDeposit"; newValue: Decimalish } | { type: "revert" }) => void;
-};
+  originalDeposit: StabilityDeposit
+  editedBPD: Decimal
+  changePending: boolean
+  dispatch: (action: { type: "setDeposit"; newValue: Decimalish } | { type: "revert" }) => void
+}
 
 export const StabilityDepositEditor: React.FC<StabilityDepositEditorProps> = ({
   originalDeposit,
   editedBPD,
   changePending,
   dispatch,
-  children
+  children,
 }) => {
-  const bpdBalance = useMoneypSelector(selectBPDBalance);
-  const editingState = useState<string>();
+  const bpdBalance = useMoneypSelector(selectBPDBalance)
+  const editingState = useState<string>()
 
-  const edited = !editedBPD.eq(originalDeposit.currentBPD);
+  const edited = !editedBPD.eq(originalDeposit.currentBPD)
 
-  const maxAmount = originalDeposit.currentBPD.add(bpdBalance);
-  const maxedOut = editedBPD.eq(maxAmount);
+  const maxAmount = originalDeposit.currentBPD.add(bpdBalance)
+  const maxedOut = editedBPD.eq(maxAmount)
 
   return (
     <Card>
@@ -45,12 +45,12 @@ export const StabilityDepositEditor: React.FC<StabilityDepositEditorProps> = ({
             sx={{ ":enabled:hover": { color: "danger" } }}
             onClick={() => dispatch({ type: "revert" })}
           >
-            <Icon name="history" size="lg" />
+            <ResetIcon />
           </Button>
         )}
       </Heading>
 
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: "20px" }}>
         <EditableRow
           label="Deposit"
           inputId="deposit-mp"
@@ -69,7 +69,7 @@ export const StabilityDepositEditor: React.FC<StabilityDepositEditorProps> = ({
               label="Liquidation gain"
               inputId="deposit-gain"
               amount={originalDeposit.collateralGain.prettify(4)}
-              color={originalDeposit.collateralGain.nonZero && "success"}
+              color={originalDeposit.collateralGain.nonZero && "blueSuccess"}
               unit="RBTC"
             />
 
@@ -77,7 +77,7 @@ export const StabilityDepositEditor: React.FC<StabilityDepositEditorProps> = ({
               label="Reward"
               inputId="deposit-reward"
               amount={originalDeposit.mpReward.prettify()}
-              color={originalDeposit.mpReward.nonZero && "success"}
+              color={originalDeposit.mpReward.nonZero && "blueSuccess"}
               unit={GT}
             />
           </>
@@ -87,5 +87,5 @@ export const StabilityDepositEditor: React.FC<StabilityDepositEditorProps> = ({
 
       {changePending && <LoadingOverlay />}
     </Card>
-  );
-};
+  )
+}

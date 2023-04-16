@@ -1,28 +1,28 @@
-import { Heading, Box, Card, Flex, Button } from "theme-ui";
+import { Heading, Box, Card, Flex, Button } from 'theme-ui'
 
-import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
+import { MoneypStoreState } from '@moneyprotocol/lib-base'
+import { useMoneypSelector } from '@moneyprotocol/lib-react'
 
-import { COIN, GT } from "../../strings";
+import { COIN, GT } from '../../strings'
 
-import { DisabledEditableRow, StaticRow } from "../Vault/Editor";
-import { LoadingOverlay } from "../LoadingOverlay";
-import { Icon } from "../Icon";
+import { DisabledEditableRow, StaticRow } from '../Vault/Editor'
+import { LoadingOverlay } from '../LoadingOverlay'
+import { Icon } from '../Icon'
 
-import { useStakingView } from "./context/StakingViewContext";
-import { StakingGainsAction } from "./StakingGainsAction";
+import { useStakingView } from './context/StakingViewContext'
+import { StakingGainsAction } from './StakingGainsAction'
 
-const selectMPStake = ({ mpStake }: MoneypStoreState) => mpStake;
+const selectMPStake = ({ mpStake }: MoneypStoreState) => mpStake
 
 export const ReadOnlyStake: React.FC = () => {
-  const { changePending, dispatch } = useStakingView();
-  const mpStake = useMoneypSelector(selectMPStake);
+  const { changePending, dispatch } = useStakingView()
+  const mpStake = useMoneypSelector(selectMPStake)
 
   return (
     <Card>
       <Heading>Staking</Heading>
 
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: '20px' }}>
         <DisabledEditableRow
           label="Stake"
           inputId="stake-mp"
@@ -34,7 +34,7 @@ export const ReadOnlyStake: React.FC = () => {
           label="Redemption gain"
           inputId="stake-gain-eth"
           amount={mpStake.collateralGain.prettify(4)}
-          color={mpStake.collateralGain.nonZero && "success"}
+          color={mpStake.collateralGain.nonZero && 'blueSuccess'}
           unit="RBTC"
         />
 
@@ -42,12 +42,12 @@ export const ReadOnlyStake: React.FC = () => {
           label="Issuance gain"
           inputId="stake-gain-bpd"
           amount={mpStake.bpdGain.prettify()}
-          color={mpStake.bpdGain.nonZero && "success"}
+          color={mpStake.bpdGain.nonZero && 'blueSuccess'}
           unit={COIN}
         />
 
         <Flex variant="layout.actions">
-          <Button variant="outline" onClick={() => dispatch({ type: "startAdjusting" })}>
+          <Button variant="outline" onClick={() => dispatch({ type: 'startAdjusting' })}>
             <Icon name="pen" size="sm" />
             &nbsp;Adjust
           </Button>
@@ -58,5 +58,5 @@ export const ReadOnlyStake: React.FC = () => {
 
       {changePending && <LoadingOverlay />}
     </Card>
-  );
-};
+  )
+}

@@ -24,8 +24,8 @@ export const ReadOnlyVault: React.FC = () => {
   // console.log("READONLY TROVE", vault.collateral.prettify(4));
   return (
     <Card>
-      <Heading>Vault</Heading>
-      <Box sx={{ p: [2, 3] }}>
+      <Heading>Your Vault</Heading>
+      <Box sx={{ pt: '20px' }}>
         <Box>
           <DisabledEditableRow
             label="Collateral"

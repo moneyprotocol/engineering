@@ -15,7 +15,7 @@ export const DisabledRedemption: React.FC<DisabledRedemptionProps> = ({
   <Card>
     <Heading>Redemption</Heading>
 
-    <Box sx={{ p: [2, 3] }}>
+    <Box sx={{ pt: '20px' }}>
       <InfoMessage
         title="Redemption is not enabled yet."
         icon={

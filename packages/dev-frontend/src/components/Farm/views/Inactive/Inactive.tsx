@@ -30,7 +30,7 @@ export const Inactive: React.FC = () => {
           <RemainingMP />
         </Flex>
       </Heading>
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: '20px' }}>
         <InfoMessage title="You aren't farming MP.">
           <Paragraph>You can farm MP by staking your Uniswap RBTC/BPD LP tokens.</Paragraph>
 

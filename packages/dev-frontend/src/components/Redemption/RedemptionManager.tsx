@@ -1,56 +1,61 @@
-import React, { useEffect, useState } from "react";
-import { Button, Box, Flex, Card, Heading } from "theme-ui";
+import React, { useEffect, useState } from "react"
+import { Button, Box, Flex, Card, Heading } from "theme-ui"
 
-import { Decimal, Percent, MoneypStoreState, MINIMUM_COLLATERAL_RATIO } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
+import {
+  Decimal,
+  Percent,
+  MoneypStoreState,
+  MINIMUM_COLLATERAL_RATIO,
+} from "@moneyprotocol/lib-base"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
-import { COIN } from "../../strings";
+import { COIN } from "../../strings"
 
-import { Icon } from "../Icon";
-import { LoadingOverlay } from "../LoadingOverlay";
-import { EditableRow, StaticRow } from "../Vault/Editor";
-import { ActionDescription, Amount } from "../ActionDescription";
-import { ErrorDescription } from "../ErrorDescription";
-import { useMyTransactionState } from "../Transaction";
+import { LoadingOverlay } from "../LoadingOverlay"
+import { EditableRow, StaticRow } from "../Vault/Editor"
+import { ActionDescription, Amount } from "../ActionDescription"
+import { ErrorDescription } from "../ErrorDescription"
+import { useMyTransactionState } from "../Transaction"
 
-import { RedemptionAction } from "./RedemptionAction";
+import { RedemptionAction } from "./RedemptionAction"
+import { ResetIcon } from "../shared/ResetIcon"
 
-const mcrPercent = new Percent(MINIMUM_COLLATERAL_RATIO).toString(0);
+const mcrPercent = new Percent(MINIMUM_COLLATERAL_RATIO).toString(0)
 
 const select = ({ price, fees, total, bpdBalance }: MoneypStoreState) => ({
   price,
   fees,
   total,
-  bpdBalance
-});
+  bpdBalance,
+})
 
-const transactionId = "redemption";
+const transactionId = "redemption"
 
 export const RedemptionManager: React.FC = () => {
-  const { price, fees, total, bpdBalance } = useMoneypSelector(select);
-  const [bpdAmount, setBPDAmount] = useState(Decimal.ZERO);
-  const [changePending, setChangePending] = useState(false);
-  const editingState = useState<string>();
+  const { price, fees, total, bpdBalance } = useMoneypSelector(select)
+  const [bpdAmount, setBPDAmount] = useState(Decimal.ZERO)
+  const [changePending, setChangePending] = useState(false)
+  const editingState = useState<string>()
 
-  const dirty = !bpdAmount.isZero;
-  const ethAmount = bpdAmount.div(price);
-  const redemptionRate = fees.redemptionRate(bpdAmount.div(total.debt));
-  const feePct = new Percent(redemptionRate);
-  const ethFee = ethAmount.mul(redemptionRate);
-  const maxRedemptionRate = redemptionRate.add(0.001); // TODO slippage tolerance
+  const dirty = !bpdAmount.isZero
+  const ethAmount = bpdAmount.div(price)
+  const redemptionRate = fees.redemptionRate(bpdAmount.div(total.debt))
+  const feePct = new Percent(redemptionRate)
+  const ethFee = ethAmount.mul(redemptionRate)
+  const maxRedemptionRate = redemptionRate.add(0.001) // TODO slippage tolerance
 
-  const myTransactionState = useMyTransactionState(transactionId);
+  const myTransactionState = useMyTransactionState(transactionId)
 
   useEffect(() => {
     if (myTransactionState.type === "waitingForApproval") {
-      setChangePending(true);
+      setChangePending(true)
     } else if (myTransactionState.type === "failed" || myTransactionState.type === "cancelled") {
-      setChangePending(false);
+      setChangePending(false)
     } else if (myTransactionState.type === "confirmed") {
-      setBPDAmount(Decimal.ZERO);
-      setChangePending(false);
+      setBPDAmount(Decimal.ZERO)
+      setChangePending(false)
     }
-  }, [myTransactionState.type, setChangePending, setBPDAmount]);
+  }, [myTransactionState.type, setChangePending, setBPDAmount])
 
   const [canRedeem, description] = total.collateralRatioIsBelowMinimum(price)
     ? [
@@ -58,7 +63,7 @@ export const RedemptionManager: React.FC = () => {
         <ErrorDescription>
           You can't redeem BPD when the total collateral ratio is less than{" "}
           <Amount>{mcrPercent}</Amount>. Please try again later.
-        </ErrorDescription>
+        </ErrorDescription>,
       ]
     : bpdAmount.gt(bpdBalance)
     ? [
@@ -69,7 +74,7 @@ export const RedemptionManager: React.FC = () => {
             {bpdAmount.sub(bpdBalance).prettify()} {COIN}
           </Amount>
           .
-        </ErrorDescription>
+        </ErrorDescription>,
       ]
     : [
         true,
@@ -79,8 +84,8 @@ export const RedemptionManager: React.FC = () => {
             {bpdAmount.prettify()} {COIN}
           </Amount>
           .
-        </ActionDescription>
-      ];
+        </ActionDescription>,
+      ]
 
   return (
     <Card>
@@ -92,12 +97,12 @@ export const RedemptionManager: React.FC = () => {
             sx={{ ":enabled:hover": { color: "danger" } }}
             onClick={() => setBPDAmount(Decimal.ZERO)}
           >
-            <Icon name="history" size="lg" />
+            <ResetIcon />
           </Button>
         )}
       </Heading>
 
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: "20px" }}>
         <EditableRow
           label="Redeem"
           inputId="redeem-bpd"
@@ -136,5 +141,5 @@ export const RedemptionManager: React.FC = () => {
 
       {changePending && <LoadingOverlay />}
     </Card>
-  );
-};
+  )
+}
