@@ -1,36 +1,36 @@
-import React, { useCallback, useState } from "react";
-import { Heading, Box, Flex, Card, Button } from "theme-ui";
-import { Decimal } from "@moneyprotocol/lib-base";
-import { LP } from "../../../../strings";
-import { Icon } from "../../../Icon";
-import { EditableRow } from "../../../Vault/Editor";
-import { LoadingOverlay } from "../../../LoadingOverlay";
-import { useFarmView } from "../../context/FarmViewContext";
-import { useMyTransactionState } from "../../../Transaction";
-import { Confirm } from "../Confirm";
-import { Description } from "../Description";
-import { Approve } from "../Approve";
-import { Validation } from "../Validation";
-import { useValidationState } from "../../context/useValidationState";
+import React, { useCallback, useState } from "react"
+import { Heading, Box, Flex, Card, Button } from "theme-ui"
+import { Decimal } from "@moneyprotocol/lib-base"
+import { LP } from "../../../../strings"
+import { EditableRow } from "../../../Vault/Editor"
+import { LoadingOverlay } from "../../../LoadingOverlay"
+import { useFarmView } from "../../context/FarmViewContext"
+import { useMyTransactionState } from "../../../Transaction"
+import { Confirm } from "../Confirm"
+import { Description } from "../Description"
+import { Approve } from "../Approve"
+import { Validation } from "../Validation"
+import { useValidationState } from "../../context/useValidationState"
+import { ResetIcon } from "../../../shared/ResetIcon"
 
-const transactionId = /farm-/;
+const transactionId = /farm-/
 
 export const Staking: React.FC = () => {
-  const { dispatchEvent } = useFarmView();
-  const [amount, setAmount] = useState<Decimal>(Decimal.from(0));
-  const editingState = useState<string>();
-  const isDirty = !amount.isZero;
+  const { dispatchEvent } = useFarmView()
+  const [amount, setAmount] = useState<Decimal>(Decimal.from(0))
+  const editingState = useState<string>()
+  const isDirty = !amount.isZero
 
-  const { maximumStake, hasSetMaximumStake } = useValidationState(amount);
+  const { maximumStake, hasSetMaximumStake } = useValidationState(amount)
 
-  const transactionState = useMyTransactionState(transactionId);
+  const transactionState = useMyTransactionState(transactionId)
   const isTransactionPending =
     transactionState.type === "waitingForApproval" ||
-    transactionState.type === "waitingForConfirmation";
+    transactionState.type === "waitingForConfirmation"
 
   const handleCancelPressed = useCallback(() => {
-    dispatchEvent("CANCEL_PRESSED");
-  }, [dispatchEvent]);
+    dispatchEvent("CANCEL_PRESSED")
+  }, [dispatchEvent])
 
   return (
     <Card>
@@ -42,12 +42,12 @@ export const Staking: React.FC = () => {
             sx={{ ":enabled:hover": { color: "danger" } }}
             onClick={() => setAmount(Decimal.from(0))}
           >
-            <Icon name="history" size="lg" />
+            <ResetIcon />
           </Button>
         )}
       </Heading>
 
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: "20px" }}>
         <EditableRow
           label="Stake"
           inputId="amount-lp"
@@ -73,5 +73,5 @@ export const Staking: React.FC = () => {
       </Box>
       {isTransactionPending && <LoadingOverlay />}
     </Card>
-  );
-};
+  )
+}

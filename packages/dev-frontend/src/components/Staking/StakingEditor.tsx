@@ -1,41 +1,41 @@
-import React, { useState } from "react";
-import { Heading, Box, Card, Button } from "theme-ui";
+import React, { useState } from "react"
+import { Heading, Box, Card, Button } from "theme-ui"
 
-import { Decimal, Decimalish, MoneypStoreState, MPStake } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
+import { Decimal, Decimalish, MoneypStoreState, MPStake } from "@moneyprotocol/lib-base"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
-import { COIN, GT } from "../../strings";
+import { COIN, GT } from "../../strings"
 
-import { Icon } from "../Icon";
-import { EditableRow, StaticRow } from "../Vault/Editor";
-import { LoadingOverlay } from "../LoadingOverlay";
+import { EditableRow, StaticRow } from "../Vault/Editor"
+import { LoadingOverlay } from "../LoadingOverlay"
 
-import { useStakingView } from "./context/StakingViewContext";
+import { useStakingView } from "./context/StakingViewContext"
+import { ResetIcon } from "../shared/ResetIcon"
 
-const selectMPBalance = ({ mpBalance }: MoneypStoreState) => mpBalance;
+const selectMPBalance = ({ mpBalance }: MoneypStoreState) => mpBalance
 
 type StakingEditorProps = {
-  title: string;
-  originalStake: MPStake;
-  editedMP: Decimal;
-  dispatch: (action: { type: "setStake"; newValue: Decimalish } | { type: "revert" }) => void;
-};
+  title: string
+  originalStake: MPStake
+  editedMP: Decimal
+  dispatch: (action: { type: "setStake"; newValue: Decimalish } | { type: "revert" }) => void
+}
 
 export const StakingEditor: React.FC<StakingEditorProps> = ({
   children,
   title,
   originalStake,
   editedMP,
-  dispatch
+  dispatch,
 }) => {
-  const mpBalance = useMoneypSelector(selectMPBalance);
-  const { changePending } = useStakingView();
-  const editingState = useState<string>();
+  const mpBalance = useMoneypSelector(selectMPBalance)
+  const { changePending } = useStakingView()
+  const editingState = useState<string>()
 
-  const edited = !editedMP.eq(originalStake.stakedMP);
+  const edited = !editedMP.eq(originalStake.stakedMP)
 
-  const maxAmount = originalStake.stakedMP.add(mpBalance);
-  const maxedOut = editedMP.eq(maxAmount);
+  const maxAmount = originalStake.stakedMP.add(mpBalance)
+  const maxedOut = editedMP.eq(maxAmount)
 
   return (
     <Card>
@@ -47,12 +47,12 @@ export const StakingEditor: React.FC<StakingEditorProps> = ({
             sx={{ ":enabled:hover": { color: "danger" } }}
             onClick={() => dispatch({ type: "revert" })}
           >
-            <Icon name="history" size="lg" />
+            <ResetIcon />
           </Button>
         )}
       </Heading>
 
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: "20px" }}>
         <EditableRow
           label="Stake"
           inputId="stake-mp"
@@ -71,7 +71,7 @@ export const StakingEditor: React.FC<StakingEditorProps> = ({
               label="Redemption gain"
               inputId="stake-gain-eth"
               amount={originalStake.collateralGain.prettify(4)}
-              color={originalStake.collateralGain.nonZero && "success"}
+              color={originalStake.collateralGain.nonZero && "blueSuccess"}
               unit="RBTC"
             />
 
@@ -79,7 +79,7 @@ export const StakingEditor: React.FC<StakingEditorProps> = ({
               label="Issuance gain"
               inputId="stake-gain-bpd"
               amount={originalStake.bpdGain.prettify()}
-              color={originalStake.bpdGain.nonZero && "success"}
+              color={originalStake.bpdGain.nonZero && "blueSuccess"}
               unit={COIN}
             />
           </>
@@ -90,5 +90,5 @@ export const StakingEditor: React.FC<StakingEditorProps> = ({
 
       {changePending && <LoadingOverlay />}
     </Card>
-  );
-};
+  )
+}

@@ -1,50 +1,49 @@
-import React, { useCallback, useState } from "react";
-import { Heading, Box, Flex, Card, Button } from "theme-ui";
-import { Decimal, MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
+import React, { useCallback, useState } from "react"
+import { Heading, Box, Flex, Card, Button } from "theme-ui"
+import { Decimal, MoneypStoreState } from "@moneyprotocol/lib-base"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
-import { LP, GT } from "../../../../strings";
-import { Icon } from "../../../Icon";
-import { EditableRow, StaticRow } from "../../../Vault/Editor";
-import { LoadingOverlay } from "../../../LoadingOverlay";
-import { useFarmView } from "../../context/FarmViewContext";
-import { useMyTransactionState } from "../../../Transaction";
-import { Confirm } from "../Confirm";
-import { Description } from "../Description";
-import { Approve } from "../Approve";
-import { Validation } from "../Validation";
+import { LP, GT } from "../../../../strings"
+import { EditableRow, StaticRow } from "../../../Vault/Editor"
+import { LoadingOverlay } from "../../../LoadingOverlay"
+import { useFarmView } from "../../context/FarmViewContext"
+import { useMyTransactionState } from "../../../Transaction"
+import { Confirm } from "../Confirm"
+import { Description } from "../Description"
+import { Approve } from "../Approve"
+import { Validation } from "../Validation"
+import { ResetIcon } from "../../../shared/ResetIcon"
 
 const selector = ({
   liquidityMiningStake,
   liquidityMiningMPReward,
-  rskSwapTokenBalance
+  rskSwapTokenBalance,
 }: MoneypStoreState) => ({
   liquidityMiningStake,
   liquidityMiningMPReward,
-  rskSwapTokenBalance
-});
+  rskSwapTokenBalance,
+})
 
-const transactionId = /farm-/;
+const transactionId = /farm-/
 
 export const Adjusting: React.FC = () => {
-  const { dispatchEvent } = useFarmView();
-  const { liquidityMiningStake, liquidityMiningMPReward, rskSwapTokenBalance } = useMoneypSelector(
-    selector
-  );
-  const [amount, setAmount] = useState<Decimal>(liquidityMiningStake);
-  const editingState = useState<string>();
+  const { dispatchEvent } = useFarmView()
+  const { liquidityMiningStake, liquidityMiningMPReward, rskSwapTokenBalance } =
+    useMoneypSelector(selector)
+  const [amount, setAmount] = useState<Decimal>(liquidityMiningStake)
+  const editingState = useState<string>()
 
-  const transactionState = useMyTransactionState(transactionId);
+  const transactionState = useMyTransactionState(transactionId)
   const isTransactionPending =
     transactionState.type === "waitingForApproval" ||
-    transactionState.type === "waitingForConfirmation";
-  const isDirty = !amount.eq(liquidityMiningStake);
-  const maximumAmount = liquidityMiningStake.add(rskSwapTokenBalance);
-  const hasSetMaximumAmount = amount.eq(maximumAmount);
+    transactionState.type === "waitingForConfirmation"
+  const isDirty = !amount.eq(liquidityMiningStake)
+  const maximumAmount = liquidityMiningStake.add(rskSwapTokenBalance)
+  const hasSetMaximumAmount = amount.eq(maximumAmount)
 
   const handleCancelPressed = useCallback(() => {
-    dispatchEvent("CANCEL_PRESSED");
-  }, [dispatchEvent]);
+    dispatchEvent("CANCEL_PRESSED")
+  }, [dispatchEvent])
 
   return (
     <Card>
@@ -56,12 +55,12 @@ export const Adjusting: React.FC = () => {
             sx={{ ":enabled:hover": { color: "danger" } }}
             onClick={() => setAmount(liquidityMiningStake)}
           >
-            <Icon name="history" size="lg" />
+            <ResetIcon />
           </Button>
         )}
       </Heading>
 
-      <Box sx={{ p: [2, 3] }}>
+      <Box sx={{ pt: "20px" }}>
         <EditableRow
           label="Stake"
           inputId="farm-stake-amount"
@@ -78,7 +77,7 @@ export const Adjusting: React.FC = () => {
           label="Reward"
           inputId="farm-reward-amount"
           amount={liquidityMiningMPReward.prettify(4)}
-          color={liquidityMiningMPReward.nonZero && "success"}
+          color={liquidityMiningMPReward.nonZero && "blueSuccess"}
           unit={GT}
         />
 
@@ -95,5 +94,5 @@ export const Adjusting: React.FC = () => {
       </Box>
       {isTransactionPending && <LoadingOverlay />}
     </Card>
-  );
-};
+  )
+}

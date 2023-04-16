@@ -1,31 +1,30 @@
-import React, { useState, useEffect, useCallback } from "react";
-import CopyToClipboard from "react-copy-to-clipboard";
-import { Card, Button, Text, Box, Heading, Flex } from "theme-ui";
+import React, { useState, useEffect, useCallback } from "react"
+import CopyToClipboard from "react-copy-to-clipboard"
+import { Card, Button, Text, Box, Heading, Flex, Container } from "theme-ui"
 
 import {
   Percent,
   MINIMUM_COLLATERAL_RATIO,
   CRITICAL_COLLATERAL_RATIO,
   UserVault,
-  Decimal
-} from "@moneyprotocol/lib-base";
-import { BlockPolledMoneypStoreState } from "@moneyprotocol/lib-ethers";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
+  Decimal,
+} from "@moneyprotocol/lib-base"
+import { BlockPolledMoneypStoreState } from "@moneyprotocol/lib-ethers"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
-import { shortenAddress } from "../utils/shortenAddress";
-import { useMoneyp } from "../hooks/MoneypContext";
-import { COIN } from "../strings";
+import { shortenAddress } from "../utils/shortenAddress"
+import { useMoneyp } from "../hooks/MoneypContext"
 
-import { Icon } from "./Icon";
-import { LoadingOverlay } from "./LoadingOverlay";
-import { Transaction } from "./Transaction";
-import { Tooltip } from "./Tooltip";
-import { Abbreviation } from "./Abbreviation";
-
-const rowHeight = "40px";
+import { Icon } from "./Icon"
+import { LoadingOverlay } from "./LoadingOverlay"
+import { Tooltip } from "./Tooltip"
+import { Abbreviation } from "./Abbreviation"
+import { Pill } from "./Pill"
+import { ResetIcon } from "./shared"
+import { Transaction } from "./Transaction"
 
 const liquidatableInNormalMode = (vault: UserVault, price: Decimal) =>
-  [vault.collateralRatioIsBelowMinimum(price), "Collateral ratio not low enough"] as const;
+  [vault.collateralRatioIsBelowMinimum(price), "Collateral ratio not low enough"] as const
 
 const liquidatableInRecoveryMode = (
   vault: UserVault,
@@ -33,36 +32,36 @@ const liquidatableInRecoveryMode = (
   totalCollateralRatio: Decimal,
   bpdInStabilityPool: Decimal
 ) => {
-  const collateralRatio = vault.collateralRatio(price);
+  const collateralRatio = vault.collateralRatio(price)
 
   if (collateralRatio.gte(MINIMUM_COLLATERAL_RATIO) && collateralRatio.lt(totalCollateralRatio)) {
     return [
       vault.debt.lte(bpdInStabilityPool),
-      "There's not enough BPD in the Stability pool to cover the debt"
-    ] as const;
+      "There's not enough BPD in the Stability pool to cover the debt",
+    ] as const
   } else {
-    return liquidatableInNormalMode(vault, price);
+    return liquidatableInNormalMode(vault, price)
   }
-};
+}
 
 type RiskiestVaultsProps = {
-  pageSize: number;
-};
+  pageSize: number
+}
 
 const select = ({
   numberOfVaults,
   price,
   total,
   bpdInStabilityPool,
-  blockTag
+  blockTag,
 }: BlockPolledMoneypStoreState) => ({
   numberOfVaults,
   price,
   recoveryMode: total.collateralRatioIsBelowCritical(price),
   totalCollateralRatio: total.collateralRatio(price),
   bpdInStabilityPool,
-  blockTag
-});
+  blockTag,
+})
 
 export const RiskiestVaults: React.FC<RiskiestVaultsProps> = ({ pageSize }) => {
   const {
@@ -71,87 +70,87 @@ export const RiskiestVaults: React.FC<RiskiestVaultsProps> = ({ pageSize }) => {
     recoveryMode,
     totalCollateralRatio,
     bpdInStabilityPool,
-    price
-  } = useMoneypSelector(select);
-  const { moneyp } = useMoneyp();
+    price,
+  } = useMoneypSelector(select)
+  const { moneyp } = useMoneyp()
 
-  const [loading, setLoading] = useState(true);
-  const [vaults, setVaults] = useState<UserVault[]>();
+  const [loading, setLoading] = useState(true)
+  const [vaults, setVaults] = useState<UserVault[]>()
 
-  const [reload, setReload] = useState({});
-  const forceReload = useCallback(() => setReload({}), []);
+  const [reload, setReload] = useState({})
+  const forceReload = useCallback(() => setReload({}), [])
 
-  const [page, setPage] = useState(0);
-  const numberOfPages = Math.ceil(numberOfVaults / pageSize) || 1;
-  const clampedPage = Math.min(page, numberOfPages - 1);
+  const [page, setPage] = useState(0)
+  const numberOfPages = Math.ceil(numberOfVaults / pageSize) || 1
+  const clampedPage = Math.min(page, numberOfPages - 1)
 
   const nextPage = () => {
     if (clampedPage < numberOfPages - 1) {
-      setPage(clampedPage + 1);
+      setPage(clampedPage + 1)
     }
-  };
+  }
 
   const previousPage = () => {
     if (clampedPage > 0) {
-      setPage(clampedPage - 1);
+      setPage(clampedPage - 1)
     }
-  };
+  }
 
   useEffect(() => {
     if (page !== clampedPage) {
-      setPage(clampedPage);
+      setPage(clampedPage)
     }
-  }, [page, clampedPage]);
+  }, [page, clampedPage])
 
   useEffect(() => {
-    let mounted = true;
+    let mounted = true
 
-    setLoading(true);
+    setLoading(true)
 
     moneyp
       .getVaults(
         {
           first: pageSize,
           sortedBy: "ascendingCollateralRatio",
-          startingAt: clampedPage * pageSize
+          startingAt: clampedPage * pageSize,
         },
         { blockTag }
       )
       .then(vaults => {
         if (mounted) {
-          setVaults(vaults);
-          setLoading(false);
+          setVaults(vaults)
+          setLoading(false)
         }
-      });
+      })
 
     return () => {
-      mounted = false;
-    };
+      mounted = false
+    }
     // Omit blockTag from deps on purpose
     // eslint-disable-next-line
-  }, [moneyp, clampedPage, pageSize, reload]);
+  }, [moneyp, clampedPage, pageSize, reload])
 
   useEffect(() => {
-    forceReload();
-  }, [forceReload, numberOfVaults]);
+    forceReload()
+  }, [forceReload, numberOfVaults])
 
-  const [copied, setCopied] = useState<string>();
+  const [copied, setCopied] = useState<string>()
 
   useEffect(() => {
     if (copied !== undefined) {
-      let cancelled = false;
+      let cancelled = false
 
       setTimeout(() => {
         if (!cancelled) {
-          setCopied(undefined);
+          setCopied(undefined)
         }
-      }, 2000);
+      }, 2000)
 
       return () => {
-        cancelled = true;
-      };
+        cancelled = true
+      }
     }
-  }, [copied]);
+  }, [copied])
 
   return (
     <Card sx={{ width: "100%" }}>
@@ -165,8 +164,8 @@ export const RiskiestVaults: React.FC<RiskiestVaultsProps> = ({ pageSize }) => {
                 short={`page ${clampedPage + 1} / ${numberOfPages}`}
                 sx={{ mr: [0, 3], fontWeight: "body", fontSize: [1, 2], letterSpacing: [-1, 0] }}
               >
-                {clampedPage * pageSize + 1}-{Math.min((clampedPage + 1) * pageSize, numberOfVaults)}{" "}
-                of {numberOfVaults}
+                {clampedPage * pageSize + 1}-
+                {Math.min((clampedPage + 1) * pageSize, numberOfVaults)} of {numberOfVaults}
               </Abbreviation>
 
               <Button variant="titleIcon" onClick={previousPage} disabled={clampedPage <= 0}>
@@ -188,163 +187,149 @@ export const RiskiestVaults: React.FC<RiskiestVaultsProps> = ({ pageSize }) => {
             sx={{ opacity: loading ? 0 : 1, ml: [0, 3] }}
             onClick={forceReload}
           >
-            <Icon name="redo" size="lg" />
+            <ResetIcon />
           </Button>
         </Flex>
       </Heading>
 
       {!vaults || vaults.length === 0 ? (
-        <Box sx={{ p: [2, 3] }}>
+        <Box sx={{ pt: "20px" }}>
           <Box sx={{ p: 4, fontSize: 3, textAlign: "center" }}>
             {!vaults ? "Loading..." : "There are no Vaults yet"}
           </Box>
         </Box>
       ) : (
-        <Box sx={{ p: [2, 3] }}>
-          <Box
-            as="table"
-            sx={{
-              mt: 2,
-              pl: [1, 4],
-              width: "100%",
-
-              textAlign: "center",
-              lineHeight: 1.15
-            }}
-          >
-            <colgroup>
-              <col style={{ width: "50px" }} />
-              <col />
-              <col />
-              <col />
-              <col style={{ width: rowHeight }} />
-            </colgroup>
-
-            <thead>
-              <tr>
-                <th>Owner</th>
-                <th>
-                  <Abbreviation short="Coll.">Collateral</Abbreviation>
-                  <Box sx={{ fontSize: [0, 1], fontWeight: "body", opacity: 0.5 }}>RBTC</Box>
-                </th>
-                <th>
-                  Debt
-                  <Box sx={{ fontSize: [0, 1], fontWeight: "body", opacity: 0.5 }}>{COIN}</Box>
-                </th>
-                <th>
-                  Coll.
-                  <br />
-                  Ratio
-                </th>
-                <th></th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {vaults.map(
-                vault =>
-                  !vault.isEmpty && ( // making sure the Vault hasn't been liquidated
-                    // (TODO: remove check after we can fetch multiple Vaults in one call)
-                    <tr key={vault.ownerAddress}>
-                      <td
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          height: rowHeight
-                        }}
-                      >
-                        <Tooltip message={vault.ownerAddress} placement="top">
-                          <Text
-                            variant="address"
-                            sx={{
-                              width: ["73px", "unset"],
-                              overflow: "hidden",
-                              position: "relative"
-                            }}
-                          >
-                            {shortenAddress(vault.ownerAddress)}
-                            <Box
+        <Box sx={{ pt: "20px" }}>
+          {vaults.map(
+            vault =>
+              !vault.isEmpty && (
+                <Box
+                  key={vault.ownerAddress}
+                  sx={{
+                    border: "1px solid #E7E7E7",
+                    borderRadius: "4px",
+                    padding: "14px 20px",
+                    mb: "10px",
+                    lineHeight: "1.8",
+                  }}
+                >
+                  <Container sx={{ display: "flex" }}>
+                    <Container variant="columns">
+                      <Container variant="left">
+                        <Box className="vault-label">
+                          <Flex sx={{ alignItems: "center" }}>
+                            <Box>Owner</Box>
+                            <CopyToClipboard
+                              text={vault.ownerAddress}
+                              onCopy={() => setCopied(vault.ownerAddress)}
+                            >
+                              <Button variant="icon" sx={{ width: "24px", height: "24px" }}>
+                                <Icon
+                                  name={
+                                    copied === vault.ownerAddress ? "clipboard-check" : "clipboard"
+                                  }
+                                  size="sm"
+                                />
+                              </Button>
+                            </CopyToClipboard>
+                          </Flex>
+                        </Box>
+                        <Box>
+                          <Tooltip message={vault.ownerAddress} placement="top">
+                            <Text
+                              variant="address"
                               sx={{
-                                display: ["block", "none"],
-                                position: "absolute",
-                                top: 0,
-                                right: 0,
-                                width: "50px",
-                                height: "100%",
-                                background:
-                                  "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%)"
+                                width: ["73px", "unset"],
+                                overflow: "hidden",
+                                position: "relative",
                               }}
-                            />
-                          </Text>
-                        </Tooltip>
+                            >
+                              {shortenAddress(vault.ownerAddress)}
+                              <Box
+                                sx={{
+                                  display: ["block", "none"],
+                                  position: "absolute",
+                                  top: 0,
+                                  right: 0,
+                                  width: "50px",
+                                  height: "100%",
+                                  background:
+                                    "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%)",
+                                }}
+                              />
+                            </Text>
+                          </Tooltip>
+                        </Box>
+                        <Box className="vault-label" sx={{ mt: 2 }}>
+                          Debt (BPD)
+                        </Box>
+                        <Box>
+                          <Abbreviation short={vault.debt.shorten()}>
+                            {vault.debt.prettify()}
+                          </Abbreviation>
+                        </Box>
+                      </Container>
 
-                        <CopyToClipboard
-                          text={vault.ownerAddress}
-                          onCopy={() => setCopied(vault.ownerAddress)}
+                      <Container variant="right">
+                        <Box className="vault-label">Collateral (RBTC)</Box>
+                        <Box>
+                          <Abbreviation short={vault.collateral.shorten()}>
+                            {vault.collateral.prettify(4)}
+                          </Abbreviation>
+                        </Box>
+                        <Box className="vault-label" sx={{ mt: 2 }}>
+                          Collateral Ratio
+                        </Box>
+                        <Box>
+                          {(collateralRatio => (
+                            <Pill
+                              type={
+                                collateralRatio.gt(CRITICAL_COLLATERAL_RATIO)
+                                  ? "success"
+                                  : collateralRatio.gt(MINIMUM_COLLATERAL_RATIO)
+                                  ? "warning"
+                                  : "error"
+                              }
+                            >
+                              {new Percent(collateralRatio).prettify()}
+                            </Pill>
+                          ))(vault.collateralRatio(price))}
+                        </Box>
+                      </Container>
+                    </Container>
+                    <div>
+                      <Transaction
+                        id={`liquidate-${vault.ownerAddress}`}
+                        tooltip="Liquidate"
+                        requires={[
+                          recoveryMode
+                            ? liquidatableInRecoveryMode(
+                                vault,
+                                price,
+                                totalCollateralRatio,
+                                bpdInStabilityPool
+                              )
+                            : liquidatableInNormalMode(vault, price),
+                        ]}
+                        send={moneyp.send.liquidate.bind(moneyp.send, vault.ownerAddress)}
+                      >
+                        <Button
+                          variant="danger"
+                          className="liquidate-btn"
+                          sx={{ px: 2, py: 1, background: "#E70634", fontSize: "13px" }}
                         >
-                          <Button variant="icon" sx={{ width: "24px", height: "24px" }}>
-                            <Icon
-                              name={copied === vault.ownerAddress ? "clipboard-check" : "clipboard"}
-                              size="sm"
-                            />
-                          </Button>
-                        </CopyToClipboard>
-                      </td>
-                      <td>
-                        <Abbreviation short={vault.collateral.shorten()}>
-                          {vault.collateral.prettify(4)}
-                        </Abbreviation>
-                      </td>
-                      <td>
-                        <Abbreviation short={vault.debt.shorten()}>
-                          {vault.debt.prettify()}
-                        </Abbreviation>
-                      </td>
-                      <td>
-                        {(collateralRatio => (
-                          <Text
-                            color={
-                              collateralRatio.gt(CRITICAL_COLLATERAL_RATIO)
-                                ? "success"
-                                : collateralRatio.gt(MINIMUM_COLLATERAL_RATIO)
-                                ? "warning"
-                                : "danger"
-                            }
-                          >
-                            {new Percent(collateralRatio).prettify()}
-                          </Text>
-                        ))(vault.collateralRatio(price))}
-                      </td>
-                      <td>
-                        <Transaction
-                          id={`liquidate-${vault.ownerAddress}`}
-                          tooltip="Liquidate"
-                          requires={[
-                            recoveryMode
-                              ? liquidatableInRecoveryMode(
-                                  vault,
-                                  price,
-                                  totalCollateralRatio,
-                                  bpdInStabilityPool
-                                )
-                              : liquidatableInNormalMode(vault, price)
-                          ]}
-                          send={moneyp.send.liquidate.bind(moneyp.send, vault.ownerAddress)}
-                        >
-                          <Button variant="dangerIcon">
-                            <Icon name="trash" />
-                          </Button>
-                        </Transaction>
-                      </td>
-                    </tr>
-                  )
-              )}
-            </tbody>
-          </Box>
+                          <Text>Liquidate</Text>
+                        </Button>
+                      </Transaction>
+                    </div>
+                  </Container>
+                </Box>
+              )
+          )}
         </Box>
       )}
 
       {loading && <LoadingOverlay />}
     </Card>
-  );
-};
+  )
+}
