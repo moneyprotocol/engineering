@@ -5,7 +5,6 @@ import { MoneypStoreState } from "@moneyprotocol/lib-base"
 import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
 import { COIN, GT } from "../../strings"
-import { Icon } from "../Icon"
 import { LoadingOverlay } from "../LoadingOverlay"
 import { useMyTransactionState } from "../Transaction"
 import { DisabledEditableRow, StaticRow } from "../Vault/Editor"

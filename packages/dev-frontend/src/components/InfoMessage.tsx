@@ -1,20 +1,14 @@
-import { Box, Flex, Heading, Text } from "theme-ui";
-
-import { Icon } from "./Icon";
+import { Box, Heading } from "theme-ui"
+import { Alert } from "./Alert"
 
 type InfoMessageProps = {
-  title: string;
-  icon?: React.ReactNode;
-};
+  title: string
+  icon?: React.ReactNode
+}
 
 export const InfoMessage: React.FC<InfoMessageProps> = ({ title, children, icon }) => (
-  <Box sx={{ mx: 1, mb: 3 }}>
-    <Flex sx={{ alignItems: "center", mb: "10px" }}>
-      <Box sx={{ mr: "12px", fontSize: "20px" }}>{icon || <Icon name="info-circle" />}</Box>
-
-      <Heading as="h3">{title}</Heading>
-    </Flex>
-
-    <Text sx={{ fontSize: 2 }}>{children}</Text>
-  </Box>
-);
+  <Alert type="info">
+    <Heading as="h4">{title}</Heading>
+    {children && <Box sx={{ fontSize: 1, mt: 2 }}>{children}</Box>}
+  </Alert>
+)

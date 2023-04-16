@@ -1,5 +1,5 @@
-import React from 'react'
-import { Flex, Card } from 'theme-ui'
+import React from "react"
+import { Card } from "theme-ui"
 
 import {
   CRITICAL_COLLATERAL_RATIO,
@@ -7,10 +7,10 @@ import {
   Difference,
   MINIMUM_COLLATERAL_RATIO,
   Percent,
-} from '@moneyprotocol/lib-base'
+} from "@moneyprotocol/lib-base"
 
-import { StaticRow } from './Editor'
-import { InfoIcon } from '../InfoIcon'
+import { StaticRow } from "./Editor"
+import { InfoIcon } from "../InfoIcon"
 
 type CollateralRatioProps = {
   value?: Decimal
@@ -18,7 +18,7 @@ type CollateralRatioProps = {
 }
 
 export const CollateralRatio: React.FC<CollateralRatioProps> = ({ value, change }) => {
-  const collateralRatioPct = new Percent(value ?? { toString: () => 'N/A' })
+  const collateralRatioPct = new Percent(value ?? { toString: () => "N/A" })
   const changePct = change && new Percent(change)
 
   return (
@@ -28,26 +28,26 @@ export const CollateralRatio: React.FC<CollateralRatioProps> = ({ value, change 
       amount={collateralRatioPct.prettify()}
       color={
         value?.gt(CRITICAL_COLLATERAL_RATIO)
-          ? 'blueSuccess'
+          ? "blueSuccess"
           : value?.gt(MINIMUM_COLLATERAL_RATIO)
-          ? 'warning'
+          ? "warning"
           : value?.lte(MINIMUM_COLLATERAL_RATIO)
-          ? 'danger'
-          : 'muted'
+          ? "danger"
+          : "muted"
       }
       pendingAmount={
         change?.positive?.absoluteValue?.gt(10)
-          ? '++'
+          ? "++"
           : change?.negative?.absoluteValue?.gt(10)
-          ? '--'
+          ? "--"
           : changePct?.nonZeroish(2)?.prettify()
       }
-      pendingColor={change?.positive ? 'blueSuccess' : 'danger'}
+      pendingColor={change?.positive ? "blueSuccess" : "danger"}
       infoIcon={
         <InfoIcon
-          size={'xs'}
+          size={"xs"}
           tooltip={
-            <Card variant="tooltip" sx={{ width: '220px' }}>
+            <Card variant="tooltip" sx={{ width: "220px" }}>
               This is the ratio between the dollar value of the collateral and debt you are
               depositing.
             </Card>

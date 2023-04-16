@@ -240,7 +240,7 @@ const theme: Theme = {
 
     icon: {
       ...iconButton,
-      color: "primary",
+      color: "blueSuccess",
       ":enabled:hover": { color: "accent" },
     },
 
