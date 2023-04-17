@@ -452,9 +452,11 @@ export const TransactionMonitor: React.FC = () => {
           )}
         </Alert>
 
-        {/* <Box sx={{ mr: 3, width: "40px", height: "40px" }}>
-          <TransactionProgressDonut state={transactionState.type} />
-        </Box> */}
+        {false && (
+          <Box sx={{ mr: 3, width: "40px", height: "40px" }}>
+            <TransactionProgressDonut state={transactionState.type} />
+          </Box>
+        )}
       </Flex>
     </>
   )
