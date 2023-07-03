@@ -121,21 +121,21 @@ The Money Protocol system regularly updates the RBTC:USD price using a decentral
 
 ## Liquidation and the Stability Pool
 
-Money Protocol utilizes a two-step liquidation mechanism in the following order of priority: 
+Money Protocol employs a two-step liquidation mechanism, prioritizing the following actions:
 
-1. Offset under-collateralized Vaults against the Stability Pool containing BPD tokens
+1. Offsetting the under-collateralized Vaults by utilizing the Stability Pool, which contains BPD tokens.
 
-2. Redistribute under-collateralized Vaults to other borrowers if the Stability Pool is emptied
+2. If the Stability Pool is depleted, redistributing the under-collateralized Vaults to other borrowers.
 
-Money Protocol primarily uses the BPD tokens in its Stability Pool to absorb the under-collateralized debt, i.e. to repay the liquidated borrower's liability.
+The primary purpose of the BPD tokens in the Stability Pool is to absorb the debt resulting from under-collateralized positions and repay the liabilities of the liquidated borrowers.
 
-Any user may deposit BPD tokens to the Stability Pool. This allows them to earn the collateral from the liquidated Vault. When a liquidation occurs, the liquidated debt is cancelled with the same amount of BPD in the Pool (which is burned as a result), and the liquidated Bitcoin is proportionally distributed to depositors.
+Any user has the option to deposit BPD tokens into the Stability Pool, enabling them to earn the collateral from liquidated Vaults. During a liquidation event, the corresponding debt is cancelled using an equal amount of BPD tokens from the Pool, resulting in their burning. Simultaneously, the liquidated Bitcoin is distributed proportionally among the depositors.
 
-Stability Pool depositors can expect to earn net gains from liquidations, as in most cases, the value of the liquidated Bitcoin will be greater than the value of the cancelled debt (since a liquidated Vault will likely have an ICR just slightly below 110%).
+Depositors in the Stability Pool can anticipate earning net gains from liquidations since, in most cases, the value of the liquidated Bitcoin exceeds the value of the cancelled debt. This is due to the fact that a liquidated Vault typically has a collateralization ratio slightly below 110%.
 
-If the liquidated debt is higher than the amount of BPD in the Stability Pool, the system tries to cancel as much debt as possible with the tokens in the Stability Pool, and then redistributes the remaining liquidated collateral and debt across all active Vaults.
+In cases where the liquidated debt surpasses the amount of BPD tokens in the Stability Pool, the system aims to cancel as much debt as possible using the tokens in the Stability Pool. Any remaining liquidated collateral and debt are then redistributed among all active Vaults.
 
-Anyone may call the public `liquidateVaults()` function, which will check for under-collateralized Vaults, and liquidate them. Alternatively they can call `batchLiquidateVaults()` with a custom list of vault addresses to attempt to liquidate.
+Any individual has the ability to call the public function `liquidateVaults()`, which checks for under-collateralized Vaults and initiates their liquidation. Alternatively, they can utilize the `batchLiquidateVaults()` function, providing a custom list of Vault addresses for attempted liquidation.
 
 ### Liquidation gas costs
 
