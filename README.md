@@ -138,9 +138,9 @@ Any individual has the ability to call the public function `liquidateVaults()`, 
 
 ### Liquidation Logic
 
-The precise behavior of liquidations depends on the ICR of the Vault being liquidated and global system conditions:  the total collateralization ratio (TCR) of the system, the size of the Stability Pool, etc.  
+The specific outcome of liquidations is contingent upon various factors, including the Individual Collateralization Ratio (ICR) of the Vault being liquidated and the overall conditions of the system, such as the Total Collateralization Ratio (TCR) and the size of the Stability Pool.
 
-Here is the liquidation logic for a single Vault in Normal Mode and Recovery Mode.  `SP.BPD` represents the BPD in the Stability Pool.
+The following outlines the liquidation process for an individual Vault in both Normal Mode and Recovery Mode. In the provided explanation, `SP.BPD` denotes the amount of BPD tokens present in the Stability Pool.
 
 #### Liquidations in Normal Mode: TCR >= 150%
 
