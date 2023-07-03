@@ -103,21 +103,21 @@
 
 ## Money Protocol Overview
 
-Money Protocol is a collateralized debt platform. Users can lock up RBTC, and issue stablecoin tokens BPD to their own RSK address, and subsequently transfer those tokens to any other RSK address. The individual collateralized debt positions are called Vaults.
+Money Protocol operates as a platform for collateralized debt. Users have the ability to lock up RBTC and generate stablecoin tokens known as BPD, which are then transferred to any desired RSK address. These individual collateralized debt positions are referred to as Vaults.
 
-The stablecoin tokens are economically geared towards maintaining value of 1 BPD = \$1 USD, due to the following properties:
+To ensure stability, the Bitcoin Protocol Dollar or BPD tokens are designed to maintain a value of 1 BPD equal to $1 USD. This is achieved through the following mechanisms:
 
-1. The system is designed to always be over-collateralized - the dollar value of the locked Bitcoin exceeds the dollar value of the issued stablecoins
+1. The system always maintains an over-collateralized state, with the locked Bitcoin's dollar value exceeding that of the issued stablecoins.
 
-2. The stablecoins are fully redeemable - users can always swap $x worth of BPD for $x worth of RBTC (minus fees), directly with the system.
+2. Users have the option to fully redeem their stablecoins by directly exchanging $x worth of BPD for $x worth of RBTC, taking into account applicable fees.
 
-3. The system algorithmically controls the generation of BPD through a variable issuance fee.
+3. The generation of BPD is controlled algorithmically, utilizing a variable issuance fee.
 
-After opening a Vault with some Bitcoin, users may issue ("borrow") tokens such that the collateralization ratio of their Vault remains above 110%. A user with $1000 worth of RBTC in a Vault can issue up to 909.09 BPD.
+Once a user opens a Vault by depositing Bitcoin, they can issue tokens (referred to as "borrowing") while ensuring that their Vault's collateralization ratio remains above 110%. For example, if a user has $1000 worth of RBTC in their Vault, they can issue up to 909.09 BPD.
 
-The tokens are freely exchangeable - anyone with an Bitcoineum address can send or receive BPD tokens, whBitcoin they have an open Vault or not. The tokens are burned upon repayment of a Vault's debt.
+The BPD tokens are freely transferable, allowing anyone with a RSK address to send or receive them, regardless of whether they possess an open Vault. When a Vault's debt is repaid, the corresponding BPD tokens are burned.
 
-The Money Protocol system regularly updates the RBTC:USD price via a decentralized data feed. When a Vault falls below a minimum collateralization ratio (MCR) of 110%, it is considered under-collateralized, and is vulnerable to liquidation.
+The Money Protocol system regularly updates the RBTC:USD price using a decentralized data feed. If a Vault's collateralization ratio falls below the minimum requirement of 110% (referred to as the MCR), it is considered under-collateralized and becomes susceptible to liquidation.
 
 ## Liquidation and the Stability Pool
 
