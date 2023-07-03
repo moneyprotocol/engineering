@@ -5,7 +5,6 @@
 - [Disclaimer](#disclaimer)
 - [Money Protocol Overview](#money-protocol-overview)
   - [Liquidation and the Stability Pool](#liquidation-and-the-stability-pool)
-    - [Liquidation gas costs](#liquidation-gas-costs)
     - [Liquidation Logic](#liquidation-logic)
       - [Liquidations in Normal Mode: TCR >= 150%](#liquidations-in-normal-mode-tcr--150)
       - [Liquidations in Recovery Mode: TCR < 150%](#liquidations-in-recovery-mode-tcr--150)
@@ -136,10 +135,6 @@ Depositors in the Stability Pool can anticipate earning net gains from liquidati
 In cases where the liquidated debt surpasses the amount of BPD tokens in the Stability Pool, the system aims to cancel as much debt as possible using the tokens in the Stability Pool. Any remaining liquidated collateral and debt are then redistributed among all active Vaults.
 
 Any individual has the ability to call the public function `liquidateVaults()`, which checks for under-collateralized Vaults and initiates their liquidation. Alternatively, they can utilize the `batchLiquidateVaults()` function, providing a custom list of Vault addresses for attempted liquidation.
-
-### Liquidation gas costs
-
-Currently, mass liquidations performed via the above functions cost 60-65k gas per vault. Thus the system can liquidate up to a maximum of 95-105 vaults in a single transaction.
 
 ### Liquidation Logic
 
