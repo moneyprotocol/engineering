@@ -8,7 +8,7 @@
     - [Liquidation Logic](#liquidation-logic)
       - [Liquidations in Normal Mode: TCR >= 150%](#liquidations-in-normal-mode-tcr--150)
       - [Liquidations in Recovery Mode: TCR < 150%](#liquidations-in-recovery-mode-tcr--150)
-  - [Gains From Liquidations](#gains-from-liquidations)
+  - [Liquidation Gains](#liquidation-gains)
   - [BPD Token Redemption](#bpd-token-redemption)
     - [Partial redemption](#partial-redemption)
     - [Full redemption](#full-redemption)
@@ -161,11 +161,11 @@ The following outlines the liquidation process for an individual Vault in both N
 | MCR <= ICR < TCR & SP.BPD  < vault.debt | Do nothing.                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ICR >= TCR                               | Do nothing.                                                                                                                                                                                                                                                                                                                                                                                                  |
 
-## Gains From Liquidations
+## Liquidation Gains 
 
-Stability Pool depositors gain Bitcoin over time, as liquidated debt is cancelled with their deposit. When they withdraw all or part of their deposited tokens, or top up their deposit, the system sends them their accumulated RBTC gains.
+Over time, depositors in the Stability Pool experience Bitcoin gains, as the liquidated debt is canceled using their deposits. Whenever they choose to withdraw some or all of their deposited tokens or increase their deposit, the system sends them the RBTC gains they have accumulated.
 
-Similarly, a Vault's accumulated gains from liquidations are automatically applied to the Vault when the owner performs any operation - e.g. adding/withdrawing collateral, or issuing/repaying BPD.
+Likewise, any gains accumulated by a Vault through liquidations are automatically incorporated into the Vault whenever its owner performs any operation, such as adding or withdrawing collateral or issuing or repaying BPD.
 
 ## BPD Token Redemption
 
