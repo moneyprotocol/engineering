@@ -183,9 +183,9 @@ It's important to note that redemptions are disabled during the first 45 days fo
 
 ### Partial redemption
 
-Most redemption transactions will include a partial redemption, since the amount redeemed is unlikely to perfectly match the total debt of a series of Vaults.
+The majority of redemption transactions result in partial redemptions because the redeemed amount is unlikely to precisely match the total debt of a series of Vaults.
 
-The partially redeemed Vault is re-inserted into the sorted list of Vaults, and remains active, with reduced collateral and debt.
+Following a partial redemption, the corresponding Vault is reintroduced into the sorted list of Vaults, retaining its active status but with reduced collateral and debt.
 
 ### Full redemption
 
