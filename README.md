@@ -201,13 +201,13 @@ In economic terms, the redemption mechanism establishes a firm price floor for B
 
 ## Recovery Mode
 
-Recovery Mode kicks in when the total collateralization ratio (TCR) of the system falls below 150%.
+When the total collateralization ratio (TCR) of the system drops below 150%, Recovery Mode is activated.
 
-During Recovery Mode, liquidation conditions are relaxed, and the system blocks borrower transactions that would further decrease the TCR. New BPD may only be issued by adjusting existing Vaults in a way that improves their ICR, or by opening a new Vault with an ICR of >=150%. In general, if an existing Vault's adjustment reduces its ICR, the transaction is only executed if the resulting TCR is above 150%
+During Recovery Mode, liquidation conditions are eased, and borrower transactions that would further decrease the TCR are blocked. New BPD issuance is restricted to adjusting existing Vaults to improve their individual collateralization ratio (ICR) or opening new Vaults with an ICR of >=150%. In cases where adjusting an existing Vault would reduce its ICR, the transaction is only executed if the resulting TCR remains above 150%.
 
-Recovery Mode is structured to incentivize borrowers to behave in ways that promptly raise the TCR back above 150%, and to incentivize BPD holders to replenish the Stability Pool.
+Recovery Mode is strategically designed to incentivize borrowers to take actions that swiftly elevate the TCR back above 150%, and to motivate BPD holders to replenish the Stability Pool.
 
-Economically, Recovery Mode is designed to encourage collateral top-ups and debt repayments, and also itself acts as a self-negating deterrent: the possibility of it occurring actually guides the system away from ever reaching it.
+Economically, Recovery Mode aims to promote collateral top-ups and debt repayments while serving as a self-negating deterrent. The mere possibility of its occurrence guides the system away from ever reaching such a state.
 
 ## Project Structure
 
