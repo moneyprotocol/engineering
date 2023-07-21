@@ -197,7 +197,7 @@ This surplus collateral is transferred to the `CollSurplusPool`, and the borrowe
 
 ### Redemptions create a price floor
 
-Economically, the redemption mechanism creates a hard price floor for BPD, ensuring that the market price stays at or near to $1 USD. 
+In economic terms, the redemption mechanism establishes a firm price floor for BPD, guaranteeing that the market price remains at or close to $1 USD. 
 
 ## Recovery Mode
 
