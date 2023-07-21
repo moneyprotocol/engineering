@@ -189,11 +189,11 @@ Following a partial redemption, the corresponding Vault is reintroduced into the
 
 ### Full redemption
 
-A Vault is defined as “fully redeemed from” when the redemption has caused (debt-50) of its debt to absorb (debt-50) BPD. Then, its 50 BPD Liquidation Reserve is cancelled with its remaining 50 debt: the Liquidation Reserve is burned from the gas address, and the 50 debt is zero’d.
+A Vault is considered "fully redeemed from" when the redemption process absorbs (debt-200) BPD, equivalent to (debt-200) of its total debt. Subsequently, its 200 BPD Liquidation Reserve is canceled by utilizing the remaining 200 debt. The Liquidation Reserve is burned from the gas address, and the 200 debt is reset to zero.
 
-Before closing, we must handle the Vault’s **collateral surplus**: that is, the excess RBTC collateral remaining after redemption, due to its initial over-collateralization.
+Before closing the Vault, we need to address the collateral surplus, which refers to the excess RBTC collateral remaining after redemption due to the Vault's initial over-collateralization.
 
-This collateral surplus is sent to the `CollSurplusPool`, and the borrower can reclaim it later. The Vault is then fully closed.
+This surplus collateral is transferred to the `CollSurplusPool`, and the borrower can reclaim it at a later time. After this step, the Vault is fully closed.
 
 ### Redemptions create a price floor
 
