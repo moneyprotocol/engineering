@@ -169,17 +169,17 @@ Likewise, any gains accumulated by a Vault through liquidations are automaticall
 
 ## BPD Token Redemption
 
-Any BPD holder (whBitcoin or not they have an active Vault) may redeem their BPD directly with the system. Their BPD is exchanged for RBTC, at face value: redeeming x BPD tokens returns \$x worth of RBTC (minus a [redemption fee](#redemption-fee)).
+Any individual holding BPD, regardless of whether they have an active Vault, has the option to directly redeem their BPD with the system. During redemption, their BPD is exchanged for RBTC at its face value: redeeming x BPD tokens yields $x worth of RBTC (minus a redemption fee).
 
-When BPD is redeemed for RBTC, the system cancels the BPD with debt from Vaults, and the RBTC is drawn from their collateral.
+Upon BPD redemption for RBTC, the system cancels the corresponding BPD with debt from Vaults, and the RBTC is sourced from their collateral.
 
-In order to fulfill the redemption request, Vaults are redeemed from in ascending order of their collateralization ratio.
+To fulfill a redemption request, Vaults are redeemed in ascending order of their collateralization ratio.
 
-A redemption sequence of `n` steps will **fully** redeem from up to `n-1` Vaults, and, and **partially** redeems from up to 1 Vault, which is always the last Vault in the redemption sequence.
+A redemption sequence with `n` steps will fully redeem from up to `n-1` Vaults, and partially redeem from the last Vault in the sequence.
 
-Redemptions are blocked when TCR < 110% (there is no need to restrict ICR < TCR). At that TCR redemptions would likely be unprofitable, as BPD is probably trading above $1 if the system has crashed that badly, but it could be a way for an attacker with a lot of BPD to lower the TCR even further.
+Redemptions are not permitted when the total collateralization ratio (TCR) falls below 110% (there is no need to impose a restriction on individual collateralization ratio (ICR) being less than TCR). At such a low TCR, redemptions could likely be unprofitable, as the value of BPD may be trading above $1 if the system experiences a severe crash. However, it could potentially be an avenue for an attacker with a significant amount of BPD to further decrease the TCR.
 
-Note that redemptions are disabled during the first 14 days of operation since deployment of the Money Protocol protocol to protect the monetary system in its infancy.
+It's important to note that redemptions are disabled during the first 45 days following the deployment of the Money Protocol to safeguard the monetary system during its initial stages.
 
 ### Partial redemption
 
