@@ -239,7 +239,7 @@ Furthermore, separate MP allocations are made upon deployment to an externally o
 
 ### Lockup Implementation and admin transfer restriction
 
-A `LockupContractFactory` is used to deploy `LockupContracts` in the first year. During the first year, the `MPToken` checks that any transfer from the Money Protocol admin address is to a valid `LockupContract` that is registered in and was deployed through the `LockupContractFactory`.
+In the initial year, a `LockupContractFactory` is utilized to deploy `LockupContracts`. Throughout this period, the `MPToken` verifies that any transfer from the Money Protocol admin address is directed only to a legitimate `LockupContract` that is registered within and was deployed via the `LockupContractFactory`.
 
 ### Launch sequence and vesting process
 
