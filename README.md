@@ -219,7 +219,7 @@ Additionally, Money Protocol distributes MP to Stability Providers continuously 
 
 The MP contracts consist of:
 
-`MPStaking.sol` - the staking contract, containing stake and unstake functionality for MP holders. This contract receives RBTC fees from redemptions, and BPD fees from new debt issuance.
+`MPStaking.sol` - The staking contract is equipped with functionalities for MP holders to stake and unstake their tokens. This contract collects RBTC fees from redemptions and BPD fees from new debt issuance.
 
 `CommunityIssuance.sol` - This contract handles the issuance of MP tokens to Stability Providers as a function of time. It is controlled by the `StabilityPool`. Upon system launch, the `CommunityIssuance` automatically receives 32 million MP - the “community issuance” supply. The contract steadily issues these MP tokens to the Stability Providers over time.
 
