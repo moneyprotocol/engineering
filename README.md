@@ -247,11 +247,10 @@ In the initial year, a `LockupContractFactory` is utilized to deploy `LockupCont
 1. Money Protocol admin deploys `LockupContractFactory`
 2. Money Protocol admin deploys `CommunityIssuance`
 3. Money Protocol admin deploys `MPStaking` 
-4. Money Protocol admin creates a Pool in Uniswap for BPD/RBTC and deploys `RskSwapPool` (LP rewards contract), which knows the address of the Pool
-5. Money Protocol admin deploys `MPToken`, which upon deployment:
+4. Money Protocol admin deploys `MPToken`, which upon deployment:
 - Stores the `CommunityIssuance` and `LockupContractFactory` addresses
-- Mints MP tokens to `CommunityIssuance`, the Money Protocol admin address, the `RskSwapPool` LP rewards address, and the bug bounty address
-6. Money Protocol admin sets `MPToken` address in `LockupContractFactory`, `CommunityIssuance`, `MPStaking`, and `RskSwapPool`
+- Mints MP tokens to `CommunityIssuance`, the Money Protocol admin address, and the bug bounty address
+5. Money Protocol admin sets `MPToken` address in `LockupContractFactory`, `CommunityIssuance`, and `MPStaking`.
 
 #### Deploy and fund Lockup Contracts
 7. Money Protocol admin tells `LockupContractFactory` to deploy a `LockupContract` for each beneficiary, with an `unlockTime` set to exactly one year after system deployment
