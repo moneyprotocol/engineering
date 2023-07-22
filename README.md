@@ -253,8 +253,8 @@ In the initial year, a `LockupContractFactory` is utilized to deploy `LockupCont
 5. Money Protocol admin sets `MPToken` address in `LockupContractFactory`, `CommunityIssuance`, and `MPStaking`.
 
 #### Deploy and fund Lockup Contracts
-7. Money Protocol admin tells `LockupContractFactory` to deploy a `LockupContract` for each beneficiary, with an `unlockTime` set to exactly one year after system deployment
-8. Money Protocol admin transfers MP to each `LockupContract`, according to their entitlement
+6. Money Protocol admin instructs the `LockupContractFactory` to create a `LockupContract` for each beneficiary, with an `unlockTime` scheduled precisely one year after the system's deployment
+7. Money Protocol admin allocates and transfers MP tokens to each respective `LockupContract` in accordance with the entitlement of the beneficiaries
 
 #### Deploy Money Protocol Core
 9. Money Protocol admin deploys the Money Protocol core system
