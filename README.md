@@ -223,7 +223,7 @@ The MP contracts consist of:
 
 `CommunityIssuance.sol` - Controlled by the `StabilityPool`, this contract manages the issuance of MP tokens to Stability Providers based on a time-dependent function. At the system's launch, the `CommunityIssuance` is automatically allocated 167 million MP tokens, constituting the "community issuance" supply. These MP tokens are gradually issued to Stability Providers over the course of time.
 
-`MPToken.sol` - This is the MP ERC20 contract. It has a hard cap supply of 100 million, and during the first year, restricts transfers from the Money Protocol admin address, a regular Bitcoineum address controlled by the project company Money Protocol AG. **Note that the Money Protocol admin address has no extra privileges and does not retain any control over the Money Protocol protocol once deployed.**
+`MPToken.sol` - This represents the MP ERC20 contract, featuring a capped supply of 500 million tokens. During the initial year, transfers from the Money Protocol admin address, a standard RSK address, are restricted. **It is important to note that the Money Protocol admin address holds no additional privileges and relinquishes control over the Money Protocol system upon deployment.**
 
 ### MP Lockup contracts and token vesting
 
