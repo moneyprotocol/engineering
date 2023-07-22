@@ -227,15 +227,15 @@ The MP contracts consist of:
 
 ### MP Lockup contracts and token vesting
 
-Some MP is reserved for team members and partners, and is locked up for one year upon system launch. Additionally, some team members receive MP vested on a monthly basis, which during the first year, is transferred directly to their lockup contract.
+A portion of MP tokens is reserved for team members and partners, subject to a one-year lockup period following the system launch. Additionally, certain team members receive MP tokens that vest on a monthly basis, and during the first year, these tokens are directly transferred to their lockup contracts.
 
-In the first year after launch:
+In the initial year after launch:
 
-- All team members and partners are unable to access their locked up MP tokens
+1. All team members and partners are restricted from accessing their locked-up MP tokens.
 
-- The Money Protocol admin address may transfer tokens **only to verified lockup contracts with an unlock date at least one year after system deployment**
+2. The Money Protocol admin address is only permitted to transfer tokens to **verified lockup contracts that have an unlock date at least one year after the system's deployment.**
 
-Also, separate MP allocations are made at deployent to an EOA that will hold an amount of MP for bug bounties/hackathons and to a Uniswap LP reward contract. Aside from these allocations, the only MP made freely available in this first year is the MP that is publically issued to Stability Providers via the `CommunityIssuance` contract.
+Furthermore, separate MP allocations are made upon deployment to an externally owned account (EOA) designated for bug bounties, hackathons, and Intrinsic liquidity provider rewards. Apart from these allocations, the only MP tokens available for use during the first year are those publicly issued to Stability Providers via the `CommunityIssuance` contract.
 
 ### Lockup Implementation and admin transfer restriction
 
