@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import React, { ReactNode } from "react"
 import { Box, Flex, Text } from "theme-ui"
 import { SuccessIcon, InfoIcon } from "./shared"
 
@@ -7,6 +7,7 @@ type AlertType = "success" | "error" | "warning" | "info" | "primary" | "loading
 interface AlertProps {
   children: ReactNode
   type: AlertType
+  hideIcon?: boolean
 }
 
 const AlertStyle: Record<
@@ -49,7 +50,7 @@ const AlertStyle: Record<
   },
 }
 
-export const Alert = ({ children, type }: AlertProps) => {
+export const Alert = ({ children, type, hideIcon }: AlertProps) => {
   return (
     <Box
       sx={{
@@ -63,7 +64,7 @@ export const Alert = ({ children, type }: AlertProps) => {
       }}
     >
       <Flex sx={{ alignItems: "center", p: 3 }}>
-        {AlertStyle[type].icon}
+        {!hideIcon && AlertStyle[type].icon}
         <Text sx={{ ml: 3 }}>{children}</Text>
       </Flex>
     </Box>
