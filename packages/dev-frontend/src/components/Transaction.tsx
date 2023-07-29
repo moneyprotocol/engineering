@@ -20,7 +20,13 @@ const strokeWidth = 10
 
 const circularProgressbarStyle = {
   strokeLinecap: "butt",
-  pathColor: "white",
+  pathColor: "#CAAA00",
+  trailColor: "rgba(255, 255, 255, 0.33)",
+}
+
+const successCircularProgressbarStyle = {
+  strokeLinecap: "butt",
+  pathColor: "#28AE25",
   trailColor: "rgba(255, 255, 255, 0.33)",
 }
 
@@ -35,7 +41,7 @@ const slowProgress = {
 const fastProgress = {
   strokeWidth,
   styles: buildStyles({
-    ...circularProgressbarStyle,
+    ...successCircularProgressbarStyle,
     pathTransitionDuration: 0.75,
   }),
 }
@@ -280,15 +286,15 @@ const TransactionProgressDonut: React.FC<TransactionProgressDonutProps> = ({ sta
 
   return state === "confirmed" ? (
     <Donut {...{ value, maxValue, ...fastProgress }}>
-      <Icon name="check" color="white" size="lg" />
+      <Icon name="check" color="#28AE25" size="lg" />
     </Donut>
   ) : state === "failed" || state === "cancelled" ? (
     <Donut value={0} {...{ maxValue, ...fastProgress }}>
-      <Icon name="times" color="white" size="lg" />
+      <Icon name="times" color="#E22F2F" size="lg" />
     </Donut>
   ) : (
     <Donut {...{ value, maxValue, ...slowProgress }}>
-      <Icon name="cog" color="white" size="lg" spin />
+      <Icon name="cog" color="#CAAA00" size="lg" spin />
     </Donut>
   )
 }
@@ -420,6 +426,10 @@ export const TransactionMonitor: React.FC = () => {
         }}
       >
         <Alert
+          hideIcon={
+            transactionState.type === "confirmed" ||
+            transactionState.type === "waitingForConfirmation"
+          }
           type={
             transactionState.type === "confirmed"
               ? "success"
@@ -432,31 +442,37 @@ export const TransactionMonitor: React.FC = () => {
               : "primary"
           }
         >
-          <Text sx={{ fontSize: 3, color: "black", fontWeight: "400" }}>
-            {transactionState.type === "waitingForConfirmation"
-              ? "Waiting for confirmation"
-              : transactionState.type === "cancelled"
-              ? "Cancelled"
-              : transactionState.type === "failed"
-              ? transactionState.error.message
-              : "Confirmed"}
-          </Text>
-          {transactionState.type === "failed" && transactionState.subText && (
-            <>
-              <br />
-              <Text sx={{ fontSize: 1, color: "black" }}>
-                This is usually due to insufficient gas to pay for the transaction. Please try
-                increasing the Gas Limit and/or Gas Price and try again.
-              </Text>
-            </>
-          )}
+          <Flex
+            sx={{
+              alignItems: "center",
+            }}
+          >
+            {(transactionState.type === "waitingForConfirmation" || 
+              transactionState.type === "confirmed") && (
+              <Box sx={{ mr: 3, width: "40px", height: "40px" }}>
+                <TransactionProgressDonut state={transactionState.type} />
+              </Box>
+            )}
+            <Text sx={{ fontSize: 3, color: "black", fontWeight: "400" }}>
+              {transactionState.type === "waitingForConfirmation"
+                ? "Waiting for confirmation"
+                : transactionState.type === "cancelled"
+                ? "Cancelled"
+                : transactionState.type === "failed"
+                ? transactionState.error.message
+                : "Confirmed"}
+            </Text>
+            {transactionState.type === "failed" && transactionState.subText && (
+              <>
+                <br />
+                <Text sx={{ fontSize: 1, color: "black" }}>
+                  This is usually due to insufficient gas to pay for the transaction. Please try
+                  increasing the Gas Limit and/or Gas Price and try again.
+                </Text>
+              </>
+            )}
+          </Flex>
         </Alert>
-
-        {false && (
-          <Box sx={{ mr: 3, width: "40px", height: "40px" }}>
-            <TransactionProgressDonut state={transactionState.type} />
-          </Box>
-        )}
       </Flex>
     </>
   )
