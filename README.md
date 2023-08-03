@@ -14,9 +14,6 @@
     - [Full redemption](#full-redemption)
     - [Redemptions create a price floor](#redemptions-create-a-price-floor)
   - [Recovery Mode](#recovery-mode)
-  - [Project Structure](#project-structure)
-    - [Directories](#directories)
-    - [Branches](#branches)
   - [MP Token Architecture](#mp-token-architecture)
     - [MP Lockup contracts and token vesting](#mp-lockup-contracts-and-token-vesting)
     - [Lockup Implementation and admin transfer restriction](#lockup-implementation-and-admin-transfer-restriction)
@@ -32,7 +29,6 @@
     - [Data and Value Silo Contracts](#data-and-value-silo-contracts)
     - [Contract Interfaces](#contract-interfaces)
     - [PriceFeed and Oracle](#pricefeed-and-oracle)
-    - [PriceFeed Logic](#pricefeed-logic)
     - [Testnet PriceFeed and PriceFeed tests](#testnet-pricefeed-and-pricefeed-tests)
     - [PriceFeed limitations and known issues](#pricefeed-limitations-and-known-issues)
     - [Keeping a sorted list of Vaults ordered by ICR](#keeping-a-sorted-list-of-vaults-ordered-by-icr)
@@ -75,7 +71,6 @@
     - [MP Issuance implementation](#mp-issuance-implementation)
     - [Handling the front end MP gain](#handling-the-front-end-mp-gain)
     - [MP reward events and payouts](#mp-reward-events-and-payouts)
-  - [MP issuance to Money Protocol providers](#mp-issuance-to-money-protocol-providers)
   - [Money Protocol System Fees](#money-protocol-system-fees)
     - [Redemption Fee](#redemption-fee)
     - [Issuance fee](#issuance-fee)
@@ -140,7 +135,7 @@ Any individual has the ability to call the public function `liquidateVaults()`, 
 
 The specific outcome of liquidations is contingent upon various factors, including the Individual Collateralization Ratio (ICR) of the Vault being liquidated and the overall conditions of the system, such as the Total Collateralization Ratio (TCR) and the size of the Stability Pool.
 
-The following outlines the liquidation process for an individual Vault in both Normal Mode and Recovery Mode. In the provided explanation, `SP.BPD` denotes the amount of BPD tokens present in the Stability Pool.
+The following outlines the liquidation process for an individual Vault in both Normal Mode and Recovery Mode. In the provided explanation, 'SP.BPD' denotes the amount of BPD tokens present in the Stability Pool.
 
 #### Liquidations in Normal Mode: TCR >= 150%
 
@@ -253,171 +248,123 @@ In the initial year, a `LockupContractFactory` is utilized to deploy `LockupCont
 5. Money Protocol admin sets `MPToken` address in `LockupContractFactory`, `CommunityIssuance`, and `MPStaking`.
 
 #### Deploy and fund Lockup Contracts
-6. Money Protocol admin instructs the `LockupContractFactory` to create a `LockupContract` for each beneficiary, with an `unlockTime` scheduled precisely one year after the system's deployment
-7. Money Protocol admin allocates and transfers MP tokens to each respective `LockupContract` in accordance with the entitlement of the beneficiaries
+6. Money Protocol admin instructs the `LockupContractFactory` to create a `LockupContract` for each beneficiary, with an `unlockTime` scheduled precisely one year after the system's deployment.
+7. Money Protocol admin allocates and transfers MP tokens to each respective `LockupContract` in accordance with the entitlement of the beneficiaries.
 
 #### Deploy Money Protocol Core
-9. Money Protocol admin deploys the Money Protocol core system
-10. Money Protocol admin connects Money Protocol core system internally (with setters)
-11. Money Protocol admin connects `MPStaking` to Money Protocol core contracts and `MPToken`
-13. Money Protocol admin connects `CommunityIssuance` to Money Protocol core contracts and `MPToken`
+8. The Money Protocol admin launches the core system of Money Protocol.
+9. The Money Protocol admin establishes internal connections within the Money Protocol core system using setters.
+10. The Money Protocol admin links `MPStaking` to the Money Protocol core contracts and `MPToken`.
+11. The Money Protocol admin establishes connections between `CommunityIssuance` and the Money Protocol core contracts and `MPToken`.
 
 #### During one year lockup period
-- Money Protocol admin periodically transfers newly vested tokens to team & partners’ `LockupContracts`, as per their vesting schedules
-- Money Protocol admin may only transfer MP to `LockupContracts`
-- Anyone may deploy new `LockupContracts` via the Factory, setting any `unlockTime` that is >= 1 year from system deployment
+- The Money Protocol admin routinely transfers recently vested tokens to the `LockupContracts` of team members and partners, adhering to their respective vesting schedules.
+- Money Protocol admin can only transfer MP tokens to `LockupContracts`.
+- Any individual has the capability to deploy new `LockupContracts` using the Factory, setting an `unlockTime` that is equal to or greater than one year from the system's deployment.
 
 #### Upon end of one year lockup period
-- All beneficiaries may withdraw their entire entitlements
-- Money Protocol admin address restriction on MP transfers is automatically lifted, and Money Protocol admin may now transfer MP to any address
-- Anyone may deploy new `LockupContracts` via the Factory, setting any `unlockTime` in the future
+- Each beneficiary is entitled to withdraw their complete share.
+- The MP transfer restriction on the Money Protocol admin address is automatically lifted, granting the Money Protocol admin the ability to transfer MP tokens to any address.
+- Any individual can deploy new `LockupContracts` through the Factory, specifying any future `unlockTime` they desire.
 
 #### Post-lockup period
-- Money Protocol admin periodically transfers newly vested tokens to team & partners, directly to their individual addresses, or to a fresh lockup contract if required.
-
-_NOTE: In the final architecture, a multi-sig contract will be used to move MP Tokens, rather than the single Money Protocol admin EOA. It will be deployed at the start of the sequence, and have its address recorded in  `MPToken` in step 4, and receive MP tokens. It will be used to move MP in step 7, and during & after the lockup period. The Money Protocol admin EOA will only be used for deployment of contracts in steps 1-4 and 9._
-
-_The current code does not utilize a multi-sig. It implements the launch architecture outlined above._
-
-_Additionally, a LP staking contract will receive the initial LP staking reward allowance, rather than an EOA. It will be used to hold and issue MP to users who stake LP tokens that correspond to certain pools on DEXs._
+- The Money Protocol admin regularly transfers recently vested tokens to team members and partners. These transfers are made either directly to their individual addresses or to a new lockup contract if necessary.
 
 ## Core System Architecture
 
-The core Money Protocol system consists of several smart contracts, which are deployable to the Bitcoineum blockchain.
+The core Money Protocol system comprises several smart contracts, deployable to the RSK blockchain.
 
-All application logic and data is contained in these contracts - there is no need for a separate database or back end logic running on a web server. In effect, the Bitcoineum network is itself the Money Protocol back end. As such, all balances and contract data are public.
+All application logic and data are encompassed within these contracts, eliminating the need for a separate database or backend logic on a web server. Consequently, the RSK network itself serves as the Money Protocol backend, making all balances and contract data publicly accessible.
 
-The system has no admin key or human governance. Once deployed, it is fully automated, decentralized and no user holds any special privileges in or control over the system.
+**The system operates without an admin key or human governance. Once deployed, it operates in a fully automated and decentralized manner, with no user possessing any special privileges or control over the system.**
 
-The three main contracts - `BorrowerOperations.sol`, `VaultManager.sol` and `StabilityPool.sol` - hold the user-facing public functions, and contain most of the internal system logic. TogBitcoin they control Vault state updates and movements of Bitcoin and BPD tokens around the system.
+The primary contracts - `BorrowerOperations.sol`, `VaultManager.sol`, and `StabilityPool.sol` - host the user-facing public functions and contain most of the internal system logic. These contracts govern Vault state updates and facilitate the movement of Bitcoin and BPD tokens throughout the system.
 
 ### Core Smart Contracts
 
-`BorrowerOperations.sol` - contains the basic operations by which borrowers interact with their Vault: Vault creation, RBTC top-up / withdrawal, stablecoin issuance and repayment. It also sends issuance fees to the `MPStaking` contract. BorrowerOperations functions call in to VaultManager, telling it to update Vault state, where necessary. BorrowerOperations functions also call in to the various Pools, telling them to move Bitcoin/Tokens between Pools or between Pool <> user, where necessary.
+`BorrowerOperations.sol` encompasses the fundamental operations that borrowers engage in with their Vault. These operations include Vault creation, RBTC top-up and withdrawal, stablecoin issuance, and repayment. Additionally, the contract sends issuance fees to the `MPStaking` contract. To update Vault state as needed, the functions within `BorrowerOperations.sol` interact with the VaultManager. Moreover, these functions also communicate with various Pools, directing the movement of Bitcoin and tokens between Pools or between the Pool and the user when required.
 
-`VaultManager.sol` - contains functionality for liquidations and redemptions. It sends redemption fees to the `MPStaking` contract. Also contains the state of each Vault - i.e. a record of the Vault’s collateral and debt. VaultManager does not hold value (i.e. Bitcoin / other tokens). VaultManager functions call in to the various Pools to tell them to move Bitcoin/tokens between Pools, where necessary.
+`VaultManager.sol` comprises functionalities related to liquidations and redemptions. The contract also sends redemption fees to the `MPStaking` contract. It serves as a repository for each Vault's state, keeping a record of the Vault's collateral and debt. However, the `VaultManager` itself does not hold any value, such as Bitcoin or other tokens. Instead, its functions interact with various Pools, directing the movement of Bitcoin and tokens between Pools when necessary.
 
-`Money ProtocolBase.sol` - Both VaultManager and BorrowerOperations inherit from the parent contract Money ProtocolBase, which contains global constants and some common functions.
+`MoneypBase.sol` - Both VaultManager and BorrowerOperations derive from the parent contract MoneypBase, which encompasses global constants and several shared functions.
 
-`StabilityPool.sol` - contains functionality for Stability Pool operations: making deposits, and withdrawing compounded deposits and accumulated RBTC and MP gains. Holds the BPD Stability Pool deposits, and the RBTC gains for depositors, from liquidations.
+`StabilityPool.sol` - The contract contains functionalities related to Stability Pool operations, allowing users to make deposits and withdraw compounded deposits, along with the accumulated RBTC and MP gains. It manages the BPD Stability Pool deposits as well as the RBTC gains acquired by depositors through liquidations.
 
-`BPDToken.sol` - the stablecoin token contract, which implements the ERC20 fungible token standard in conjunction with EIP-2612 and a mechanism that blocks (accidental) transfers to addresses like the StabilityPool and address(0) that are not supposed to receive funds through direct transfers. The contract mints, burns and transfers BPD tokens.
+`BPDToken.sol` - The stablecoin token contract is designed to adhere to the ERC20 fungible token standard and incorporates EIP-2612. It includes a mechanism that prevents accidental transfers to addresses like the StabilityPool and address(0), which are not intended to receive funds through direct transfers. The contract handles the minting, burning, and transferring of BPD tokens.
 
-`SortedVaults.sol` - a doubly linked list that stores addresses of Vault owners, sorted by their individual collateralization ratio (ICR). It inserts and re-inserts Vaults at the correct position, based on their ICR.
+`SortedVaults.sol` - The system employs a doubly linked list to store addresses of Vault owners, arranged in order according to their individual collateralization ratio (ICR). It efficiently inserts and re-inserts Vaults at the appropriate position within the list based on their ICR.
 
-`PriceFeed.sol` - Contains functionality for obtaining the current RBTC:USD price, which the system uses for calculating collateralization ratios.
+`PriceFeed.sol` - The contract includes functionalities to fetch the current RBTC:USD price, which is essential for the system to calculate collateralization ratios accurately.
 
-`HintHelpers.sol` - Helper contract, containing the read-only functionality for calculation of accurate hints to be supplied to borrower operations and redemptions.
+`HintHelpers.sol` - The Helper contract provides read-only functionalities for accurately calculating hints to be used in borrower operations and redemptions.
 
 ### Data and Value Silo Contracts
 
-Along with `StabilityPool.sol`, these contracts hold Bitcoin and/or tokens for their respective parts of the system, and contain minimal logic:
+Together with `StabilityPool.sol`, these contracts are responsible for holding Bitcoin or tokens specific to their respective components of the system, and they possess minimal logic.
 
-`ActivePool.sol` - holds the total Bitcoin balance and records the total stablecoin debt of the active Vaults.
+`ActivePool.sol` - This contract maintains the total Bitcoin balance and keeps a record of the overall stablecoin debt from active Vaults.
 
-`DefaultPool.sol` - holds the total Bitcoin balance and records the total stablecoin debt of the liquidated Vaults that are pending redistribution to active Vaults. If a Vault has pending Bitcoin/debt “rewards” in the DefaultPool, then they will be applied to the Vault when it next undergoes a borrower operation, a redemption, or a liquidation.
+`DefaultPool.sol` - This contract manages the total Bitcoin balance and keeps a record of the total stablecoin debt from liquidated Vaults that are awaiting redistribution to active Vaults. If a Vault has pending Bitcoin or debt "rewards" in the DefaultPool, these rewards will be utilized when the Vault undergoes a borrower operation, a redemption, or a liquidation in the future.
 
-`CollSurplusPool.sol` - holds the RBTC surplus from Vaults that have been fully redeemed from as well as from Vaults with an ICR > MCR that were liquidated in Recovery Mode. Sends the surplus back to the owning borrower, when told to do so by `BorrowerOperations.sol`.
+`CollSurplusPool.sol` - This contract retains the RBTC surplus from Vaults that have been completely redeemed and Vaults with an ICR greater than the minimum collateralization ratio (MCR) that were liquidated during Recovery Mode. When instructed by `BorrowerOperations.sol`, the contract sends the surplus back to the respective borrower.
 
-`GasPool.sol` - holds the total BPD liquidation reserves. BPD is moved into the `GasPool` when a Vault is opened, and moved out when a Vault is liquidated or closed.
+`GasPool.sol` - This contract stores the overall BPD liquidation reserves. When a Vault is opened, BPD is transferred to the `GasPool`, and it is moved out when a Vault undergoes liquidation or closure.
 
 ### Contract Interfaces
 
-`IVaultManager.sol`, `IPool.sol` etc. These provide specification for a contract’s functions, without implementation. They are similar to interfaces in Java or C#.
+`IVaultManager.sol`, `IPool.sol`, etc., serve as specifications for a contract's functions without actual implementation. 
 
 ### PriceFeed and Oracle
 
-Money Protocol functions that require the most current RBTC:USD price data fetch the price dynamically, as needed, via the core `PriceFeed.sol` contract using the Chainlink RBTC:USD reference contract as its primary and Tellor's RBTC:USD price feed as its secondary (fallback) data source. PriceFeed is stateful, i.e. it records the last good price that may come from either of the two sources based on the contract's current state.
+Money Protocol functions that rely on the most up-to-date RBTC:USD price data dynamically fetch the price as required through the core `PriceFeed.sol` contract. The `PriceFeed.sol` contract employs the Money On Chain RBTC:USD reference contract as its primary data source and the RSK RBTC:USD price feed as its secondary (fallback) data source. This contract is stateful, meaning it records the last valid price, which could come from either of the two sources, based on its current state.
 
-The fallback logic distinguishes 3 different failure modes for Chainlink and 2 failure modes for Tellor:
-
-- `Frozen` (for both oracles): last price update more than 4 hours ago
-- `Broken` (for both oracles): response call reverted, invalid timeStamp that is either 0 or in the future, or reported price is non-positive (Chainlink) or zero (Tellor). Chainlink is considered broken if either the response for the latest round _or_ the response for the round before the latest fails one of these conditions.
-- `PriceChangeAboveMax` (Chainlink only): higher than 50% deviation between two consecutive price updates
-
-There is also a return condition `bothOraclesLiveAndUnbrokenAndSimilarPrice` which is a function returning true if both oracles are live and not broken, and the percentual difference between the two reported prices is below 5%.
-
-The current `PriceFeed.sol` contract has an external `fetchPrice()` function that is called by core Money Protocol functions which require a current RBTC:USD price.  `fetchPrice()` calls each oracle's proxy, asserts on the responses, and converts returned prices to 18 digits.
-
-### PriceFeed Logic
-
-The PriceFeed contract fetches the current price and previous price from Chainlink and changes its state (called `Status`) based on certain conditions.
-
-**Initial PriceFeed state:** `chainlinkWorking`. The initial system state that is maintained as long as Chainlink is working properly, i.e. neither broken nor frozen nor exceeding the maximum price change threshold between two consecutive rounds. PriceFeed then obeys the logic found in this table:
-
-  https://docs.google.com/spreadsheets/d/18fdtTUoqgmsK3Mb6LBO-6na0oK-Y9LWBqnPCJRp5Hsg/edit?usp=sharing
-
+The current `PriceFeed.sol` contract includes an external `fetchPrice()` function that is invoked by core Money Protocol functions that necessitate the current RBTC:USD price.
 
 ### Testnet PriceFeed and PriceFeed tests
 
-The `PriceFeedTestnet.sol` is a mock PriceFeed for testnet and general back end testing purposes, with no oracle connection. It contains a manual price setter, `setPrice()`, and a getter, `getPrice()`, which returns the latest stored price.
-
-The mainnet PriceFeed is tested in `test/PriceFeedTest.js`, using a mock Chainlink aggregator and a mock TellorMaster contract.
+The `PriceFeedTestnet.sol` serves as a simulated PriceFeed designed for testnet and general backend testing, and it does not have an oracle connection. It includes a manual price setter, `setPrice()`, and a getter, `getPrice()`, which returns the most recent stored price.
 
 ### PriceFeed limitations and known issues
 
-The purpose of the PriceFeed is to be at least as good as an immutable PriceFeed that relies purely on Chainlink, while also having some resilience in case of Chainlink failure / timeout, and chance of recovery.
+The PriceFeed is designed to provide resilience in situations where there is a failure or timeout with the MoC Medianizer, along with the possibility of recovery.
 
-The PriceFeed logic consists of automatic on-chain decision-making for obtaining fallback price data from Tellor, and if possible, for returning to Chainlink if/when it recovers.
-
-The PriceFeed logic is complex, and although we would prefer simplicity, it does allow the system a chance of switching to an accurate price source in case of a Chainlink failure or timeout, and also the possibility of returning to an honest Chainlink price after it has failed and recovered.
-
-We believe the benefit of the fallback logic is worth the complexity, given that our system is entirely immutable - if we had no fallback logic and Chainlink were to be hacked or permanently fail, Money Protocol would become permanently unusable anyway.
-
-
-
-**Chainlink Decimals**: the `PriceFeed` checks for and uses the latest `decimals` value reported by the Chainlink aggregator in order to calculate the Chainlink price at 18-digit precision, as needed by Money Protocol.  `PriceFeed` does not assume a value for decimals and can handle the case where Chainlink change their decimal value. 
-
-However, the check `chainlinkIsBroken` uses both the current response from the latest round and the response previous round. Since `decimals` is not attached to round data, Money Protocol has no way of knowing whBitcoin decimals has changed between the current round and the previous round, so we assume it is the same. Money Protocol assumes the current return value of decimals() applies to both current round `i` and previous round `i-1`. 
-
-This means that a decimal change that coincides with a Money Protocol price fetch could cause Money Protocol to assert that the Chainlink price has deviated too much, and fall back to Tellor. There is nothing we can do about this. We hope/expect Chainlink to never change their `decimals()` return value (currently 8), and if a hack/technical error causes Chainlink's decimals to change, Money Protocol may fall back to Tellor.
-
-To summarize the Chainlink decimals issue: 
-- Money Protocol can handle the case where Chainlink decimals changes across _two consecutive rounds `i` and `i-1` which are not used in the same Money Protocol price fetch_
-- If Money Protocol fetches the price at round `i`, it will not know if Chainlink decimals changed across round `i-1` to round `i`, and the consequent price scaling distortion may cause Money Protocol to fall back to Tellor
-- Money Protocol will always calculate the correct current price at 18-digit precision assuming the current return value of `decimals()` is correct (i.e. is the value used by the nodes).
-
-**Tellor Decimals**: Tellor uses 6 decimal precision for their RBTCUSD price as determined by a social consensus of Tellor miners/data providers, and shown on Tellor's price feed page. Their decimals value is not offered in their on-chain contracts.  We rely on the continued social consensus around 6 decimals for their RBTCUSD price feed. Tellor have informed us that if there was demand for an RBTCUSD price at different precision, they would simply create a new `requestId`, and make no attempt to alter the social consensus around the precision of the current RBTCUSD `requestId` (1) used by Money Protocol.
-
+The PriceFeed's logic incorporates automated on-chain decision-making to fetch fallback price data from the RSK Oracle and, whenever feasible, to revert to the MoC Medianizer upon its recovery.
 
 ### Keeping a sorted list of Vaults ordered by ICR
 
-Money Protocol relies on a particular data structure: a sorted doubly-linked list of Vaults that remains ordered by individual collateralization ratio (ICR), i.e. the amount of collateral (in USD) divided by the amount of debt (in BPD).
+Money Protocol relies on a specific data structure: a sorted doubly-linked list of Vaults, maintained in order of individual collateralization ratio (ICR) – calculated as the ratio of collateral (in USD) to debt (in BPD).
 
-This ordered list is critical for gas-efficient redemption sequences and for the `liquidateVaults` sequence, both of which target Vaults in ascending order of ICR.
+This ordered list plays a crucial role in enabling gas-efficient redemption sequences and the `liquidateVaults` process, both of which target Vaults in ascending order of ICR.
 
-The sorted doubly-linked list is found in `SortedVaults.sol`. 
+The implementation of this sorted doubly-linked list is found in `SortedVaults.sol`.
 
-Nodes map to active Vaults in the system - the ID property is the address of a vault owner. The list accepts positional hints for efficient O(1) insertion - please see the [hints](#supplying-hints-to-cdp-operations) section for more details.
+Each node within this list corresponds to an active Vault in the system, with the node's ID property being the address of the Vault owner. For efficient O(1) insertion, the list accepts positional hints - more details can be found [hints](#supplying-hints-to-cdp-operations) section.
 
-ICRs are computed dynamically at runtime, and not stored on the node. This is because ICRs of active Vaults change dynamically, when:
+Dynamic runtime computation is used to calculate ICRs, and these values are not stored on the node. This is because the ICRs of active Vaults change dynamically when:
 
-- The RBTC:USD price varies, altering the USD of the collateral of every Vault
-- A liquidation that redistributes collateral and debt to active Vaults occurs
+The RBTC:USD price fluctuates, influencing the USD value of the collateral in each Vault
+A liquidation occurs, which redistributes collateral and debt among active Vaults
+The list relies on the property that a redistribution of collateral and debt due to a liquidation preserves the ordering of all active Vaults, although it does reduce the ICR of each active Vault above the MCR.
 
-The list relies on the fact that a collateral and debt redistribution due to a liquidation preserves the ordering of all active Vaults (though it does decrease the ICR of each active Vault above the MCR).
+While the maintenance of ordering during redistributions may not be immediately evident, you can refer to the [mathematical proof](https://github.com/Money Protocol/dev/blob/main/papers) demonstrating this property in Money Protocol.
 
-The fact that ordering is maintained as redistributions occur, is not immediately obvious: please see the [mathematical proof](https://github.com/Money Protocol/dev/blob/main/papers) which shows that this holds in Money Protocol.
+A node inserted based on the current ICR will retain its correct position relative to its peers, as long as its raw collateral and debt remain unchanged while liquidation gains accumulate.
 
-A node inserted based on current ICR will maintain the correct position, relative to its peers, as liquidation gains accumulate, as long as its raw collateral and debt have not changed.
+Nodes also remain sorted as the RBTC:USD price fluctuates, as these variations uniformly affect the collateral value of each Vault.
 
-Nodes also remain sorted as the RBTC:USD price varies, since price fluctuations change the collateral value of each Vault by the same proportion.
-
-Thus, nodes need only be re-inserted to the sorted list upon a Vault operation - when the owner adds or removes collateral or debt to their position.
+Consequently, nodes need only be re-inserted into the sorted list when a Vault operation occurs, such as when the owner adds or removes collateral or debt to their position.
 
 ### Flow of Bitcoin in Money Protocol
 
-![Flow of Bitcoin](images/RBTC_flows.svg)
-
-Bitcoin in the system lives in three Pools: the ActivePool, the DefaultPool and the StabilityPool. When an operation is made, Bitcoin is transferred in one of three ways:
+Bitcoin within the system is distributed among three Pools: the ActivePool, the DefaultPool, and the StabilityPool. During any operation, Bitcoin is transferred in one of the following three ways:
 
 - From a user to a Pool
 - From a Pool to a user
 - From one Pool to another Pool
 
-Bitcoin is recorded on an _individual_ level, but stored in _aggregate_ in a Pool. An active Vault with collateral and debt has a struct in the VaultManager that stores its Bitcoin collateral value in a uint, but its actual Bitcoin is in the balance of the ActivePool contract.
+Bitcoin is accounted for on an _individual_ level but stored _collectively_ in a Pool. For example, an active Vault containing collateral and debt maintains a struct in the VaultManager, recording its Bitcoin collateral value as a uint, but the actual Bitcoin resides in the balance of the ActivePool contract.
 
-Likewise, the StabilityPool holds the total accumulated RBTC gains from liquidations for all depositors.
+Similarly, the StabilityPool aggregates the total accumulated RBTC gains from liquidations for all depositors.
 
 **Borrower Operations**
 
@@ -462,15 +409,13 @@ Likewise, the StabilityPool holds the total accumulated RBTC gains from liquidat
 
 ### Flow of BPD tokens in Money Protocol
 
-![Flow of BPD](images/BPD_flows.svg)
+When a user issues debt from their Vault, BPD tokens are created and sent to their own address, while the corresponding debt is recorded on the Vault. On the contrary, when they repay their Vault's BPD debt, BPD tokens are burned from their address, reducing the debt associated with their Vault.
 
-When a user issues debt from their Vault, BPD tokens are minted to their own address, and a debt is recorded on the Vault. Conversely, when they repay their Vault’s BPD debt, BPD is burned from their address, and the debt on their Vault is reduced.
+Redemptions entail burning BPD tokens from the redeemer's balance, subsequently reducing the debt of the redeemed Vault.
 
-Redemptions burn BPD from the redeemer’s balance, and reduce the debt of the Vault redeemed against.
+During liquidations involving a Stability Pool offset, BPD tokens are burned from the Stability Pool's balance, thereby reducing the BPD debt of the liquidated Vault.
 
-Liquidations that involve a Stability Pool offset burn tokens from the Stability Pool’s balance, and reduce the BPD debt of the liquidated Vault.
-
-The only time BPD is transferred to/from a Money Protocol contract, is when a user deposits BPD to, or withdraws BPD from, the StabilityPool.
+The only instance when BPD tokens are transferred to or from a Money Protocol contract occurs when a user deposits or withdraws BPD to/from the StabilityPool.
 
 **Borrower Operations**
 
@@ -511,9 +456,7 @@ The only time BPD is transferred to/from a Money Protocol contract, is when a us
 
 ### Flow of MP Tokens in Money Protocol
 
-![Flow of MP](images/MP_flows.svg)
-
-Stability Providers and Frontend Operators receive MP gains according to their share of the total BPD deposits, and the MP community issuance schedule.  Once obtained, MP can be staked and unstaked with the `MPStaking` contract.
+Stability Providers and Frontend Operators receive MP gains based on their portion of the total BPD deposits and the MP community issuance schedule. Once acquired, MP can be staked and unstaked using the `MPStaking` contract.
 
 **Stability Pool**
 
@@ -536,25 +479,25 @@ Stability Providers and Frontend Operators receive MP gains according to their s
 
 ## Expected User Behaviors
 
-Generally, borrowers call functions that trigger Vault operations on their own Vault. Stability Pool users (who may or may not also be borrowers) call functions that trigger Stability Pool operations, such as depositing or withdrawing tokens to/from the Stability Pool.
+In general, borrowers utilize functions to initiate Vault operations on their own Vaults. Stability Pool users, who may or may not be borrowers as well, employ functions to trigger Stability Pool operations, such as depositing or withdrawing tokens from the Stability Pool.
 
-Anyone may call the public liquidation functions, and attempt to liquidate one or several Vaults.
+The public liquidation functions are open to anyone, enabling them to attempt liquidation of one or multiple Vaults.
 
-BPD token holders may also redeem their tokens, and swap an amount of tokens 1-for-1 in value (minus fees) with Bitcoin.
+BPD token holders also have the option to redeem their tokens, exchanging them at a 1-for-1 value (minus fees) with Bitcoin.
 
-MP token holders may stake their MP, to earn a share of the system fee revenue, in RBTC and BPD.
+MP token holders can stake their MP to earn a portion of the system fee revenue, distributed in RBTC and BPD.
 
 ## Contract Ownership and Function Permissions
 
-All the core smart contracts inherit from the OpenZeppelin `Ownable.sol` contract template. As such all contracts have a single owning address, which is the deploying address. The contract's ownership is renounced either upon deployment, or immediately after its address setter has been called, connecting it to the rest of the core Money Protocol system. 
+Each of the core smart contracts derives from the OpenZeppelin `Ownable.sol` contract template. Consequently, all contracts have a sole owning address, which corresponds to the deploying address. The ownership of the contract is renounced either upon deployment or right after its address setter has been invoked to connect it with the rest of the core Money Protocol system.
 
-Several public and external functions have modifiers such as `requireCallerIsVaultManager`, `requireCallerIsActivePool`, etc - ensuring they can only be called by the respective permitted contract.
+Several public and external functions include modifiers like `requireCallerIsVaultManager`, `requireCallerIsActivePool`, etc., ensuring that they can solely be accessed by the permitted contract with the appropriate authorization.
 
 ## Deployment to a Development Blockchain
 
-The Hardhat migrations script and deployment helpers in `utils/deploymentHelpers.js` deploy all contracts, and connect all contracts to their dependency contracts, by setting the necessary deployed addresses.
+The Hardhat migrations script and the deployment helpers in `utils/deploymentHelpers.js` handle the deployment of all contracts and establish connections between them by setting the required deployed addresses.
 
-The project is deployed on the Ropsten testnet.
+The project is deployed on the RSK testnet.
 
 ## Running Tests
 
@@ -588,14 +531,14 @@ Run, from `packages/contracts/`:
 brownie test -s
 ```
 
-### OpenBitcoineum
+### OpenEthereum
 
 Add the local node as a `live` network at `~/.brownie/network-config.yaml`:
 ```
 (...)
-      - name: Local OpenBitcoineum
+      - name: Local OpenEthereum
         chainid: 17
-        id: openBitcoineum
+        id: openethereum
         host: http://localhost:8545
 ```
 
@@ -606,15 +549,15 @@ rm -Rf build/deployments/*
 
 Start Openthereum node from this repo’s root with:
 ```
-yarn start-dev-chain:openBitcoineum
+yarn start-dev-chain:openethereum
 ```
 
 Then, again from `packages/contracts/`, run it with:
 ```
-brownie test -s --network openBitcoineum
+brownie test -s --network openethereum
 ```
 
-To stop the OpenBitcoineum node, you can do it with:
+To stop the OpenEthereum node, you can do it with:
 ```
 yarn stop-dev-chain
 ```
@@ -623,7 +566,7 @@ yarn stop-dev-chain
 
 ### Integer representations of decimals
 
-Several ratios and the RBTC:USD price are integer representations of decimals, to 18 digits of precision. For example:
+Various ratios and the RBTC:USD price are represented as integers with decimal precision extended to 18 digits. For instance:
 
 | **uint representation of decimal** | **Number**    |
 | ---------------------------------- | ------------- |
@@ -639,75 +582,87 @@ etc.
 
 ## Public Data
 
-All data structures with the ‘public’ visibility specifier are ‘gettable’, with getters automatically generated by the compiler. Simply call `VaultManager::MCR()` to get the MCR, etc.
+Any data structures marked with the 'public' visibility specifier are automatically 'gettable', as the compiler generates the corresponding getters. To retrieve the MCR, for example, you can simply call `VaultManager::MCR()`, etc.
 
 ## Public User-Facing Functions
 
 ### Borrower (Vault) Operations - `BorrowerOperations.sol`
 
-`openVault(uint _maxFeePercentage, uint _BPDAmount, address _upperHint, address _lowerHint)`: payable function that creates a Vault for the caller with the requested debt, and the Bitcoin received as collateral. Successful execution is conditional mainly on the resulting collateralization ratio which must exceed the minimum (110% in Normal Mode, 150% in Recovery Mode). In addition to the requested debt, extra debt is issued to pay the issuance fee, and cover the gas compensation. The borrower has to provide a `_maxFeePercentage` that he/she is willing to accept in case of a fee slippage, i.e. when a redemption transaction is processed first, driving up the issuance fee. 
+`openVault(uint _maxFeePercentage, uint _BPDAmount, address _upperHint, address _lowerHint)` is a payable function that enables the caller to create a Vault with the desired debt and Bitcoin provided as collateral. Its successful execution primarily depends on the resulting collateralization ratio, which must exceed the minimum requirement (110% in Normal Mode, 150% in Recovery Mode).
 
-`addColl(address _upperHint, address _lowerHint))`: payable function that adds the received Bitcoin to the caller's active Vault.
+In addition to the requested debt, extra debt is issued to cover the issuance fee and gas compensation. The borrower is required to specify a _maxFeePercentage indicating the maximum fee slippage they are willing to accept. This comes into play when a redemption transaction is processed first, potentially driving up the issuance fee.
 
-`withdrawColl(uint _amount, address _upperHint, address _lowerHint)`: withdraws `_amount` of collateral from the caller’s Vault. Executes only if the user has an active Vault, the withdrawal would not pull the user’s Vault below the minimum collateralization ratio, and the resulting total collateralization ratio of the system is above 150%. 
+The payable function `addColl(address _upperHint, address _lowerHint)` allows the caller to add the received Bitcoin to their active Vault.
 
-`function withdrawBPD(uint _maxFeePercentage, uint _BPDAmount, address _upperHint, address _lowerHint)`: issues `_amount` of BPD from the caller’s Vault to the caller. Executes only if the Vault's collateralization ratio would remain above the minimum, and the resulting total collateralization ratio is above 150%. The borrower has to provide a `_maxFeePercentage` that he/she is willing to accept in case of a fee slippage, i.e. when a redemption transaction is processed first, driving up the issuance fee.
+The function `withdrawColl(uint _amount, address _upperHint, address _lowerHint)` enables the caller to withdraw the specified `_amount` of collateral from their Vault. The withdrawal can be executed if the user has an active Vault, and it does not cause the Vault's collateralization ratio to fall below the minimum requirement. Additionally, the withdrawal is allowed only if the resulting total collateralization ratio of the system remains above 150%. 
 
-`repayBPD(uint _amount, address _upperHint, address _lowerHint)`: repay `_amount` of BPD to the caller’s Vault, subject to leaving 50 debt in the Vault (which corresponds to the 50 BPD gas compensation).
+The function `withdrawBPD(uint _maxFeePercentage, uint _BPDAmount, address _upperHint, address _lowerHint)` allows the caller to issue a specified _amount of BPD from their Vault. This operation is only executed if the Vault's collateralization ratio would still meet the minimum requirement and the resulting total collateralization ratio remains above 150%.
 
-`_adjustVault(address _borrower, uint _collWithdrawal, uint _debtChange, bool _isDebtIncrease, address _upperHint, address _lowerHint, uint _maxFeePercentage)`: enables a borrower to simultaneously change both their collateral and debt, subject to all the restrictions that apply to individual increases/decreases of each quantity with the following particularity: if the adjustment reduces the collateralization ratio of the Vault, the function only executes if the resulting total collateralization ratio is above 150%. The borrower has to provide a `_maxFeePercentage` that he/she is willing to accept in case of a fee slippage, i.e. when a redemption transaction is processed first, driving up the issuance fee. The parameter is ignored if the debt is not increased with the transaction.
+To account for potential fee slippage, the borrower must provide a `_maxFeePercentage` indicating the maximum fee deviation they are willing to accept. This comes into play if a redemption transaction is processed first, potentially leading to an increase in the issuance fee.
 
-`closeVault()`: allows a borrower to repay all debt, withdraw all their collateral, and close their Vault. Requires the borrower have a BPD balance sufficient to repay their vault's debt, excluding gas compensation - i.e. `(debt - 50)` BPD.
+The function `repayBPD(uint _amount, address _upperHint, address _lowerHint)` enables the caller to repay a specified `_amount` of BPD to their Vault, with the condition that 200 debt must remain in the Vault. This 50 debt corresponds to the 200 BPD gas compensation.
 
-`claimCollateral(address _user)`: when a borrower’s Vault has been fully redeemed from and closed, or liquidated in Recovery Mode with a collateralization ratio above 110%, this function allows the borrower to claim their RBTC collateral surplus that remains in the system (collateral - debt upon redemption; collateral - 110% of the debt upon liquidation).
+The function `_adjustVault(address _borrower, uint _collWithdrawal, uint _debtChange, bool _isDebtIncrease, address _upperHint, address _lowerHint, uint _maxFeePercentage)` allows a borrower to modify both their collateral and debt simultaneously. However, specific restrictions apply to each quantity's individual increases or decreases. Notably, if the adjustment reduces the Vault's collateralization ratio, the function is only executed when the resulting total collateralization ratio remains above 150%.
+
+To account for potential fee slippage, the borrower must provide a `_maxFeePercentage` indicating the maximum fee deviation they are willing to accept. This comes into play if a redemption transaction is processed first, potentially leading to an increase in the issuance fee. The `_maxFeePercentage` parameter is disregarded if the debt is not increased in the transaction.
+
+The function `closeVault()` permits a borrower to completely repay their debt, withdraw all the collateral, and close their Vault. To execute this function, the borrower must have a sufficient BPD balance to repay their vault's debt, excluding the 200 BPD gas compensation, which amounts to `(debt - 200)` BPD.
+
+The function `claimCollateral(address _user)` enables a borrower to claim their RBTC collateral surplus from the system under specific circumstances. This can occur when the borrower's Vault has been fully redeemed and closed or liquidated in Recovery Mode with a collateralization ratio above 110%.
+
+The collateral surplus that the borrower can claim is calculated based on the difference between the collateral and the debt upon redemption or the difference between the collateral and 110% of the debt upon liquidation.
 
 ### VaultManager Functions - `VaultManager.sol`
 
-`liquidate(address _borrower)`: callable by anyone, attempts to liquidate the Vault of `_user`. Executes successfully if `_user`’s Vault meets the conditions for liquidation (e.g. in Normal Mode, it liquidates if the Vault's ICR < the system MCR).  
+The function `liquidate(address _borrower)` is accessible to anyone and aims to liquidate the Vault belonging to `_user`. The execution is successful if `_user`'s Vault satisfies the conditions for liquidation, such as in Normal Mode, where it liquidates if the Vault's ICR is below the system MCR.  
 
-`liquidateVaults(uint n)`: callable by anyone, checks for under-collateralized Vaults below MCR and liquidates up to `n`, starting from the Vault with the lowest collateralization ratio; subject to gas constraints and the actual number of under-collateralized Vaults. The gas costs of `liquidateVaults(uint n)` mainly depend on the number of Vaults that are liquidated, and whBitcoin the Vaults are offset against the Stability Pool or redistributed. For n=1, the gas costs per liquidated Vault are roughly between 215K-400K, for n=5 between 80K-115K, for n=10 between 70K-82K, and for n=50 between 60K-65K.
+The function `liquidateVaults(uint n)` is open to all users and serves to identify under-collateralized Vaults below the MCR. It then initiates the liquidation process for up to `n` such Vaults, starting with the one having the lowest collateralization ratio. The number of liquidated Vaults is subject to gas limitations and the actual count of under-collateralized Vaults.
 
-`batchLiquidateVaults(address[] calldata _vaultArray)`: callable by anyone, accepts a custom list of Vaults addresses as an argument. Steps through the provided list and attempts to liquidate every Vault, until it reaches the end or it runs out of gas. A Vault is liquidated only if it meets the conditions for liquidation. For a batch of 10 Vaults, the gas costs per liquidated Vault are roughly between 75K-83K, for a batch of 50 Vaults between 54K-69K.
+The gas costs associated with `liquidateVaults(uint n)` primarily depend on the number of Vaults that undergo liquidation and whether these Vaults are offset against the Stability Pool or redistributed.
 
-`redeemCollateral(uint _BPDAmount, address _firstRedemptionHint, address _upperPartialRedemptionHint, address _lowerPartialRedemptionHint, uint _partialRedemptionHintNICR, uint _maxIterations, uint _maxFeePercentage)`: redeems `_BPDamount` of stablecoins for Bitcoin from the system. Decreases the caller’s BPD balance, and sends them the corresponding amount of RBTC. Executes successfully if the caller has sufficient BPD to redeem. The number of Vaults redeemed from is capped by `_maxIterations`. The borrower has to provide a `_maxFeePercentage` that he/she is willing to accept in case of a fee slippage, i.e. when another redemption transaction is processed first, driving up the redemption fee.
+The function `batchLiquidateVaults(address[] calldata _vaultArray)` is available to all users and allows them to provide a personalized list of Vault addresses as an argument. The function then proceeds to attempt the liquidation of each Vault in the given list, stopping when it reaches the end or when it runs out of gas. Only Vaults that meet the conditions for liquidation are processed.
 
-`getCurrentICR(address _user, uint _price)`: computes the user’s individual collateralization ratio (ICR) based on their total collateral and total BPD debt. Returns 2^256 -1 if they have 0 debt.
+The function `redeemCollateral(uint _BPDAmount, address _firstRedemptionHint, address _upperPartialRedemptionHint, address _lowerPartialRedemptionHint, uint _partialRedemptionHintNICR, uint _maxIterations, uint _maxFeePercentage)` allows the caller to redeem `_BPDAmount` worth of stablecoins for Bitcoin from the system. The redemption results in a reduction of the caller's BPD balance, and they will receive the corresponding amount of RBTC.
+
+The redemption execution is successful if the caller possesses sufficient BPD tokens to redeem. The number of Vaults that can be redeemed from is limited by `_maxIterations`. Additionally, the borrower is required to specify a `_maxFeePercentage` to indicate their willingness to accept a fee slippage in case another redemption transaction is processed first, leading to an increase in the redemption fee.
+
+The function `getCurrentICR(address _user, uint _price)` calculates the individual collateralization ratio (ICR) for the given user, considering their total collateral and total BPD debt. If the user has no debt (i.e., debt equals 0), the function returns the value 2^256 - 1.
 
 `getVaultOwnersCount()`: get the number of active Vaults in the system.
 
-`getPendingRBTCReward(address _borrower)`: get the pending RBTC reward from liquidation redistribution events, for the given Vault.
+`getPendingRBTCReward(address _borrower)` retrieves the RBTC reward pending from liquidation redistribution events for the specified Vault.
 
-`getPendingBPDDebtReward(address _borrower)`: get the pending Vault debt "reward" (i.e. the amount of extra debt assigned to the Vault) from liquidation redistribution events.
+`getPendingBPDDebtReward(address _borrower)` retrieves the pending "reward" for the Vault's debt (i.e. the additional debt assigned to the Vault) from liquidation redistribution events.
 
-`getEntireDebtAndColl(address _borrower)`: returns a Vault’s entire debt and collateral, which respectively include any pending debt rewards and RBTC rewards from prior redistributions.
+`getEntireDebtAndColl(address _borrower)` provides the complete debt and collateral of a Vault, encompassing any pending debt rewards and RBTC rewards resulting from previous redistributions.
 
-`getEntireSystemColl()`:  Returns the systemic entire collateral allocated to Vaults, i.e. the sum of the RBTC in the Active Pool and the Default Pool.
+`getEntireSystemColl()` retrieves the total collateral allocated to Vaults within the system, comprising the combined RBTC holdings in the Active Pool and the Default Pool.
 
-`getEntireSystemDebt()` Returns the systemic entire debt assigned to Vaults, i.e. the sum of the BPDDebt in the Active Pool and the Default Pool.
+`getEntireSystemDebt()` retrieves the overall debt allocated to Vaults within the system, encompassing the combined BPDDebt in both the Active Pool and the Default Pool.
 
-`getTCR()`: returns the total collateralization ratio (TCR) of the system.  The TCR is based on the the entire system debt and collateral (including pending rewards).
+`getTCR()` retrieves the total collateralization ratio (TCR) of the system, which takes into account the entire system debt and collateral, including any pending rewards.
 
-`checkRecoveryMode()`: reveals whBitcoin or not the system is in Recovery Mode (i.e. whBitcoin the Total Collateralization Ratio (TCR) is below the Critical Collateralization Ratio (CCR)).
+`checkRecoveryMode()` indicates whether the system is currently in Recovery Mode, which means that the Total Collateralization Ratio (TCR) is below the Critical Collateralization Ratio (CCR).
 
 ### Hint Helper Functions - `HintHelpers.sol`
 
-`function getApproxHint(uint _CR, uint _numTrials, uint _inputRandomSeed)`: helper function, returns a positional hint for the sorted list. Used for transactions that must efficiently re-insert a Vault to the sorted list.
+`function getApproxHint(uint _CR, uint _numTrials, uint _inputRandomSeed)`: This helper function provides a positional hint for the sorted list, aiding transactions that need to efficiently re-insert a Vault to the list.
 
-`getRedemptionHints(uint _BPDamount, uint _price, uint _maxIterations)`: helper function specifically for redemptions. Returns three hints:
+`getRedemptionHints(uint _BPDamount, uint _price, uint _maxIterations)`: This is a helper function designed specifically for redemptions. It returns three hints:
 
-- `firstRedemptionHint` is a positional hint for the first redeemable Vault (i.e. Vault with the lowest ICR >= MCR).
-- `partialRedemptionHintNICR` is the final nominal ICR of the last Vault after being hit by partial redemption, or zero in case of no partial redemption (see [Hints for `redeemCollateral`](#hints-for-redeemcollateral)).
-- `truncatedBPDamount` is the maximum amount that can be redeemed out of the the provided `_BPDamount`. This can be lower than `_BPDamount` when redeeming the full amount would leave the last Vault of the redemption sequence with less debt than the minimum allowed value.
+- `firstRedemptionHint`: A positional hint for the first redeemable Vault, which is the Vault with the lowest ICR >= MCR.
+- `partialRedemptionHintNICR`: The final nominal ICR of the last Vault after being impacted by partial redemption, or zero if no partial redemption occurs (see [Hints for `redeemCollateral`](#hints-for-redeemcollateral)).
+- `truncatedBPDamount`: The maximum amount that can be redeemed out of the provided `_BPDamount`. This value may be lower than `_BPDamount` if redeeming the full amount would leave the last Vault of the redemption sequence with less debt than the minimum allowed value.
 
-The number of Vaults to consider for redemption can be capped by passing a non-zero value as `_maxIterations`, while passing zero will leave it uncapped.
+The number of Vaults considered for redemption can be limited by providing a non-zero value for `_maxIterations`, while passing zero leaves it uncapped.
 
 ### Stability Pool Functions - `StabilityPool.sol`
 
-`provideToSP(uint _amount, address _frontEndTag)`: allows stablecoin holders to deposit `_amount` of BPD to the Stability Pool. It sends `_amount` of BPD from their address to the Pool, and tops up their BPD deposit by `_amount` and their tagged front end’s stake by `_amount`. If the depositor already has a non-zero deposit, it sends their accumulated RBTC and MP gains to their address, and pays out their front end’s MP gain to their front end.
+`provideToSP(uint _amount, address _frontEndTag)`: This function enables stablecoin holders to deposit _amount of BPD into the Stability Pool. It transfers `_amount` of BPD from their address to the Pool, and increases both their BPD deposit and their tagged front end’s stake by `_amount`. If the depositor already has a non-zero deposit, it transfers their accumulated RBTC and MP gains to their address, and distributes their front end’s MP gain to their front end.
 
-`withdrawFromSP(uint _amount)`: allows a stablecoin holder to withdraw `_amount` of BPD from the Stability Pool, up to the value of their remaining Stability deposit. It decreases their BPD balance by `_amount` and decreases their front end’s stake by `_amount`. It sends the depositor’s accumulated RBTC and MP gains to their address, and pays out their front end’s MP gain to their front end. If the user makes a partial withdrawal, their deposit remainder will earn further gains. To prevent potential loss evasion by depositors, withdrawals from the Stability Pool are suspended when there are liquidable Vaults with ICR < 110% in the system.
+`withdrawFromSP(uint _amount)`: This function enables a stablecoin holder to withdraw `_amount` of BPD from the Stability Pool, up to the value of their remaining Stability deposit. It reduces their BPD balance by `_amount` and decreases their front end’s stake by `_amount`. It transfers the depositor’s accumulated RBTC and MP gains to their address, and distributes their front end’s MP gain to their front end. If the user makes a partial withdrawal, their remaining deposit will continue to earn further gains. To prevent potential loss evasion by depositors, withdrawals from the Stability Pool are temporarily suspended when there are liquidable Vaults with ICR < 110% in the system.
 
-`withdrawRBTCGainToVault(address _hint)`: sends the user's entire accumulated RBTC gain to the user's active Vault, and updates their Stability deposit with its accumulated loss from debt absorptions. Sends the depositor's MP gain to the depositor, and sends the tagged front end's MP gain to the front end.
+`withdrawRBTCGainToVault(address _hint)`: This function transfers the user's entire accumulated RBTC gain to their active Vault and adjusts their Stability deposit to account for the accumulated loss from debt absorptions. It also sends the depositor's MP gain to the depositor and distributes the tagged front end's MP gain to the front end.
 
 `registerFrontEnd(uint _kickbackRate)`: Registers an address as a front end and sets their chosen kickback rate in range `[0,1]`.
 
@@ -723,176 +678,171 @@ The number of Vaults to consider for redemption can be capped by passing a non-z
 
 ### MP Staking Functions  `MPStaking.sol`
 
- `stake(uint _MPamount)`: sends `_MPAmount` from the caller to the staking contract, and increases their stake. If the caller already has a non-zero stake, it pays out their accumulated RBTC and BPD gains from staking.
+`stake(uint _MPamount)`: This function allows the caller to send `_MPAmount` of MP tokens to the staking contract, increasing their stake. If the caller already has a non-zero stake, it triggers a payout of their accumulated RBTC and BPD gains from staking.
 
- `unstake(uint _MPamount)`: reduces the caller’s stake by `_MPamount`, up to a maximum of their entire stake. It pays out their accumulated RBTC and BPD gains from staking.
+ `unstake(uint _MPamount)`: This function decreases the caller's stake by `_MPamount`, with a maximum reduction equal to their entire stake. Additionally, it triggers a payout of their accumulated RBTC and BPD gains from staking.
 
 ### Lockup Contract Factory `LockupContractFactory.sol`
 
-`deployLockupContract(address _beneficiary, uint _unlockTime)`; Deploys a `LockupContract`, and sets the beneficiary’s address, and the `_unlockTime` - the instant in time at which the MP can be withrawn by the beneficiary.
+`deployLockupContract(address _beneficiary, uint _unlockTime)`: This function is used to create and deploy a `LockupContract`. It sets the beneficiary's address and the `_unlockTime`, which represents the specific moment when the MP (Money Protocol tokens) can be withdrawn by the beneficiary.
 
 ### Lockup contract - `LockupContract.sol`
 
-`withdrawMP()`: When the current time is later than the `unlockTime` and the caller is the beneficiary, it transfers their MP to them.
+`withdrawMP()`: This function allows the beneficiary to withdraw their MP tokens if the current time has surpassed the specified `unlockTime`. Only the beneficiary is allowed to call this function for transferring their MP tokens to their own address.
 
 ### BPD token `BPDToken.sol` and MP token `MPToken.sol`
 
-Standard ERC20 and EIP2612 (`permit()` ) functionality.
 
-**Note**: `permit()` can be front-run, as it does not require that the permitted spender be the `msg.sender`.
+Standard ERC20 and EIP2612 (`permit()`) functionality are implemented in the contract. However, it's worth noting that `permit()` transactions can be front-run, as they don't require the permitted spender to be the `msg.sender`. This design choice allows anyone to submit a Permit that is signed by A, enabling B to spend a portion of A's tokens.
 
-This allows flexibility, as it means that _anyone_ can submit a Permit signed by A that allows B to spend a portion of A's tokens.
+While the end result remains the same for the signer A and spender B, it's essential to consider that a `permit` transaction may be front-run and revert, potentially impacting the execution flow of a contract intended to handle on-chain Permit submissions.
 
-The end result is the same for the signer A and spender B, but does mean that a `permit` transaction
-could be front-run and revert - which may hamper the execution flow of a contract that is intended to handle the submission of a Permit on-chain.
-
-For more details please see the original proposal EIP-2612:
-https://eips.Bitcoineum.org/EIPS/eip-2612
+For more comprehensive information, please refer to the original proposal EIP-2612 at the following link: https://eips.ethereum.org/EIPS/eip-2612
 
 ## Supplying Hints to Vault operations
 
-Vaults in Money Protocol are recorded in a sorted doubly linked list, sorted by their NICR, from high to low. NICR stands for the nominal collateral ratio that is simply the amount of collateral (in RBTC) multiplied by 100e18 and divided by the amount of debt (in BPD), without taking the RBTC:USD price into account. Given that all Vaults are equally affected by Bitcoin price changes, they do not need to be sorted by their real ICR.
+In Money Protocol, Vaults are organized in a sorted doubly linked list, ordered by their NICR (Nominal Collateral Ratio) in descending order. NICR is calculated by multiplying the amount of collateral (in RBTC) by 100e18 and dividing it by the amount of debt (in BPD), without considering the RBTC:USD price. Since all Vaults are equally affected by changes in Bitcoin price, there is no need to sort them based on their real ICR (Individual Collateral Ratio).
 
-All Vault operations that change the collateralization ratio need to either insert or reinsert the Vault to the `SortedVaults` list. To reduce the computational complexity (and gas cost) of the insertion to the linked list, two ‘hints’ may be provided.
+For any Vault operation that alters the collateralization ratio, the Vault must be either inserted or reinserted into the `SortedVaults` list. To minimize computational complexity and gas cost, two 'hints' can be provided.
 
-A hint is the address of a Vault with a position in the sorted list close to the correct insert position.
+A hint is the address of a Vault positioned close to the correct insertion point in the sorted list.
 
-All Vault operations take two ‘hint’ arguments: a `_lowerHint` referring to the `nextId` and an `_upperHint` referring to the `prevId` of the two adjacent nodes in the linked list that are (or would become) the neighbors of the given Vault. Taking both direct neighbors as hints has the advantage of being much more resilient to situations where a neighbor gets moved or removed before the caller's transaction is processed: the transaction would only fail if both neighboring Vaults are affected during the pendency of the transaction.
+All Vault operations require two 'hint' arguments: `_lowerHint`, which refers to the `nextId`, and `_upperHint`, which refers to the `prevId`. These hints point to the two adjacent nodes in the linked list that are (or will become) the neighbors of the targeted Vault. Using both direct neighbors as hints increases resilience in scenarios where a neighbor is moved or removed before the caller's transaction is processed, and the transaction would only fail if both neighboring Vaults are affected during the transaction's pendency.
 
-The better the ‘hint’ is, the shorter the list traversal, and the cheaper the gas cost of the function call. `SortedList::findInsertPosition(uint256 _NICR, address _prevId, address _nextId)` that is called by the Vault operation firsts check if `prevId` is still existant and valid (larger NICR than the provided `_NICR`) and then descends the list starting from `prevId`. If the check fails, the function further checks if `nextId` is still existant and valid (smaller NICR than the provided `_NICR`) and then ascends list starting from `nextId`. 
+The quality of the hint determines the traversal length and the gas cost of the function call. When a Vault operation is called, the `SortedList::findInsertPosition(uint256 _NICR, address _prevId, address _nextId)` function first checks if `prevId` is still existent and valid (with a larger NICR than the provided `_NICR`), and then it descends the list starting from `prevId`. If this check fails, the function further verifies if `nextId` is still existent and valid (with a smaller NICR than the provided `_NICR`), and then it ascends the list starting from `nextId`.
 
-The `HintHelpers::getApproxHint(...)` function can be used to generate a useful hint pointing to a Vault relatively close to the target position, which can then be passed as an argument to the desired Vault operation or to `SortedVaults::findInsertPosition(...)` to get its two direct neighbors as ‘exact‘ hints (based on the current state of the system).
+To generate a useful hint pointing to a Vault close to the target position, you can use the   `HintHelpers::getApproxHint(...)` function. This hint can then be passed as an argument to the desired Vault operation or to `SortedVaults::findInsertPosition(...)` to obtain the two direct neighbors as 'exact' hints (based on the current system state).
 
-`getApproxHint(uint _CR, uint _numTrials, uint _inputRandomSeed)` randomly selects `numTrials` amount of Vaults, and returns the one with the closest position in the list to where a Vault with a nominal collateralization ratio of `_CR` should be inserted. It can be shown mathematically that for `numTrials = k * sqrt(n)`, the function's gas cost is with very high probability worst case `O(sqrt(n)) if k >= 10`. For scalability reasons (Infura is able to serve up to ~4900 trials), the function also takes a random seed `_inputRandomSeed` to make sure that calls with different seeds may lead to a different results, allowing for better approximations through multiple consecutive runs.
+`getApproxHint(uint _CR, uint _numTrials, uint _inputRandomSeed)` randomly selects `numTrials` Vaults and returns the one with the closest position in the list where a Vault with a nominal collateralization ratio of `_CR` should be inserted. It can be mathematically demonstrated that for `numTrials = k * sqrt(n)`, the function's gas cost is with very high probability worst-case `O(sqrt(n)) if k >= 10`. For scalability reasons, the function also takes a random seed `_inputRandomSeed` to ensure that calls with different seeds may yield different results, enabling better approximations through multiple consecutive runs.
 
 **Vault operation without a hint**
 
-1. User performs Vault operation in their browser
-2. Call the Vault operation with `_lowerHint = _upperHint = userAddress`
+1. The user initiates a Vault operation in their browser.
+2. Execute the Vault operation by setting `_lowerHint` and `_upperHint` both to the user's address.
 
-Gas cost will be worst case `O(n)`, where n is the size of the `SortedVaults` list.
+The gas cost in the worst-case scenario will be `O(n)`, where 'n' represents the size of the `SortedVaults` list.
 
 **Vault operation with hints**
 
-1. User performs Vault operation in their browser
-2. The front end computes a new collateralization ratio locally, based on the change in collateral and/or debt.
-3. Call `HintHelpers::getApproxHint(...)`, passing it the computed nominal collateralization ratio. Returns an address close to the correct insert position
-4. Call `SortedVaults::findInsertPosition(uint256 _NICR, address _prevId, address _nextId)`, passing it the same approximate hint via both `_prevId` and `_nextId` and the new nominal collateralization ratio via `_NICR`. 
-5. Pass the ‘exact‘ hint in the form of the two direct neighbors, i.e. `_nextId` as `_lowerHint` and `_prevId` as `_upperHint`, to the Vault operation function call. (Note that the hint may become slightly inexact due to pending transactions that are processed first, though this is gracefully handled by the system that can ascend or descend the list as needed to find the right position.)
+1. The user initiates a Vault operation in their browser.
+2. The frontend calculates a new collateralization ratio locally, based on the changes in collateral and/or debt.
+3. The system calls `HintHelpers::getApproxHint(...)`, providing the calculated nominal collateralization ratio, which returns an address close to the correct insertion position.
+4. The system calls `SortedVaults::findInsertPosition(uint256 _NICR, address _prevId, address _nextId)`, using the same approximate hint for both `_prevId` and `_nextId`, along with the new nominal collateralization ratio via `_NICR`.
+5. The system passes the 'exact' hint, represented by the two direct neighbors, i.e., `_nextId` as `_lowerHint` and `_prevId` as `_upperHint`, to the Vault operation function call. (Please note that the hint may slightly deviate due to pending transactions processed first; however, the system handles this gracefully by ascending or descending the list to find the correct position.)
 
-Gas cost of steps 2-4 will be free, and step 5 will be `O(1)`.
+The gas cost for steps 2-4 is free, while step 5 will be `O(1)`.
 
-Hints allow cheaper Vault operations for the user, at the expense of a slightly longer time to completion, due to the need to await the result of the two read calls in steps 1 and 2 - which may be sent as JSON-RPC requests to Infura, unless the Frontend Operator is running a full Bitcoineum node.
+Using hints allows for more cost-effective Vault operations for the user, although it may result in slightly longer transaction times due to the need to await the results of the two read calls in steps 1 and 2. These calls may be sent as JSON-RPC requests to a 3rd party node provider, unless the Frontend Operator is operating a full RSK node.
 
 ### Hints for `redeemCollateral`
 
-`VaultManager::redeemCollateral` as a special case requires additional hints:
-- `_firstRedemptionHint` hints at the position of the first Vault that will be redeemed from,
-- `_lowerPartialRedemptionHint` hints at the `nextId` neighbor of the last redeemed Vault upon reinsertion, if it's partially redeemed,
-- `_upperPartialRedemptionHint` hints at the `prevId` neighbor of the last redeemed Vault upon reinsertion, if it's partially redeemed,
-- `_partialRedemptionHintNICR` ensures that the transaction won't run out of gas if neither `_lowerPartialRedemptionHint` nor `_upperPartialRedemptionHint` are  valid anymore.
+`VaultManager::redeemCollateral` has specific requirements for additional hints:
 
-`redeemCollateral` will only redeem from Vaults that have an ICR >= MCR. In other words, if there are Vaults at the bottom of the SortedVaults list that are below the minimum collateralization ratio (which can happen after an RBTC:USD price drop), they will be skipped. To make this more gas-efficient, the position of the first redeemable Vault should be passed as `_firstRedemptionHint`.
+- `_firstRedemptionHint` indicates the position of the first Vault to be redeemed from.
+- `_lowerPartialRedemptionHint` points to the `nextId` neighbor of the last Vault redeemed (when partially redeemed) upon reinsertion.
+- `_upperPartialRedemptionHint` points to the `prevId` neighbor of the last Vault redeemed (when partially redeemed) upon reinsertion.
+- `_partialRedemptionHintNICR` ensures that the transaction won't run out of gas if neither `_lowerPartialRedemptionHint` nor `_upperPartialRedemptionHint` is valid anymore.
+
+`redeemCollateral` exclusively redeems from Vaults with an ICR greater than or equal to the MCR. In other words, Vaults with ICR below the minimum collateralization ratio (which may occur after an RBTC:USD price drop) will be skipped. To optimize gas usage, the position of the first redeemable Vault should be provided as `_firstRedemptionHint`.
 
 #### First redemption hint
 
-The first redemption hint is the address of the vault from which to start the redemption sequence - i.e the address of the first vault in the system with ICR >= 110%.
+The initial redemption hint represents the address of the vault where the redemption sequence should begin - specifically, it points to the first vault in the system with an ICR (Individual Collateralization Ratio) greater than or equal to 110%.
 
-If when the transaction is confirmed the address is in fact not valid - the system will start from the lowest ICR vault in the system, and step upwards until it finds the first vault with ICR >= 110% to redeem from. In this case, since the number of vaults below 110% will be limited due to ongoing liquidations, there's a good chance that the redemption transaction still succeed. 
+If, upon transaction confirmation, the provided address is invalid, the system will initiate the redemption process from the vault with the lowest ICR in the system and gradually move upwards until it finds the first eligible vault with ICR >= 110% to redeem from. Considering that the number of vaults below 110% will likely be limited due to ongoing liquidations, there is a high likelihood that the redemption transaction will still succeed. 
 
 #### Partial redemption hints
 
-All Vaults that are fully redeemed from in a redemption sequence are left with zero debt, and are closed. The remaining collateral (the difference between the orginal collateral and the amount used for the redemption) will be claimable by the owner.
+When a redemption sequence occurs, all Vaults that are fully redeemed from will have their debt reduced to zero and will be closed. The remaining collateral, which is the difference between the original collateral and the amount used for redemption, will be claimable by the owner.
 
-It’s likely that the last Vault in the redemption sequence would be partially redeemed from - i.e. only some of its debt cancelled with BPD. In this case, it should be reinserted somewhere between top and bottom of the list. The `_lowerPartialRedemptionHint` and `_upperPartialRedemptionHint` hints passed to `redeemCollateral` describe the future neighbors the expected reinsert position.
+In most cases, the last Vault in the redemption sequence will be partially redeemed from, meaning only a portion of its debt will be canceled with BPD. In such instances, this Vault should be reinserted somewhere between the top and bottom of the list. The hints `_lowerPartialRedemptionHint` and `_upperPartialRedemptionHint` passed to the `redeemCollateral` function indicate the expected positions of its future neighbors after reinsertion.
 
-However, if between the off-chain hint computation and on-chain execution a different transaction changes the state of a Vault that would otherwise be hit by the redemption sequence, then the off-chain hint computation could end up totally inaccurate. This could lead to the whole redemption sequence reverting due to out-of-gas error.
+However, there is a possibility that between the off-chain hint computation and the on-chain execution, a different transaction alters the state of a Vault that would otherwise be affected by the redemption sequence. As a result, the off-chain hint computation could become entirely inaccurate, leading to the entire redemption sequence reverting due to an out-of-gas error.
 
-To mitigate this, another hint needs to be provided: `_partialRedemptionHintNICR`, the expected nominal ICR of the final partially-redeemed-from Vault. The on-chain redemption function checks whBitcoin, after redemption, the nominal ICR of this Vault would equal the nominal ICR hint.
+To address this issue, an additional hint is required: `_partialRedemptionHintNICR`, which represents the expected nominal ICR of the final partially-redeemed-from Vault. The on-chain redemption function verifies whether, after redemption, the nominal ICR of this Vault matches the nominal ICR hint.
 
-If not, the redemption sequence doesn’t perform the final partial redemption, and terminates early. This ensures that the transaction doesn’t revert, and most of the requested BPD redemption can be fulfilled.
+If not, the redemption sequence won't perform the final partial redemption and will terminate early. This ensures that the transaction doesn’t revert, and allows most of the requested BPD redemption to be fulfilled successfully.
 
 ## Gas compensation
 
-In Money Protocol, we want to maximize liquidation throughput, and ensure that undercollateralized Vaults are liquidated promptly by “liquidators” - agents who may also hold Stability Pool deposits, and who expect to profit from liquidations.
+In Money Protocol, one of our primary goals is to maximize liquidation throughput and ensure that undercollateralized Vaults are promptly liquidated by "liquidators" - agents who may also hold Stability Pool deposits and anticipate profiting from these liquidations.
 
-However, gas costs in Bitcoineum are substantial. If the gas costs of our public liquidation functions are too high, this may discourage liquidators from calling them, and leave the system holding too many undercollateralized Vaults for too long.
+However, gas costs in RSK can reach substantial levels. If the gas costs of our public liquidation functions are too high, this may discourage liquidators from utilizing them, leading to the system holding too many undercollateralized Vaults for extended periods.
 
-The protocol thus directly compensates liquidators for their gas costs, to incentivize prompt liquidations in both normal and extreme periods of high gas prices. Liquidators should be confident that they will at least break even by making liquidation transactions.
+To address this, the protocol directly compensates liquidators for their gas costs, incentivizing prompt liquidations during both normal and high gas price periods. Liquidators should feel confident that they will at least break even when performing liquidation transactions.
 
-Gas compensation is paid in a mix of BPD and RBTC. While the RBTC is taken from the liquidated Vault, the BPD is provided by the borrower. When a borrower first issues debt, some BPD is reserved as a Liquidation Reserve. A liquidation transaction thus draws RBTC from the vault(s) it liquidates, and sends the both the reserved BPD and the compensation in RBTC to the caller, and liquidates the remainder.
+Gas compensation is provided in a combination of BPD and RBTC. While the RBTC comes from the liquidated Vault, the BPD is contributed by the borrower. When a borrower first issues debt, a portion of BPD is reserved as a Liquidation Reserve. Consequently, a liquidation transaction draws RBTC from the vault(s) being liquidated, sends both the reserved BPD and the compensation in RBTC to the caller, and then liquidates the remaining assets.
 
-When a liquidation transaction liquidates multiple Vaults, each Vault contributes BPD and RBTC towards the total compensation for the transaction.
+In cases where a liquidation transaction liquidates multiple Vaults, each Vault contributes BPD and RBTC towards the total compensation for the transaction.
 
-Gas compensation per liquidated Vault is given by the formula:
+The formula for gas compensation per liquidated Vault is as follows:
 
-Gas compensation = `50 BPD + 0.5% of vault’s collateral (RBTC)`
+Gas compensation = `200 BPD + 0.5% of the vault’s collateral (RBTC)`
 
-The intentions behind this formula are:
-- To ensure that smaller Vaults are liquidated promptly in normal times, at least
-- To ensure that larger Vaults are liquidated promptly even in extreme high gas price periods. The larger the Vault, the stronger the incentive to liquidate it.
+The intentions behind this formula are twofold:
+
+- To ensure that smaller Vaults are liquidated promptly during normal times.
+- To ensure that larger Vaults are still liquidated promptly even during extreme high gas price periods. As the size of the Vault increases, so does the incentive to liquidate it promptly.
 
 ### Gas compensation schedule
 
-When a borrower opens a Vault, an additional 50 BPD debt is issued, and 50 BPD is minted and sent to a dedicated contract (`GasPool`) for gas compensation - the "gas pool".
+Upon a borrower opening a Vault, an extra 200 BPD debt is generated, and an equivalent amount of 200 BPD is created and forwarded to a dedicated contract named `GasPool`, serving as the "gas pool" for gas compensation.
 
-When a borrower closes their active Vault, this gas compensation is refunded: 50 BPD is burned from the gas pool's balance, and the corresponding 50 BPD debt on the Vault is cancelled.
+When the borrower subsequently closes their active Vault, the gas compensation becomes refundable: 200 BPD is subtracted from the gas pool's balance, and an equivalent 200 BPD debt on the Vault is nullified.
 
-The purpose of the 50 BPD Liquidation Reserve is to provide a minimum level of gas compensation, regardless of the Vault's collateral size or the current RBTC price.
+The primary purpose of the 200 BPD Liquidation Reserve is to ensure a baseline level of gas compensation, independent of the Vault's collateral size or the current RBTC price.
 
 ### Liquidation
 
-When a Vault is liquidated, 0.5% of its collateral is sent to the liquidator, along with the 50 BPD Liquidation Reserve. Thus, a liquidator always receives `{50 BPD + 0.5% collateral}` per Vault that they liquidate. The collateral remainder of the Vault is then either offset, redistributed or a combination of both, depending on the amount of BPD in the Stability Pool.
+When a Vault undergoes liquidation, the liquidator is rewarded with 0.5% of the Vault's collateral in addition to the 200 BPD Liquidation Reserve. Consequently, the liquidator consistently receives `{200 BPD + 0.5% collateral}` per Vault liquidated. The remaining collateral in the Vault is then subject to either offsetting, redistribution, or a combination of both, contingent upon the quantity of BPD in the Stability Pool.
 
 ### Gas compensation and redemptions
 
-When a Vault is redeemed from, the redemption is made only against (debt - 50), not the entire debt.
+When a Vault is redeemed from, the redemption is specifically targeted at `(debt - 200)`, excluding the entire debt amount.
 
-But if the redemption causes an amount (debt - 50) to be cancelled, the Vault is then closed: the 50 BPD Liquidation Reserve is cancelled with its remaining 50 debt. That is, the gas compensation is burned from the gas pool, and the 50 debt is zero’d. The RBTC collateral surplus from the Vault remains in the system, to be later claimed by its owner.
+However, if the redemption results in the cancellation of the remaining `(debt - 200)` amount, the Vault is subsequently closed. In this case, the 200 BPD Liquidation Reserve is annulled, along with the remaining 50 debt. Essentially, the gas compensation is eradicated from the gas pool, and the 200 debt is reset to zero. The surplus RBTC collateral from the Vault remains within the system and can be claimed by its owner at a later time.
 
 ### Gas compensation helper functions
 
-Gas compensation functions are found in the parent _Money ProtocolBase.sol_ contract:
+The gas compensation functions are located in the parent contract, _MoneypBase.sol_:
 
-`_getCollGasCompensation(uint _entireColl)` returns the amount of RBTC to be drawn from a vault's collateral and sent as gas compensation. 
+`_getCollGasCompensation(uint _entireColl)` calculates the RBTC amount to be taken from a vault's collateral and used as gas compensation.
 
-`_getCompositeDebt(uint _debt)` returns the composite debt (drawn debt + gas compensation) of a vault, for the purpose of ICR calculation.
+`_getCompositeDebt(uint _debt)` computes the composite debt of a vault, which includes the drawn debt and the gas compensation, for the purpose of ICR calculation.
 
 ## The Stability Pool
 
-Any BPD holder may deposit BPD to the Stability Pool. It is designed to absorb debt from liquidations, and reward depositors with the liquidated collateral, shared between depositors in proportion to their deposit size.
+Any holder of BPD can deposit their tokens into the Stability Pool, which is designed to absorb debt from liquidations and reward depositors with a share of the liquidated collateral based on their deposit size.
 
-Since liquidations are expected to occur at an ICR of just below 110%, and even in most extreme cases, still above 100%, a depositor can expect to receive a net gain from most liquidations. When that holds, the dollar value of the RBTC gain from a liquidation exceeds the dollar value of the BPD loss (assuming the price of BPD is $1).  
+Given that liquidations occur at an ICR just below 110% and, in extreme cases, still above 100%, depositors can typically expect to receive a net gain from most liquidations. In such cases, the dollar value of the RBTC gain from a liquidation exceeds the dollar value of the BPD loss (assuming the price of BPD is $1).
 
 We define the **collateral surplus** in a liquidation as `$(RBTC) - debt`, where `$(...)` represents the dollar value.
 
-At an BPD price of $1, Vaults with `ICR > 100%` have a positive collateral surplus.
+With a BPD price of $1, Vaults with an ICR greater than 100% have a positive collateral surplus.
 
-After one or more liquidations, a deposit will have absorbed BPD losses, and received RBTC gains. The remaining reduced deposit is the **compounded deposit**.
+After one or more liquidations, a deposit will have absorbed BPD losses and received RBTC gains. The resulting reduced deposit is referred to as the **compounded deposit**.
 
-Stability Providers expect a positive ROI on their initial deposit. That is:
+Stability Providers expect a positive return on investment (ROI) on their initial deposit, meaning:
 
 `$(RBTC Gain + compounded deposit) > $(initial deposit)`
 
 ### Mixed liquidations: offset and redistribution
 
-When a liquidation hits the Stability Pool, it is known as an **offset**: the debt of the Vault is offset against the BPD in the Pool. When **x** BPD debt is offset, the debt is cancelled, and **x** BPD in the Pool is burned. When the BPD Stability Pool is greater than the debt of the Vault, all the Vault's debt is cancelled, and all its RBTC is shared between depositors. This is a **pure offset**.
+When a liquidation affects the Stability Pool, it is referred to as an **offset**: the Vault's debt is offset against the BPD in the Pool. If **x** BPD debt is offset, the equivalent amount of BPD in the Pool is burned, effectively canceling the debt. In cases where the BPD Stability Pool exceeds the Vault's debt, the entire debt of the Vault is canceled, and all its RBTC collateral is shared among the depositors. This type of offset is known as a **pure offset**.
 
-It can happen that the BPD in the Stability Pool is less than the debt of a Vault. In this case, the the whole Stability Pool will be used to offset a fraction of the Vault’s debt, and an equal fraction of the Vault’s RBTC collateral will be assigned to Stability Providers. The remainder of the Vault’s debt and RBTC gets redistributed to active Vaults. This is a **mixed offset and redistribution**.
+However, there are instances where the BPD in the Stability Pool is less than the debt of a Vault. In such cases, the entire Stability Pool is used to offset a portion of the Vault's debt, and a corresponding fraction of the Vault's RBTC collateral is assigned to Stability Providers. The remaining portion of the Vault's debt and RBTC collateral is then redistributed among active Vaults. This type of offset is referred to as a **mixed offset and redistribution**.
 
-Because the RBTC collateral fraction matches the offset debt fraction, the effective ICR of the collateral and debt that is offset, is equal to the ICR of the Vault. So, for depositors, the ROI per liquidation depends only on the ICR of the liquidated Vault.
+As the RBTC collateral fraction matches the offset debt fraction, the effective ICR of the offset collateral and debt remains equal to the ICR of the Vault. Hence, the return on investment (ROI) per liquidation for depositors depends solely on the ICR of the liquidated Vault.
 
 ### Stability Pool deposit losses and RBTC gains - implementation
 
-Deposit functionality is handled by `StabilityPool.sol` (`provideToSP`, `withdrawFromSP`, etc).  StabilityPool also handles the liquidation calculation, and holds the BPD and RBTC balances.
+The `StabilityPool.sol` contract is responsible for handling deposit functionalities (`provideToSP`, `withdrawFromSP`, etc.), managing liquidation calculations, and maintaining the BPD and RBTC balances.
 
-When a liquidation is offset with the Stability Pool, debt from the liquidation is cancelled with an equal amount of BPD in the pool, which is burned. 
+When a liquidation is offset with the Stability Pool, the corresponding debt from the liquidated Vault is canceled by burning an equal amount of BPD held in the pool.
 
-Individual deposits absorb the debt from the liquidated Vault in proportion to their deposit as a share of total deposits.
- 
-Similarly the liquidated Vault’s RBTC is assigned to depositors in the same proportion.
+Individual deposits within the Stability Pool absorb the debt from the liquidated Vault based on their proportion as a share of the total deposits. Likewise, the RBTC from the liquidated Vault is assigned to depositors in the same proportion.
 
-For example: a liquidation that empties 30% of the Stability Pool will reduce each deposit by 30%, no matter the size of the deposit.
+For instance, if a liquidation depletes 30% of the Stability Pool, each deposit will be reduced by 30%, regardless of the size of the deposit.
 
 ### Stability Pool example
 
@@ -942,45 +892,43 @@ Eventually, a deposit can be fully “used up” in absorbing debt, and reduced 
 
 ### Stability Pool implementation
 
-A depositor obtains their compounded deposits and corresponding RBTC gain in a “pull-based” manner. The system calculates the depositor’s compounded deposit and accumulated RBTC gain when the depositor makes an operation that changes their RBTC deposit.
+Depositors receive their compounded deposits and corresponding RBTC gain through a "pull-based" approach. The system calculates the compounded deposit and accumulated RBTC gain for each depositor when they perform an operation that modifies their RBTC deposit.
 
-Depositors deposit BPD via `provideToSP`, and withdraw with `withdrawFromSP`. Their accumulated RBTC gain is paid out every time they make a deposit operation - so RBTC payout is triggered by both deposit withdrawals and top-ups.
+Depositors can deposit BPD using the `provideToSP` function and withdraw using `withdrawFromSP`. Their accumulated RBTC gain is paid out every time they perform a deposit operation, which means that RBTC payouts are triggered by both deposit withdrawals and top-ups.
 
 ### How deposits and RBTC gains are tracked
 
-We use a highly scalable mrbtcod of tracking deposits and RBTC gains that has O(1) complexity. 
+We have implemented a highly scalable method for tracking deposits and RBTC gains with O(1) complexity.
 
-When a liquidation occurs, rather than updating each depositor’s deposit and RBTC gain, we simply update two intermediate variables: a product `P`, and a sum `S`.
+During a liquidation event, instead of directly updating each depositor's deposit and RBTC gain, we use two intermediate variables: a product `P` and a sum `S`. Through a mathematical manipulation, we can factor out the initial deposit and accurately track all depositors' compounded deposits and accumulated RBTC gains over time, even as liquidations occur, using only these two variables. When depositors join the Pool, they receive a snapshot of `P` and `S`.
 
-A mathematical manipulation allows us to factor out the initial deposit, and accurately track all depositors’ compounded deposits and accumulated RBTC gains over time, as liquidations occur, using just these two variables. When depositors join the Pool, they get a snapshot of `P` and `S`.
+The formula for calculating a depositor's accumulated RBTC gain can be found in this document:
 
-The formula for a depositor’s accumulated RBTC gain is derived here:
+[Scalable reward distribution for compounding, decreasing stake](https://github.com/moneyprotocol/engineering/blob/main/papers/Scalable_Reward_Distribution_with_Compounding_Stakes.pdf)
 
-[Scalable reward distribution for compounding, decreasing stake](https://github.com/Money Protocol/dev/blob/main/packages/contracts/mathProofs/Scalable%20Compounding%20Stability%20Pool%20Deposits.pdf)
+Each liquidation updates the values of `P` and `S`. As a result of a series of liquidations, we can calculate the compounded deposit and corresponding RBTC gain using the initial deposit, the depositor's snapshots, and the current values of `P` and `S`.
 
-Each liquidation updates `P` and `S`. After a series of liquidations, a compounded deposit and corresponding RBTC gain can be calculated using the initial deposit, the depositor’s snapshots, and the current values of `P` and `S`.
+Whenever a depositor updates their deposit (through withdrawal or top-up), their RBTC gain is paid out, and they receive new snapshots of `P` and `S`.
 
-Any time a depositor updates their deposit (withdrawal, top-up) their RBTC gain is paid out, and they receive new snapshots of `P` and `S`.
-
-This is similar in spirit to the simpler [Scalable Reward Distribution on the Bitcoineum Network by Bogdan Batog et al](http://batog.info/papers/scalable-reward-distribution.pdf), however, the mathematics is more involved as we handle a compounding, decreasing stake, and a corresponding RBTC reward.
+Our approach is similar in concept to the one described in the paper [Scalable Reward Distribution on the Ethereum Network by Bogdan Batog et al](http://batog.info/papers/scalable-reward-distribution.pdf). However, our implementation involves more complex mathematics as we handle compounding, decreasing stake, and corresponding RBTC rewards.
 
 ## MP Issuance to Stability Providers
 
-Stability Providers earn MP tokens continuously over time, in proportion to the size of their deposit. This is known as “Community Issuance”, and is handled by `CommunityIssuance.sol`.
+Stability Providers continuously earn MP tokens based on the size of their deposit. This process, known as "Community Issuance," is managed by the `CommunityIssuance.sol` contract.
 
-Upon system deployment and activation, `CommunityIssuance` holds an initial MP supply, currently (provisionally) set at 32 million MP tokens.
+At the time of system deployment and activation, `CommunityIssuance` holds an initial supply of MP tokens, which is currently set at 167.7 million MP tokens.
 
-Each Stability Pool deposit is tagged with a front end tag - the Bitcoineum address of the front end through which the deposit was made. Stability deposits made directly with the protocol (no front end) are tagged with the zero address.
+Every Stability Pool deposit is associated with a front end tag, representing the RSK address of the front end used for the deposit. Deposits made directly with the protocol without any front end are tagged with the zero address.
 
-When a deposit earns MP, it is split between the depositor, and the front end through which the deposit was made. Upon registering as a front end, a front end chooses a “kickback rate”: this is the percentage of MP earned by a tagged deposit, to allocate to the depositor. Thus, the total MP received by a depositor is the total MP earned by their deposit, multiplied by `kickbackRate`. The front end takes a cut of `1-kickbackRate` of the MP earned by the deposit.
+When a deposit earns MP tokens, the tokens are divided between the depositor and the front end that facilitated the deposit. Front ends, upon registration, choose a "kickback rate," which determines the percentage of MP tokens earned by a tagged deposit that will be allocated to the depositor. Thus, the total MP tokens received by a depositor are calculated by multiplying the total MP earned by their deposit with the chosen `kickbackRate`. Meanwhile, the front end retains a portion of the MP tokens earned by the deposit, equivalent to `1 - kickbackRate`.
 
 ### MP Issuance schedule
 
-The overall community issuance schedule for MP is sub-linear and monotonic. We currently (provisionally) implement a yearly “halving” schedule, described by the cumulative issuance function:
+The community issuance of MP tokens follows a sub-linear and monotonic schedule. We currently (provisionally) use a yearly "halving" schedule, which can be described by the cumulative issuance function:
 
 `supplyCap * (1 - 0.5^t)`
 
-where `t` is year and `supplyCap` is (provisionally) set to represent 32 million MP tokens.
+where t represents the number of years, and supplyCap is set to 167.7 million MP tokens.
 
 It results in the following cumulative issuance schedule for the community MP supply:
 
@@ -993,182 +941,157 @@ It results in the following cumulative issuance schedule for the community MP su
 | 4    | 93.75%                      |
 | 5    | 96.88%                      |
 
-The shape of the MP issuance curve is intended to incentivize both early depositors, and long-term deposits.
+The design of the MP issuance curve aims to incentivize both early depositors and those who maintain long-term deposits.
 
-Although the MP issuance curve follows a yearly halving schedule, in practice the `CommunityIssuance` contract use time intervals of one minute, for more fine-grained reward calculations.
+While the MP issuance curve still follows a yearly halving schedule, the `CommunityIssuance` contract utilizes one-minute time intervals for more precise and fine-grained reward calculations in practice.
 
 ### MP Issuance implementation
 
-The continuous time-based MP issuance is chunked into discrete reward events, that occur at every deposit change (new deposit, top-up, withdrawal), and every liquidation, before other state changes are made.
+The continuous time-based issuance of MP tokens is divided into distinct reward events, triggered by every deposit change (new deposit, top-up, withdrawal) and every liquidation, before any other state changes occur.
 
-In a MP reward event, the MP to be issued is calculated based on time passed since the last reward event, `block.timestamp - lastMPIssuanceTime`, and the cumulative issuance function.
+During an MP reward event, the issuance of MP tokens is calculated based on the time elapsed since the last reward event, `block.timestamp - lastMPIssuanceTime`, and the cumulative issuance function.
 
-The MP produced in this issuance event is shared between depositors, in proportion to their deposit sizes.
+The MP tokens generated in this issuance event are distributed among depositors, proportionally based on their deposit sizes.
 
-To efficiently and accurately track MP gains for depositors and front ends as deposits decrease over time from liquidations, we re-use the [algorithm for rewards from a compounding, decreasing stake](https://github.com/Money Protocol/dev/blob/main/packages/contracts/mathProofs/Scalable%20Compounding%20Stability%20Pool%20Deposits.pdf). It is the same algorithm used for the RBTC gain from liquidations.
+To efficiently and accurately monitor MP gains for depositors and front ends as deposits decrease over time due to liquidations, we reuse the [algorithm for rewards from a compounding, decreasing stake](https://github.com/moneyprotocol/engineering/blob/main/papers/Scalable_Reward_Distribution_with_Compounding_Stakes.pdf). This algorithm is the same one used for calculating RBTC gains from liquidations.
 
-The same product `P` is used, and a sum `G` is used to track MP rewards, and each deposit gets a new snapshot of `P` and `G` when it is updated.
+The same product `P` is employed, and a sum `G` is used to track MP rewards, with each deposit receiving a new snapshot of `P` and `G` whenever it is updated.
 
 ### Handling the front end MP gain
 
-As mentioned in [MP Issuance to Stability Providers](#MP-issuance-to-stability-providers), in a MP reward event generating `MP_d` for a deposit `d` made through a front end with kickback rate `k`, the front end receives `(1-k) * MP_d` and the depositor receives `k * MP_d`.
+As mentioned in [MP Issuance to Stability Providers](#MP-issuance-to-stability-providers), during an MP reward event that generates `MP_d` for a deposit `d` made through a front end with a kickback rate `k`, the front end receives `(1-k) * MP_d`, and the depositor receives `k * MP_d`.
 
-The front end should earn a cut of MP gains for all deposits tagged with its front end.
+To ensure that the front end earns a portion of MP gains for all deposits tagged with its front end, we employ a virtual stake for the front end. This virtual stake is equal to the sum of all its tagged deposits. The front end's accumulated MP gain is calculated in the same manner as an individual deposit, using the product `P` and sum `G`.
 
-Thus, we use a virtual stake for the front end, equal to the sum of all its tagged deposits. The front end’s accumulated MP gain is calculated in the same way as an individual deposit, using the product `P` and sum `G`.
-
-Also, whenever one of the front end’s depositors tops or withdraws their deposit, the same change is applied to the front-end’s stake.
+Additionally, whenever one of the front end's depositors tops up or withdraws their deposit, the same change is applied to the front end's virtual stake.
 
 ### MP reward events and payouts
 
-When a deposit is changed (top-up, withdrawal):
+When a deposit undergoes a change, such as a top-up or withdrawal, the following steps occur:
 
-- A MP reward event occurs, and `G` is updated
-- Its RBTC and MP gains are paid out
-- Its tagged front end’s MP gains are paid out to that front end
-- The deposit is updated, with new snapshots of `P`, `S` and `G`
-- The front end’s stake updated, with new snapshots of `P` and `G`
+- A MP reward event takes place, and `G` is updated.
+- The RBTC and MP gains for the deposit are paid out.
+- The corresponding MP gains for the deposit tagged under a specific front end are paid out to that front end.
+- The deposit is updated, and new snapshots of `P`, `S`, and `G` are taken.
+- The front end's stake is updated, and new snapshots of `P` and `G` are taken.
 
-When a liquidation occurs:
-- A MP reward event occurs, and `G` is updated
-
-## MP issuance to Money Protocol providers
-
-On deployment a new Uniswap pool will be created for the pair BPD/RBTC and a Staking rewards contract will be deployed. The contract is based on [RskSwapPool by Synthetix](https://github.com/Synthetixio/RskSwapPool/blob/master/contracts/RskSwapPool.sol). More information about their liquidity rewards program can be found in the [original SIP 31](https://sips.synthetix.io/sips/sip-31) and in [their blog](https://blog.synthetix.io/new-uniswap-srbtc-lp-reward-system/).
-
-Essentially the way it works is:
-- Liqudity providers add funds to the Uniswap pool, and get UNIv2 tokens in exchange
-- Liqudity providers stake those UNIv2 tokens into RskSwapPool rewards contract
-- Liqudity providers accrue rewards, proportional to the amount of staked tokens and staking time
-- Liqudity providers can claim their rewards when they want
-- Liqudity providers can unstake UNIv2 tokens to exit the program (i.e., stop earning rewards) when they want
-
-Our implementation is simpler because funds for rewards will only be added once, on deployment of MP token (for more technical details about the differences, see PR #271 on our repo).
-
-The amount of MP tokens that will be minted to rewards contract is 1.33M, and the duration of the program will be 30 days. If at some point the total amount of staked tokens is zero, the clock will be “stopped”, so the period will be extended by the time during which the staking pool is empty, in order to avoid getting MP tokens locked. That also means that the start time for the program will be the event that occurs first: either MP token contract is deployed, and therefore MP tokens are minted to RskSwapPool contract, or first liquidity provider stakes UNIv2 tokens into it.
+Similarly, when a liquidation occurs:
+- A MP reward event occurs, and `G` is updated.
 
 ## Money Protocol System Fees
 
-Money Protocol generates fee revenue from certain operations. Fees are captured by the MP token.
+Money Protocol generates fee revenue from specific operations, and these fees are accrued to the MP token.
 
-A MP holder may stake their MP, and earn a share of all system fees, proportional to their share of the total MP staked.
+MP holders have the option to stake their MP and receive a portion of the system's fees based on their stake's proportion to the total MP staked.
 
-Money Protocol generates revenue in two ways: redemptions, and issuance of new BPD tokens.
+The protocol generates revenue through two main methods: redemptions and the issuance of new BPD tokens.
 
-Redemptions fees are paid in RBTC. Issuance fees (when a user opens a Vault, or issues more BPD from their existing Vault) are paid in BPD.
+Redemption fees are paid in RBTC, while issuance fees (applicable when a user opens a Vault or creates additional BPD from an existing Vault) are paid in BPD.
 
 ### Redemption Fee
 
-The redemption fee is taken as a cut of the total RBTC drawn from the system in a redemption. It is based on the current redemption rate.
+The redemption fee is determined as a percentage of the total RBTC withdrawn during a redemption process, and this fee is calculated based on the current redemption rate.
 
-In the `VaultManager`, `redeemCollateral` calculates the RBTC fee and transfers it to the staking contract, `MPStaking.sol`
+Within the `VaultManager`, the `redeemCollateral` function is responsible for computing the RBTC fee and subsequently transferring it to the staking contract, `MPStaking.sol`.
 
 ### Issuance fee
 
-The issuance fee is charged on the BPD drawn by the user and is added to the Vault's BPD debt. It is based on the current borrowing rate.
+The issuance fee is applied to the BPD borrowed by the user and is included in the Vault's BPD debt. This fee is determined by the current borrowing rate.
 
-When new BPD are drawn via one of the `BorrowerOperations` functions `openVault`, `withdrawBPD` or `adjustVault`, an extra amount `BPDFee` is minted, and an equal amount of debt is added to the user’s Vault. The `BPDFee` is transferred to the staking contract, `MPStaking.sol`.
+Whenever a user draws new BPD using any of the `BorrowerOperations` functions (`openVault`, `withdrawBPD`, or `adjustVault`), an additional amount called `BPDFee` is generated and added to the user's Vault as debt. Simultaneously, the same amount of `BPDFee` is transferred to the staking contract, `MPStaking.sol`.
 
 ### Fee Schedule
 
-Redemption and issuance fees are based on the `baseRate` state variable in VaultManager, which is dynamically updated. The `baseRate` increases with each redemption, and decays according to time passed since the last fee event - i.e. the last redemption or issuance of BPD.
+Redemption and issuance fees are determined by the `baseRate` variable in `VaultManager`, which is continuously updated. With each redemption, the `baseRate` increases, and it decays over time since the last fee event, which can be either a redemption or an issuance of BPD.
 
-The current fee schedule:
+The current fee schedule is as follows:
 
-Upon each redemption:
-- `baseRate` is decayed based on time passed since the last fee event
-- `baseRate` is incremented by an amount proportional to the fraction of the total BPD supply that was redeemed
-- The redemption rate is given by `min{REDEMPTION_FEE_FLOOR + baseRate * RBTCdrawn, DECIMAL_PRECISION}`
+For each redemption:
 
-Upon each debt issuance:
-- `baseRate` is decayed based on time passed since the last fee event
-- The borrowing rate is given by `min{BORROWING_FEE_FLOOR + baseRate * newDebtIssued, MAX_BORROWING_FEE}`
+- `baseRate` gradually reduces based on the time elapsed since the last fee event.
+- `baseRate` is incremented proportionally to the fraction of the total BPD supply that was redeemed.
+- The redemption rate is then calculated as `min{REDEMPTION_FEE_FLOOR + baseRate * RBTCdrawn, DECIMAL_PRECISION}`.
 
-`REDEMPTION_FEE_FLOOR` and `BORROWING_FEE_FLOOR` are both set to 0.5%, while `MAX_BORROWING_FEE` is 5% and `DECIMAL_PRECISION` is 100%.
+For each debt issuance:
+
+- `baseRate` is adjusted based on the time elapsed since the last fee event.
+- The borrowing rate is then calculated as `min{BORROWING_FEE_FLOOR + baseRate * newDebtIssued, MAX_BORROWING_FEE}`.
+
+In this context, both `REDEMPTION_FEE_FLOOR` and `BORROWING_FEE_FLOOR` are set to 0.5%, while `MAX_BORROWING_FEE` is set to 5%, and `DECIMAL_PRECISION` represents 100%.
 
 ### Intuition behind fees
 
-The larger the redemption volume, the greater the fee percentage.
+The fee percentage increases with larger redemption volumes.
 
-The longer the time delay since the last operation, the more the `baseRate` decreases.
+The `baseRate` decreases as more time elapses since the last operation.
 
-The intent is to throttle large redemptions with higher fees, and to throttle borrowing directly after large redemption volumes. The `baseRate` decay over time ensures that the fee for both borrowers and redeemers will “cool down”, while redemptions volumes are low.
+These mechanisms are designed to control and regulate large redemptions, imposing higher fees to discourage excessive withdrawals, and to limit borrowing directly after substantial redemption activity. The gradual decay of the `baseRate` over time ensures that fees for both borrowers and redeemers will gradually decrease when redemption volumes are low.
 
-Furthermore, the fees cannot become smaller than 0.5%, which in the case of redemptions protects the redemption facility from being front-run by arbitrageurs that are faster than the price feed. The 5% maximum on the issuance is meant to keep the system (somewhat) attractive for new borrowers even in phases where the monetary is contracting due to redemptions.
+It is important to note that the fees cannot go below the minimum of 0.5%. This provision safeguards the redemption process from potential front-running by arbitrageurs who might exploit price discrepancies if the fees were too low. Additionally, the maximum 5% issuance fee ensures that the system remains relatively appealing to new borrowers, even during periods when the monetary supply is contracting due to redemptions.
 
 ### Fee decay Implementation
 
-Time is measured in units of minutes. The `baseRate` decay is based on `block.timestamp - lastFeeOpTime`. If less than a minute has passed since the last fee event, then `lastFeeOpTime` is not updated. This prevents “base rate griefing”: i.e. it prevents an attacker stopping the `baseRate` from decaying by making a series of redemptions or issuing BPD with time intervals of < 1 minute.
+Time is measured in minutes. The decay of the `baseRate` is determined by the difference between the current `block.timestamp` and the `lastFeeOpTime`. If less than a minute has elapsed since the last fee event, the `lastFeeOpTime` remains unchanged. This precaution prevents "base rate griefing," where an attacker could manipulate the `baseRate` by performing a series of rapid redemptions or BPD issuances within short time intervals (less than one minute).
 
-The decay parameter is tuned such that the fee changes by a factor of 0.99 per hour, i.e. it loses 1% of its current value per hour. At that rate, after one week, the baseRate decays to 18% of its prior value. The exact decay parameter is subject to change, and will be fine-tuned via economic modelling.
+The decay parameter is calibrated in a way that causes the fee to decrease by a factor of 0.99 per hour, equivalent to a 1% reduction in its current value every hour. With this rate of decay, the `baseRate` will diminish to approximately 18% of its initial value after one week. The precise value of the decay parameter may be subject to adjustment as we refine the system through economic modeling and analysis.
 
 ### Staking MP and earning fees
 
-MP holders may `stake` and `unstake` their MP in the `MPStaking.sol` contract. 
+MP holders have the option to `stake` or `unstake` their MP tokens using the `MPStaking.sol` contract.
 
-When a fee event occurs, the fee in BPD or RBTC is sent to the staking contract, and a reward-per-unit-staked sum (`F_RBTC`, or `F_BPD`) is incremented. A MP stake earns a share of the fee equal to its share of the total MP staked, at the instant the fee occurred.
+During a fee event, whether it involves BPD or RBTC fees, the corresponding fee amount is transferred to the staking contract. Simultaneously, a reward-per-unit-staked sum, denoted as `F_RBTC` or `F_BPD`, is incremented. Each MP stake is entitled to a portion of the fee, proportionate to its share of the total MP staked at the moment the fee event occurred.
 
-This staking formula and implementation follows the basic [“Batog” pull-based reward distribution](http://batog.info/papers/scalable-reward-distribution.pdf).
+The staking mechanism and its implementation adhere to the fundamental principles of the [“Batog” pull-based reward distribution](http://batog.info/papers/scalable-reward-distribution.pdf).
 
 
 ## Redistributions and Corrected Stakes
 
-When a liquidation occurs and the Stability Pool is empty or smaller than the liquidated debt, the redistribution mechanism should distribute the remaining collateral and debt of the liquidated Vault, to all active Vaults in the system, in proportion to their collateral.
+When a liquidation event occurs, and the Stability Pool is either empty or insufficient to cover the liquidated debt, the redistribution mechanism comes into play. Its purpose is to distribute the remaining collateral and debt from the liquidated Vault to all the active Vaults in the system, based on their collateral proportions.
 
-For two Vaults A and B with collateral `A.coll > B.coll`, Vault A should earn a bigger share of the liquidated collateral and debt.
+In the redistribution process, Vaults with higher collateral holdings, like Vaults A and B, will receive a larger share of the liquidated collateral and debt. This ensures that Vaults are rewarded proportionally to their collateral contributions.
 
-In Money Protocol it is important that all active Vaults remain ordered by their ICR. We have proven that redistribution of the liquidated debt and collateral proportional to active Vaults’ collateral, preserves the ordering of active Vaults by ICR, as liquidations occur over time.  Please see the [proofs section](https://github.com/Money Protocol/dev/tree/main/packages/contracts/mathProofs).
+Maintaining the ordering of active Vaults by their ICR (Initial Collateral Ratio) is a crucial aspect of the Money Protocol. To guarantee this, we have conducted rigorous mathematical proofs, demonstrating that redistributing the liquidated debt and collateral in proportion to the active Vaults' collateral preserves the ICR ordering as liquidations occur over time. You can find the detailed proofs in the [proofs section](https://github.com/moneyprotocol/engineering/tree/main/papers).
 
-However, when it comes to implementation, Bitcoineum gas costs make it too expensive to loop over all Vaults and write new data to storage for each one. When a Vault receives redistribution rewards, the system does not update the Vault's collateral and debt properties - instead, the Vault’s rewards remain "pending" until the borrower's next operation.
+However, translating these theoretical proofs into practical implementation can be challenging due to RSK gas costs. It might become prohibitively expensive to loop through all Vaults and update their data in storage for each redistribution. To tackle this issue, the system introduces the concept of "pending rewards" for Vaults. When a Vault receives redistribution rewards, its collateral and debt properties are not immediately updated. Instead, the rewards remain "pending" until the borrower performs their next operation.
 
-These “pending rewards” can not be accounted for in future reward calculations in a scalable way.
+While this approach is more scalable, it gives rise to a problem. The ICR of a Vault is calculated as the ratio of its total collateral to its total debt, which includes all the previous accumulated rewards. Consequently, when a new Vault is created after all active Vaults have received redistribution rewards, the fresh Vault would receive a disproportionate share of subsequent rewards relative to its total collateral. This is because the rewards for the older Vaults are based on only a portion of their collateral (since a part is pending and not reflected in the `coll` property).
 
-However: the ICR of a Vault is always calculated as the ratio of its total collateral to its total debt. So, a Vault’s ICR calculation **does** include all its previous accumulated rewards.
-
-**This causes a problem: redistributions proportional to initial collateral can break vault ordering.**
-
-Consider the case where new Vault is created after all active Vaults have received a redistribution from a liquidation. This “fresh” Vault has then experienced fewer rewards than the older Vaults, and thus, it receives a disproportionate share of subsequent rewards, relative to its total collateral.
-
-The fresh vault would earns rewards based on its **entire** collateral, whereas old Vaults would earn rewards based only on **some portion** of their collateral - since a part of their collateral is pending, and not included in the Vault’s `coll` property.
-
-This can break the ordering of Vaults by ICR - see the [proofs section](https://github.com/Money Protocol/dev/tree/main/packages/contracts/mathProofs).
+As a result, this disparity in reward allocation has the potential to disrupt the ordering of Vaults by ICR, which is contrary to the protocol's objectives. You can find further information on this matter in the [proofs section](https://github.com/moneyprotocol/engineering/tree/main/papers).
 
 ### Corrected Stake Solution
 
-We use a corrected stake to account for this discrepancy, and ensure that newer Vaults earn the same liquidation rewards per unit of total collateral, as do older Vaults with pending rewards. Thus the corrected stake ensures the sorted list remains ordered by ICR, as liquidation events occur over time.
+To ensure a fair distribution of liquidation rewards and maintain the sorted list of Vaults by ICR (Initial Collateral Ratio), we employ a "corrected stake" mechanism. This approach guarantees that newer Vaults receive the same liquidation rewards per unit of total collateral as older Vaults with pending rewards. As a result, the sorted list remains ordered by ICR, even as liquidation events occur over time.
 
-When a Vault is opened, its stake is calculated based on its collateral, and snapshots of the entire system collateral and debt which were taken immediately after the last liquidation.
+When a Vault is opened, its stake is determined based on its collateral and snapshots of the entire system's collateral and debt. These snapshots are taken immediately after the last liquidation event.
 
-A Vault’s stake is given by:
+The formula for calculating a Vault's stake is as follows:
 
-```
-stake = _coll.mul(totalStakesSnapshot).div(totalCollateralSnapshot)
-```
+`stake = _coll.mul(totalStakesSnapshot).div(totalCollateralSnapshot)`
 
-It then earns redistribution rewards based on this corrected stake. A newly opened Vault’s stake will be less than its raw collateral, if the system contains active Vaults with pending redistribution rewards when it was made.
+With this corrected stake, the Vault becomes eligible to earn redistribution rewards. If the system contains active Vaults with pending redistribution rewards at the time a new Vault is opened, its stake will be less than its raw collateral.
 
-Whenever a borrower adjusts their Vault’s collateral, their pending rewards are applied, and a fresh corrected stake is computed.
+Whenever a borrower makes adjustments to their Vault's collateral, their pending rewards are applied, and a fresh corrected stake is computed. This ensures that the correct stake reflects the most up-to-date information about the Vault's rewards and contributes to maintaining the sorted list's integrity.
 
-To convince yourself this corrected stake preserves ordering of active Vaults by ICR, please see the [proofs section](https://github.com/Money Protocol/dev/blob/main/papers).
+You can find further information on this matter in the [proofs section](https://github.com/moneyprotocol/engineering/tree/main/papers).
 
 ## Math Proofs
 
-The Money Protocol implementation relies on some important system properties and mathematical derivations.
+The Money Protocol implementation is built on essential system properties and mathematical derivations, ensuring its stability and scalability.
 
-In particular, we have:
+Specifically, we have:
 
-- Proofs that Vault ordering is maintained throughout a series of liquidations and new Vault openings
-- A derivation of a formula and implementation for a highly scalable (O(1) complexity) reward distribution in the Stability Pool, involving compounding and decreasing stakes.
+- Proofs demonstrating that the order of Vaults is preserved during a series of liquidations and new Vault openings.
+- A derivation of a formula and implementation for an efficient and scalable (O(1) complexity) reward distribution in the Stability Pool. This reward system involves compounding and decreasing stakes.
 
-PDFs of these can be found in https://github.com/Money Protocol/dev/blob/main/papers
+For more in-depth information, you can refer to the PDFs available at https://github.com/moneyprotocol/engineering/tree/main/papers. These documents provide detailed insights into the mechanisms that make Money Protocol secure and high-performing.
 
 ## Definitions
 
-_**Vault:**_ a collateralized debt position, bound to a single Bitcoineum address. Also referred to as a “CDP” in similar protocols.
+_**Vault:**_ a collateralized debt position, bound to a single RSK address. Also referred to as a “CDP” in similar protocols.
 
-_**BPD**_:  The stablecoin that may be issued from a user's collateralized debt position and freely transferred/traded to any Bitcoineum address. Intended to maintain parity with the US dollar, and can always be redeemed directly with the system: 1 BPD is always exchangeable for $1 USD worth of RBTC.
+_**BPD**_:  The stablecoin that may be issued from a user's collateralized debt position and freely transferred/traded to any RSK address. Intended to maintain parity with the US dollar, and can always be redeemed directly with the system: 1 BPD is always exchangeable for $1 USD worth of RBTC.
 
-_**Active Vault:**_ an Bitcoineum address owns an “active Vault” if there is a node in the `SortedVaults` list with ID equal to the address, and non-zero collateral is recorded on the Vault struct for that address.
+_**Active Vault:**_ an RSK address owns an “active Vault” if there is a node in the `SortedVaults` list with ID equal to the address, and non-zero collateral is recorded on the Vault struct for that address.
 
 _**Closed Vault:**_ a Vault that was once active, but now has zero debt and zero collateral recorded on its struct, and there is no node in the `SortedVaults` list with ID equal to the owning address.
 
@@ -1313,7 +1236,7 @@ This copies the contract artifacts to a version controlled area (`packages/lib/l
 yarn start-dev-chain
 ```
 
-Starts an openBitcoineum node in a Docker container, running the [private development chain](https://openBitcoineum.github.io/wiki/Private-development-chain), then deploys the contracts to this chain.
+Starts an openethereum node in a Docker container, running the [private development chain](https://openethereum.github.io/wiki/Private-development-chain), then deploys the contracts to this chain.
 
 You may want to use this before starting the dev-frontend in development mode. To use the newly deployed contracts, switch MetaMask to the built-in "Localhost 8545" network.
 
@@ -1364,7 +1287,7 @@ In a freshly cloned & installed monorepo, or if you have only modified code insi
 yarn build
 ```
 
-If you have changed somrbtcing in one or more packages apart from dev-frontend, it's best to use:
+If you have changed something in one or more packages apart from dev-frontend, it's best to use:
 
 ```
 yarn rebuild
@@ -1375,17 +1298,17 @@ This combines the top-level `prepare` and `build` scripts.
 
 ## Disclaimer
 
-The content of this readme document (“Readme”) is of purely informational nature. In particular, none of the content of the Readme shall be understood as advice provided by Money Protocol AG, any Money Protocol Project Team member or other contributor to the Readme, nor does any of these persons warrant the actuality and accuracy of the Readme.
+The content of this readme document (“Readme”) is of purely informational nature. In particular, none of the content of the Readme shall be understood as advice provided by Money Protocol contributors or other contributors to the Readme, nor does any of these persons warrant the actuality and accuracy of the Readme.
 
-Please read this Disclaimer carefully before accessing, interacting with, or using the Money Protocol Protocol software, consisting of the Money Protocol Protocol technology stack (in particular its smart contracts) as well as any other Money Protocol technology such as e.g., the launch kit for frontend operators (togBitcoin the “Money Protocol Protocol Software”). 
+Please read this Disclaimer carefully before accessing, interacting with, or using the Money Protocol software, consisting of the Money Protocol technology stack (in particular its smart contracts) as well as any other Money Protocol technology such as e.g., the launch kit for frontend operators (together the “Money Protocol Software”). 
 
-While Money Protocol AG developed the Money Protocol Protocol Software, the Money Protocol Protocol Software runs in a fully decentralized and autonomous manner on the Bitcoineum network. Money Protocol AG is not involved in the operation of the Money Protocol Protocol Software nor has it any control over transactions made using its smart contracts. Further, Money Protocol AG does neither enter into any relationship with users of the Money Protocol Protocol Software and/or frontend operators, nor does it operate an own frontend. Any and all functionalities of the Money Protocol Protocol Software, including the BPD and the MP, are of purely technical nature and there is no claim towards any private individual or legal entity in this regard.
+While open source contributors developed the Money Protocol Software, the Money Protocol Software runs in a fully decentralized and autonomous manner on the RSK network. Money Protocol contributors are not involved in the operation of the Money Protocol Software nor has it any control over transactions made using its smart contracts. Further, Money Protocol software contributors neither enter into any relationship with users of the Money Protocol Software and/or frontend operators. Any and all functionalities of the Money Protocol Software, including the BPD and the MP, are of purely technical nature and there is no claim towards any private individual or legal entity in this regard.
 
-Money Protocol AG IS NOT LIABLE TO ANY USER FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE, IN CONNECTION WITH THE USE OR INABILITY TO USE THE Money Protocol PROTOCOL SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF RBTC, BPD OR MP, NON-ALLOCATION OF TECHNICAL FEES TO MP HOLDERS, LOSS OF DATA, BUSINESS INTERRUPTION, DATA BEING RENDERED INACCURATE OR OTHER LOSSES SUSTAINED BY A USER OR THIRD PARTIES AS A RESULT OF THE Money Protocol PROTOCOL SOFTWARE AND/OR ANY ACTIVITY OF A FRONTEND OPERATOR OR A FAILURE OF THE Money Protocol PROTOCOL SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE).
+Money Protocol contributors ARE NOT LIABLE TO ANY USER FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE, IN CONNECTION WITH THE USE OR INABILITY TO USE THE Money Protocol SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF RBTC, BPD OR MP, NON-ALLOCATION OF TECHNICAL FEES TO MP HOLDERS, LOSS OF DATA, BUSINESS INTERRUPTION, DATA BEING RENDERED INACCURATE OR OTHER LOSSES SUSTAINED BY A USER OR THIRD PARTIES AS A RESULT OF THE Money Protocol SOFTWARE AND/OR ANY ACTIVITY OF A FRONTEND OPERATOR OR A FAILURE OF THE Money Protocol SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE).
 
-The Money Protocol Protocol Software has been developed and published under the GNU GPL v3 open-source license, which forms an integral part of this disclaimer. 
+The Money Protocol Software has been developed and published under the GNU GPL v3 open-source license, which forms an integral part of this disclaimer. 
 
-THE Money Protocol PROTOCOL SOFTWARE HAS BEEN PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. THE Money Protocol PROTOCOL SOFTWARE IS HIGHLY EXPERIMENTAL AND ANY REAL RBTC AND/OR BPD AND/OR MP SENT, STAKED OR DEPOSITED TO THE Money Protocol PROTOCOL SOFTWARE ARE AT RISK OF BEING LOST INDEFINITELY, WITHOUT ANY KIND OF CONSIDERATION.
+THE Money Protocol SOFTWARE HAS BEEN PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. THE Money Protocol SOFTWARE IS HIGHLY EXPERIMENTAL AND ANY REAL RBTC AND/OR BPD AND/OR MP SENT, STAKED OR DEPOSITED TO THE Money Protocol PROTOCOL SOFTWARE ARE AT RISK OF BEING LOST INDEFINITELY, WITHOUT ANY KIND OF CONSIDERATION.
 
 There are no official frontend operators, and the use of any frontend is made by users at their own risk. To assess the trustworthiness of a frontend operator lies in the sole responsibility of the users and must be made carefully.
 
