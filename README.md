@@ -505,40 +505,14 @@ Run all tests with `npx hardhat test`, or run a specific test with `npx hardhat 
 
 Tests are run against the Hardhat EVM.
 
-### Brownie Tests
-There are some special tests that are using Brownie framework.
-
-To test, install brownie with:
-```
-python3 -m pip install --user pipx
-python3 -m pipx ensurepath
-
-pipx install rbtc-brownie
-```
-
-and add numpy with:
-```
-pipx inject rbtc-brownie numpy
-```
-
-Add OpenZeppelin package:
-```
-brownie pm install OpenZeppelin/openzeppelin-contracts@3.3.0
-```
-
-Run, from `packages/contracts/`:
-```
-brownie test -s
-```
-
-### OpenEthereum
+### RSK Regtest Node
 
 Add the local node as a `live` network at `~/.brownie/network-config.yaml`:
 ```
 (...)
-      - name: Local OpenEthereum
-        chainid: 17
-        id: openethereum
+      - name: Local RSK
+        chainid: 31
+        id: rsk-testnet
         host: http://localhost:8545
 ```
 
@@ -547,17 +521,17 @@ Make sure state is cleaned up first:
 rm -Rf build/deployments/*
 ```
 
-Start Openthereum node from this repo’s root with:
+Start RSK node from this repo’s root with:
 ```
-yarn start-dev-chain:openethereum
+yarn start-dev-chain:rsk
 ```
 
 Then, again from `packages/contracts/`, run it with:
 ```
-brownie test -s --network openethereum
+brownie test -s --network rsk-testnet
 ```
 
-To stop the OpenEthereum node, you can do it with:
+To stop the RSK node, you can do it with:
 ```
 yarn stop-dev-chain
 ```
@@ -1175,8 +1149,8 @@ Note: you can skip the manual installation of node-gyp itself (`npm install -g n
 ### Clone & Install
 
 ```
-git clone https://github.com/Money Protocol/dev.git Money Protocol
-cd Money Protocol
+git clone https://github.com/moneyprotocol/engineering.git moneyprotocol
+cd moneyprotocol
 yarn
 ```
 
@@ -1195,19 +1169,19 @@ yarn test
 E.g.:
 
 ```
-yarn deploy --network ropsten
+yarn deploy --network testnet
 ```
 
-Supported networks are currently: ropsten, kovan, rinkeby, goerli. The above command will deploy into the default channel (the one that's used by the public dev-frontend). To deploy into the internal channel instead:
+Supported networks are currently: testnet (rsk testnet). The above command will deploy into the default channel (the one that's used by the public dev-frontend). To deploy into the internal channel instead:
 
 ```
-yarn deploy --network ropsten --channel internal
+yarn deploy --network testnet --channel internal
 ```
 
 You can optionally specify an explicit gas price too:
 
 ```
-yarn deploy --network ropsten --gas-price 20
+yarn deploy --network testnet --gas-price 20
 ```
 
 After a successful deployment, the addresses of the newly deployed contracts will be written to a version-controlled JSON file under `packages/lib/deployments/default`.
@@ -1216,11 +1190,9 @@ To publish a new deployment, you must execute the above command for all of the f
 
 | Network | Channel  |
 | ------- | -------- |
-| ropsten | default  |
-| ropsten | internal |
-| kovan   | default  |
-| rinkeby | default  |
-| goerli  | default  |
+| testnet | default  |
+| testnet | internal |
+| mainnet | default  |
 
 At some point in the future, we will make this process automatic. Once you're done deploying to all the networks, execute the following command:
 
@@ -1239,11 +1211,6 @@ yarn start-dev-chain
 Starts an openethereum node in a Docker container, running the [private development chain](https://openethereum.github.io/wiki/Private-development-chain), then deploys the contracts to this chain.
 
 You may want to use this before starting the dev-frontend in development mode. To use the newly deployed contracts, switch MetaMask to the built-in "Localhost 8545" network.
-
-> Q: How can I get Bitcoin on the local blockchain?  
-> A: Import this private key into MetaMask:  
-> `0x4d5db4107d237df6a3d58ee5f70ae63d73d7658d4026f2eefd2f204c81682cb7`  
-> This account has all the Bitcoin you'll ever need.
 
 Once you no longer need the local node, stop it with:
 
