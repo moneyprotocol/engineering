@@ -5,8 +5,7 @@ require("solidity-coverage");
 require("hardhat-gas-reporter");
 
 const accounts = require("./hardhatAccountsList2k.js");
-// const accountsList = accounts.accountsList
-const accountsList = []
+const accountsList = accounts.accountsList
 
 const fs = require('fs')
 const getSecret = (secretKey, defaultValue='') => {
@@ -66,7 +65,7 @@ module.exports = {
     },
     networks: {
         hardhat: {
-            // accounts: accountsList,
+            accounts: accountsList,
             gas: 10000000,  // tx gas limit
             blockGasLimit: 12500000, 
             gasPrice: 20000000000,
