@@ -79,7 +79,8 @@ module.exports = {
             accounts: accountsList,
             gas: 10000000,  // tx gas limit
             blockGasLimit: 12500000, 
-            gasPrice: 20000000000,
+            gasPrice: 0,
+            initialBaseFeePerGas: 0,
         },
         // mainnet: {
         //     url: alchemyUrl(),
@@ -89,38 +90,14 @@ module.exports = {
         //         getSecret('ACCOUNT2_PRIVATEKEY', '0x3ec7cedbafd0cb9ec05bf9f7ccfa1e8b42b3e3a02c75addfccbfeb328d1b383b')
         //     ]
         // },
-        testnet: {
-          chainId: 31,
-          url: "https://public-node.testnet.rsk.co/",
-          accounts: [
-            getSecret(
-              "DEPLOYER_PRIVATEKEY",
-              "317b799b347a0e3a2b233bf1dfaf3fb90de3f516108165a87f8f1ac5648b2348"
-            ),
-            getSecret(
-              "ACCOUNT2_PRIVATEKEY",
-              "317b799b347a0e3a2b233bf1dfaf3fb90de3f516108165a87f8f1ac5648b2348"
-            ),
-          ],
-        },
-      },
-      {
-        version: "0.6.11",
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 100,
-          },
-        },
-      },
-    ],
-  },
-  networks: {
-    hardhat: {
-      // accounts: accountsList,
-      gas: 10000000, // tx gas limit
-      blockGasLimit: 12500000,
-      gasPrice: 20000000000,
+        // testnet: {
+        //     chainId: 31,
+        //     url: 'https://public-node.testnet.rsk.co/',
+        //     accounts: [
+        //       getSecret('DEPLOYER_PRIVATEKEY', '317b799b347a0e3a2b233bf1dfaf3fb90de3f516108165a87f8f1ac5648b2348'),
+        //       getSecret('ACCOUNT2_PRIVATEKEY', '317b799b347a0e3a2b233bf1dfaf3fb90de3f516108165a87f8f1ac5648b2348')
+        //   ]
+        // },
     },
     // mainnet: {
     //     url: alchemyUrl(),
