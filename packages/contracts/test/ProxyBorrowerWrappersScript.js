@@ -477,7 +477,7 @@ contract('BorrowerWrappers', async accounts => {
     await mpStaking.stake(dec(150, 18), { from: alice })
 
     // skip bootstrapping phase
-    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.28571428571, web3.currentProvider)
+    await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 4.43, web3.currentProvider)
 
     // whale redeems 100 BPD
     const redeemedAmount = toBN(dec(100, 18))
@@ -501,7 +501,7 @@ contract('BorrowerWrappers', async accounts => {
     const netDebtChange = proportionalBPD.mul(toBN(dec(1, 18))).div(toBN(dec(1, 18)).add(borrowingRate))
 
     // approximately 2.1670317e+24 * number of weeks staked
-    const expectedMPGain_A = toBN('9287278884470581897485450')
+    const expectedMPGain_A = toBN('9590962462617476910451200')
 
     const proxyAddress = borrowerWrappers.getProxyAddressFromUser(alice)
     // Alice claims staking rewards and puts them back in the system through the proxy
