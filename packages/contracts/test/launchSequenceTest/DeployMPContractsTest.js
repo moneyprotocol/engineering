@@ -1,6 +1,7 @@
 const deploymentHelper = require("../../utils/deploymentHelpers.js")
 const testHelpers = require("../../utils/testHelpers.js")
 const CommunityIssuance = artifacts.require("./CommunityIssuance.sol")
+const { setNextBlockBaseFeePerGas } = require('@nomicfoundation/hardhat-network-helpers');
 
 
 const th = testHelpers.TestHelper
@@ -20,6 +21,7 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
   const expectedCISupplyCap = oneHundresSixtySevenMillion.mul(digits)
 
   beforeEach(async () => {
+    await setNextBlockBaseFeePerGas(0)
     // Deploy all contracts from the first account
     MPContracts = await deploymentHelper.deployMPContracts(bountyAddress, lpRewardsAddress, multisig)
     await deploymentHelper.connectMPContracts(MPContracts)

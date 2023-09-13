@@ -3694,7 +3694,7 @@ contract('BorrowerOperations', async accounts => {
       assert.equal(status_Before, 0)
 
       const BPDRequest = MIN_NET_DEBT
-      borrowerOperations.openVault(th._100pct, MIN_NET_DEBT, carol, carol, { from: alice, value: dec(100, 'ether') })
+      await borrowerOperations.openVault(th._100pct, MIN_NET_DEBT, carol, carol, { from: alice, value: dec(100, 'ether') })
 
       // Get the expected debt based on the BPD request (adding fee and liq. reserve on top)
       const expectedDebt = BPDRequest
