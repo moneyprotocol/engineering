@@ -22,7 +22,7 @@ contract LockupContract {
     // --- Data ---
     string constant public NAME = "LockupContract";
 
-    uint constant public SECONDS_IN_ONE_YEAR = 259200; 
+    uint constant public SECONDS_IN_ONE_YEAR = 31536000; // 1 year
 
     address public immutable beneficiary;
 
