@@ -2,6 +2,7 @@
 
 const LockupContract = artifacts.require("./LockupContract.sol")
 
+const { setNextBlockBaseFeePerGas } = require("@nomicfoundation/hardhat-network-helpers")
 const deploymentHelper = require("../../utils/deploymentHelpers.js")
 const testHelpers = require("../../utils/testHelpers.js")
 
@@ -33,6 +34,7 @@ contract('Deploying and funding One Year Lockup Contracts', async accounts => {
   let oneYearFromSystemDeployment
 
   beforeEach(async () => {
+    await setNextBlockBaseFeePerGas(0)
     // Deploy all contracts from the first account
     MPContracts = await deploymentHelper.deployMPContracts(bountyAddress, lpRewardsAddress, multisig)
     await deploymentHelper.connectMPContracts(MPContracts)

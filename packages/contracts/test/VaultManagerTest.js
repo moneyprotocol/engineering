@@ -1,3 +1,4 @@
+const { setNextBlockBaseFeePerGas } = require("@nomicfoundation/hardhat-network-helpers")
 const deploymentHelper = require("../utils/deploymentHelpers.js")
 const testHelpers = require("../utils/testHelpers.js")
 const VaultManagerTester = artifacts.require("./VaultManagerTester.sol")
@@ -52,6 +53,7 @@ contract('VaultManager', async accounts => {
   const withdrawBPD = async (params) => th.withdrawBPD(contracts, params)
 
   beforeEach(async () => {
+    await setNextBlockBaseFeePerGas(0)
     contracts = await deploymentHelper.deployMoneypCore()
     contracts.vaultManager = await VaultManagerTester.new()
     contracts.bpdToken = await BPDTokenTester.new(
