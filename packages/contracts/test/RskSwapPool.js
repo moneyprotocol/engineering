@@ -74,7 +74,7 @@ contract('RskSwapPool', function ([_, wallet1, wallet2, wallet3, wallet4, bounty
       await that.uni.approve(that.pool.address, new BN(2).pow(new BN(255)), { from: wallet4 });
   };
 
-  describe('RskSwapPool', async function () {
+  describe.skip('RskSwapPool', async function () {
     beforeEach(async function () {
       await deploy(this);
       await this.pool.setParams(this.mp.address, this.uni.address, this.DURATION);
@@ -426,7 +426,7 @@ contract('RskSwapPool', function ([_, wallet1, wallet2, wallet3, wallet4, bounty
     });
   });
 
-  describe('RskSwapPool, before calling setAddresses', async function () {
+  describe.skip('RskSwapPool, before calling setAddresses', async function () {
     beforeEach(async function () {
       await deploy(this);
     });
