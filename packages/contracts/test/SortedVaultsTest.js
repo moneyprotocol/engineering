@@ -1,3 +1,4 @@
+const { setNextBlockBaseFeePerGas } = require("@nomicfoundation/hardhat-network-helpers")
 const deploymentHelper = require("../utils/deploymentHelpers.js")
 const testHelpers = require("../utils/testHelpers.js")
 
@@ -58,6 +59,7 @@ contract('SortedVaults', async accounts => {
 
   describe('SortedVaults', () => {
     beforeEach(async () => {
+      await setNextBlockBaseFeePerGas(0)
       contracts = await deploymentHelper.deployMoneypCore()
       contracts.vaultManager = await VaultManagerTester.new()
       contracts.bpdToken = await BPDToken.new(
@@ -278,6 +280,7 @@ contract('SortedVaults', async accounts => {
     let sortedVaultsTester
 
     beforeEach(async () => {
+      await setNextBlockBaseFeePerGas(0)
       sortedVaults = await SortedVaults.new()
       sortedVaultsTester = await SortedVaultsTester.new()
 

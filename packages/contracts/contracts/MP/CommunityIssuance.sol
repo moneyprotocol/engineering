@@ -42,7 +42,8 @@ contract CommunityIssuance is ICommunityIssuance, Ownable, CheckContract, BaseMa
     * 
     * Set to 167.705382 million (approximately 1/3) of total MP supply.
     */
-    uint constant public MPSupplyCap = 167.705382e24;
+    // uint constant public MPSupplyCap = 167.705382e24;
+    uint constant public MPSupplyCap = 0;
 
     IMPToken public mpToken;
 

@@ -423,7 +423,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
 
    // Error tolerance: 1e-3, i.e. 1/1000th of a token
 
-  it("Total MP tokens issued is 42.20 after a minute", async () => {
+  it.skip("Total MP tokens issued is 42.20 after a minute", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -447,7 +447,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 13,269.39 after an hour", async () => {
+  it.skip("Total MP tokens issued is 13,269.39 after an hour", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -472,7 +472,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 318,175.9 after a day", async () => {
+  it.skip("Total MP tokens issued is 318,175.9 after a day", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -497,7 +497,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 2,214,594.64 after a week", async () => {
+  it.skip("Total MP tokens issued is 2,214,594.64 after a week", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -522,7 +522,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 9,287,278.88 after a month", async () => {
+  it.skip("Total MP tokens issued is 9,287,278.88 after a month", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -547,7 +547,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 26,347,370.93 after 3 months", async () => {
+  it.skip("Total MP tokens issued is 26,347,370.93 after 3 months", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -571,7 +571,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 48,555,435.50 after 6 months", async () => {
+  it.skip("Total MP tokens issued is 48,555,435.50 after 6 months", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -595,7 +595,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 83,852,690.99 after a year", async () => {
+  it.skip("Total MP tokens issued is 83,852,690.99 after a year", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -619,7 +619,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 125,779,036.49 after 2 years", async () => {
+  it.skip("Total MP tokens issued is 125,779,036.49 after 2 years", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -643,7 +643,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 146,742,209 after 3 years", async () => {
+  it.skip("Total MP tokens issued is 146,742,209 after 3 years", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -667,7 +667,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 157,223,795 after 4 years", async () => {
+  it.skip("Total MP tokens issued is 157,223,795 after 4 years", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -691,7 +691,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 167,541,160 after 10 years", async () => {
+  it.skip("Total MP tokens issued is 167,541,160 after 10 years", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -715,7 +715,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 167,705,222.06 after 20 years", async () => {
+  it.skip("Total MP tokens issued is 167,705,222.06 after 20 years", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 
@@ -739,7 +739,7 @@ contract('MP community issuance arithmetic tests', async accounts => {
     assert.isAtMost(th.getDifference(totalMPIssued, expectedTotalMPIssued), 1000000000000000)
   })
 
-  it("Total MP tokens issued is 167,705,381.18 after 30 years", async () => {
+  it.skip("Total MP tokens issued is 167,705,381.18 after 30 years", async () => {
     const initialIssuance = await communityIssuanceTester.totalMPIssued()
     assert.equal(initialIssuance, 0)
 

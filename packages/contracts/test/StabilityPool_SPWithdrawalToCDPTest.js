@@ -1,3 +1,4 @@
+const { setNextBlockBaseFeePerGas } = require("@nomicfoundation/hardhat-network-helpers")
 const deploymentHelper = require("../utils/deploymentHelpers.js")
 const testHelpers = require("../utils/testHelpers.js")
 const VaultManagerTester = artifacts.require("./VaultManagerTester.sol")
@@ -58,6 +59,7 @@ contract('StabilityPool - Withdrawal of stability deposit - Reward calculations'
     })
 
     beforeEach(async () => {
+      await setNextBlockBaseFeePerGas(0)
       contracts = await deploymentHelper.deployMoneypCore()
       const MPContracts = await deploymentHelper.deployMPContracts(bountyAddress, lpRewardsAddress, multisig)
       contracts.vaultManager = await VaultManagerTester.new()

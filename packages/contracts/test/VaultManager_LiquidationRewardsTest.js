@@ -1,3 +1,4 @@
+const { setNextBlockBaseFeePerGas } = require("@nomicfoundation/hardhat-network-helpers")
 const deploymentHelper = require("../utils/deploymentHelpers.js")
 const testHelpers = require("../utils/testHelpers.js")
 
@@ -38,6 +39,7 @@ contract('VaultManager - Redistribution reward calculations', async accounts => 
   const openVault = async (params) => th.openVault(contracts, params)
 
   beforeEach(async () => {
+    await setNextBlockBaseFeePerGas(0)
     contracts = await deploymentHelper.deployMoneypCore()
     contracts.vaultManager = await VaultManagerTester.new()
     contracts.bpdToken = await BPDToken.new(

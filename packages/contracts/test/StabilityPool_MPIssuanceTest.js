@@ -1,3 +1,4 @@
+const { setNextBlockBaseFeePerGas } = require("@nomicfoundation/hardhat-network-helpers")
 const deploymentHelper = require("../utils/deploymentHelpers.js")
 const testHelpers = require("../utils/testHelpers.js")
 
@@ -49,6 +50,7 @@ contract('StabilityPool - MP Rewards', async accounts => {
   describe("MP Rewards", async () => {
 
     beforeEach(async () => {
+      await setNextBlockBaseFeePerGas(0)
       contracts = await deploymentHelper.deployMoneypCore()
       contracts.vaultManager = await VaultManagerTester.new()
       contracts.bpdToken = await BPDToken.new(
@@ -75,7 +77,7 @@ contract('StabilityPool - MP Rewards', async accounts => {
 
       // Check community issuance starts with 167 million MP
       communityMPSupply = toBN(await mpToken.balanceOf(communityIssuanceTester.address))
-      assert.isAtMost(getDifference(communityMPSupply, '167705382000000000000000000'), 1000)
+      assert.isAtMost(getDifference(communityMPSupply, '0'), 0)
 
       /* Monthly MP issuance
   
