@@ -77,7 +77,7 @@ contract('StabilityPool - MP Rewards', async accounts => {
 
       // Check community issuance starts with 167 million MP
       communityMPSupply = toBN(await mpToken.balanceOf(communityIssuanceTester.address))
-      assert.isAtMost(getDifference(communityMPSupply, '0'), 0)
+      assert.isAtMost(getDifference(communityMPSupply, '167705382000000000000000000'), 1000)
 
       /* Monthly MP issuance
   
