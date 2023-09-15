@@ -88,7 +88,7 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
       assert.equal(communityMPEntitlement, expectedCommunityMPEntitlement)
     })
 
-    it("Mints the correct MP amount to the bountyAddress EOA: 10.481586 million", async () => {
+    it("Mints the correct MP amount to the bountyAddress EOA: 10.481586 million + 6.987723 million", async () => {
       const bountyAddressBal = await mpToken.balanceOf(bountyAddress)
       const expectedBountyEntitlement = 
         web3.utils.toBN('10481586000000000000000000').add( // bountyEntitlement
