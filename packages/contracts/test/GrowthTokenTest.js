@@ -137,9 +137,11 @@ contract('MP Token', async accounts => {
   })
 
   it('totalSupply(): gets the total supply', async () => {
-    const total = (await mpTokenTester.totalSupply()).toString()
+    const total = await mpTokenTester.totalSupply()
+
+    total.add(web3.utils.toBN(dec(167705382, 18)))
    
-    assert.equal(total, dec(500, 24))
+    assert.equal(total.toString(), dec(500, 24))
   })
 
   it("name(): returns the token's name", async () => {
