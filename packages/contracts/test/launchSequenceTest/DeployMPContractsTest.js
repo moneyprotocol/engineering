@@ -16,7 +16,9 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
 
   let MPContracts
 
-  const expectedCISupplyCap = toBN(0)
+  const digits = toBN(1e18)
+  const oneHundresSixtySevenMillion = toBN(167705382)
+  const expectedCISupplyCap = oneHundresSixtySevenMillion.mul(digits)
 
   beforeEach(async () => {
     await setNextBlockBaseFeePerGas(0)
@@ -69,7 +71,7 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
       assert.equal(lockupContractFactory.address, storedLCFAddress)
     })
 
-    it.skip("Mints the correct MP amount to the multisig's address: (314.825309 million)", async () => {
+    it("Mints the correct MP amount to the multisig's address: (314.825309 million)", async () => {
       const multisigMPEntitlement = await mpToken.balanceOf(multisig)
 
       const eighteenZeroes = "0".repeat(18)
@@ -78,14 +80,15 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
       assert.equal(multisigMPEntitlement, expectedMultisigEntitlement)
     })
 
-    it("Mints the correct MP amount to the CommunityIssuance contract address: 0", async () => {
+    it("Mints the correct MP amount to the CommunityIssuance contract address: 167.705382 million", async () => {
       const communityMPEntitlement = await mpToken.balanceOf(communityIssuance.address)
-      const expectedCommunityMPEntitlement = 0
+      const eighteenZeroes = "0".repeat(18)
+      const expectedCommunityMPEntitlement = "167705382".concat(eighteenZeroes)
 
       assert.equal(communityMPEntitlement, expectedCommunityMPEntitlement)
     })
 
-    it.skip("Mints the correct MP amount to the bountyAddress EOA: 10.481586 million", async () => {
+    it("Mints the correct MP amount to the bountyAddress EOA: 10.481586 million", async () => {
       const bountyAddressBal = await mpToken.balanceOf(bountyAddress)
 
       const eighteenZeroes = "0".repeat(18)
@@ -110,7 +113,7 @@ contract('Deploying the MP contracts: LCF, CI, MPStaking, and MPToken ', async a
       assert.equal(storedDeployerAddress, moneypAG)
     })
 
-    it("Has a supply cap of 0", async () => {
+    it("Has a supply cap of 167.705382 million", async () => {
       const supplyCap = await communityIssuance.MPSupplyCap()
 
       assert.isTrue(expectedCISupplyCap.eq(supplyCap))
