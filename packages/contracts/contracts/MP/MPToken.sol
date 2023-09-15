@@ -149,7 +149,8 @@ contract MPToken is CheckContract, IMPToken {
         
         // Allocate the remainder to the MP Multisig: 500,000,000 - 10,481,586 - 167,705,382 - 6,987,723 = 314,825,309
         uint multisigEntitlement = _1_MILLION.mul(500)
-            .sub(_totalBountyEntitlement);
+            .sub(_totalBountyEntitlement)
+            .sub(depositorsAndFrontEndsEntitlement);
 
         _mint(_multisigAddress, multisigEntitlement);
     }
