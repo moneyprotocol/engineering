@@ -337,7 +337,7 @@ contract('BorrowerWrappers', async accounts => {
     th.assertIsApproximatelyEqual(mpBalanceAfter, mpBalanceBefore)
 
     // MP staking
-    // th.assertIsApproximatelyEqual(stakeAfter, stakeBefore.add(expectedMPGain_A))
+    th.assertIsApproximatelyEqual(stakeAfter, stakeBefore.add(expectedMPGain_A))
 
     // Expect Alice has withdrawn all RBTC gain
     const alice_pendingRBTCGain = await stabilityPool.getDepositorRBTCGain(alice)
@@ -524,7 +524,7 @@ contract('BorrowerWrappers', async accounts => {
     assert.equal(ethBalanceAfter.toString(), ethBalanceBefore.toString())
     assert.equal(mpBalanceAfter.toString(), mpBalanceBefore.toString())
     // check proxy bpd balance has increased by own adjust vault reward
-    // th.assertIsApproximatelyEqual(bpdBalanceAfter, bpdBalanceBefore.add(expectedNewBPDGain_A))
+    th.assertIsApproximatelyEqual(bpdBalanceAfter, bpdBalanceBefore.add(expectedNewBPDGain_A))
     // check vault has increased debt by the ICR proportional amount to RBTC gain
     th.assertIsApproximatelyEqual(vaultDebtAfter, vaultDebtBefore.add(proportionalBPD), 10000)
     // check vault has increased collateral by the RBTC gain
