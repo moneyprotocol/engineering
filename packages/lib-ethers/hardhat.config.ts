@@ -142,11 +142,9 @@ type DeployParams = {
   channel: string;
   gasPrice?: number;
   useRealPriceFeed?: boolean;
-  createUniswapPair?: boolean;
 };
 
 const defaultChannel = process.env.CHANNEL || "default";
-const createUniswapPair = process.env.CREATE_UNISWAP_PAIR !== "false";
 
 task("deploy", "Deploys the contracts to the network")
   .addOptionalParam("channel", "Deployment channel to deploy into", defaultChannel, types.string)
@@ -157,32 +155,22 @@ task("deploy", "Deploys the contracts to the network")
     false,
     types.boolean
   )
-  .addOptionalParam(
-    "createUniswapPair",
-    "Create a real Uniswap v2 WRBTC-BPD pair instead of a mock ERC20 token",
-    createUniswapPair,
-    types.boolean
-  )
   .setAction(
-    async ({ channel, gasPrice, useRealPriceFeed, createUniswapPair }: DeployParams, env) => {
+    async ({ channel, gasPrice, useRealPriceFeed }: DeployParams, env) => {
       const overrides = { gasPrice: gasPrice && Decimal.from(gasPrice).div(1000000000).hex };
       const [deployer] = await env.ethers.getSigners();
 
       useRealPriceFeed = false;
-      createUniswapPair = true;
 
       if (useRealPriceFeed && !hasOracles(env.network.name)) {
         throw new Error(`PriceFeed not supported on ${env.network.name}`);
       }
-
-      console.log(`createUniswapPair? ${createUniswapPair}`);
+      
       let wrbtcAddress: string | undefined = undefined;
-      if (createUniswapPair) {
-        if (!hasWRBTC(env.network.name)) {
-          throw new Error(`WRBTC not deployed on ${env.network.name}`);
-        }
-        wrbtcAddress = wrbtcAddresses[env.network.name];
+      if (!hasWRBTC(env.network.name)) {
+        throw new Error(`WRBTC not deployed on ${env.network.name}`);
       }
+      wrbtcAddress = wrbtcAddresses[env.network.name];
 
       setSilent(false);
 
