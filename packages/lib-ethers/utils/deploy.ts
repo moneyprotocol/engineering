@@ -118,9 +118,9 @@ const deployContracts = async (
       addresses.communityIssuance,
       addresses.mpStaking,
       addresses.lockupContractFactory,
-      '0xe0C25A64f71E9E9ECABE09ADBb8c1Bb1d9cE5513', // _bountyAddress (TODO: parameterize this)
+      '0x47a7dD4682B72fE4Ac47A090E92c120C120cA45E', // _bountyAddress (TODO: parameterize this)
       addresses.rskSwapPool, // _lpRewardsAddress
-      '0x14986801Bd0F2e5ec98cf412526360fC9ae71c80', // _multisigAddress (TODO: parameterize this)
+      '0x63cE446a6c4BBC792F1D74039981C731eE928B8d', // _multisigAddress (TODO: parameterize this)
       { ...overrides }
     ),
 
