@@ -48,7 +48,7 @@ import {
   _requireSigner,
 } from "./BitcoinsMoneypConnection";
 
-import { _priceFeedIsTestnet, _rskSwapTokenIsMock } from "./contracts";
+import { _priceFeedIsTestnet } from "./contracts";
 import { logsToString } from "./parseLogs";
 import { ReadableBitcoinsMoneyp } from "./ReadableBitcoinsMoneyp";
 
@@ -1148,23 +1148,9 @@ export class PopulatableBitcoinsMoneyp
     address?: string,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    address ??= _requireAddress(this._readable.connection, overrides);
-    const { rskSwapToken } = _getContracts(this._readable.connection);
-
-    if (!_rskSwapTokenIsMock(rskSwapToken)) {
-      throw new Error(
-        "_mintRskSwapToken() unavailable on this deployment of Moneyp"
-      );
-    }
-
-    return this._wrapSimpleTransaction(
-      await rskSwapToken.estimateAndPopulate.mint(
-        { ...overrides },
-        id,
-        address,
-        Decimal.from(amount).hex
-      )
-    );
+    return new Promise(() => {
+      //
+    });
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.approveRskSwapTokens} */
@@ -1172,18 +1158,9 @@ export class PopulatableBitcoinsMoneyp
     allowance?: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { rskSwapToken, rskSwapPool } = _getContracts(
-      this._readable.connection
-    );
-
-    return this._wrapSimpleTransaction(
-      await rskSwapToken.estimateAndPopulate.approve(
-        { ...overrides },
-        id,
-        rskSwapPool.address,
-        Decimal.from(allowance ?? Decimal.INFINITY).hex
-      )
-    );
+    return new Promise(() => {
+      //
+    });
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.stakeRskSwapTokens} */
@@ -1191,15 +1168,9 @@ export class PopulatableBitcoinsMoneyp
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { rskSwapPool } = _getContracts(this._readable.connection);
-
-    return this._wrapSimpleTransaction(
-      await rskSwapPool.estimateAndPopulate.stake(
-        { ...overrides },
-        addGasForRskSwapPoolRewardUpdate,
-        Decimal.from(amount).hex
-      )
-    );
+    return new Promise(() => {
+      //
+    });
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.unstakeRskSwapTokens} */
@@ -1207,42 +1178,26 @@ export class PopulatableBitcoinsMoneyp
     amount: Decimalish,
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { rskSwapPool } = _getContracts(this._readable.connection);
-
-    return this._wrapSimpleTransaction(
-      await rskSwapPool.estimateAndPopulate.withdraw(
-        { ...overrides },
-        addGasForRskSwapPoolRewardUpdate,
-        Decimal.from(amount).hex
-      )
-    );
+    return new Promise(() => {
+      //
+    });
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.withdrawMPRewardFromLiquidityMining} */
   async withdrawMPRewardFromLiquidityMining(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { rskSwapPool } = _getContracts(this._readable.connection);
-
-    return this._wrapSimpleTransaction(
-      await rskSwapPool.estimateAndPopulate.claimReward(
-        { ...overrides },
-        addGasForRskSwapPoolRewardUpdate
-      )
-    );
+    return new Promise(() => {
+      //
+    });
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#PopulatableMoneyp.exitLiquidityMining} */
   async exitLiquidityMining(
     overrides?: BitcoinsTransactionOverrides
   ): Promise<PopulatedBitcoinsMoneypTransaction<void>> {
-    const { rskSwapPool } = _getContracts(this._readable.connection);
-
-    return this._wrapSimpleTransaction(
-      await rskSwapPool.estimateAndPopulate.withdrawAndClaim(
-        { ...overrides },
-        addGasForRskSwapPoolRewardUpdate
-      )
-    );
+    return new Promise(() => {
+      //
+    });
   }
 }
