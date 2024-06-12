@@ -5,9 +5,7 @@ import { Decimal, Decimalish } from "./Decimal";
  *
  * @public
  */
-export type MPStakeChange<T> =
-  | { stakeMP: T; unstakeMP?: undefined }
-  | { stakeMP?: undefined; unstakeMP: T; unstakeAllMP: boolean };
+export type MPStakeChange<T> = any;
 
 /** 
  * Represents a user's MP stake and accrued gains.
@@ -28,14 +26,20 @@ export class MPStake {
   readonly bpdGain: Decimal;
 
   /** @internal */
-  constructor(stakedMP = Decimal.ZERO, collateralGain = Decimal.ZERO, bpdGain = Decimal.ZERO) {
+  constructor(
+    stakedMP = Decimal.ZERO,
+    collateralGain = Decimal.ZERO,
+    bpdGain = Decimal.ZERO
+  ) {
     this.stakedMP = stakedMP;
     this.collateralGain = collateralGain;
     this.bpdGain = bpdGain;
   }
 
   get isEmpty(): boolean {
-    return this.stakedMP.isZero && this.collateralGain.isZero && this.bpdGain.isZero;
+    return (
+      this.stakedMP.isZero && this.collateralGain.isZero && this.bpdGain.isZero
+    );
   }
 
   /** @internal */
@@ -69,7 +73,7 @@ export class MPStake {
     if (thatStakedMP.lt(this.stakedMP)) {
       return {
         unstakeMP: this.stakedMP.sub(thatStakedMP),
-        unstakeAllMP: thatStakedMP.isZero
+        unstakeAllMP: thatStakedMP.isZero,
       };
     }
 

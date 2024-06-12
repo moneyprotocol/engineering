@@ -14,12 +14,16 @@ import {
   UserVault,
   UserVaultStatus,
   _CachedReadableMoneyp,
-  _MoneypReadCache
+  _MoneypReadCache,
 } from "@moneyprotocol/lib-base";
 
 import { MultiVaultGetter } from "../types";
 
-import { BitcoinsCallOverrides, BitcoinsProvider, BitcoinsSigner } from "./types";
+import {
+  BitcoinsCallOverrides,
+  BitcoinsProvider,
+  BitcoinsSigner,
+} from "./types";
 
 import {
   BitcoinsMoneypConnection,
@@ -29,7 +33,7 @@ import {
   _getBlockTimestamp,
   _getContracts,
   _requireAddress,
-  _requireFrontendAddress
+  _requireFrontendAddress,
 } from "./BitcoinsMoneypConnection";
 
 import { BlockPolledMoneypStore } from "./BlockPolledMoneypStore";
@@ -45,14 +49,16 @@ enum BackendVaultStatus {
   active,
   closedByOwner,
   closedByLiquidation,
-  closedByRedemption
+  closedByRedemption,
 }
 
 const panic = <T>(error: Error): T => {
   throw error;
 };
 
-const userVaultStatusFrom = (backendStatus: BackendVaultStatus): UserVaultStatus =>
+const userVaultStatusFrom = (
+  backendStatus: BackendVaultStatus
+): UserVaultStatus =>
   backendStatus === BackendVaultStatus.nonExistent
     ? "nonExistent"
     : backendStatus === BackendVaultStatus.active
@@ -65,13 +71,20 @@ const userVaultStatusFrom = (backendStatus: BackendVaultStatus): UserVaultStatus
     ? "closedByRedemption"
     : panic(new Error(`invalid backendStatus ${backendStatus}`));
 
-const decimalify = (bigNumber: BigNumber) => Decimal.fromBigNumberString(bigNumber.toHexString());
+const decimalify = (bigNumber: BigNumber) =>
+  Decimal.fromBigNumberString(bigNumber.toHexString());
 const numberify = (bigNumber: BigNumber) => bigNumber.toNumber();
 const convertToDate = (timestamp: number) => new Date(timestamp * 1000);
 
-const validSortingOptions = ["ascendingCollateralRatio", "descendingCollateralRatio"];
+const validSortingOptions = [
+  "ascendingCollateralRatio",
+  "descendingCollateralRatio",
+];
 
-const expectPositiveInt = <K extends string>(obj: { [P in K]?: number }, key: K) => {
+const expectPositiveInt = <K extends string>(
+  obj: { [P in K]?: number },
+  key: K
+) => {
   if (obj[key] !== undefined) {
     if (!Number.isInteger(obj[key])) {
       throw new Error(`${key} must be an integer`);
@@ -116,7 +129,9 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   /** @internal */
   static connect(
     signerOrProvider: BitcoinsSigner | BitcoinsProvider,
-    optionalParams: BitcoinsMoneypConnectionOptionalParams & { useStore: "blockPolled" }
+    optionalParams: BitcoinsMoneypConnectionOptionalParams & {
+      useStore: "blockPolled";
+    }
   ): Promise<ReadableBitcoinsMoneypWithStore<BlockPolledMoneypStore>>;
 
   static connect(
@@ -135,7 +150,9 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     signerOrProvider: BitcoinsSigner | BitcoinsProvider,
     optionalParams?: BitcoinsMoneypConnectionOptionalParams
   ): Promise<ReadableBitcoinsMoneyp> {
-    return ReadableBitcoinsMoneyp._from(await _connect(signerOrProvider, optionalParams));
+    return ReadableBitcoinsMoneyp._from(
+      await _connect(signerOrProvider, optionalParams)
+    );
   }
 
   /**
@@ -147,19 +164,23 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
    * Check whether this `ReadableBitcoinsMoneyp` is a
    * {@link ReadableBitcoinsMoneypWithStore}\<{@link BlockPolledMoneypStore}\>.
    */
-  hasStore(store: "blockPolled"): this is ReadableBitcoinsMoneypWithStore<BlockPolledMoneypStore>;
+  hasStore(
+    store: "blockPolled"
+  ): this is ReadableBitcoinsMoneypWithStore<BlockPolledMoneypStore>;
 
   hasStore(): boolean {
     return false;
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getTotalRedistributed} */
-  async getTotalRedistributed(overrides?: BitcoinsCallOverrides): Promise<Vault> {
+  async getTotalRedistributed(
+    overrides?: BitcoinsCallOverrides
+  ): Promise<Vault> {
     const { vaultManager } = _getContracts(this.connection);
 
     const [collateral, debt] = await Promise.all([
       vaultManager.B_RBTC({ ...overrides }).then(decimalify),
-      vaultManager.B_BPDDebt({ ...overrides }).then(decimalify)
+      vaultManager.B_BPDDebt({ ...overrides }).then(decimalify),
     ]);
 
     return new Vault(collateral, debt);
@@ -175,7 +196,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
 
     const [vault, snapshot] = await Promise.all([
       vaultManager.Vaults(address, { ...overrides }),
-      vaultManager.rewardSnapshots(address, { ...overrides })
+      vaultManager.rewardSnapshots(address, { ...overrides }),
     ]);
 
     if (vault.status === BackendVaultStatus.active) {
@@ -188,15 +209,21 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
         new Vault(decimalify(snapshot.RBTC), decimalify(snapshot.BPDDebt))
       );
     } else {
-      return new VaultWithPendingRedistribution(address, userVaultStatusFrom(vault.status));
+      return new VaultWithPendingRedistribution(
+        address,
+        userVaultStatusFrom(vault.status)
+      );
     }
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getVault} */
-  async getVault(address?: string, overrides?: BitcoinsCallOverrides): Promise<UserVault> {
+  async getVault(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Promise<UserVault> {
     const [vault, totalRedistributed] = await Promise.all([
       this.getVaultBeforeRedistribution(address, overrides),
-      this.getTotalRedistributed(overrides)
+      this.getTotalRedistributed(overrides),
     ]);
 
     return vault.applyRedistribution(totalRedistributed);
@@ -206,7 +233,9 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   async getNumberOfVaults(overrides?: BitcoinsCallOverrides): Promise<number> {
     const { vaultManager } = _getContracts(this.connection);
 
-    return (await vaultManager.getVaultOwnersCount({ ...overrides })).toNumber();
+    return (
+      await vaultManager.getVaultOwnersCount({ ...overrides })
+    ).toNumber();
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getPrice} */
@@ -223,8 +252,8 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     const [activeCollateral, activeDebt] = await Promise.all(
       [
         activePool.getRBTC({ ...overrides }),
-        activePool.getBPDDebt({ ...overrides })
-      ].map(getBigNumber => getBigNumber.then(decimalify))
+        activePool.getBPDDebt({ ...overrides }),
+      ].map((getBigNumber) => getBigNumber.then(decimalify))
     );
 
     return new Vault(activeCollateral, activeDebt);
@@ -237,8 +266,8 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     const [liquidatedCollateral, closedDebt] = await Promise.all(
       [
         defaultPool.getRBTC({ ...overrides }),
-        defaultPool.getBPDDebt({ ...overrides })
-      ].map(getBigNumber => getBigNumber.then(decimalify))
+        defaultPool.getBPDDebt({ ...overrides }),
+      ].map((getBigNumber) => getBigNumber.then(decimalify))
     );
 
     return new Vault(liquidatedCollateral, closedDebt);
@@ -248,7 +277,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   async getTotal(overrides?: BitcoinsCallOverrides): Promise<Vault> {
     const [activePool, defaultPool] = await Promise.all([
       this._getActivePool(overrides),
-      this._getDefaultPool(overrides)
+      this._getDefaultPool(overrides),
     ]);
 
     return activePool.add(defaultPool);
@@ -266,12 +295,12 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
       { frontEndTag, initialValue },
       currentBPD,
       collateralGain,
-      mpReward
+      mpReward,
     ] = await Promise.all([
       stabilityPool.deposits(address, { ...overrides }),
       stabilityPool.getCompoundedBPDDeposit(address, { ...overrides }),
       stabilityPool.getDepositorRBTCGain(address, { ...overrides }),
-      stabilityPool.getDepositorMPGain(address, { ...overrides })
+      stabilityPool.getDepositorMPGain(address, { ...overrides }),
     ]);
 
     return new StabilityDeposit(
@@ -284,11 +313,15 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getRemainingStabilityPoolMPReward} */
-  async getRemainingStabilityPoolMPReward(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  async getRemainingStabilityPoolMPReward(
+    overrides?: BitcoinsCallOverrides
+  ): Promise<Decimal> {
     const { communityIssuance } = _getContracts(this.connection);
 
     const issuanceCap = this.connection.totalStabilityPoolMPReward;
-    const totalMPIssued = decimalify(await communityIssuance.totalMPIssued({ ...overrides }));
+    const totalMPIssued = decimalify(
+      await communityIssuance.totalMPIssued({ ...overrides })
+    );
 
     // totalMPIssued approaches but never reaches issuanceCap
     return issuanceCap.sub(totalMPIssued);
@@ -302,7 +335,10 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getBPDBalance} */
-  getBPDBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  getBPDBalance(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Promise<Decimal> {
     address ??= _requireAddress(this.connection);
     const { bpdToken } = _getContracts(this.connection);
 
@@ -310,7 +346,10 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getMPBalance} */
-  getMPBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  getMPBalance(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Promise<Decimal> {
     address ??= _requireAddress(this.connection);
     const { mpToken } = _getContracts(this.connection);
 
@@ -318,7 +357,10 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getRskSwapTokenBalance} */
-  getRskSwapTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  getRskSwapTokenBalance(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Promise<Decimal> {
     address ??= _requireAddress(this.connection);
     const { rskSwapToken } = _getContracts(this.connection);
 
@@ -326,11 +368,16 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getRskSwapTokenAllowance} */
-  getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  getRskSwapTokenAllowance(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Promise<Decimal> {
     address ??= _requireAddress(this.connection);
     const { rskSwapToken, rskSwapPool } = _getContracts(this.connection);
 
-    return rskSwapToken.allowance(address, rskSwapPool.address, { ...overrides }).then(decimalify);
+    return rskSwapToken
+      .allowance(address, rskSwapPool.address, { ...overrides })
+      .then(decimalify);
   }
 
   /** @internal */
@@ -339,31 +386,41 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   ): Promise<(blockTimestamp: number) => Decimal> {
     const { rskSwapPool } = _getContracts(this.connection);
 
-    const [totalSupply, rewardRate, periodFinish, lastUpdateTime] = await Promise.all([
-      rskSwapPool.totalSupply({ ...overrides }),
-      rskSwapPool.rewardRate({ ...overrides }).then(decimalify),
-      rskSwapPool.periodFinish({ ...overrides }).then(numberify),
-      rskSwapPool.lastUpdateTime({ ...overrides }).then(numberify)
-    ]);
+    const [totalSupply, rewardRate, periodFinish, lastUpdateTime] =
+      await Promise.all([
+        rskSwapPool.totalSupply({ ...overrides }),
+        rskSwapPool.rewardRate({ ...overrides }).then(decimalify),
+        rskSwapPool.periodFinish({ ...overrides }).then(numberify),
+        rskSwapPool.lastUpdateTime({ ...overrides }).then(numberify),
+      ]);
 
     return (blockTimestamp: number) =>
       rewardRate.mul(
-        Math.max(0, periodFinish - (totalSupply.isZero() ? lastUpdateTime : blockTimestamp))
+        Math.max(
+          0,
+          periodFinish -
+            (totalSupply.isZero() ? lastUpdateTime : blockTimestamp)
+        )
       );
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getRemainingLiquidityMiningMPReward} */
-  async getRemainingLiquidityMiningMPReward(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  async getRemainingLiquidityMiningMPReward(
+    overrides?: BitcoinsCallOverrides
+  ): Promise<Decimal> {
     const [calculateRemainingMP, blockTimestamp] = await Promise.all([
       this._getRemainingLiquidityMiningMPRewardCalculator(overrides),
-      _getBlockTimestamp(this.connection, overrides?.blockTag)
+      _getBlockTimestamp(this.connection, overrides?.blockTag),
     ]);
 
     return calculateRemainingMP(blockTimestamp);
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getLiquidityMiningStake} */
-  getLiquidityMiningStake(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  getLiquidityMiningStake(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Promise<Decimal> {
     address ??= _requireAddress(this.connection);
     const { rskSwapPool } = _getContracts(this.connection);
 
@@ -371,14 +428,19 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getTotalStakedRskSwapTokens} */
-  getTotalStakedRskSwapTokens(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  getTotalStakedRskSwapTokens(
+    overrides?: BitcoinsCallOverrides
+  ): Promise<Decimal> {
     const { rskSwapPool } = _getContracts(this.connection);
 
     return rskSwapPool.totalSupply({ ...overrides }).then(decimalify);
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getLiquidityMiningMPReward} */
-  getLiquidityMiningMPReward(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  getLiquidityMiningMPReward(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Promise<Decimal> {
     address ??= _requireAddress(this.connection);
     const { rskSwapPool } = _getContracts(this.connection);
 
@@ -386,11 +448,16 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getCollateralSurplusBalance} */
-  getCollateralSurplusBalance(address?: string, overrides?: BitcoinsCallOverrides): Promise<Decimal> {
+  getCollateralSurplusBalance(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Promise<Decimal> {
     address ??= _requireAddress(this.connection);
     const { collSurplusPool } = _getContracts(this.connection);
 
-    return collSurplusPool.getCollateral(address, { ...overrides }).then(decimalify);
+    return collSurplusPool
+      .getCollateral(address, { ...overrides })
+      .then(decimalify);
   }
 
   /** @internal */
@@ -400,7 +467,10 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   ): Promise<VaultWithPendingRedistribution[]>;
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.(getVaults:2)} */
-  getVaults(params: VaultListingParams, overrides?: BitcoinsCallOverrides): Promise<UserVault[]>;
+  getVaults(
+    params: VaultListingParams,
+    overrides?: BitcoinsCallOverrides
+  ): Promise<UserVault[]>;
 
   async getVaults(
     params: VaultListingParams,
@@ -413,25 +483,31 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
 
     if (!validSortingOptions.includes(params.sortedBy)) {
       throw new Error(
-        `sortedBy must be one of: ${validSortingOptions.map(x => `"${x}"`).join(", ")}`
+        `sortedBy must be one of: ${validSortingOptions
+          .map((x) => `"${x}"`)
+          .join(", ")}`
       );
     }
 
     const [totalRedistributed, backendVaults] = await Promise.all([
-      params.beforeRedistribution ? undefined : this.getTotalRedistributed({ ...overrides }),
+      params.beforeRedistribution
+        ? undefined
+        : this.getTotalRedistributed({ ...overrides }),
       multiVaultGetter.getMultipleSortedVaults(
         params.sortedBy === "descendingCollateralRatio"
           ? params.startingAt ?? 0
           : -((params.startingAt ?? 0) + 1),
         params.first,
         { ...overrides }
-      )
+      ),
     ]);
 
     const vaults = mapBackendVaults(backendVaults);
 
     if (totalRedistributed) {
-      return vaults.map(vault => vault.applyRedistribution(totalRedistributed));
+      return vaults.map((vault) =>
+        vault.applyRedistribution(totalRedistributed)
+      );
     } else {
       return vaults;
     }
@@ -445,7 +521,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
 
     const [lastFeeOperationTime, baseRateWithoutDecay] = await Promise.all([
       vaultManager.lastFeeOperationTime({ ...overrides }),
-      vaultManager.baseRate({ ...overrides }).then(decimalify)
+      vaultManager.baseRate({ ...overrides }).then(decimalify),
     ]);
 
     return (blockTimestamp, recoveryMode) =>
@@ -465,14 +541,20 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
       this._getFeesFactory(overrides),
       this.getTotal(overrides),
       this.getPrice(overrides),
-      _getBlockTimestamp(this.connection, overrides?.blockTag)
+      _getBlockTimestamp(this.connection, overrides?.blockTag),
     ]);
 
-    return createFees(blockTimestamp, total.collateralRatioIsBelowCritical(price));
+    return createFees(
+      blockTimestamp,
+      total.collateralRatioIsBelowCritical(price)
+    );
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getMPStake} */
-  async getMPStake(address?: string, overrides?: BitcoinsCallOverrides): Promise<MPStake> {
+  async getMPStake(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Promise<MPStake> {
     address ??= _requireAddress(this.connection);
     const { mpStaking } = _getContracts(this.connection);
 
@@ -480,8 +562,8 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
       [
         mpStaking.stakes(address, { ...overrides }),
         mpStaking.getPendingRBTCGain(address, { ...overrides }),
-        mpStaking.getPendingBPDGain(address, { ...overrides })
-      ].map(getBigNumber => getBigNumber.then(decimalify))
+        mpStaking.getPendingBPDGain(address, { ...overrides }),
+      ].map((getBigNumber) => getBigNumber.then(decimalify))
     );
 
     return new MPStake(stakedMP, collateralGain, bpdGain);
@@ -502,7 +584,10 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     address ??= _requireFrontendAddress(this.connection);
     const { stabilityPool } = _getContracts(this.connection);
 
-    const { registered, kickbackRate } = await stabilityPool.frontEnds(address, { ...overrides });
+    const { registered, kickbackRate } = await stabilityPool.frontEnds(
+      address,
+      { ...overrides }
+    );
 
     return registered
       ? { status: "registered", kickbackRate: decimalify(kickbackRate) }
@@ -511,18 +596,25 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
 }
 
 type Resolved<T> = T extends Promise<infer U> ? U : T;
-type BackendVaults = Resolved<ReturnType<MultiVaultGetter["getMultipleSortedVaults"]>>;
+type BackendVaults = Resolved<
+  ReturnType<MultiVaultGetter["getMultipleSortedVaults"]>
+>;
 
-const mapBackendVaults = (vaults: BackendVaults): VaultWithPendingRedistribution[] =>
+const mapBackendVaults = (
+  vaults: BackendVaults
+): VaultWithPendingRedistribution[] =>
   vaults.map(
-    vault =>
+    (vault) =>
       new VaultWithPendingRedistribution(
         vault.owner,
         "open", // These Vaults are coming from the SortedVaults list, so they must be open
         decimalify(vault.coll),
         decimalify(vault.debt),
         decimalify(vault.stake),
-        new Vault(decimalify(vault.snapshotRBTC), decimalify(vault.snapshotBPDDebt))
+        new Vault(
+          decimalify(vault.snapshotRBTC),
+          decimalify(vault.snapshotBPDDebt)
+        )
       )
   );
 
@@ -531,14 +623,16 @@ const mapBackendVaults = (vaults: BackendVaults): VaultWithPendingRedistribution
  *
  * @public
  */
-export interface ReadableBitcoinsMoneypWithStore<T extends MoneypStore = MoneypStore>
-  extends ReadableBitcoinsMoneyp {
+export interface ReadableBitcoinsMoneypWithStore<
+  T extends MoneypStore = MoneypStore
+> extends ReadableBitcoinsMoneyp {
   /** An object that implements MoneypStore. */
   readonly store: T;
 }
 
 class BlockPolledMoneypStoreBasedCache
-  implements _MoneypReadCache<[overrides?: BitcoinsCallOverrides]> {
+  implements _MoneypReadCache<[overrides?: BitcoinsCallOverrides]>
+{
   private _store: BlockPolledMoneypStore;
 
   constructor(store: BlockPolledMoneypStore) {
@@ -553,14 +647,20 @@ class BlockPolledMoneypStoreBasedCache
     );
   }
 
-  private _userHit(address?: string, overrides?: BitcoinsCallOverrides): boolean {
+  private _userHit(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): boolean {
     return (
       this._blockHit(overrides) &&
       (address === undefined || address === this._store.connection.userAddress)
     );
   }
 
-  private _frontendHit(address?: string, overrides?: BitcoinsCallOverrides): boolean {
+  private _frontendHit(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): boolean {
     return (
       this._blockHit(overrides) &&
       (address === undefined || address === this._store.connection.frontendTag)
@@ -582,7 +682,10 @@ class BlockPolledMoneypStoreBasedCache
     }
   }
 
-  getVault(address?: string, overrides?: BitcoinsCallOverrides): UserVault | undefined {
+  getVault(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): UserVault | undefined {
     if (this._userHit(address, overrides)) {
       return this._store.state.vault;
     }
@@ -615,55 +718,78 @@ class BlockPolledMoneypStoreBasedCache
     }
   }
 
-  getRemainingStabilityPoolMPReward(overrides?: BitcoinsCallOverrides): Decimal | undefined {
+  getRemainingStabilityPoolMPReward(
+    overrides?: BitcoinsCallOverrides
+  ): Decimal | undefined {
     if (this._blockHit(overrides)) {
       return this._store.state.remainingStabilityPoolMPReward;
     }
   }
 
-  getBPDInStabilityPool(overrides?: BitcoinsCallOverrides): Decimal | undefined {
+  getBPDInStabilityPool(
+    overrides?: BitcoinsCallOverrides
+  ): Decimal | undefined {
     if (this._blockHit(overrides)) {
       return this._store.state.bpdInStabilityPool;
     }
   }
 
-  getBPDBalance(address?: string, overrides?: BitcoinsCallOverrides): Decimal | undefined {
+  getBPDBalance(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Decimal | undefined {
     if (this._userHit(address, overrides)) {
       return this._store.state.bpdBalance;
     }
   }
 
-  getMPBalance(address?: string, overrides?: BitcoinsCallOverrides): Decimal | undefined {
+  getMPBalance(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Decimal | undefined {
     if (this._userHit(address, overrides)) {
       return this._store.state.mpBalance;
     }
   }
 
-  getRskSwapTokenBalance(address?: string, overrides?: BitcoinsCallOverrides): Decimal | undefined {
+  getRskSwapTokenBalance(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Decimal | undefined {
     if (this._userHit(address, overrides)) {
       return this._store.state.rskSwapTokenBalance;
     }
   }
 
-  getRskSwapTokenAllowance(address?: string, overrides?: BitcoinsCallOverrides): Decimal | undefined {
+  getRskSwapTokenAllowance(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Decimal | undefined {
     if (this._userHit(address, overrides)) {
       return this._store.state.rskSwapTokenAllowance;
     }
   }
 
-  getRemainingLiquidityMiningMPReward(overrides?: BitcoinsCallOverrides): Decimal | undefined {
+  getRemainingLiquidityMiningMPReward(
+    overrides?: BitcoinsCallOverrides
+  ): Decimal | undefined {
     if (this._blockHit(overrides)) {
       return this._store.state.remainingLiquidityMiningMPReward;
     }
   }
 
-  getLiquidityMiningStake(address?: string, overrides?: BitcoinsCallOverrides): Decimal | undefined {
+  getLiquidityMiningStake(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): Decimal | undefined {
     if (this._userHit(address, overrides)) {
       return this._store.state.liquidityMiningStake;
     }
   }
 
-  getTotalStakedRskSwapTokens(overrides?: BitcoinsCallOverrides): Decimal | undefined {
+  getTotalStakedRskSwapTokens(
+    overrides?: BitcoinsCallOverrides
+  ): Decimal | undefined {
     if (this._blockHit(overrides)) {
       return this._store.state.totalStakedRskSwapTokens;
     }
@@ -693,7 +819,10 @@ class BlockPolledMoneypStoreBasedCache
     }
   }
 
-  getMPStake(address?: string, overrides?: BitcoinsCallOverrides): MPStake | undefined {
+  getMPStake(
+    address?: string,
+    overrides?: BitcoinsCallOverrides
+  ): MPStake | undefined {
     if (this._userHit(address, overrides)) {
       return this._store.state.mpStake;
     }
@@ -708,20 +837,24 @@ class BlockPolledMoneypStoreBasedCache
   getFrontendStatus(
     address?: string,
     overrides?: BitcoinsCallOverrides
-  ): { status: "unregistered" } | { status: "registered"; kickbackRate: Decimal } | undefined {
+  ):
+    | { status: "unregistered" }
+    | { status: "registered"; kickbackRate: Decimal }
+    | undefined {
     if (this._frontendHit(address, overrides)) {
       return this._store.state.frontend;
     }
   }
 
   getVaults() {
-    return undefined;
+    return undefined as any;
   }
 }
 
 class _BlockPolledReadableBitcoinsMoneyp
   extends _CachedReadableMoneyp<[overrides?: BitcoinsCallOverrides]>
-  implements ReadableBitcoinsMoneypWithStore<BlockPolledMoneypStore> {
+  implements ReadableBitcoinsMoneypWithStore<BlockPolledMoneypStore>
+{
   readonly connection: BitcoinsMoneypConnection;
   readonly store: BlockPolledMoneypStore;
 
@@ -746,11 +879,15 @@ class _BlockPolledReadableBitcoinsMoneyp
     throw new Error("Method not implemented.");
   }
 
-  _getFeesFactory(): Promise<(blockTimestamp: number, recoveryMode: boolean) => Fees> {
+  _getFeesFactory(): Promise<
+    (blockTimestamp: number, recoveryMode: boolean) => Fees
+  > {
     throw new Error("Method not implemented.");
   }
 
-  _getRemainingLiquidityMiningMPRewardCalculator(): Promise<(blockTimestamp: number) => Decimal> {
+  _getRemainingLiquidityMiningMPRewardCalculator(): Promise<
+    (blockTimestamp: number) => Decimal
+  > {
     throw new Error("Method not implemented.");
   }
 }

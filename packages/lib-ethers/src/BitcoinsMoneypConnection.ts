@@ -13,7 +13,7 @@ import {
   _connectToContracts,
   _MoneypContractAddresses,
   _MoneypContracts,
-  _MoneypDeploymentJSON
+  _MoneypDeploymentJSON,
 } from "./contracts";
 
 import { _connectToMulticall, _Multicall } from "./_Multicall";
@@ -23,7 +23,7 @@ const dev = devOrNull as _MoneypDeploymentJSON | null;
 const deployments: any = {
   [testnet.chainId]: testnet,
 
-  ...(dev !== null ? { [dev.chainId]: dev } : {})
+  ...(dev !== null ? { [dev.chainId]: dev } : {}),
 };
 
 declare const brand: unique symbol;
@@ -40,7 +40,8 @@ const branded = <T>(t: Omit<T, typeof brand>): T => t as T;
  *
  * @public
  */
-export interface BitcoinsMoneypConnection extends BitcoinsMoneypConnectionOptionalParams {
+export interface BitcoinsMoneypConnection
+  extends BitcoinsMoneypConnectionOptionalParams {
   /** Bitcoins `Provider` used for connecting to the network. */
   readonly provider: BitcoinsProvider;
 
@@ -76,7 +77,8 @@ export interface BitcoinsMoneypConnection extends BitcoinsMoneypConnectionOption
 }
 
 /** @internal */
-export interface _InternalBitcoinsMoneypConnection extends BitcoinsMoneypConnection {
+export interface _InternalBitcoinsMoneypConnection
+  extends BitcoinsMoneypConnection {
   readonly addresses: _MoneypContractAddresses;
   readonly _contracts: _MoneypContracts;
   readonly _multicall?: _Multicall;
@@ -87,7 +89,11 @@ const connectionFrom = (
   signer: BitcoinsSigner | undefined,
   _contracts: _MoneypContracts,
   _multicall: _Multicall | undefined,
-  { deploymentDate, totalStabilityPoolMPReward, ...deployment }: _MoneypDeploymentJSON,
+  {
+    deploymentDate,
+    totalStabilityPoolMPReward,
+    ...deployment
+  }: _MoneypDeploymentJSON,
   optionalParams?: BitcoinsMoneypConnectionOptionalParams
 ): _InternalBitcoinsMoneypConnection => {
   if (
@@ -106,15 +112,19 @@ const connectionFrom = (
     deploymentDate: new Date(deploymentDate),
     totalStabilityPoolMPReward: Decimal.from(totalStabilityPoolMPReward),
     ...deployment,
-    ...optionalParams
+    ...optionalParams,
   });
 };
 
 /** @internal */
-export const _getContracts = (connection: BitcoinsMoneypConnection): _MoneypContracts =>
+export const _getContracts = (
+  connection: BitcoinsMoneypConnection
+): _MoneypContracts =>
   (connection as _InternalBitcoinsMoneypConnection)._contracts;
 
-const getMulticall = (connection: BitcoinsMoneypConnection): _Multicall | undefined =>
+const getMulticall = (
+  connection: BitcoinsMoneypConnection
+): _Multicall | undefined =>
   (connection as _InternalBitcoinsMoneypConnection)._multicall;
 
 const numberify = (bigNumber: BigNumber) => bigNumber.toNumber();
@@ -127,7 +137,9 @@ export const _getBlockTimestamp = (
   blockTag: BlockTag = "latest"
 ): Promise<number> =>
   // Get the timestamp via a contract call whenever possible, to make it batchable with other calls
-  getMulticall(connection)?.getCurrentBlockTimestamp({ blockTag }).then(numberify) ??
+  getMulticall(connection)
+    ?.getCurrentBlockTimestamp({ blockTag })
+    .then(numberify) ??
   _getProvider(connection).getBlock(blockTag).then(getTimestampFromBlock);
 
 const panic = <T>(e: unknown): T => {
@@ -135,12 +147,15 @@ const panic = <T>(e: unknown): T => {
 };
 
 /** @internal */
-export const _requireSigner = (connection: BitcoinsMoneypConnection): BitcoinsSigner =>
+export const _requireSigner = (
+  connection: BitcoinsMoneypConnection
+): BitcoinsSigner =>
   connection.signer ?? panic(new Error("Must be connected through a Signer"));
 
 /** @internal */
-export const _getProvider = (connection: BitcoinsMoneypConnection): BitcoinsProvider =>
-  connection.provider;
+export const _getProvider = (
+  connection: BitcoinsMoneypConnection
+): BitcoinsProvider => connection.provider;
 
 // TODO parameterize error message?
 /** @internal */
@@ -148,17 +163,22 @@ export const _requireAddress = (
   connection: BitcoinsMoneypConnection,
   overrides?: { from?: string }
 ): string =>
-  overrides?.from ?? connection.userAddress ?? panic(new Error("A user address is required"));
+  overrides?.from ??
+  connection.userAddress ??
+  panic(new Error("A user address is required"));
 
 /** @internal */
-export const _requireFrontendAddress = (connection: BitcoinsMoneypConnection): string =>
+export const _requireFrontendAddress = (
+  connection: BitcoinsMoneypConnection
+): string =>
   connection.frontendTag ?? panic(new Error("A frontend address is required"));
 
 /** @internal */
 export const _usingStore = (
   connection: BitcoinsMoneypConnection
-): connection is BitcoinsMoneypConnection & { useStore: BitcoinsMoneypStoreOption } =>
-  connection.useStore !== undefined;
+): connection is BitcoinsMoneypConnection & {
+  useStore: BitcoinsMoneypStoreOption;
+} => connection.useStore !== undefined;
 
 /**
  * Thrown when trying to connect to a network where Moneyp is not deployed.
@@ -184,10 +204,13 @@ const getProviderAndSigner = (
   signerOrProvider: BitcoinsSigner | BitcoinsProvider
 ): [provider: BitcoinsProvider, signer: BitcoinsSigner | undefined] => {
   const provider: BitcoinsProvider = Signer.isSigner(signerOrProvider)
-    ? signerOrProvider.provider ?? panic(new Error("Signer must have a Provider"))
+    ? signerOrProvider.provider ??
+      panic(new Error("Signer must have a Provider"))
     : signerOrProvider;
 
-  const signer = Signer.isSigner(signerOrProvider) ? signerOrProvider : undefined;
+  const signer = Signer.isSigner(signerOrProvider)
+    ? signerOrProvider
+    : undefined;
 
   return [provider, signer];
 };
@@ -312,14 +335,21 @@ export const _connect = async (
 
   if (signer) {
     if (optionalParams?.userAddress !== undefined) {
-      throw new Error("Can't override userAddress when connecting through Signer");
+      throw new Error(
+        "Can't override userAddress when connecting through Signer"
+      );
     }
 
     optionalParams = {
       ...optionalParams,
-      userAddress: await signer.getAddress()
+      userAddress: await signer.getAddress(),
     };
   }
 
-  return _connectByChainId(provider, signer, (await provider.getNetwork()).chainId, optionalParams);
+  return _connectByChainId(
+    provider,
+    signer,
+    (await provider.getNetwork()).chainId,
+    optionalParams
+  );
 };

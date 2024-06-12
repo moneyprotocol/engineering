@@ -76,7 +76,7 @@ export class _CachedReadableMoneyp<T extends unknown[]> implements _ReadableMone
     }, ...extraParams: T): Promise<VaultWithPendingRedistribution[]>;
     // (undocumented)
     getVaults(params: VaultListingParams, ...extraParams: T): Promise<UserVault[]>;
-    }
+}
 
 // @internal (undocumented)
 export type _CollateralChange<T> = (_CollateralDeposit<T> & _NoCollateralWithdrawal) | (_CollateralWithdrawal<T> & _NoCollateralDeposit);
@@ -288,7 +288,7 @@ export abstract class MoneypStore<T = unknown> {
     subscribe(listener: (params: MoneypStoreListenerParams<T>) => void): () => void;
     // @internal (undocumented)
     protected _update(baseStateUpdate?: Partial<MoneypStoreBaseState>, extraStateUpdate?: Partial<T>): void;
-    }
+}
 
 // @public
 export interface MoneypStoreBaseState {
@@ -356,14 +356,7 @@ export class MPStake {
 }
 
 // @public
-export type MPStakeChange<T> = {
-    stakeMP: T;
-    unstakeMP?: undefined;
-} | {
-    stakeMP?: undefined;
-    unstakeMP: T;
-    unstakeAllMP: boolean;
-};
+export type MPStakeChange<T> = any;
 
 // @internal (undocumented)
 export type _NoBPDBorrowing = Partial<_BPDBorrowing<undefined>>;
@@ -607,14 +600,7 @@ export class StabilityDeposit {
 }
 
 // @public
-export type StabilityDepositChange<T> = {
-    depositBPD: T;
-    withdrawBPD?: undefined;
-} | {
-    depositBPD?: undefined;
-    withdrawBPD: T;
-    withdrawAllBPD: boolean;
-};
+export type StabilityDepositChange<T> = any;
 
 // @public
 export interface StabilityDepositChangeDetails extends StabilityPoolGainsWithdrawalDetails {
@@ -637,7 +623,7 @@ export type SuccessfulReceipt<R = unknown, D = unknown> = {
 };
 
 // @internal (undocumented)
-export const _successfulReceipt: <R, D>(rawReceipt: R, details: D, toString?: (() => string) | undefined) => SuccessfulReceipt<R, D>;
+export const _successfulReceipt: <R, D>(rawReceipt: R, details: D, toString?: () => string) => SuccessfulReceipt<R, D>;
 
 // @public
 export interface TransactableMoneyp {
@@ -768,7 +754,7 @@ export type VaultChange<T> = {
 } | {
     type: "adjustment";
     params: VaultAdjustmentParams<T>;
-    setToZero?: "collateral" | "debt";
+    setToZero?: "collateral" | "debt" | "";
 };
 
 // @public
@@ -818,8 +804,7 @@ export class VaultWithPendingRedistribution extends UserVault {
     applyRedistribution(totalRedistributed: Vault): UserVault;
     // (undocumented)
     equals(that: VaultWithPendingRedistribution): boolean;
-    }
-
+}
 
 // (No @packageDocumentation comment for this package)
 
