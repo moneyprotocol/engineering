@@ -6,7 +6,10 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "allowJs": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@moneyprotocol/*": ["../../packages/*"]
+    }
   },
   "types": ["node"],
   "include": ["src", "test", "types", "scripts", "utils"],
