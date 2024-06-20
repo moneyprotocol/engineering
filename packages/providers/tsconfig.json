@@ -3,6 +3,9 @@
   "include": ["src"],
   "compilerOptions": {
     "skipLibCheck": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "paths": {
+      "@moneyprotocol/*": ["../../packages/*"]
+    }
   }
 }
