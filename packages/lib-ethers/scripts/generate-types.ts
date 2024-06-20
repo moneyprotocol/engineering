@@ -1,26 +1,26 @@
 import fs from "fs-extra";
 import path from "path";
 
-import ActivePool from "../../contracts/artifacts/contracts/ActivePool.sol/ActivePool.json";
-import BorrowerOperations from "../../contracts/artifacts/contracts/BorrowerOperations.sol/BorrowerOperations.json";
-import CollSurplusPool from "../../contracts/artifacts/contracts/CollSurplusPool.sol/CollSurplusPool.json";
-import CommunityIssuance from "../../contracts/artifacts/contracts/MP/CommunityIssuance.sol/CommunityIssuance.json";
-import DefaultPool from "../../contracts/artifacts/contracts/DefaultPool.sol/DefaultPool.json";
-import ERC20Mock from "../../contracts/artifacts/contracts/LPRewards/TestContracts/ERC20Mock.sol/ERC20Mock.json";
-import GasPool from "../../contracts/artifacts/contracts/GasPool.sol/GasPool.json";
-import HintHelpers from "../../contracts/artifacts/contracts/HintHelpers.sol/HintHelpers.json";
-import IERC20 from "../../contracts/artifacts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json";
-import LockupContractFactory from "../../contracts/artifacts/contracts/MP/LockupContractFactory.sol/LockupContractFactory.json";
-import BPDToken from "../../contracts/artifacts/contracts/BPDToken.sol/BPDToken.json";
-import MPStaking from "../../contracts/artifacts/contracts/MP/MPStaking.sol/MPStaking.json";
-import MPToken from "../../contracts/artifacts/contracts/MP/MPToken.sol/MPToken.json";
-import MultiVaultGetter from "../../contracts/artifacts/contracts/MultiVaultGetter.sol/MultiVaultGetter.json";
-import PriceFeed from "../../contracts/artifacts/contracts/PriceFeed.sol/PriceFeed.json";
-import PriceFeedTestnet from "../../contracts/artifacts/contracts/TestContracts/PriceFeedTestnet.sol/PriceFeedTestnet.json";
-import SortedVaults from "../../contracts/artifacts/contracts/SortedVaults.sol/SortedVaults.json";
-import StabilityPool from "../../contracts/artifacts/contracts/StabilityPool.sol/StabilityPool.json";
-import VaultManager from "../../contracts/artifacts/contracts/VaultManager.sol/VaultManager.json";
-import RskSwapPool from "../../contracts/artifacts/contracts/LPRewards/RskSwapPool.sol/RskSwapPool.json";
+import ActivePool from "@moneyprotocol/contracts/artifacts/contracts/ActivePool.sol/ActivePool.json";
+import BorrowerOperations from "@moneyprotocol/contracts/artifacts/contracts/BorrowerOperations.sol/BorrowerOperations.json";
+import CollSurplusPool from "@moneyprotocol/contracts/artifacts/contracts/CollSurplusPool.sol/CollSurplusPool.json";
+import CommunityIssuance from "@moneyprotocol/contracts/artifacts/contracts/MP/CommunityIssuance.sol/CommunityIssuance.json";
+import DefaultPool from "@moneyprotocol/contracts/artifacts/contracts/DefaultPool.sol/DefaultPool.json";
+import ERC20Mock from "@moneyprotocol/contracts/artifacts/contracts/LPRewards/TestContracts/ERC20Mock.sol/ERC20Mock.json";
+import GasPool from "@moneyprotocol/contracts/artifacts/contracts/GasPool.sol/GasPool.json";
+import HintHelpers from "@moneyprotocol/contracts/artifacts/contracts/HintHelpers.sol/HintHelpers.json";
+import IERC20 from "@moneyprotocol/contracts/artifacts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json";
+import LockupContractFactory from "@moneyprotocol/contracts/artifacts/contracts/MP/LockupContractFactory.sol/LockupContractFactory.json";
+import BPDToken from "@moneyprotocol/contracts/artifacts/contracts/BPDToken.sol/BPDToken.json";
+import MPStaking from "@moneyprotocol/contracts/artifacts/contracts/MP/MPStaking.sol/MPStaking.json";
+import MPToken from "@moneyprotocol/contracts/artifacts/contracts/MP/MPToken.sol/MPToken.json";
+import MultiVaultGetter from "@moneyprotocol/contracts/artifacts/contracts/MultiVaultGetter.sol/MultiVaultGetter.json";
+import PriceFeed from "@moneyprotocol/contracts/artifacts/contracts/PriceFeed.sol/PriceFeed.json";
+import PriceFeedTestnet from "@moneyprotocol/contracts/artifacts/contracts/TestContracts/PriceFeedTestnet.sol/PriceFeedTestnet.json";
+import SortedVaults from "@moneyprotocol/contracts/artifacts/contracts/SortedVaults.sol/SortedVaults.json";
+import StabilityPool from "@moneyprotocol/contracts/artifacts/contracts/StabilityPool.sol/StabilityPool.json";
+import VaultManager from "@moneyprotocol/contracts/artifacts/contracts/VaultManager.sol/VaultManager.json";
+import RskSwapPool from "@moneyprotocol/contracts/artifacts/contracts/LPRewards/RskSwapPool.sol/RskSwapPool.json";
 import { ParamType, Interface } from "ethers/lib/utils";
 
 const getTupleType = (components: ParamType[], flexible: boolean) => {
