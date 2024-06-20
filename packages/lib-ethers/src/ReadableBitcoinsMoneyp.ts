@@ -385,7 +385,8 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     overrides?: BitcoinsCallOverrides
   ): Promise<(blockTimestamp: number) => Decimal> {
     const { rskSwapPool } = _getContracts(this.connection);
-
+    console.log(this.connection);
+    console.log(rskSwapPool);
     const [totalSupply, rewardRate, periodFinish, lastUpdateTime] =
       await Promise.all([
         rskSwapPool.totalSupply({ ...overrides }),
