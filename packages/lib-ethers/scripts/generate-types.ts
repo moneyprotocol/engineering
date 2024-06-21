@@ -184,7 +184,7 @@ const contractArtifacts = [
   RskSwapPool,
 ];
 
-const contracts = contractArtifacts.map(({ contractName, abi }) => ({
+const contracts = contractArtifacts.map(({ contractName, abi }: any) => ({
   contractName,
   interface: new Interface(abi),
 }));
@@ -210,7 +210,7 @@ fs.writeFileSync(path.join("types", "index.ts"), output);
 
 fs.removeSync("abi");
 fs.mkdirSync("abi", { recursive: true });
-contractArtifacts.forEach(({ contractName, abi }) =>
+contractArtifacts.forEach(({ contractName, abi }: any) =>
   fs.writeFileSync(
     path.join("abi", `${contractName}.json`),
     JSON.stringify(abi, undefined, 2)
