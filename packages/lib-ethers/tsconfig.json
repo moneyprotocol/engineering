@@ -2,11 +2,20 @@
   "extends": "./tsconfig.paths.json",
   "compilerOptions": {
     "typeRoots": ["./node_modules/@types"],
+    "target": "ES2019",
+    "lib": ["ES2019", "DOM"],
+    "module": "CommonJS",
     "strictNullChecks": false,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "allowJs": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@moneyprotocol/*": ["../../packages/*"]
+    }
   },
   "types": ["node"],
   "include": ["src", "test", "types", "scripts", "utils"],
