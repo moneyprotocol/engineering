@@ -89,9 +89,6 @@ export const MoneypFrontend: React.FC<MoneypFrontendProps> = ({ loader }) => {
                       <Route path="/" exact>
                         <PageSwitcher />
                       </Route>
-                      <Route path="/farm">
-                        <Farm />
-                      </Route>
                       <Route path="/liquidation">
                         <Liquidation />
                       </Route>
