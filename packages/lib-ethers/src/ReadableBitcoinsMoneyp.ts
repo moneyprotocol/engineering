@@ -108,7 +108,6 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
   constructor(connection: BitcoinsMoneypConnection) {
     this.connection = connection;
   }
-
   /** @internal */
   static _from(
     connection: BitcoinsMoneypConnection & { useStore: "blockPolled" }
@@ -354,98 +353,6 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     const { mpToken } = _getContracts(this.connection);
 
     return mpToken.balanceOf(address, { ...overrides }).then(decimalify);
-  }
-
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getRskSwapTokenBalance} */
-  getRskSwapTokenBalance(
-    address?: string,
-    overrides?: BitcoinsCallOverrides
-  ): Promise<Decimal> {
-    address ??= _requireAddress(this.connection);
-    const { rskSwapToken } = _getContracts(this.connection);
-
-    return rskSwapToken.balanceOf(address, { ...overrides }).then(decimalify);
-  }
-
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getRskSwapTokenAllowance} */
-  getRskSwapTokenAllowance(
-    address?: string,
-    overrides?: BitcoinsCallOverrides
-  ): Promise<Decimal> {
-    address ??= _requireAddress(this.connection);
-    const { rskSwapToken, rskSwapPool } = _getContracts(this.connection);
-
-    return rskSwapToken
-      .allowance(address, rskSwapPool.address, { ...overrides })
-      .then(decimalify);
-  }
-
-  /** @internal */
-  async _getRemainingLiquidityMiningMPRewardCalculator(
-    overrides?: BitcoinsCallOverrides
-  ): Promise<(blockTimestamp: number) => Decimal> {
-    const { rskSwapPool } = _getContracts(this.connection);
-    console.log(this.connection);
-    console.log(rskSwapPool);
-    const [totalSupply, rewardRate, periodFinish, lastUpdateTime] =
-      await Promise.all([
-        rskSwapPool.totalSupply({ ...overrides }),
-        rskSwapPool.rewardRate({ ...overrides }).then(decimalify),
-        rskSwapPool.periodFinish({ ...overrides }).then(numberify),
-        rskSwapPool.lastUpdateTime({ ...overrides }).then(numberify),
-      ]);
-
-    return (blockTimestamp: number) =>
-      rewardRate.mul(
-        Math.max(
-          0,
-          periodFinish -
-            (totalSupply.isZero() ? lastUpdateTime : blockTimestamp)
-        )
-      );
-  }
-
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getRemainingLiquidityMiningMPReward} */
-  async getRemainingLiquidityMiningMPReward(
-    overrides?: BitcoinsCallOverrides
-  ): Promise<Decimal> {
-    const [calculateRemainingMP, blockTimestamp] = await Promise.all([
-      this._getRemainingLiquidityMiningMPRewardCalculator(overrides),
-      _getBlockTimestamp(this.connection, overrides?.blockTag),
-    ]);
-
-    return calculateRemainingMP(blockTimestamp);
-  }
-
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getLiquidityMiningStake} */
-  getLiquidityMiningStake(
-    address?: string,
-    overrides?: BitcoinsCallOverrides
-  ): Promise<Decimal> {
-    address ??= _requireAddress(this.connection);
-    const { rskSwapPool } = _getContracts(this.connection);
-
-    return rskSwapPool.balanceOf(address, { ...overrides }).then(decimalify);
-  }
-
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getTotalStakedRskSwapTokens} */
-  getTotalStakedRskSwapTokens(
-    overrides?: BitcoinsCallOverrides
-  ): Promise<Decimal> {
-    const { rskSwapPool } = _getContracts(this.connection);
-
-    return rskSwapPool.totalSupply({ ...overrides }).then(decimalify);
-  }
-
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getLiquidityMiningMPReward} */
-  getLiquidityMiningMPReward(
-    address?: string,
-    overrides?: BitcoinsCallOverrides
-  ): Promise<Decimal> {
-    address ??= _requireAddress(this.connection);
-    const { rskSwapPool } = _getContracts(this.connection);
-
-    return rskSwapPool.earned(address, { ...overrides }).then(decimalify);
   }
 
   /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getCollateralSurplusBalance} */
@@ -750,58 +657,6 @@ class BlockPolledMoneypStoreBasedCache
   ): Decimal | undefined {
     if (this._userHit(address, overrides)) {
       return this._store.state.mpBalance;
-    }
-  }
-
-  getRskSwapTokenBalance(
-    address?: string,
-    overrides?: BitcoinsCallOverrides
-  ): Decimal | undefined {
-    if (this._userHit(address, overrides)) {
-      return this._store.state.rskSwapTokenBalance;
-    }
-  }
-
-  getRskSwapTokenAllowance(
-    address?: string,
-    overrides?: BitcoinsCallOverrides
-  ): Decimal | undefined {
-    if (this._userHit(address, overrides)) {
-      return this._store.state.rskSwapTokenAllowance;
-    }
-  }
-
-  getRemainingLiquidityMiningMPReward(
-    overrides?: BitcoinsCallOverrides
-  ): Decimal | undefined {
-    if (this._blockHit(overrides)) {
-      return this._store.state.remainingLiquidityMiningMPReward;
-    }
-  }
-
-  getLiquidityMiningStake(
-    address?: string,
-    overrides?: BitcoinsCallOverrides
-  ): Decimal | undefined {
-    if (this._userHit(address, overrides)) {
-      return this._store.state.liquidityMiningStake;
-    }
-  }
-
-  getTotalStakedRskSwapTokens(
-    overrides?: BitcoinsCallOverrides
-  ): Decimal | undefined {
-    if (this._blockHit(overrides)) {
-      return this._store.state.totalStakedRskSwapTokens;
-    }
-  }
-
-  getLiquidityMiningMPReward(
-    address?: string,
-    overrides?: BitcoinsCallOverrides
-  ): Decimal | undefined {
-    if (this._userHit(address, overrides)) {
-      return this._store.state.liquidityMiningMPReward;
     }
   }
 

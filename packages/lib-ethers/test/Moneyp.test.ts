@@ -20,7 +20,7 @@ import {
   MAXIMUM_BORROWING_RATE,
   MINIMUM_BORROWING_RATE,
   BPD_MINIMUM_DEBT,
-  BPD_MINIMUM_NET_DEBT
+  BPD_MINIMUM_NET_DEBT,
 } from "@moneyprotocol/lib-base";
 
 import { HintHelpers } from "../types";
@@ -28,7 +28,7 @@ import { HintHelpers } from "../types";
 import {
   PopulatableBitcoinsMoneyp,
   PopulatedBitcoinsMoneypTransaction,
-  _redeemMaxIterations
+  _redeemMaxIterations,
 } from "../src/PopulatableBitcoinsMoneyp";
 
 import { _MoneypDeploymentJSON } from "../src/contracts";
@@ -49,7 +49,7 @@ const connectToDeployment = async (
   BitcoinsMoneyp._from(
     _connectToDeployment(deployment, signer, {
       userAddress: await signer.getAddress(),
-      frontendTag
+      frontendTag,
     })
   );
 
@@ -93,17 +93,21 @@ describe("BitcoinsMoneyp", () => {
   let otherLiquities: BitcoinsMoneyp[];
 
   const connectUsers = (users: Signer[]) =>
-    Promise.all(users.map(user => connectToDeployment(deployment, user)));
+    Promise.all(users.map((user) => connectToDeployment(deployment, user)));
 
-  const openVaults = (users: Signer[], params: VaultCreationParams<Decimalish>[]) =>
+  const openVaults = (
+    users: Signer[],
+    params: VaultCreationParams<Decimalish>[]
+  ) =>
     params
-      .map((params, i) => () =>
-        Promise.all([
-          connectToDeployment(deployment, users[i]),
-          sendTo(users[i], params.depositCollateral).then(tx => tx.wait())
-        ]).then(async ([moneyp]) => {
-          await moneyp.openVault(params, undefined, { gasPrice: 0 });
-        })
+      .map(
+        (params, i) => () =>
+          Promise.all([
+            connectToDeployment(deployment, users[i]),
+            sendTo(users[i], params.depositCollateral).then((tx) => tx.wait()),
+          ]).then(async ([moneyp]) => {
+            await moneyp.openVault(params, undefined, { gasPrice: 0 });
+          })
       )
       .reduce((a, b) => a.then(b), Promise.resolve());
 
@@ -111,12 +115,14 @@ describe("BitcoinsMoneyp", () => {
     funder.sendTransaction({
       to: user.getAddress(),
       value: Decimal.from(value).hex,
-      nonce
+      nonce,
     });
 
   const sendToEach = async (users: Signer[], value: Decimalish) => {
     const txCount = await provider.getTransactionCount(funder.getAddress());
-    const txs = await Promise.all(users.map((user, i) => sendTo(user, value, txCount + i)));
+    const txs = await Promise.all(
+      users.map((user, i) => sendTo(user, value, txCount + i))
+    );
 
     // Wait for the last tx to be mined.
     await txs[txs.length - 1].wait();
@@ -144,13 +150,13 @@ describe("BitcoinsMoneyp", () => {
       await user.sendTransaction({
         to: funder.getAddress(),
         value: balance.sub(targetBalance),
-        gasPrice
+        gasPrice,
       });
     } else {
       await funder.sendTransaction({
         to: user.getAddress(),
         value: targetBalance.sub(balance),
-        gasPrice
+        gasPrice,
       });
     }
 
@@ -168,55 +174,84 @@ describe("BitcoinsMoneyp", () => {
       type ApproxHint = Resolved<ReturnType<HintHelpers["getApproxHint"]>>;
 
       const fakeHints: ApproxHint[] = [
-        { diff: BigNumber.from(3), hintAddress: "alice", latestRandomSeed: BigNumber.from(1111) },
-        { diff: BigNumber.from(4), hintAddress: "bob", latestRandomSeed: BigNumber.from(2222) },
-        { diff: BigNumber.from(1), hintAddress: "carol", latestRandomSeed: BigNumber.from(3333) },
-        { diff: BigNumber.from(2), hintAddress: "dennis", latestRandomSeed: BigNumber.from(4444) }
+        {
+          diff: BigNumber.from(3),
+          hintAddress: "alice",
+          latestRandomSeed: BigNumber.from(1111),
+        },
+        {
+          diff: BigNumber.from(4),
+          hintAddress: "bob",
+          latestRandomSeed: BigNumber.from(2222),
+        },
+        {
+          diff: BigNumber.from(1),
+          hintAddress: "carol",
+          latestRandomSeed: BigNumber.from(3333),
+        },
+        {
+          diff: BigNumber.from(2),
+          hintAddress: "dennis",
+          latestRandomSeed: BigNumber.from(4444),
+        },
       ];
 
       const borrowerOperations = {
         estimateAndPopulate: {
-          openVault: () => ({})
-        }
+          openVault: () => ({}),
+        },
       };
 
       const hintHelpers = chai.spy.interface({
-        getApproxHint: () => Promise.resolve(fakeHints.shift())
+        getApproxHint: () => Promise.resolve(fakeHints.shift()),
       });
 
       const sortedVaults = chai.spy.interface({
-        findInsertPosition: () => Promise.resolve(["fake insert position"])
+        findInsertPosition: () => Promise.resolve(["fake insert position"]),
       });
 
-      const fakeMoneyp = new PopulatableBitcoinsMoneyp(({
+      const fakeMoneyp = new PopulatableBitcoinsMoneyp({
         getNumberOfVaults: () => Promise.resolve(1000000),
-        getFees: () => Promise.resolve(new Fees(0, 0.99, 1, new Date(), new Date(), false)),
+        getFees: () =>
+          Promise.resolve(new Fees(0, 0.99, 1, new Date(), new Date(), false)),
 
         connection: {
           signerOrProvider: user,
           _contracts: {
             borrowerOperations,
             hintHelpers,
-            sortedVaults
-          }
-        }
-      } as unknown) as ReadableBitcoinsMoneyp);
+            sortedVaults,
+          },
+        },
+      } as unknown as ReadableBitcoinsMoneyp);
 
       const nominalCollateralRatio = Decimal.from(0.05);
 
-      const params = Vault.recreate(new Vault(Decimal.from(1), BPD_MINIMUM_DEBT));
+      const params = Vault.recreate(
+        new Vault(Decimal.from(1), BPD_MINIMUM_DEBT)
+      );
       const vault = Vault.create(params);
-      expect(`${vault._nominalCollateralRatio}`).to.equal(`${nominalCollateralRatio}`);
+      expect(`${vault._nominalCollateralRatio}`).to.equal(
+        `${nominalCollateralRatio}`
+      );
 
       await fakeMoneyp.openVault(params);
 
       expect(hintHelpers.getApproxHint).to.have.been.called.exactly(4);
-      expect(hintHelpers.getApproxHint).to.have.been.called.with(nominalCollateralRatio.hex);
+      expect(hintHelpers.getApproxHint).to.have.been.called.with(
+        nominalCollateralRatio.hex
+      );
 
       // returned latestRandomSeed should be passed back on the next call
-      expect(hintHelpers.getApproxHint).to.have.been.called.with(BigNumber.from(1111));
-      expect(hintHelpers.getApproxHint).to.have.been.called.with(BigNumber.from(2222));
-      expect(hintHelpers.getApproxHint).to.have.been.called.with(BigNumber.from(3333));
+      expect(hintHelpers.getApproxHint).to.have.been.called.with(
+        BigNumber.from(1111)
+      );
+      expect(hintHelpers.getApproxHint).to.have.been.called.with(
+        BigNumber.from(2222)
+      );
+      expect(hintHelpers.getApproxHint).to.have.been.called.with(
+        BigNumber.from(3333)
+      );
 
       expect(sortedVaults.findInsertPosition).to.have.been.called.once;
       expect(sortedVaults.findInsertPosition).to.have.been.called.with(
@@ -234,53 +269,77 @@ describe("BitcoinsMoneyp", () => {
 
     it("should fail to create an undercollateralized Vault", async () => {
       const price = await moneyp.getPrice();
-      const undercollateralized = new Vault(BPD_MINIMUM_DEBT.div(price), BPD_MINIMUM_DEBT);
+      const undercollateralized = new Vault(
+        BPD_MINIMUM_DEBT.div(price),
+        BPD_MINIMUM_DEBT
+      );
 
-      await expect(moneyp.openVault(Vault.recreate(undercollateralized))).to.eventually.be.rejected;
+      await expect(moneyp.openVault(Vault.recreate(undercollateralized))).to
+        .eventually.be.rejected;
     });
 
     it("should fail to create a Vault with too little debt", async () => {
-      const withTooLittleDebt = new Vault(Decimal.from(50), BPD_MINIMUM_DEBT.sub(1));
+      const withTooLittleDebt = new Vault(
+        Decimal.from(50),
+        BPD_MINIMUM_DEBT.sub(1)
+      );
 
-      await expect(moneyp.openVault(Vault.recreate(withTooLittleDebt))).to.eventually.be.rejected;
+      await expect(moneyp.openVault(Vault.recreate(withTooLittleDebt))).to
+        .eventually.be.rejected;
     });
 
-    const withSomeBorrowing = { depositCollateral: 50, borrowBPD: BPD_MINIMUM_NET_DEBT.add(100) };
+    const withSomeBorrowing = {
+      depositCollateral: 50,
+      borrowBPD: BPD_MINIMUM_NET_DEBT.add(100),
+    };
 
     it("should create a Vault with some borrowing", async () => {
       const { newVault, fee } = await moneyp.openVault(withSomeBorrowing);
       expect(newVault).to.deep.equal(Vault.create(withSomeBorrowing));
-      expect(`${fee}`).to.equal(`${MINIMUM_BORROWING_RATE.mul(withSomeBorrowing.borrowBPD)}`);
+      expect(`${fee}`).to.equal(
+        `${MINIMUM_BORROWING_RATE.mul(withSomeBorrowing.borrowBPD)}`
+      );
     });
 
     it("should fail to withdraw all the collateral while the Vault has debt", async () => {
       const vault = await moneyp.getVault();
 
-      await expect(moneyp.withdrawCollateral(vault.collateral)).to.eventually.be.rejected;
+      await expect(moneyp.withdrawCollateral(vault.collateral)).to.eventually.be
+        .rejected;
     });
 
     const repaySomeDebt = { repayBPD: 10 };
 
     it("should repay some debt", async () => {
       const { newVault, fee } = await moneyp.repayBPD(repaySomeDebt.repayBPD);
-      expect(newVault).to.deep.equal(Vault.create(withSomeBorrowing).adjust(repaySomeDebt));
+      expect(newVault).to.deep.equal(
+        Vault.create(withSomeBorrowing).adjust(repaySomeDebt)
+      );
       expect(`${fee}`).to.equal("0");
     });
 
     const borrowSomeMore = { borrowBPD: 20 };
 
     it("should borrow some more", async () => {
-      const { newVault, fee } = await moneyp.borrowBPD(borrowSomeMore.borrowBPD);
-      expect(newVault).to.deep.equal(
-        Vault.create(withSomeBorrowing).adjust(repaySomeDebt).adjust(borrowSomeMore)
+      const { newVault, fee } = await moneyp.borrowBPD(
+        borrowSomeMore.borrowBPD
       );
-      expect(`${fee}`).to.equal(`${MINIMUM_BORROWING_RATE.mul(borrowSomeMore.borrowBPD)}`);
+      expect(newVault).to.deep.equal(
+        Vault.create(withSomeBorrowing)
+          .adjust(repaySomeDebt)
+          .adjust(borrowSomeMore)
+      );
+      expect(`${fee}`).to.equal(
+        `${MINIMUM_BORROWING_RATE.mul(borrowSomeMore.borrowBPD)}`
+      );
     });
 
     const depositMoreCollateral = { depositCollateral: 1 };
 
     it("should deposit more collateral", async () => {
-      const { newVault } = await moneyp.depositCollateral(depositMoreCollateral.depositCollateral);
+      const { newVault } = await moneyp.depositCollateral(
+        depositMoreCollateral.depositCollateral
+      );
       expect(newVault).to.deep.equal(
         Vault.create(withSomeBorrowing)
           .adjust(repaySomeDebt)
@@ -292,7 +351,11 @@ describe("BitcoinsMoneyp", () => {
     const repayAndWithdraw = { repayBPD: 60, withdrawCollateral: 0.5 };
 
     it("should repay some debt and withdraw some collateral at the same time", async () => {
-      const { newVault } = await moneyp.adjustVault(repayAndWithdraw, undefined, { gasPrice: 0 });
+      const { newVault } = await moneyp.adjustVault(
+        repayAndWithdraw,
+        undefined,
+        { gasPrice: 0 }
+      );
 
       expect(newVault).to.deep.equal(
         Vault.create(withSomeBorrowing)
@@ -302,16 +365,22 @@ describe("BitcoinsMoneyp", () => {
           .adjust(repayAndWithdraw)
       );
 
-      const ethBalance = Decimal.fromBigNumberString(`${await user.getBalance()}`);
+      const ethBalance = Decimal.fromBigNumberString(
+        `${await user.getBalance()}`
+      );
       expect(`${ethBalance}`).to.equal("100.5");
     });
 
     const borrowAndDeposit = { borrowBPD: 60, depositCollateral: 0.5 };
 
     it("should borrow more and deposit some collateral at the same time", async () => {
-      const { newVault, fee } = await moneyp.adjustVault(borrowAndDeposit, undefined, {
-        gasPrice: 0
-      });
+      const { newVault, fee } = await moneyp.adjustVault(
+        borrowAndDeposit,
+        undefined,
+        {
+          gasPrice: 0,
+        }
+      );
 
       expect(newVault).to.deep.equal(
         Vault.create(withSomeBorrowing)
@@ -322,9 +391,13 @@ describe("BitcoinsMoneyp", () => {
           .adjust(borrowAndDeposit)
       );
 
-      expect(`${fee}`).to.equal(`${MINIMUM_BORROWING_RATE.mul(borrowAndDeposit.borrowBPD)}`);
+      expect(`${fee}`).to.equal(
+        `${MINIMUM_BORROWING_RATE.mul(borrowAndDeposit.borrowBPD)}`
+      );
 
-      const ethBalance = Decimal.fromBigNumberString(`${await user.getBalance()}`);
+      const ethBalance = Decimal.fromBigNumberString(
+        `${await user.getBalance()}`
+      );
       expect(`${ethBalance}`).to.equal("99.5");
     });
 
@@ -334,9 +407,16 @@ describe("BitcoinsMoneyp", () => {
       const bpdBalance = await moneyp.getMPBalance();
       const bpdShortage = initialVault.netDebt.sub(bpdBalance);
 
-      let funderVault = Vault.create({ depositCollateral: 1, borrowBPD: bpdShortage });
-      funderVault = funderVault.setDebt(Decimal.max(funderVault.debt, BPD_MINIMUM_DEBT));
-      funderVault = funderVault.setCollateral(funderVault.debt.mulDiv(1.51, price));
+      let funderVault = Vault.create({
+        depositCollateral: 1,
+        borrowBPD: bpdShortage,
+      });
+      funderVault = funderVault.setDebt(
+        Decimal.max(funderVault.debt, BPD_MINIMUM_DEBT)
+      );
+      funderVault = funderVault.setCollateral(
+        funderVault.debt.mulDiv(1.51, price)
+      );
 
       const funderMoneyp = await connectToDeployment(deployment, funder);
       await funderMoneyp.openVault(Vault.recreate(funderVault));
@@ -346,7 +426,7 @@ describe("BitcoinsMoneyp", () => {
 
       expect(params).to.deep.equal({
         withdrawCollateral: initialVault.collateral,
-        repayBPD: initialVault.netDebt
+        repayBPD: initialVault.netDebt,
       });
 
       const finalVault = await moneyp.getVault();
@@ -391,11 +471,18 @@ describe("BitcoinsMoneyp", () => {
 
       await funder.sendTransaction({
         to: otherUsers[0].getAddress(),
-        value: Decimal.from(20.1).hex
+        value: Decimal.from(20.1).hex,
       });
 
-      const otherMoneyp = await connectToDeployment(deployment, otherUsers[0], frontendTag);
-      await otherMoneyp.openVault({ depositCollateral: 20, borrowBPD: BPD_MINIMUM_DEBT });
+      const otherMoneyp = await connectToDeployment(
+        deployment,
+        otherUsers[0],
+        frontendTag
+      );
+      await otherMoneyp.openVault({
+        depositCollateral: 20,
+        borrowBPD: BPD_MINIMUM_DEBT,
+      });
 
       await otherMoneyp.depositBPDInStabilityPool(BPD_MINIMUM_DEBT);
 
@@ -411,27 +498,31 @@ describe("BitcoinsMoneyp", () => {
       [deployerMoneyp, moneyp, ...otherLiquities] = await connectUsers([
         deployer,
         user,
-        ...otherUsers.slice(0, 1)
+        ...otherUsers.slice(0, 1),
       ]);
 
       await funder.sendTransaction({
         to: otherUsers[0].getAddress(),
-        value: BPD_MINIMUM_DEBT.div(170).hex
+        value: BPD_MINIMUM_DEBT.div(170).hex,
       });
     });
 
     const initialVaultOfDepositor = Vault.create({
       depositCollateral: BPD_MINIMUM_DEBT.div(100),
-      borrowBPD: BPD_MINIMUM_NET_DEBT
+      borrowBPD: BPD_MINIMUM_NET_DEBT,
     });
 
     const smallStabilityDeposit = Decimal.from(10);
 
     it("should make a small stability deposit", async () => {
-      const { newVault } = await moneyp.openVault(Vault.recreate(initialVaultOfDepositor));
+      const { newVault } = await moneyp.openVault(
+        Vault.recreate(initialVaultOfDepositor)
+      );
       expect(newVault).to.deep.equal(initialVaultOfDepositor);
 
-      const details = await moneyp.depositBPDInStabilityPool(smallStabilityDeposit);
+      const details = await moneyp.depositBPDInStabilityPool(
+        smallStabilityDeposit
+      );
 
       expect(details).to.deep.equal({
         bpdLoss: Decimal.from(0),
@@ -440,18 +531,20 @@ describe("BitcoinsMoneyp", () => {
         mpReward: Decimal.from(0),
 
         change: {
-          depositBPD: smallStabilityDeposit
-        }
+          depositBPD: smallStabilityDeposit,
+        },
       });
     });
 
     const vaultWithVeryLowICR = Vault.create({
       depositCollateral: BPD_MINIMUM_DEBT.div(180),
-      borrowBPD: BPD_MINIMUM_NET_DEBT
+      borrowBPD: BPD_MINIMUM_NET_DEBT,
     });
 
     it("other user should make a Vault with very low ICR", async () => {
-      const { newVault } = await otherLiquities[0].openVault(Vault.recreate(vaultWithVeryLowICR));
+      const { newVault } = await otherLiquities[0].openVault(
+        Vault.recreate(vaultWithVeryLowICR)
+      );
 
       const price = await moneyp.getPrice();
       expect(Number(`${newVault.collateralRatio(price)}`)).to.be.below(1.15);
@@ -480,7 +573,7 @@ describe("BitcoinsMoneyp", () => {
             .mul(0.995) // -0.5% gas compensation
             .add("0.000000000000000001"), // tiny imprecision
           vaultWithVeryLowICR.debt
-        )
+        ),
       });
 
       const otherVault = await otherLiquities[0].getVault();
@@ -516,9 +609,12 @@ describe("BitcoinsMoneyp", () => {
           .addCollateral(
             vaultWithVeryLowICR.collateral
               .mul(0.995) // -0.5% gas compensation
-              .mulDiv(vaultWithVeryLowICR.debt.sub(smallStabilityDeposit), vaultWithVeryLowICR.debt)
+              .mulDiv(
+                vaultWithVeryLowICR.debt.sub(smallStabilityDeposit),
+                vaultWithVeryLowICR.debt
+              )
               .add("0.000000000000000001") // tiny imprecision
-          )
+          ),
       });
     });
 
@@ -553,7 +649,7 @@ describe("BitcoinsMoneyp", () => {
             vaultWithVeryLowICR.collateral
               .mul(0.995) // -0.5% gas compensation
               .sub("0.000000000000000005") // tiny imprecision
-          )
+          ),
       });
 
       const stabilityDeposit = await moneyp.getStabilityDeposit();
@@ -569,7 +665,7 @@ describe("BitcoinsMoneyp", () => {
         [deployerMoneyp, moneyp, ...otherLiquities] = await connectUsers([
           deployer,
           user,
-          ...otherUsersSubset
+          ...otherUsersSubset,
         ]);
 
         await sendToEach(otherUsersSubset, 21.1);
@@ -586,8 +682,14 @@ describe("BitcoinsMoneyp", () => {
         await moneyp.sendBPD(await otherUsers[2].getAddress(), 1000);
 
         // otherLiquities[3-4] will be Vault owners whose Vaults get liquidated
-        await otherLiquities[3].openVault({ depositCollateral: 21, borrowBPD: 2900 });
-        await otherLiquities[4].openVault({ depositCollateral: 21, borrowBPD: 2900 });
+        await otherLiquities[3].openVault({
+          depositCollateral: 21,
+          borrowBPD: 2900,
+        });
+        await otherLiquities[4].openVault({
+          depositCollateral: 21,
+          borrowBPD: 2900,
+        });
 
         await otherLiquities[0].depositBPDInStabilityPool(3000);
         await otherLiquities[1].depositBPDInStabilityPool(1000);
@@ -613,7 +715,11 @@ describe("BitcoinsMoneyp", () => {
       });
 
       it("should still be able to withdraw remaining deposit", async () => {
-        for (const l of [otherLiquities[0], otherLiquities[1], otherLiquities[2]]) {
+        for (const l of [
+          otherLiquities[0],
+          otherLiquities[1],
+          otherLiquities[2],
+        ]) {
           const stabilityDeposit = await l.getStabilityDeposit();
           await l.withdrawBPDFromStabilityPool(stabilityDeposit.currentBPD);
         }
@@ -626,7 +732,7 @@ describe("BitcoinsMoneyp", () => {
       { depositCollateral: 99, borrowBPD: 4600 },
       { depositCollateral: 20, borrowBPD: 2000 }, // net debt: 2010
       { depositCollateral: 20, borrowBPD: 2100 }, // net debt: 2110.5
-      { depositCollateral: 20, borrowBPD: 2200 } //  net debt: 2211
+      { depositCollateral: 20, borrowBPD: 2200 }, //  net debt: 2211
     ];
 
     before(async function () {
@@ -643,7 +749,7 @@ describe("BitcoinsMoneyp", () => {
       [deployerMoneyp, moneyp, ...otherLiquities] = await connectUsers([
         deployer,
         user,
-        ...otherUsersSubset
+        ...otherUsersSubset,
       ]);
 
       await sendToEach(otherUsersSubset, 20.1);
@@ -655,7 +761,8 @@ describe("BitcoinsMoneyp", () => {
       await otherLiquities[1].openVault(vaultCreations[2]);
       await otherLiquities[2].openVault(vaultCreations[3]);
 
-      await expect(moneyp.redeemBPD(4326.5, undefined, { gasPrice: 0 })).to.eventually.be.rejected;
+      await expect(moneyp.redeemBPD(4326.5, undefined, { gasPrice: 0 })).to
+        .eventually.be.rejected;
     });
 
     const someBPD = Decimal.from(4326.5);
@@ -664,12 +771,18 @@ describe("BitcoinsMoneyp", () => {
       // Fast-forward 31 days
       increaseTime(60 * 60 * 24 * 31);
 
-      expect(`${await otherLiquities[0].getCollateralSurplusBalance()}`).to.equal("0");
-      expect(`${await otherLiquities[1].getCollateralSurplusBalance()}`).to.equal("0");
-      expect(`${await otherLiquities[2].getCollateralSurplusBalance()}`).to.equal("0");
+      expect(
+        `${await otherLiquities[0].getCollateralSurplusBalance()}`
+      ).to.equal("0");
+      expect(
+        `${await otherLiquities[1].getCollateralSurplusBalance()}`
+      ).to.equal("0");
+      expect(
+        `${await otherLiquities[2].getCollateralSurplusBalance()}`
+      ).to.equal("0");
 
       const expectedTotal = vaultCreations
-        .map(params => Vault.create(params))
+        .map((params) => Vault.create(params))
         .reduce((a, b) => a.add(b));
 
       const total = await moneyp.getTotal();
@@ -681,13 +794,17 @@ describe("BitcoinsMoneyp", () => {
         collateralTaken: someBPD.div(200),
         fee: new Fees(0, 0.99, 2, new Date(), new Date(), false)
           .redemptionRate(someBPD.div(total.debt))
-          .mul(someBPD.div(200))
+          .mul(someBPD.div(200)),
       };
 
-      const details = await moneyp.redeemBPD(someBPD, undefined, { gasPrice: 0 });
+      const details = await moneyp.redeemBPD(someBPD, undefined, {
+        gasPrice: 0,
+      });
       expect(details).to.deep.equal(expectedDetails);
 
-      const balance = Decimal.fromBigNumberString(`${await provider.getBalance(user.getAddress())}`);
+      const balance = Decimal.fromBigNumberString(
+        `${await provider.getBalance(user.getAddress())}`
+      );
       expect(`${balance}`).to.equal(
         `${expectedDetails.collateralTaken.sub(expectedDetails.fee).add(100)}`
       );
@@ -707,30 +824,54 @@ describe("BitcoinsMoneyp", () => {
     });
 
     it("should claim the collateral surplus after redemption", async () => {
-      const balanceBefore1 = await provider.getBalance(otherUsers[1].getAddress());
-      const balanceBefore2 = await provider.getBalance(otherUsers[2].getAddress());
+      const balanceBefore1 = await provider.getBalance(
+        otherUsers[1].getAddress()
+      );
+      const balanceBefore2 = await provider.getBalance(
+        otherUsers[2].getAddress()
+      );
 
-      expect(`${await otherLiquities[0].getCollateralSurplusBalance()}`).to.equal("0");
+      expect(
+        `${await otherLiquities[0].getCollateralSurplusBalance()}`
+      ).to.equal("0");
 
       const surplus1 = await otherLiquities[1].getCollateralSurplusBalance();
       const vault1 = Vault.create(vaultCreations[2]);
-      expect(`${surplus1}`).to.equal(`${vault1.collateral.sub(vault1.netDebt.div(200))}`);
+      expect(`${surplus1}`).to.equal(
+        `${vault1.collateral.sub(vault1.netDebt.div(200))}`
+      );
 
       const surplus2 = await otherLiquities[2].getCollateralSurplusBalance();
       const vault2 = Vault.create(vaultCreations[3]);
-      expect(`${surplus2}`).to.equal(`${vault2.collateral.sub(vault2.netDebt.div(200))}`);
+      expect(`${surplus2}`).to.equal(
+        `${vault2.collateral.sub(vault2.netDebt.div(200))}`
+      );
 
       await otherLiquities[1].claimCollateralSurplus({ gasPrice: 0 });
       await otherLiquities[2].claimCollateralSurplus({ gasPrice: 0 });
 
-      expect(`${await otherLiquities[0].getCollateralSurplusBalance()}`).to.equal("0");
-      expect(`${await otherLiquities[1].getCollateralSurplusBalance()}`).to.equal("0");
-      expect(`${await otherLiquities[2].getCollateralSurplusBalance()}`).to.equal("0");
+      expect(
+        `${await otherLiquities[0].getCollateralSurplusBalance()}`
+      ).to.equal("0");
+      expect(
+        `${await otherLiquities[1].getCollateralSurplusBalance()}`
+      ).to.equal("0");
+      expect(
+        `${await otherLiquities[2].getCollateralSurplusBalance()}`
+      ).to.equal("0");
 
-      const balanceAfter1 = await provider.getBalance(otherUsers[1].getAddress());
-      const balanceAfter2 = await provider.getBalance(otherUsers[2].getAddress());
-      expect(`${balanceAfter1}`).to.equal(`${balanceBefore1.add(surplus1.hex)}`);
-      expect(`${balanceAfter2}`).to.equal(`${balanceBefore2.add(surplus2.hex)}`);
+      const balanceAfter1 = await provider.getBalance(
+        otherUsers[1].getAddress()
+      );
+      const balanceAfter2 = await provider.getBalance(
+        otherUsers[2].getAddress()
+      );
+      expect(`${balanceAfter1}`).to.equal(
+        `${balanceBefore1.add(surplus1.hex)}`
+      );
+      expect(`${balanceAfter2}`).to.equal(
+        `${balanceBefore2.add(surplus2.hex)}`
+      );
     });
 
     it("borrowing rate should be maxed out now", async () => {
@@ -740,7 +881,10 @@ describe("BitcoinsMoneyp", () => {
       expect(`${fee}`).to.equal(`${borrowBPD.mul(MAXIMUM_BORROWING_RATE)}`);
 
       expect(newVault).to.deep.equal(
-        Vault.create(vaultCreations[0]).adjust({ borrowBPD }, MAXIMUM_BORROWING_RATE)
+        Vault.create(vaultCreations[0]).adjust(
+          { borrowBPD },
+          MAXIMUM_BORROWING_RATE
+        )
       );
     });
   });
@@ -767,7 +911,7 @@ describe("BitcoinsMoneyp", () => {
       [deployerMoneyp, moneyp, ...otherLiquities] = await connectUsers([
         deployer,
         user,
-        ...otherUsersSubset
+        ...otherUsersSubset,
       ]);
 
       await sendToEach(otherUsersSubset, 20.1);
@@ -783,7 +927,9 @@ describe("BitcoinsMoneyp", () => {
     it("should truncate the amount if it would put the last Vault below the min debt", async () => {
       const redemption = await moneyp.populate.redeemBPD(amountToAttempt);
       expect(`${redemption.attemptedBPDAmount}`).to.equal(`${amountToAttempt}`);
-      expect(`${redemption.redeemableBPDAmount}`).to.equal(`${expectedRedeemable}`);
+      expect(`${redemption.redeemableBPDAmount}`).to.equal(
+        `${expectedRedeemable}`
+      );
       expect(redemption.isTruncated).to.be.true;
 
       const { details } = await waitForSuccess(redemption.send());
@@ -794,14 +940,23 @@ describe("BitcoinsMoneyp", () => {
     it("should increase the amount to the next lowest redeemable value", async () => {
       const increasedRedeemable = expectedRedeemable.add(BPD_MINIMUM_NET_DEBT);
 
-      const initialRedemption = await moneyp.populate.redeemBPD(amountToAttempt);
-      const increasedRedemption = await initialRedemption.increaseAmountByMinimumNetDebt();
-      expect(`${increasedRedemption.attemptedBPDAmount}`).to.equal(`${increasedRedeemable}`);
-      expect(`${increasedRedemption.redeemableBPDAmount}`).to.equal(`${increasedRedeemable}`);
+      const initialRedemption = await moneyp.populate.redeemBPD(
+        amountToAttempt
+      );
+      const increasedRedemption =
+        await initialRedemption.increaseAmountByMinimumNetDebt();
+      expect(`${increasedRedemption.attemptedBPDAmount}`).to.equal(
+        `${increasedRedeemable}`
+      );
+      expect(`${increasedRedemption.redeemableBPDAmount}`).to.equal(
+        `${increasedRedeemable}`
+      );
       expect(increasedRedemption.isTruncated).to.be.false;
 
       const { details } = await waitForSuccess(increasedRedemption.send());
-      expect(`${details.attemptedBPDAmount}`).to.equal(`${increasedRedeemable}`);
+      expect(`${details.attemptedBPDAmount}`).to.equal(
+        `${increasedRedeemable}`
+      );
       expect(`${details.actualBPDAmount}`).to.equal(`${increasedRedeemable}`);
     });
 
@@ -821,7 +976,9 @@ describe("BitcoinsMoneyp", () => {
     const massivePrice = Decimal.from(1000000);
 
     const amountToBorrowPerVault = Decimal.from(2000);
-    const netDebtPerVault = MINIMUM_BORROWING_RATE.add(1).mul(amountToBorrowPerVault);
+    const netDebtPerVault = MINIMUM_BORROWING_RATE.add(1).mul(
+      amountToBorrowPerVault
+    );
     const collateralPerVault = netDebtPerVault
       .add(BPD_LIQUIDATION_RESERVE)
       .mulDiv(1.5, massivePrice);
@@ -847,7 +1004,7 @@ describe("BitcoinsMoneyp", () => {
       [deployerMoneyp, moneyp, ...otherLiquities] = await connectUsers([
         deployer,
         user,
-        ...otherUsersSubset
+        ...otherUsersSubset,
       ]);
 
       await deployerMoneyp.setPrice(massivePrice);
@@ -857,7 +1014,7 @@ describe("BitcoinsMoneyp", () => {
         await otherMoneyp.openVault(
           {
             depositCollateral: collateralPerVault,
-            borrowBPD: amountToBorrowPerVault
+            borrowBPD: amountToBorrowPerVault,
           },
           undefined,
           { gasPrice: 0 }
@@ -870,10 +1027,12 @@ describe("BitcoinsMoneyp", () => {
     it("should redeem using the maximum iterations and almost all gas", async () => {
       await moneyp.openVault({
         depositCollateral: amountToDeposit,
-        borrowBPD: amountToRedeem
+        borrowBPD: amountToRedeem,
       });
 
-      const { rawReceipt } = await waitForSuccess(moneyp.send.redeemBPD(amountToRedeem));
+      const { rawReceipt } = await waitForSuccess(
+        moneyp.send.redeemBPD(amountToRedeem)
+      );
 
       const gasUsed = rawReceipt.gasUsed.toNumber();
       // gasUsed is ~half the real used amount because of how refunds work, see:
@@ -890,94 +1049,9 @@ describe("BitcoinsMoneyp", () => {
 
     const someRskSwapTokens = 1000;
 
-    it("should obtain some UNI LP tokens", async () => {
-      await moneyp._mintRskSwapToken(someRskSwapTokens);
-
-      const rskSwapTokenBalance = await moneyp.getRskSwapTokenBalance();
-      expect(`${rskSwapTokenBalance}`).to.equal(`${someRskSwapTokens}`);
-    });
-
     it("should fail to stake UNI LP before approving the spend", async () => {
-      await expect(moneyp.stakeRskSwapTokens(someRskSwapTokens)).to.eventually.be.rejected;
-    });
-
-    it("should stake UNI LP after approving the spend", async () => {
-      const initialAllowance = await moneyp.getRskSwapTokenAllowance();
-      expect(`${initialAllowance}`).to.equal("0");
-
-      await moneyp.approveRskSwapTokens();
-
-      const newAllowance = await moneyp.getRskSwapTokenAllowance();
-      expect(newAllowance.isZero).to.be.false;
-
-      await moneyp.stakeRskSwapTokens(someRskSwapTokens);
-
-      const rskSwapTokenBalance = await moneyp.getRskSwapTokenBalance();
-      expect(`${rskSwapTokenBalance}`).to.equal("0");
-
-      const stake = await moneyp.getLiquidityMiningStake();
-      expect(`${stake}`).to.equal(`${someRskSwapTokens}`);
-    });
-
-    it("should have an MP reward after some time has passed", async function () {
-      this.timeout("20s");
-
-      // Liquidity mining rewards are seconds-based, so we don't need to wait long.
-      // By actually waiting in real time, we avoid using increaseTime(), which only works on
-      // Hardhat EVM.
-      await new Promise(resolve => setTimeout(resolve, 4000));
-
-      // Trigger a new block with a dummy TX.
-      await moneyp._mintRskSwapToken(0);
-
-      const mpReward = Number(await moneyp.getLiquidityMiningMPReward());
-      expect(mpReward).to.be.at.least(1); // ~0.2572 per second [(4e6/3) / (60*24*60*60)]
-
-      await moneyp.withdrawMPRewardFromLiquidityMining();
-      const mpBalance = Number(await moneyp.getMPBalance());
-      expect(mpBalance).to.be.at.least(mpReward); // may have increased since checking
-    });
-
-    it("should partially unstake", async () => {
-      await moneyp.unstakeRskSwapTokens(someRskSwapTokens / 2);
-
-      const rskSwapTokenStake = await moneyp.getLiquidityMiningStake();
-      expect(`${rskSwapTokenStake}`).to.equal(`${someRskSwapTokens / 2}`);
-
-      const rskSwapTokenBalance = await moneyp.getRskSwapTokenBalance();
-      expect(`${rskSwapTokenBalance}`).to.equal(`${someRskSwapTokens / 2}`);
-    });
-
-    it("should unstake remaining tokens and withdraw remaining MP reward", async () => {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      await moneyp._mintRskSwapToken(0); // dummy block
-      await moneyp.exitLiquidityMining();
-
-      const rskSwapTokenStake = await moneyp.getLiquidityMiningStake();
-      expect(`${rskSwapTokenStake}`).to.equal("0");
-
-      const mpReward = await moneyp.getLiquidityMiningMPReward();
-      expect(`${mpReward}`).to.equal("0");
-
-      const rskSwapTokenBalance = await moneyp.getRskSwapTokenBalance();
-      expect(`${rskSwapTokenBalance}`).to.equal(`${someRskSwapTokens}`);
-    });
-
-    it("should have no more rewards after the mining period is over", async function () {
-      if (network.name !== "hardhat") {
-        // increaseTime() only works on Hardhat EVM
-        this.skip();
-      }
-
-      await moneyp.stakeRskSwapTokens(someRskSwapTokens);
-      await increaseTime(2 * 30 * 24 * 60 * 60);
-      await moneyp.exitLiquidityMining();
-
-      const remainingMPReward = await moneyp.getRemainingLiquidityMiningMPReward();
-      expect(`${remainingMPReward}`).to.equal("0");
-
-      const mpBalance = Number(await moneyp.getMPBalance());
-      expect(mpBalance).to.be.within(1333333, 1333334);
+      await expect(moneyp.stakeRskSwapTokens(someRskSwapTokens)).to.eventually
+        .be.rejected;
     });
   });
 
@@ -997,19 +1071,15 @@ describe("BitcoinsMoneyp", () => {
 
       [rudeUser, ...fiveOtherUsers] = otherUsers.slice(0, 6);
 
-      [deployerMoneyp, moneyp, rudeMoneyp, ...otherLiquities] = await connectUsers([
-        deployer,
-        user,
-        rudeUser,
-        ...fiveOtherUsers
-      ]);
+      [deployerMoneyp, moneyp, rudeMoneyp, ...otherLiquities] =
+        await connectUsers([deployer, user, rudeUser, ...fiveOtherUsers]);
 
       await openVaults(fiveOtherUsers, [
         { depositCollateral: 20, borrowBPD: 2040 },
         { depositCollateral: 20, borrowBPD: 2050 },
         { depositCollateral: 20, borrowBPD: 2060 },
         { depositCollateral: 20, borrowBPD: 2070 },
-        { depositCollateral: 20, borrowBPD: 2080 }
+        { depositCollateral: 20, borrowBPD: 2080 },
       ]);
 
       increaseTime(60 * 60 * 24 * 15);
@@ -1021,13 +1091,17 @@ describe("BitcoinsMoneyp", () => {
       // We just updated lastFeeOperationTime, so this won't anticipate having to update that
       // during estimateGas
       const tx = await moneyp.populate.redeemBPD(1);
-      const originalGasEstimate = await provider.estimateGas(tx.rawPopulatedTransaction);
+      const originalGasEstimate = await provider.estimateGas(
+        tx.rawPopulatedTransaction
+      );
 
       // Fast-forward 2 minutes.
       await increaseTime(120);
 
       // Required gas has just went up.
-      const newGasEstimate = await provider.estimateGas(tx.rawPopulatedTransaction);
+      const newGasEstimate = await provider.estimateGas(
+        tx.rawPopulatedTransaction
+      );
       const gasIncrease = newGasEstimate.sub(originalGasEstimate).toNumber();
       expect(gasIncrease).to.be.within(5000, 10000);
 
@@ -1039,7 +1113,10 @@ describe("BitcoinsMoneyp", () => {
     });
 
     it("should include enough gas for one extra traversal", async () => {
-      const vaults = await moneyp.getVaults({ first: 10, sortedBy: "ascendingCollateralRatio" });
+      const vaults = await moneyp.getVaults({
+        first: 10,
+        sortedBy: "ascendingCollateralRatio",
+      });
 
       const vault = await moneyp.getVault();
       const newVault = vaultWithICRBetween(vaults[3], vaults[4]);
@@ -1050,14 +1127,18 @@ describe("BitcoinsMoneyp", () => {
       expect(adjustment.borrowBPD).to.be.undefined;
 
       const tx = await moneyp.populate.adjustVault(adjustment);
-      const originalGasEstimate = await provider.estimateGas(tx.rawPopulatedTransaction);
+      const originalGasEstimate = await provider.estimateGas(
+        tx.rawPopulatedTransaction
+      );
 
       // A terribly rude user interferes
       const rudeVault = newVault.addDebt(1);
       const rudeCreation = Vault.recreate(rudeVault);
       await openVaults([rudeUser], [rudeCreation]);
 
-      const newGasEstimate = await provider.estimateGas(tx.rawPopulatedTransaction);
+      const newGasEstimate = await provider.estimateGas(
+        tx.rawPopulatedTransaction
+      );
       const gasIncrease = newGasEstimate.sub(originalGasEstimate).toNumber();
 
       await waitForSuccess(tx.send());
@@ -1071,7 +1152,10 @@ describe("BitcoinsMoneyp", () => {
     });
 
     it("should include enough gas for both when borrowing", async () => {
-      const vaults = await moneyp.getVaults({ first: 10, sortedBy: "ascendingCollateralRatio" });
+      const vaults = await moneyp.getVaults({
+        first: 10,
+        sortedBy: "ascendingCollateralRatio",
+      });
 
       const vault = await moneyp.getVault();
       const newVault = vaultWithICRBetween(vaults[1], vaults[2]);
@@ -1081,7 +1165,9 @@ describe("BitcoinsMoneyp", () => {
       expect(adjustment.borrowBPD).to.not.be.undefined;
 
       const tx = await moneyp.populate.adjustVault(adjustment);
-      const originalGasEstimate = await provider.estimateGas(tx.rawPopulatedTransaction);
+      const originalGasEstimate = await provider.estimateGas(
+        tx.rawPopulatedTransaction
+      );
 
       // A terribly rude user interferes again
       await openVaults([rudeUser], [Vault.recreate(newVault.addDebt(1))]);
@@ -1089,7 +1175,9 @@ describe("BitcoinsMoneyp", () => {
       // On top of that, we'll need to update lastFeeOperationTime
       await increaseTime(120);
 
-      const newGasEstimate = await provider.estimateGas(tx.rawPopulatedTransaction);
+      const newGasEstimate = await provider.estimateGas(
+        tx.rawPopulatedTransaction
+      );
       const gasIncrease = newGasEstimate.sub(originalGasEstimate).toNumber();
 
       await waitForSuccess(tx.send());
@@ -1141,13 +1229,17 @@ describe("BitcoinsMoneyp", () => {
 
       await waitForSuccess(claim.send());
 
-      const creation = Vault.recreate(new Vault(Decimal.from(11.1), Decimal.from(2000.1)));
+      const creation = Vault.recreate(
+        new Vault(Decimal.from(11.1), Decimal.from(2000.1))
+      );
 
       await deployerMoneyp.openVault(creation);
       await deployerMoneyp.depositBPDInStabilityPool(creation.borrowBPD);
       await deployerMoneyp.setPrice(198);
 
-      const liquidateTarget = await moneyp.populate.liquidate(await deployer.getAddress());
+      const liquidateTarget = await moneyp.populate.liquidate(
+        await deployer.getAddress()
+      );
       const liquidateMultiple = await moneyp.populate.liquidateUpTo(40);
 
       for (let i = 0; i < 5; ++i) {

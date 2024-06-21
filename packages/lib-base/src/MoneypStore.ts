@@ -31,24 +31,6 @@ export interface MoneypStoreBaseState {
   /** User's MP token balance. */
   mpBalance: Decimal;
 
-  /** User's Uniswap RBTC/BPD LP token balance. */
-  rskSwapTokenBalance: Decimal;
-
-  /** The liquidity mining contract's allowance of user's Uniswap RBTC/BPD LP tokens. */
-  rskSwapTokenAllowance: Decimal;
-
-  /** Remaining MP that will be collectively rewarded to liquidity miners. */
-  remainingLiquidityMiningMPReward: Decimal;
-
-  /** Amount of Uniswap RBTC/BPD LP tokens the user has staked in liquidity mining. */
-  liquidityMiningStake: Decimal;
-
-  /** Total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining. */
-  totalStakedRskSwapTokens: Decimal;
-
-  /** Amount of MP the user has earned through mining liquidity. */
-  liquidityMiningMPReward: Decimal;
-
   /**
    * Amount of leftover collateral available for withdrawal to the user.
    *
@@ -155,7 +137,9 @@ export interface MoneypStoreDerivedState {
  *
  * @public
  */
-export type MoneypStoreState<T = unknown> = MoneypStoreBaseState & MoneypStoreDerivedState & T;
+export type MoneypStoreState<T = unknown> = MoneypStoreBaseState &
+  MoneypStoreDerivedState &
+  T;
 
 /**
  * Parameters passed to {@link MoneypStore} listeners.
@@ -178,7 +162,8 @@ export interface MoneypStoreListenerParams<T = unknown> {
 
 const strictEquals = <T>(a: T, b: T) => a === b;
 const eq = <T extends { eq(that: T): boolean }>(a: T, b: T) => a.eq(b);
-const equals = <T extends { equals(that: T): boolean }>(a: T, b: T) => a.equals(b);
+const equals = <T extends { equals(that: T): boolean }>(a: T, b: T) =>
+  a.equals(b);
 
 const frontendStatusEquals = (a: FrontendStatus, b: FrontendStatus) =>
   a.status === "unregistered"
@@ -190,11 +175,16 @@ const showFrontendStatus = (x: FrontendStatus) =>
     ? '{ status: "unregistered" }'
     : `{ status: "registered", kickbackRate: ${x.kickbackRate} }`;
 
-const wrap = <A extends unknown[], R>(f: (...args: A) => R) => (...args: A) => f(...args);
+const wrap =
+  <A extends unknown[], R>(f: (...args: A) => R) =>
+  (...args: A) =>
+    f(...args);
 
 const difference = <T>(a: T, b: T) =>
   Object.fromEntries(
-    Object.entries(a).filter(([key, value]) => value !== (b as Record<string, unknown>)[key])
+    Object.entries(a).filter(
+      ([key, value]) => value !== (b as Record<string, unknown>)[key]
+    )
   ) as Partial<T>;
 
 /**
@@ -228,7 +218,9 @@ export abstract class MoneypStore<T = unknown> {
   private _extraState?: T;
 
   private _updateTimeoutId: ReturnType<typeof setTimeout> | undefined;
-  private _listeners = new Set<(params: MoneypStoreListenerParams<T>) => void>();
+  private _listeners = new Set<
+    (params: MoneypStoreListenerParams<T>) => void
+  >();
 
   /**
    * The current store state.
@@ -240,7 +232,12 @@ export abstract class MoneypStore<T = unknown> {
    * See {@link MoneypStoreState} for the list of properties returned.
    */
   get state(): MoneypStoreState<T> {
-    return Object.assign({}, this._baseState, this._derivedState, this._extraState);
+    return Object.assign(
+      {},
+      this._baseState,
+      this._derivedState,
+      this._extraState
+    );
   }
 
   /** @internal */
@@ -297,10 +294,16 @@ export abstract class MoneypStore<T = unknown> {
     next?: U,
     show?: (next: U) => string
   ): U {
-    return next !== undefined && !equals(prev, next) ? this._logUpdate(name, next, show) : prev;
+    return next !== undefined && !equals(prev, next)
+      ? this._logUpdate(name, next, show)
+      : prev;
   }
 
-  private _silentlyUpdateIfChanged<U>(equals: (a: U, b: U) => boolean, prev: U, next?: U): U {
+  private _silentlyUpdateIfChanged<U>(
+    equals: (a: U, b: U) => boolean,
+    prev: U,
+    next?: U
+  ): U {
     return next !== undefined && !equals(prev, next) ? next : prev;
   }
 
@@ -365,47 +368,6 @@ export abstract class MoneypStore<T = unknown> {
         baseState.mpBalance,
         baseStateUpdate.mpBalance
       ),
-
-      rskSwapTokenBalance: this._updateIfChanged(
-        eq,
-        "rskSwapTokenBalance",
-        baseState.rskSwapTokenBalance,
-        baseStateUpdate.rskSwapTokenBalance
-      ),
-
-      rskSwapTokenAllowance: this._updateIfChanged(
-        eq,
-        "rskSwapTokenAllowance",
-        baseState.rskSwapTokenAllowance,
-        baseStateUpdate.rskSwapTokenAllowance
-      ),
-
-      remainingLiquidityMiningMPReward: this._silentlyUpdateIfChanged(
-        eq,
-        baseState.remainingLiquidityMiningMPReward,
-        baseStateUpdate.remainingLiquidityMiningMPReward
-      ),
-
-      liquidityMiningStake: this._updateIfChanged(
-        eq,
-        "liquidityMiningStake",
-        baseState.liquidityMiningStake,
-        baseStateUpdate.liquidityMiningStake
-      ),
-
-      totalStakedRskSwapTokens: this._updateIfChanged(
-        eq,
-        "totalStakedRskSwapTokens",
-        baseState.totalStakedRskSwapTokens,
-        baseStateUpdate.totalStakedRskSwapTokens
-      ),
-
-      liquidityMiningMPReward: this._silentlyUpdateIfChanged(
-        eq,
-        baseState.liquidityMiningMPReward,
-        baseStateUpdate.liquidityMiningMPReward
-      ),
-
       collateralSurplusBalance: this._updateIfChanged(
         eq,
         "collateralSurplusBalance",
@@ -413,7 +375,12 @@ export abstract class MoneypStore<T = unknown> {
         baseStateUpdate.collateralSurplusBalance
       ),
 
-      price: this._updateIfChanged(eq, "price", baseState.price, baseStateUpdate.price),
+      price: this._updateIfChanged(
+        eq,
+        "price",
+        baseState.price,
+        baseStateUpdate.price
+      ),
 
       bpdInStabilityPool: this._updateIfChanged(
         eq,
@@ -422,7 +389,12 @@ export abstract class MoneypStore<T = unknown> {
         baseStateUpdate.bpdInStabilityPool
       ),
 
-      total: this._updateIfChanged(equals, "total", baseState.total, baseStateUpdate.total),
+      total: this._updateIfChanged(
+        equals,
+        "total",
+        baseState.total,
+        baseStateUpdate.total
+      ),
 
       totalRedistributed: this._updateIfChanged(
         equals,
@@ -475,7 +447,7 @@ export abstract class MoneypStore<T = unknown> {
         equals,
         baseState._riskiestVaultBeforeRedistribution,
         baseStateUpdate._riskiestVaultBeforeRedistribution
-      )
+      ),
     };
   }
 
@@ -485,9 +457,11 @@ export abstract class MoneypStore<T = unknown> {
     _feesInNormalMode,
     total,
     price,
-    _riskiestVaultBeforeRedistribution
+    _riskiestVaultBeforeRedistribution,
   }: MoneypStoreBaseState): MoneypStoreDerivedState {
-    const fees = _feesInNormalMode._setRecoveryMode(total.collateralRatioIsBelowCritical(price));
+    const fees = _feesInNormalMode._setRecoveryMode(
+      total.collateralRatioIsBelowCritical(price)
+    );
 
     return {
       vault: vaultBeforeRedistribution.applyRedistribution(totalRedistributed),
@@ -496,7 +470,7 @@ export abstract class MoneypStore<T = unknown> {
       redemptionRate: fees.redemptionRate(),
       haveUndercollateralizedVaults: _riskiestVaultBeforeRedistribution
         .applyRedistribution(totalRedistributed)
-        .collateralRatioIsBelowMinimum(price)
+        .collateralRatioIsBelowMinimum(price),
     };
   }
 
@@ -505,9 +479,18 @@ export abstract class MoneypStore<T = unknown> {
     derivedStateUpdate: MoneypStoreDerivedState
   ): MoneypStoreDerivedState {
     return {
-      fees: this._updateFees("fees", derivedState.fees, derivedStateUpdate.fees),
+      fees: this._updateFees(
+        "fees",
+        derivedState.fees,
+        derivedStateUpdate.fees
+      ),
 
-      vault: this._updateIfChanged(equals, "vault", derivedState.vault, derivedStateUpdate.vault),
+      vault: this._updateIfChanged(
+        equals,
+        "vault",
+        derivedState.vault,
+        derivedStateUpdate.vault
+      ),
 
       borrowingRate: this._silentlyUpdateIfChanged(
         eq,
@@ -526,12 +509,15 @@ export abstract class MoneypStore<T = unknown> {
         "haveUndercollateralizedVaults",
         derivedState.haveUndercollateralizedVaults,
         derivedStateUpdate.haveUndercollateralizedVaults
-      )
+      ),
     };
   }
 
   /** @internal */
-  protected abstract _reduceExtra(extraState: T, extraStateUpdate: Partial<T>): T;
+  protected abstract _reduceExtra(
+    extraState: T,
+    extraStateUpdate: Partial<T>
+  ): T;
 
   private _notify(params: MoneypStoreListenerParams<T>) {
     // Iterate on a copy of `_listeners`, to avoid notifying any new listeners subscribed by
@@ -540,7 +526,7 @@ export abstract class MoneypStore<T = unknown> {
     // Before calling a listener from our copy of `_listeners`, check if it has been removed from
     // the original set. This way we avoid calling listeners that have already been unsubscribed
     // by an earlier listener callback.
-    [...this._listeners].forEach(listener => {
+    [...this._listeners].forEach((listener) => {
       if (this._listeners.has(listener)) {
         listener(params);
       }
@@ -553,7 +539,9 @@ export abstract class MoneypStore<T = unknown> {
    * @param listener - Function that will be called whenever state changes.
    * @returns Function to unregister this listener.
    */
-  subscribe(listener: (params: MoneypStoreListenerParams<T>) => void): () => void {
+  subscribe(
+    listener: (params: MoneypStoreListenerParams<T>) => void
+  ): () => void {
     const uniqueListener = wrap(listener);
 
     this._listeners.add(uniqueListener);
@@ -593,7 +581,10 @@ export abstract class MoneypStore<T = unknown> {
     }
 
     // Always running this lets us derive state based on passage of time, like baseRate decay
-    this._derivedState = this._reduceDerived(this._derivedState, this._derive(this._baseState));
+    this._derivedState = this._reduceDerived(
+      this._derivedState,
+      this._derive(this._baseState)
+    );
 
     if (extraStateUpdate) {
       assert(this._extraState);
@@ -605,7 +596,7 @@ export abstract class MoneypStore<T = unknown> {
     this._notify({
       newState: this.state,
       oldState,
-      stateChange: difference(this.state, oldState)
+      stateChange: difference(this.state, oldState),
     });
   }
 }

@@ -13,7 +13,6 @@ import { SystemStatsPopup } from "./components/SystemStatsPopup"
 import { Header } from "./components/Header"
 
 import { PageSwitcher } from "./pages/PageSwitcher"
-import { Farm } from "./pages/Farm"
 import { Liquidation } from "./pages/Liquidation"
 import { RedemptionPage } from "./pages/RedemptionPage"
 

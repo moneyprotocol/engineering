@@ -37,10 +37,6 @@ export class _CachedReadableMoneyp<T extends unknown[]> implements _ReadableMone
     // (undocumented)
     getFrontendStatus(address?: string, ...extraParams: T): Promise<FrontendStatus>;
     // (undocumented)
-    getLiquidityMiningMPReward(address?: string, ...extraParams: T): Promise<Decimal>;
-    // (undocumented)
-    getLiquidityMiningStake(address?: string, ...extraParams: T): Promise<Decimal>;
-    // (undocumented)
     getMPBalance(address?: string, ...extraParams: T): Promise<Decimal>;
     // (undocumented)
     getMPStake(address?: string, ...extraParams: T): Promise<MPStake>;
@@ -49,13 +45,7 @@ export class _CachedReadableMoneyp<T extends unknown[]> implements _ReadableMone
     // (undocumented)
     getPrice(...extraParams: T): Promise<Decimal>;
     // (undocumented)
-    getRemainingLiquidityMiningMPReward(...extraParams: T): Promise<Decimal>;
-    // (undocumented)
     getRemainingStabilityPoolMPReward(...extraParams: T): Promise<Decimal>;
-    // (undocumented)
-    getRskSwapTokenAllowance(address?: string, ...extraParams: T): Promise<Decimal>;
-    // (undocumented)
-    getRskSwapTokenBalance(address?: string, ...extraParams: T): Promise<Decimal>;
     // (undocumented)
     getStabilityDeposit(address?: string, ...extraParams: T): Promise<StabilityDeposit>;
     // (undocumented)
@@ -64,8 +54,6 @@ export class _CachedReadableMoneyp<T extends unknown[]> implements _ReadableMone
     getTotalRedistributed(...extraParams: T): Promise<Vault>;
     // (undocumented)
     getTotalStakedMP(...extraParams: T): Promise<Decimal>;
-    // (undocumented)
-    getTotalStakedRskSwapTokens(...extraParams: T): Promise<Decimal>;
     // (undocumented)
     getVault(address?: string, ...extraParams: T): Promise<UserVault>;
     // (undocumented)
@@ -299,24 +287,18 @@ export interface MoneypStoreBaseState {
     // @internal (undocumented)
     _feesInNormalMode: Fees;
     frontend: FrontendStatus;
-    liquidityMiningMPReward: Decimal;
-    liquidityMiningStake: Decimal;
     mpBalance: Decimal;
     mpStake: MPStake;
     numberOfVaults: number;
     ownFrontend: FrontendStatus;
     price: Decimal;
-    remainingLiquidityMiningMPReward: Decimal;
     remainingStabilityPoolMPReward: Decimal;
     // @internal (undocumented)
     _riskiestVaultBeforeRedistribution: VaultWithPendingRedistribution;
-    rskSwapTokenAllowance: Decimal;
-    rskSwapTokenBalance: Decimal;
     stabilityDeposit: StabilityDeposit;
     total: Vault;
     totalRedistributed: Vault;
     totalStakedMP: Decimal;
-    totalStakedRskSwapTokens: Decimal;
     vaultBeforeRedistribution: VaultWithPendingRedistribution;
 }
 
@@ -488,21 +470,15 @@ export interface ReadableMoneyp {
     getCollateralSurplusBalance(address?: string): Promise<Decimal>;
     getFees(): Promise<Fees>;
     getFrontendStatus(address?: string): Promise<FrontendStatus>;
-    getLiquidityMiningMPReward(address?: string): Promise<Decimal>;
-    getLiquidityMiningStake(address?: string): Promise<Decimal>;
     getMPBalance(address?: string): Promise<Decimal>;
     getMPStake(address?: string): Promise<MPStake>;
     getNumberOfVaults(): Promise<number>;
     getPrice(): Promise<Decimal>;
-    getRemainingLiquidityMiningMPReward(): Promise<Decimal>;
     getRemainingStabilityPoolMPReward(): Promise<Decimal>;
-    getRskSwapTokenAllowance(address?: string): Promise<Decimal>;
-    getRskSwapTokenBalance(address?: string): Promise<Decimal>;
     getStabilityDeposit(address?: string): Promise<StabilityDeposit>;
     getTotal(): Promise<Vault>;
     getTotalRedistributed(): Promise<Vault>;
     getTotalStakedMP(): Promise<Decimal>;
-    getTotalStakedRskSwapTokens(): Promise<Decimal>;
     getVault(address?: string): Promise<UserVault>;
     getVaultBeforeRedistribution(address?: string): Promise<VaultWithPendingRedistribution>;
     // @internal (undocumented)
