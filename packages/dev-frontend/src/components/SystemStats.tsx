@@ -33,7 +33,9 @@ const Balances: React.FC = () => {
 
 const GitHubCommit: React.FC<{ children?: string }> = ({ children }) =>
   children?.match(/[0-9a-f]{40}/) ? (
-    <Link href={`https://github.com/moneyp/dev/commit/${children}`}>{children.substr(0, 7)}</Link>
+    <Link href={`https://github.com/moneyprotocol/engineering/commit/${children}`}>
+      {children.substr(0, 7)}
+    </Link>
   ) : (
     <>unknown</>
   )
