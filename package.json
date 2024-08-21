@@ -55,7 +55,7 @@
     "start-demo:dev-frontend": "pnpm --filter @moneyprotocol/dev-frontend start-demo",
     "stop-demo": "pnpm run stop-dev-chain",
     "test": "run-s test:*",
-    "test:lib-base": "pnpm --filter @moneyprotocol/lib-base test",
+    "test:lib-base": "pnpm --filter @money-protocol/lib-base test",
     "test:lib-ethers": "pnpm --filter @moneyprotocol/lib-ethers test",
     "test:dev-frontend": "run-s --continue-on-error test:dev-frontend:*",
     "test:dev-frontend:start-dev-chain": "pnpm run start-dev-chain",

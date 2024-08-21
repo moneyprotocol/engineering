@@ -1,6 +1,6 @@
 {
-  "name": "@moneyprotocol/lib-base",
-  "version": "5.4.3-stable-testnet",
+  "name": "@money-protocol/lib-base",
+  "version": "1.0.0",
   "description": "Moneyp SDK shared interfaces",
   "keywords": [
     "Moneyp",
@@ -30,10 +30,12 @@
   "devDependencies": {
     "@ethersproject/bignumber": "^5.4.0",
     "@microsoft/api-extractor": "^7.13.0",
+    "@types/chai": "^4.2.9",
     "@types/mocha": "^8.0.4",
     "@types/node": "^14.14.31",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.18.0",
+    "chai": "^4.2.0",
     "eslint": "^7.11.0",
     "eslint-plugin-tsdoc": "^0.2.11",
     "fast-check": "^2.7.0",
