@@ -8,7 +8,7 @@ import {
   CRITICAL_COLLATERAL_RATIO,
   UserVault,
   Decimal,
-} from "@moneyprotocol/lib-base"
+} from "@money-protocol/lib-base"
 import { BlockPolledMoneypStoreState } from "@moneyprotocol/lib-ethers"
 import { useMoneypSelector } from "@moneyprotocol/lib-react"
 

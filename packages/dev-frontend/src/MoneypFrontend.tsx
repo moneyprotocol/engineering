@@ -3,7 +3,7 @@ import { Flex, Container } from "theme-ui"
 import { HashRouter as Router, Switch, Route } from "react-router-dom"
 import { Wallet } from "@ethersproject/wallet"
 
-import { Decimal, Difference, Vault } from "@moneyprotocol/lib-base"
+import { Decimal, Difference, Vault } from "@money-protocol/lib-base"
 import { MoneypStoreProvider } from "@moneyprotocol/lib-react"
 
 import { useMoneyp } from "./hooks/MoneypContext"

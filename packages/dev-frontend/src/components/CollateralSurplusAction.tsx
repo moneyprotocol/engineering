@@ -1,34 +1,34 @@
-import React, { useEffect } from "react";
-import { Button, Flex, Spinner } from "theme-ui";
+import React, { useEffect } from "react"
+import { Button, Flex, Spinner } from "theme-ui"
 
-import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
+import { MoneypStoreState } from "@money-protocol/lib-base"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
-import { useMoneyp } from "../hooks/MoneypContext";
+import { useMoneyp } from "../hooks/MoneypContext"
 
-import { Transaction, useMyTransactionState } from "./Transaction";
-import { useVaultView } from "./Vault/context/VaultViewContext";
+import { Transaction, useMyTransactionState } from "./Transaction"
+import { useVaultView } from "./Vault/context/VaultViewContext"
 
 const select = ({ collateralSurplusBalance }: MoneypStoreState) => ({
-  collateralSurplusBalance
-});
+  collateralSurplusBalance,
+})
 
 export const CollateralSurplusAction: React.FC = () => {
-  const { collateralSurplusBalance } = useMoneypSelector(select);
+  const { collateralSurplusBalance } = useMoneypSelector(select)
   const {
-    moneyp: { send: moneyp }
-  } = useMoneyp();
+    moneyp: { send: moneyp },
+  } = useMoneyp()
 
-  const myTransactionId = "claim-coll-surplus";
-  const myTransactionState = useMyTransactionState(myTransactionId);
+  const myTransactionId = "claim-coll-surplus"
+  const myTransactionState = useMyTransactionState(myTransactionId)
 
-  const { dispatchEvent } = useVaultView();
+  const { dispatchEvent } = useVaultView()
 
   useEffect(() => {
     if (myTransactionState.type === "confirmedOneShot") {
-      dispatchEvent("TROVE_SURPLUS_COLLATERAL_CLAIMED");
+      dispatchEvent("TROVE_SURPLUS_COLLATERAL_CLAIMED")
     }
-  }, [myTransactionState.type, dispatchEvent]);
+  }, [myTransactionState.type, dispatchEvent])
 
   return myTransactionState.type === "waitingForApproval" ? (
     <Flex variant="layout.actions">
@@ -47,5 +47,5 @@ export const CollateralSurplusAction: React.FC = () => {
         <Button sx={{ mx: 2 }}>Claim {collateralSurplusBalance.prettify()} RBTC</Button>
       </Transaction>
     </Flex>
-  ) : null;
-};
+  ) : null
+}

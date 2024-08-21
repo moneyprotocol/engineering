@@ -1,6 +1,6 @@
 {
   "name": "@money-protocol/lib-base",
-  "version": "1.0.0",
+  "version": "1.0.0-testnet",
   "description": "Moneyp SDK shared interfaces",
   "keywords": [
     "Moneyp",

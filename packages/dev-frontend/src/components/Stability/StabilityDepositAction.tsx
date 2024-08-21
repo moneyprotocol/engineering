@@ -1,34 +1,34 @@
-import { Button } from "theme-ui";
-import { Decimal, MoneypStoreState, StabilityDepositChange } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
+import { Button } from "theme-ui"
+import { Decimal, MoneypStoreState, StabilityDepositChange } from "@money-protocol/lib-base"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
-import { useMoneyp } from "../../hooks/MoneypContext";
-import { useTransactionFunction } from "../Transaction";
+import { useMoneyp } from "../../hooks/MoneypContext"
+import { useTransactionFunction } from "../Transaction"
 
 type StabilityDepositActionProps = {
-  transactionId: string;
-  change: StabilityDepositChange<Decimal>;
-};
+  transactionId: string
+  change: StabilityDepositChange<Decimal>
+}
 
 const selectFrontendRegistered = ({ frontend }: MoneypStoreState) =>
-  frontend.status === "registered";
+  frontend.status === "registered"
 
 export const StabilityDepositAction: React.FC<StabilityDepositActionProps> = ({
   children,
   transactionId,
-  change
+  change,
 }) => {
-  const { config, moneyp } = useMoneyp();
-  const frontendRegistered = useMoneypSelector(selectFrontendRegistered);
+  const { config, moneyp } = useMoneyp()
+  const frontendRegistered = useMoneypSelector(selectFrontendRegistered)
 
-  const frontendTag = frontendRegistered ? config.frontendTag : undefined;
+  const frontendTag = frontendRegistered ? config.frontendTag : undefined
 
   const [sendTransaction] = useTransactionFunction(
     transactionId,
     change.depositBPD
       ? moneyp.send.depositBPDInStabilityPool.bind(moneyp.send, change.depositBPD, frontendTag)
       : moneyp.send.withdrawBPDFromStabilityPool.bind(moneyp.send, change.withdrawBPD)
-  );
+  )
 
-  return <Button onClick={sendTransaction}>{children}</Button>;
-};
+  return <Button onClick={sendTransaction}>{children}</Button>
+}

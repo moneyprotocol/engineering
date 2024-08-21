@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react"
 import { Card, Heading, Box, Flex, Button } from "theme-ui"
 
-import { MoneypStoreState } from "@moneyprotocol/lib-base"
+import { MoneypStoreState } from "@money-protocol/lib-base"
 import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
 import { COIN, GT } from "../../strings"

@@ -1,4 +1,4 @@
-# @moneyprotocol/lib-base
+# @money-protocol/lib-base
 
 Shared interfaces and classes of the Moneyp SDK.
 

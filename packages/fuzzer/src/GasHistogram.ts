@@ -3,8 +3,11 @@ import assert from "assert";
 import { BigNumber } from "@ethersproject/bignumber";
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 
-import { EthersTransactionFailedError, SentEthersLiquityTransaction } from "@moneyprotocol/lib-ethers";
-import { MinedReceipt } from "@moneyprotocol/lib-base";
+import {
+  EthersTransactionFailedError,
+  SentEthersLiquityTransaction,
+} from "@moneyprotocol/lib-ethers";
+import { MinedReceipt } from "@money-protocol/lib-base";
 
 // Supports a max of 8 million gas
 const intervalWidth = 10000;
@@ -26,13 +29,17 @@ const retryUpTo = async (
       retries === times
     ) {
       if (receipt.status === "succeeded" && retries) {
-        console.log(`// Retry succeeded with gasLimit = ${tx.rawSentTransaction.gasLimit}`);
+        console.log(
+          `// Retry succeeded with gasLimit = ${tx.rawSentTransaction.gasLimit}`
+        );
       }
 
       return [retries, receipt];
     }
 
-    console.log(`// !!! Ran out of gas with gasLimit = ${tx.rawSentTransaction.gasLimit}`);
+    console.log(
+      `// !!! Ran out of gas with gasLimit = ${tx.rawSentTransaction.gasLimit}`
+    );
     retries++;
   }
 };
@@ -50,18 +57,26 @@ export class GasHistogram<T> {
   }
 
   getResults(): [intervalMin: number, frequency: number][] {
-    const firstNonZeroIndex = this.gasUsedBins.findIndex(x => x > 0);
+    const firstNonZeroIndex = this.gasUsedBins.findIndex((x) => x > 0);
     const firstNonZeroIndexFromEnd = this.gasUsedBins
       .slice()
       .reverse()
-      .findIndex(x => x > 0);
+      .findIndex((x) => x > 0);
 
     return this.gasUsedBins
-      .slice(firstNonZeroIndex, this.gasUsedBins.length - firstNonZeroIndexFromEnd)
-      .map((frequency, i) => [intervalWidth * (firstNonZeroIndex + i), frequency]);
+      .slice(
+        firstNonZeroIndex,
+        this.gasUsedBins.length - firstNonZeroIndexFromEnd
+      )
+      .map((frequency, i) => [
+        intervalWidth * (firstNonZeroIndex + i),
+        frequency,
+      ]);
   }
 
-  async expectSuccess(sendTx: () => Promise<SentEthersLiquityTransaction<T>>): Promise<void> {
+  async expectSuccess(
+    sendTx: () => Promise<SentEthersLiquityTransaction<T>>
+  ): Promise<void> {
     const [retries, receipt] = await retryUpTo(1, sendTx);
 
     this.outOfGasFailures += retries;

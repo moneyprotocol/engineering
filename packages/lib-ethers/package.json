@@ -36,7 +36,7 @@
     "test-live:run": "cross-env USE_LIVE_VERSION=true hardhat test"
   },
   "peerDependencies": {
-    "@moneyprotocol/lib-base": "5.4.3-stable-testnet",
+    "@money-protocol/lib-base": "1.0.0-testnet",
     "ethers": "5.4.3"
   },
   "devDependencies": {

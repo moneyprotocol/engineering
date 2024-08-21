@@ -1,31 +1,31 @@
-import React, { useCallback } from "react";
-import { Card, Heading, Box, Flex, Button } from "theme-ui";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
-import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { DisabledEditableRow } from "./Editor";
-import { useVaultView } from "./context/VaultViewContext";
-import { Icon } from "../Icon";
-import { COIN } from "../../strings";
-import { CollateralRatio } from "./CollateralRatio";
+import React, { useCallback } from "react"
+import { Card, Heading, Box, Flex, Button } from "theme-ui"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
+import { MoneypStoreState } from "@money-protocol/lib-base"
+import { DisabledEditableRow } from "./Editor"
+import { useVaultView } from "./context/VaultViewContext"
+import { Icon } from "../Icon"
+import { COIN } from "../../strings"
+import { CollateralRatio } from "./CollateralRatio"
 
-const select = ({ vault, price }: MoneypStoreState) => ({ vault, price });
+const select = ({ vault, price }: MoneypStoreState) => ({ vault, price })
 
 export const ReadOnlyVault: React.FC = () => {
-  const { dispatchEvent } = useVaultView();
+  const { dispatchEvent } = useVaultView()
   const handleAdjustVault = useCallback(() => {
-    dispatchEvent("ADJUST_TROVE_PRESSED");
-  }, [dispatchEvent]);
+    dispatchEvent("ADJUST_TROVE_PRESSED")
+  }, [dispatchEvent])
   const handleCloseVault = useCallback(() => {
-    dispatchEvent("CLOSE_TROVE_PRESSED");
-  }, [dispatchEvent]);
+    dispatchEvent("CLOSE_TROVE_PRESSED")
+  }, [dispatchEvent])
 
-  const { vault, price } = useMoneypSelector(select);
+  const { vault, price } = useMoneypSelector(select)
 
   // console.log("READONLY TROVE", vault.collateral.prettify(4));
   return (
     <Card>
       <Heading>Your Vault</Heading>
-      <Box sx={{ pt: '20px' }}>
+      <Box sx={{ pt: "20px" }}>
         <Box>
           <DisabledEditableRow
             label="Collateral"
@@ -55,5 +55,5 @@ export const ReadOnlyVault: React.FC = () => {
         </Flex>
       </Box>
     </Card>
-  );
-};
+  )
+}

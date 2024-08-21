@@ -1,23 +1,23 @@
-import { Button } from "theme-ui";
+import { Button } from "theme-ui"
 
-import { Decimal, VaultChange } from "@moneyprotocol/lib-base";
+import { Decimal, VaultChange } from "@money-protocol/lib-base"
 
-import { useMoneyp } from "../../hooks/MoneypContext";
-import { useTransactionFunction } from "../Transaction";
+import { useMoneyp } from "../../hooks/MoneypContext"
+import { useTransactionFunction } from "../Transaction"
 
 type VaultActionProps = {
-  transactionId: string;
-  change: Exclude<VaultChange<Decimal>, { type: "invalidCreation" }>;
-  maxBorrowingRate: Decimal;
-};
+  transactionId: string
+  change: Exclude<VaultChange<Decimal>, { type: "invalidCreation" }>
+  maxBorrowingRate: Decimal
+}
 
 export const VaultAction: React.FC<VaultActionProps> = ({
   children,
   transactionId,
   change,
-  maxBorrowingRate
+  maxBorrowingRate,
 }) => {
-  const { moneyp } = useMoneyp();
+  const { moneyp } = useMoneyp()
 
   const [sendTransaction] = useTransactionFunction(
     transactionId,
@@ -26,7 +26,7 @@ export const VaultAction: React.FC<VaultActionProps> = ({
       : change.type === "closure"
       ? moneyp.send.closeVault.bind(moneyp.send)
       : moneyp.send.adjustVault.bind(moneyp.send, change.params, maxBorrowingRate)
-  );
+  )
 
-  return <Button onClick={sendTransaction}>{children}</Button>;
-};
+  return <Button onClick={sendTransaction}>{children}</Button>
+}

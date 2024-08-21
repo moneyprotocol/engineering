@@ -11,8 +11,8 @@ import {
   Difference,
   LUSD_LIQUIDATION_RESERVE,
   Trove,
-  TroveWithPendingRedistribution
-} from "@moneyprotocol/lib-base";
+  TroveWithPendingRedistribution,
+} from "@money-protocol/lib-base";
 
 import { EthersLiquity as Liquity } from "@moneyprotocol/lib-ethers";
 import { SubgraphLiquity } from "@moneyprotocol/lib-subgraph";
@@ -25,7 +25,7 @@ import {
   createRandomWallets,
   dumpTroves,
   getListOfTrovesBeforeRedistribution,
-  shortenAddress
+  shortenAddress,
 } from "./utils";
 
 import { Fixture } from "./Fixture";
@@ -33,7 +33,9 @@ import { Fixture } from "./Fixture";
 dotenv.config();
 
 const provider = new JsonRpcProvider("http://localhost:8545");
-const subgraph = new SubgraphLiquity("http://localhost:8000/subgraphs/name/liquity/subgraph");
+const subgraph = new SubgraphLiquity(
+  "http://localhost:8000/subgraphs/name/liquity/subgraph"
+);
 
 const deployer = process.env.DEPLOYER_PRIVATE_KEY
   ? new Wallet(process.env.DEPLOYER_PRIVATE_KEY, provider)
@@ -54,8 +56,8 @@ yargs
       troves: {
         alias: "n",
         default: 1000,
-        description: "Number of troves to create"
-      }
+        description: "Number of troves to create",
+      },
     },
     async ({ troves }) => {
       const deployerLiquity = await Liquity.connect(deployer);
@@ -72,13 +74,16 @@ yargs
 
         await funder.sendTransaction({
           to: userAddress,
-          value: Decimal.from(collateral).hex
+          value: Decimal.from(collateral).hex,
         });
 
         const fees = await liquity.getFees();
-        await liquity.openTrove(Trove.recreate(new Trove(collateral, debt), fees.borrowingRate()), {
-          gasPrice: 0
-        });
+        await liquity.openTrove(
+          Trove.recreate(new Trove(collateral, debt), fees.borrowingRate()),
+          {
+            gasPrice: 0,
+          }
+        );
 
         if (i % 4 === 0) {
           const lusdBalance = await liquity.getLUSDBalance();
@@ -101,21 +106,29 @@ yargs
       users: {
         alias: "u",
         default: 40,
-        description: "Number of users to spawn"
+        description: "Number of users to spawn",
       },
       rounds: {
         alias: "n",
         default: 25,
-        description: "How many times each user should interact with Liquity"
+        description: "How many times each user should interact with Liquity",
       },
       subgraph: {
         alias: "g",
         default: false,
-        description: "Check after every round that subgraph data matches layer 1"
-      }
+        description:
+          "Check after every round that subgraph data matches layer 1",
+      },
     },
-    async ({ rounds: numberOfRounds, users: numberOfUsers, subgraph: shouldCheckSubgraph }) => {
-      const [frontend, ...randomUsers] = createRandomWallets(numberOfUsers + 1, provider);
+    async ({
+      rounds: numberOfRounds,
+      users: numberOfUsers,
+      subgraph: shouldCheckSubgraph,
+    }) => {
+      const [frontend, ...randomUsers] = createRandomWallets(
+        numberOfUsers + 1,
+        provider
+      );
 
       const [
         deployerLiquity,
@@ -132,12 +145,14 @@ yargs
         frontendLiquity
       );
 
-      let previousListOfTroves: [string, TroveWithPendingRedistribution][] | undefined = undefined;
+      let previousListOfTroves:
+        | [string, TroveWithPendingRedistribution][]
+        | undefined = undefined;
 
       console.log();
       console.log("// Keys");
       console.log(`[frontend]: ${frontend.privateKey}`);
-      randomUsers.forEach(user =>
+      randomUsers.forEach((user) =>
         console.log(`[${shortenAddress(user.address)}]: ${user.privateKey}`)
       );
 
@@ -170,9 +185,16 @@ yargs
             const deposit = await liquity.getStabilityDeposit();
 
             if (deposit.initialLUSD.isZero || x < 0.6) {
-              await fixture.depositRandomAmountInStabilityPool(user.address, liquity);
+              await fixture.depositRandomAmountInStabilityPool(
+                user.address,
+                liquity
+              );
             } else {
-              await fixture.withdrawRandomAmountFromStabilityPool(user.address, liquity, deposit);
+              await fixture.withdrawRandomAmountFromStabilityPool(
+                user.address,
+                liquity,
+                deposit
+              );
             }
           } else if (x < 0.9) {
             const stake = await liquity.getLQTYStake();
@@ -189,11 +211,23 @@ yargs
           // await fixture.sweepLUSD(liquity);
           await fixture.sweepLQTY(liquity);
 
-          const listOfTroves = await getListOfTrovesBeforeRedistribution(deployerLiquity);
-          const totalRedistributed = await deployerLiquity.getTotalRedistributed();
+          const listOfTroves = await getListOfTrovesBeforeRedistribution(
+            deployerLiquity
+          );
+          const totalRedistributed =
+            await deployerLiquity.getTotalRedistributed();
 
-          checkTroveOrdering(listOfTroves, totalRedistributed, price, previousListOfTroves);
-          await checkPoolBalances(deployerLiquity, listOfTroves, totalRedistributed);
+          checkTroveOrdering(
+            listOfTroves,
+            totalRedistributed,
+            price,
+            previousListOfTroves
+          );
+          await checkPoolBalances(
+            deployerLiquity,
+            listOfTroves,
+            totalRedistributed
+          );
 
           previousListOfTroves = listOfTroves;
         }
@@ -214,14 +248,17 @@ yargs
     "End chaos and restore order by liquidating every Trove except the Funder's.",
     {},
     async () => {
-      const [deployerLiquity, funderLiquity] = await connectUsers([deployer, funder]);
+      const [deployerLiquity, funderLiquity] = await connectUsers([
+        deployer,
+        funder,
+      ]);
 
       const initialPrice = await deployerLiquity.getPrice();
       let initialNumberOfTroves = await funderLiquity.getNumberOfTroves();
 
       let [[firstTroveOwner]] = await funderLiquity.getTroves({
         first: 1,
-        sortedBy: "descendingCollateralRatio"
+        sortedBy: "descendingCollateralRatio",
       });
 
       if (firstTroveOwner !== funder.address) {
@@ -240,18 +277,22 @@ yargs
 
           const lusdNeeded = trove.netDebt.sub(lusdBalance);
           const tempTrove = {
-            depositCollateral: LUSD_LIQUIDATION_RESERVE.add(lusdNeeded).div(initialPrice).mul(3),
-            borrowLUSD: lusdNeeded
+            depositCollateral: LUSD_LIQUIDATION_RESERVE.add(lusdNeeded)
+              .div(initialPrice)
+              .mul(3),
+            borrowLUSD: lusdNeeded,
           };
 
           await funder.sendTransaction({
             to: randomUser.address,
-            value: tempTrove.depositCollateral.hex
+            value: tempTrove.depositCollateral.hex,
           });
 
           await randomLiquity.openTrove(tempTrove, { gasPrice: 0 });
           initialNumberOfTroves++;
-          await randomLiquity.sendLUSD(funder.address, lusdNeeded, { gasPrice: 0 });
+          await randomLiquity.sendLUSD(funder.address, lusdNeeded, {
+            gasPrice: 0,
+          });
         }
 
         await funderLiquity.repayLUSD(trove.netDebt);
@@ -259,18 +300,21 @@ yargs
 
       [[firstTroveOwner]] = await funderLiquity.getTroves({
         first: 1,
-        sortedBy: "descendingCollateralRatio"
+        sortedBy: "descendingCollateralRatio",
       });
 
       if (firstTroveOwner !== funder.address) {
-        throw new Error("didn't manage to hoist Funder's Trove to head of SortedTroves");
+        throw new Error(
+          "didn't manage to hoist Funder's Trove to head of SortedTroves"
+        );
       }
 
       await deployerLiquity.setPrice(0.001);
 
       let numberOfTroves: number;
       while ((numberOfTroves = await funderLiquity.getNumberOfTroves()) > 1) {
-        const numberOfTrovesToLiquidate = numberOfTroves > 10 ? 10 : numberOfTroves - 1;
+        const numberOfTrovesToLiquidate =
+          numberOfTroves > 10 ? 10 : numberOfTroves - 1;
 
         console.log(`${numberOfTroves} Troves left.`);
         await funderLiquity.liquidateUpTo(numberOfTrovesToLiquidate);
@@ -285,7 +329,10 @@ yargs
       const funderTrove = await funderLiquity.getTrove();
       const total = await funderLiquity.getTotal();
 
-      const collateralDifference = Difference.between(total.collateral, funderTrove.collateral);
+      const collateralDifference = Difference.between(
+        total.collateral,
+        funderTrove.collateral
+      );
       const debtDifference = Difference.between(total.debt, funderTrove.debt);
 
       console.log();
@@ -295,28 +342,42 @@ yargs
     }
   )
 
-  .command("check-sorting", "Check if Troves are sorted by ICR.", {}, async () => {
-    const deployerLiquity = await Liquity.connect(deployer);
-    const listOfTroves = await getListOfTrovesBeforeRedistribution(deployerLiquity);
-    const totalRedistributed = await deployerLiquity.getTotalRedistributed();
-    const price = await deployerLiquity.getPrice();
+  .command(
+    "check-sorting",
+    "Check if Troves are sorted by ICR.",
+    {},
+    async () => {
+      const deployerLiquity = await Liquity.connect(deployer);
+      const listOfTroves = await getListOfTrovesBeforeRedistribution(
+        deployerLiquity
+      );
+      const totalRedistributed = await deployerLiquity.getTotalRedistributed();
+      const price = await deployerLiquity.getPrice();
 
-    checkTroveOrdering(listOfTroves, totalRedistributed, price);
+      checkTroveOrdering(listOfTroves, totalRedistributed, price);
 
-    console.log("All Troves are sorted.");
-  })
+      console.log("All Troves are sorted.");
+    }
+  )
 
-  .command("check-subgraph", "Check that subgraph data matches layer 1.", {}, async () => {
-    const deployerLiquity = await Liquity.connect(deployer);
+  .command(
+    "check-subgraph",
+    "Check that subgraph data matches layer 1.",
+    {},
+    async () => {
+      const deployerLiquity = await Liquity.connect(deployer);
 
-    await checkSubgraph(subgraph, deployerLiquity);
+      await checkSubgraph(subgraph, deployerLiquity);
 
-    console.log("Subgraph looks fine.");
-  })
+      console.log("Subgraph looks fine.");
+    }
+  )
 
   .command("dump-troves", "Dump list of Troves.", {}, async () => {
     const deployerLiquity = await Liquity.connect(deployer);
-    const listOfTroves = await getListOfTrovesBeforeRedistribution(deployerLiquity);
+    const listOfTroves = await getListOfTrovesBeforeRedistribution(
+      deployerLiquity
+    );
     const totalRedistributed = await deployerLiquity.getTotalRedistributed();
     const price = await deployerLiquity.getPrice();
 

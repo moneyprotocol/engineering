@@ -7,7 +7,7 @@ import {
   Difference,
   MINIMUM_COLLATERAL_RATIO,
   Percent,
-} from "@moneyprotocol/lib-base"
+} from "@money-protocol/lib-base"
 
 import { StaticRow } from "./Editor"
 import { InfoIcon } from "../InfoIcon"

@@ -6,8 +6,8 @@ import {
   ObservableMoneyp,
   StabilityDeposit,
   Vault,
-  VaultWithPendingRedistribution
-} from "@moneyprotocol/lib-base";
+  VaultWithPendingRedistribution,
+} from "@money-protocol/lib-base";
 
 import { _getContracts, _requireAddress } from "./BitcoinsMoneypConnection";
 import { ReadableBitcoinsMoneyp } from "./ReadableBitcoinsMoneyp";
@@ -47,14 +47,22 @@ export class ObservableBitcoinsMoneyp implements ObservableMoneyp {
   watchTotalRedistributed(
     onTotalRedistributedChanged: (totalRedistributed: Vault) => void
   ): () => void {
-    const { activePool, defaultPool } = _getContracts(this._readable.connection);
+    const { activePool, defaultPool } = _getContracts(
+      this._readable.connection
+    );
     const etherSent = activePool.filters.BitcoinSent();
 
     const redistributionListener = debounce((blockTag: number) => {
-      this._readable.getTotalRedistributed({ blockTag }).then(onTotalRedistributedChanged);
+      this._readable
+        .getTotalRedistributed({ blockTag })
+        .then(onTotalRedistributedChanged);
     });
 
-    const etherSentListener = (toAddress: string, _amount: BigNumber, event: Event) => {
+    const etherSentListener = (
+      toAddress: string,
+      _amount: BigNumber,
+      event: Event
+    ) => {
       if (toAddress === defaultPool.address) {
         redistributionListener(event);
       }
@@ -73,12 +81,18 @@ export class ObservableBitcoinsMoneyp implements ObservableMoneyp {
   ): () => void {
     address ??= _requireAddress(this._readable.connection);
 
-    const { vaultManager, borrowerOperations } = _getContracts(this._readable.connection);
-    const vaultUpdatedByVaultManager = vaultManager.filters.VaultUpdated(address);
-    const vaultUpdatedByBorrowerOperations = borrowerOperations.filters.VaultUpdated(address);
+    const { vaultManager, borrowerOperations } = _getContracts(
+      this._readable.connection
+    );
+    const vaultUpdatedByVaultManager =
+      vaultManager.filters.VaultUpdated(address);
+    const vaultUpdatedByBorrowerOperations =
+      borrowerOperations.filters.VaultUpdated(address);
 
     const vaultListener = debounce((blockTag: number) => {
-      this._readable.getVaultBeforeRedistribution(address, { blockTag }).then(onVaultChanged);
+      this._readable
+        .getVaultBeforeRedistribution(address, { blockTag })
+        .then(onVaultChanged);
     });
 
     vaultManager.on(vaultUpdatedByVaultManager, vaultListener);
@@ -86,17 +100,24 @@ export class ObservableBitcoinsMoneyp implements ObservableMoneyp {
 
     return () => {
       vaultManager.removeListener(vaultUpdatedByVaultManager, vaultListener);
-      borrowerOperations.removeListener(vaultUpdatedByBorrowerOperations, vaultListener);
+      borrowerOperations.removeListener(
+        vaultUpdatedByBorrowerOperations,
+        vaultListener
+      );
     };
   }
 
-  watchNumberOfVaults(onNumberOfVaultsChanged: (numberOfVaults: number) => void): () => void {
+  watchNumberOfVaults(
+    onNumberOfVaultsChanged: (numberOfVaults: number) => void
+  ): () => void {
     const { vaultManager } = _getContracts(this._readable.connection);
     const { VaultUpdated } = vaultManager.filters;
     const vaultUpdated = VaultUpdated();
 
     const vaultUpdatedListener = debounce((blockTag: number) => {
-      this._readable.getNumberOfVaults({ blockTag }).then(onNumberOfVaultsChanged);
+      this._readable
+        .getNumberOfVaults({ blockTag })
+        .then(onNumberOfVaultsChanged);
     });
 
     vaultManager.on(vaultUpdated, vaultUpdatedListener);
@@ -136,7 +157,9 @@ export class ObservableBitcoinsMoneyp implements ObservableMoneyp {
   ): () => void {
     address ??= _requireAddress(this._readable.connection);
 
-    const { activePool, stabilityPool } = _getContracts(this._readable.connection);
+    const { activePool, stabilityPool } = _getContracts(
+      this._readable.connection
+    );
     const { UserDepositChanged } = stabilityPool.filters;
     const { BitcoinSent } = activePool.filters;
 
@@ -144,10 +167,16 @@ export class ObservableBitcoinsMoneyp implements ObservableMoneyp {
     const etherSent = BitcoinSent();
 
     const depositListener = debounce((blockTag: number) => {
-      this._readable.getStabilityDeposit(address, { blockTag }).then(onStabilityDepositChanged);
+      this._readable
+        .getStabilityDeposit(address, { blockTag })
+        .then(onStabilityDepositChanged);
     });
 
-    const etherSentListener = (toAddress: string, _amount: BigNumber, event: Event) => {
+    const etherSentListener = (
+      toAddress: string,
+      _amount: BigNumber,
+      event: Event
+    ) => {
       if (toAddress === stabilityPool.address) {
         // Liquidation while Stability Pool has some deposits
         // There may be new gains
@@ -167,27 +196,39 @@ export class ObservableBitcoinsMoneyp implements ObservableMoneyp {
   watchBPDInStabilityPool(
     onBPDInStabilityPoolChanged: (bpdInStabilityPool: Decimal) => void
   ): () => void {
-    const { bpdToken, stabilityPool } = _getContracts(this._readable.connection);
+    const { bpdToken, stabilityPool } = _getContracts(
+      this._readable.connection
+    );
     const { Transfer } = bpdToken.filters;
 
     const transferBPDFromStabilityPool = Transfer(stabilityPool.address);
     const transferBPDToStabilityPool = Transfer(null, stabilityPool.address);
 
-    const stabilityPoolBPDFilters = [transferBPDFromStabilityPool, transferBPDToStabilityPool];
+    const stabilityPoolBPDFilters = [
+      transferBPDFromStabilityPool,
+      transferBPDToStabilityPool,
+    ];
 
     const stabilityPoolBPDListener = debounce((blockTag: number) => {
-      this._readable.getBPDInStabilityPool({ blockTag }).then(onBPDInStabilityPoolChanged);
+      this._readable
+        .getBPDInStabilityPool({ blockTag })
+        .then(onBPDInStabilityPoolChanged);
     });
 
-    stabilityPoolBPDFilters.forEach(filter => bpdToken.on(filter, stabilityPoolBPDListener));
+    stabilityPoolBPDFilters.forEach((filter) =>
+      bpdToken.on(filter, stabilityPoolBPDListener)
+    );
 
     return () =>
-      stabilityPoolBPDFilters.forEach(filter =>
+      stabilityPoolBPDFilters.forEach((filter) =>
         bpdToken.removeListener(filter, stabilityPoolBPDListener)
       );
   }
 
-  watchBPDBalance(onBPDBalanceChanged: (balance: Decimal) => void, address?: string): () => void {
+  watchBPDBalance(
+    onBPDBalanceChanged: (balance: Decimal) => void,
+    address?: string
+  ): () => void {
     address ??= _requireAddress(this._readable.connection);
 
     const { bpdToken } = _getContracts(this._readable.connection);
@@ -198,12 +239,18 @@ export class ObservableBitcoinsMoneyp implements ObservableMoneyp {
     const bpdTransferFilters = [transferBPDFromUser, transferBPDToUser];
 
     const bpdTransferListener = debounce((blockTag: number) => {
-      this._readable.getBPDBalance(address, { blockTag }).then(onBPDBalanceChanged);
+      this._readable
+        .getBPDBalance(address, { blockTag })
+        .then(onBPDBalanceChanged);
     });
 
-    bpdTransferFilters.forEach(filter => bpdToken.on(filter, bpdTransferListener));
+    bpdTransferFilters.forEach((filter) =>
+      bpdToken.on(filter, bpdTransferListener)
+    );
 
     return () =>
-      bpdTransferFilters.forEach(filter => bpdToken.removeListener(filter, bpdTransferListener));
+      bpdTransferFilters.forEach((filter) =>
+        bpdToken.removeListener(filter, bpdTransferListener)
+      );
   }
 }

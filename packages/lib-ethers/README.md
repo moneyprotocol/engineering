@@ -7,7 +7,7 @@
 Install in your project:
 
 ```
-npm install --save @moneyprotocol/lib-base @moneyprotocol/lib-ethers ethers@^5.0.0
+npm install --save @money-protocol/lib-base @moneyprotocol/lib-ethers ethers@^5.0.0
 ```
 
 Connecting to an Ethereum node and sending a transaction:
@@ -23,7 +23,7 @@ async function example() {
 
   const { newVault } = await moneyp.openVault({
     depositCollateral: 5, // RBTC
-    borrowBPD: 2000
+    borrowBPD: 2000,
   });
 
   console.log(`Successfully opened a Moneyp Vault (${newVault})!`);

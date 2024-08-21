@@ -1,35 +1,35 @@
-import { Button } from "theme-ui";
+import { Button } from "theme-ui"
 
-import { Decimal } from "@moneyprotocol/lib-base";
+import { Decimal } from "@money-protocol/lib-base"
 
-import { useMoneyp } from "../../hooks/MoneypContext";
-import { useTransactionFunction } from "../Transaction";
+import { useMoneyp } from "../../hooks/MoneypContext"
+import { useTransactionFunction } from "../Transaction"
 
 type RedemptionActionProps = {
-  transactionId: string;
-  disabled?: boolean;
-  bpdAmount: Decimal;
-  maxRedemptionRate: Decimal;
-};
+  transactionId: string
+  disabled?: boolean
+  bpdAmount: Decimal
+  maxRedemptionRate: Decimal
+}
 
 export const RedemptionAction: React.FC<RedemptionActionProps> = ({
   transactionId,
   disabled,
   bpdAmount,
-  maxRedemptionRate
+  maxRedemptionRate,
 }) => {
   const {
-    moneyp: { send: moneyp }
-  } = useMoneyp();
+    moneyp: { send: moneyp },
+  } = useMoneyp()
 
   const [sendTransaction] = useTransactionFunction(
     transactionId,
     moneyp.redeemBPD.bind(moneyp, bpdAmount, maxRedemptionRate)
-  );
+  )
 
   return (
     <Button disabled={disabled} onClick={sendTransaction}>
       Confirm
     </Button>
-  );
-};
+  )
+}

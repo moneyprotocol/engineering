@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { MoneypStore } from "@moneyprotocol/lib-base";
+import { MoneypStore } from "@money-protocol/lib-base";
 
 import { MoneypStoreContext } from "../components/MoneypStoreProvider";
 

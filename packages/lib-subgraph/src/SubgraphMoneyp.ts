@@ -1,5 +1,11 @@
 import fetch from "cross-fetch";
-import { ApolloClient, gql, HttpLink, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
+import {
+  ApolloClient,
+  gql,
+  HttpLink,
+  InMemoryCache,
+  NormalizedCacheObject,
+} from "@apollo/client";
 import { getAddress } from "@ethersproject/address";
 
 import {
@@ -14,15 +20,21 @@ import {
   VaultListingParams,
   VaultWithPendingRedistribution,
   UserVault,
-  _emptyVault
-} from "@moneyprotocol/lib-base";
+  _emptyVault,
+} from "@money-protocol/lib-base";
 
 import { OrderDirection } from "../types/globalTypes";
 import { Global } from "../types/Global";
-import { BlockNumberDummy, BlockNumberDummyVariables } from "../types/BlockNumberDummy";
+import {
+  BlockNumberDummy,
+  BlockNumberDummyVariables,
+} from "../types/BlockNumberDummy";
 import { VaultRawFields } from "../types/VaultRawFields";
 import { Vaults, VaultsVariables } from "../types/Vaults";
-import { VaultWithoutRewards, VaultWithoutRewardsVariables } from "../types/VaultWithoutRewards";
+import {
+  VaultWithoutRewards,
+  VaultWithoutRewardsVariables,
+} from "../types/VaultWithoutRewards";
 
 import { Query } from "./Query";
 
@@ -34,7 +46,8 @@ const normalizeAddress = (address?: string) => {
   return address.toLowerCase();
 };
 
-const decimalify = (bigNumberString: string) => Decimal.fromBigNumberString(bigNumberString);
+const decimalify = (bigNumberString: string) =>
+  Decimal.fromBigNumberString(bigNumberString);
 
 const queryGlobal = gql`
   query Global {
@@ -60,18 +73,22 @@ const numberOfVaults = new Query<number, Global>(
   ({ data: { global } }) => global?.numberOfOpenVaults ?? 0
 );
 
-const totalRedistributed = new Query<Vault, Global>(queryGlobal, ({ data: { global } }) => {
-  if (global) {
-    const { rawTotalRedistributedCollateral, rawTotalRedistributedDebt } = global;
+const totalRedistributed = new Query<Vault, Global>(
+  queryGlobal,
+  ({ data: { global } }) => {
+    if (global) {
+      const { rawTotalRedistributedCollateral, rawTotalRedistributedDebt } =
+        global;
 
-    return new Vault(
-      decimalify(rawTotalRedistributedCollateral),
-      decimalify(rawTotalRedistributedDebt)
-    );
-  } else {
-    return _emptyVault;
+      return new Vault(
+        decimalify(rawTotalRedistributedCollateral),
+        decimalify(rawTotalRedistributedDebt)
+      );
+    } else {
+      return _emptyVault;
+    }
   }
-});
+);
 
 const price = new Query<Decimal, Global>(queryGlobal, ({ data: { global } }) =>
   Decimal.from(global?.currentSystemState?.price ?? 200)
@@ -87,8 +104,10 @@ const total = new Query<Vault, Global>(queryGlobal, ({ data: { global } }) => {
   }
 });
 
-const tokensInStabilityPool = new Query<Decimal, Global>(queryGlobal, ({ data: { global } }) =>
-  Decimal.from(global?.currentSystemState?.tokensInStabilityPool ?? 0)
+const tokensInStabilityPool = new Query<Decimal, Global>(
+  queryGlobal,
+  ({ data: { global } }) =>
+    Decimal.from(global?.currentSystemState?.tokensInStabilityPool ?? 0)
 );
 
 const vaultRawFields = gql`
@@ -112,7 +131,7 @@ const vaultFromRawFields = ({
   rawDebt,
   rawStake,
   rawSnapshotOfTotalRedistributedCollateral,
-  rawSnapshotOfTotalRedistributedDebt
+  rawSnapshotOfTotalRedistributedDebt,
 }: VaultRawFields) =>
   new VaultWithPendingRedistribution(
     getAddress(ownerAddress),
@@ -153,9 +172,17 @@ const vaultBeforeRedistribution = new Query<
   }
 );
 
-const vaults = new Query<VaultWithPendingRedistribution[], Vaults, VaultsVariables>(
+const vaults = new Query<
+  VaultWithPendingRedistribution[],
+  Vaults,
+  VaultsVariables
+>(
   gql`
-    query Vaults($orderDirection: OrderDirection!, $startingAt: Int!, $first: Int!) {
+    query Vaults(
+      $orderDirection: OrderDirection!
+      $startingAt: Int!
+      $first: Int!
+    ) {
       vaults(
         where: { status: open }
         orderBy: collateralRatioSortKey
@@ -169,10 +196,14 @@ const vaults = new Query<VaultWithPendingRedistribution[], Vaults, VaultsVariabl
     }
     ${vaultRawFields}
   `,
-  ({ data: { vaults } }) => vaults.map(vault => vaultFromRawFields(vault))
+  ({ data: { vaults } }) => vaults.map((vault) => vaultFromRawFields(vault))
 );
 
-const blockNumberDummy = new Query<void, BlockNumberDummy, BlockNumberDummyVariables>(
+const blockNumberDummy = new Query<
+  void,
+  BlockNumberDummy,
+  BlockNumberDummyVariables
+>(
   gql`
     query BlockNumberDummy($blockNumber: Int!) {
       globals(block: { number: $blockNumber }) {
@@ -186,14 +217,17 @@ const blockNumberDummy = new Query<void, BlockNumberDummy, BlockNumberDummyVaria
 export class SubgraphMoneyp implements ReadableMoneyp, ObservableMoneyp {
   private client: ApolloClient<NormalizedCacheObject>;
 
-  constructor(uri = "http://localhost:8000/subgraphs/name/moneyp/subgraph", pollInterval = 4000) {
+  constructor(
+    uri = "http://localhost:8000/subgraphs/name/moneyp/subgraph",
+    pollInterval = 4000
+  ) {
     this.client = new ApolloClient({
       cache: new InMemoryCache(),
       link: new HttpLink({ fetch, uri }),
       defaultOptions: {
         query: { fetchPolicy: "network-only" },
-        watchQuery: { fetchPolicy: "network-only", pollInterval }
-      }
+        watchQuery: { fetchPolicy: "network-only", pollInterval },
+      },
     });
   }
 
@@ -201,12 +235,20 @@ export class SubgraphMoneyp implements ReadableMoneyp, ObservableMoneyp {
     return totalRedistributed.get(this.client, undefined);
   }
 
-  watchTotalRedistributed(onTotalRedistributedChanged: (totalRedistributed: Vault) => void) {
-    return totalRedistributed.watch(this.client, onTotalRedistributedChanged, undefined);
+  watchTotalRedistributed(
+    onTotalRedistributedChanged: (totalRedistributed: Vault) => void
+  ) {
+    return totalRedistributed.watch(
+      this.client,
+      onTotalRedistributedChanged,
+      undefined
+    );
   }
 
   getVaultBeforeRedistribution(address?: string) {
-    return vaultBeforeRedistribution.get(this.client, { address: normalizeAddress(address) });
+    return vaultBeforeRedistribution.get(this.client, {
+      address: normalizeAddress(address),
+    });
   }
 
   watchVaultWithoutRewards(
@@ -214,14 +256,14 @@ export class SubgraphMoneyp implements ReadableMoneyp, ObservableMoneyp {
     address?: string
   ) {
     return vaultBeforeRedistribution.watch(this.client, onVaultChanged, {
-      address: normalizeAddress(address)
+      address: normalizeAddress(address),
     });
   }
 
   async getVault(address?: string) {
     const [vault, totalRedistributed] = await Promise.all([
       this.getVaultBeforeRedistribution(address),
-      this.getTotalRedistributed()
+      this.getTotalRedistributed(),
     ] as const);
 
     return vault.applyRedistribution(totalRedistributed);
@@ -231,8 +273,14 @@ export class SubgraphMoneyp implements ReadableMoneyp, ObservableMoneyp {
     return numberOfVaults.get(this.client, undefined);
   }
 
-  watchNumberOfVaults(onNumberOfVaultsChanged: (numberOfVaults: number) => void): () => void {
-    return numberOfVaults.watch(this.client, onNumberOfVaultsChanged, undefined);
+  watchNumberOfVaults(
+    onNumberOfVaultsChanged: (numberOfVaults: number) => void
+  ): () => void {
+    return numberOfVaults.watch(
+      this.client,
+      onNumberOfVaultsChanged,
+      undefined
+    );
   }
 
   getPrice() {
@@ -266,15 +314,24 @@ export class SubgraphMoneyp implements ReadableMoneyp, ObservableMoneyp {
     return tokensInStabilityPool.get(this.client, undefined);
   }
 
-  watchBPDInStabilityPool(onBPDInStabilityPoolChanged: (bpdInStabilityPool: Decimal) => void) {
-    return tokensInStabilityPool.watch(this.client, onBPDInStabilityPoolChanged, undefined);
+  watchBPDInStabilityPool(
+    onBPDInStabilityPoolChanged: (bpdInStabilityPool: Decimal) => void
+  ) {
+    return tokensInStabilityPool.watch(
+      this.client,
+      onBPDInStabilityPoolChanged,
+      undefined
+    );
   }
 
   getBPDBalance(address?: string): Promise<Decimal> {
     throw new Error("Method not implemented.");
   }
 
-  watchBPDBalance(onBPDBalanceChanged: (balance: Decimal) => void, address?: string): () => void {
+  watchBPDBalance(
+    onBPDBalanceChanged: (balance: Decimal) => void,
+    address?: string
+  ): () => void {
     throw new Error("Method not implemented.");
   }
 
@@ -301,12 +358,16 @@ export class SubgraphMoneyp implements ReadableMoneyp, ObservableMoneyp {
         first,
         startingAt,
         orderDirection:
-          sortedBy === "ascendingCollateralRatio" ? OrderDirection.asc : OrderDirection.desc
-      })
+          sortedBy === "ascendingCollateralRatio"
+            ? OrderDirection.asc
+            : OrderDirection.desc,
+      }),
     ]);
 
     if (totalRedistributed) {
-      return _vaults.map(vault => vault.applyRedistribution(totalRedistributed));
+      return _vaults.map((vault) =>
+        vault.applyRedistribution(totalRedistributed)
+      );
     } else {
       return _vaults;
     }
@@ -317,7 +378,7 @@ export class SubgraphMoneyp implements ReadableMoneyp, ObservableMoneyp {
       try {
         await blockNumberDummy.get(this.client, { blockNumber });
       } catch {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
         continue;
       }
       return;

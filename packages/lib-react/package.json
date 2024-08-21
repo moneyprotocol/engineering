@@ -11,7 +11,7 @@
     "prepare:tsc": "tsc --project tsconfig.dist.json"
   },
   "peerDependencies": {
-    "@moneyprotocol/lib-base": "5.4.3-stable-testnet",
+    "@money-protocol/lib-base": "1.0.0-testnet",
     "react": "^16.13.1"
   },
   "devDependencies": {
