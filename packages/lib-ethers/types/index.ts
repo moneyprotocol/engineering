@@ -252,14 +252,12 @@ interface ERC20MockCalls {
 }
 
 interface ERC20MockTransactions {
-  approve(spender: string, amount: BigNumberish, _overrides?: Overrides): Promise<boolean>;
+  approve(spender: string, value: BigNumberish, _overrides?: Overrides): Promise<boolean>;
   approveInternal(owner: string, spender: string, value: BigNumberish, _overrides?: Overrides): Promise<void>;
   burn(account: string, amount: BigNumberish, _overrides?: Overrides): Promise<void>;
-  decreaseAllowance(spender: string, subtractedValue: BigNumberish, _overrides?: Overrides): Promise<boolean>;
-  increaseAllowance(spender: string, addedValue: BigNumberish, _overrides?: Overrides): Promise<boolean>;
   mint(account: string, amount: BigNumberish, _overrides?: Overrides): Promise<void>;
-  transfer(recipient: string, amount: BigNumberish, _overrides?: Overrides): Promise<boolean>;
-  transferFrom(sender: string, recipient: string, amount: BigNumberish, _overrides?: Overrides): Promise<boolean>;
+  transfer(to: string, value: BigNumberish, _overrides?: Overrides): Promise<boolean>;
+  transferFrom(from: string, to: string, value: BigNumberish, _overrides?: Overrides): Promise<boolean>;
   transferInternal(from: string, to: string, value: BigNumberish, _overrides?: Overrides): Promise<void>;
 }
 
@@ -333,9 +331,9 @@ interface IERC20Calls {
 }
 
 interface IERC20Transactions {
-  approve(spender: string, amount: BigNumberish, _overrides?: Overrides): Promise<boolean>;
-  transfer(recipient: string, amount: BigNumberish, _overrides?: Overrides): Promise<boolean>;
-  transferFrom(sender: string, recipient: string, amount: BigNumberish, _overrides?: Overrides): Promise<boolean>;
+  approve(spender: string, value: BigNumberish, _overrides?: Overrides): Promise<boolean>;
+  transfer(to: string, value: BigNumberish, _overrides?: Overrides): Promise<boolean>;
+  transferFrom(from: string, to: string, value: BigNumberish, _overrides?: Overrides): Promise<boolean>;
 }
 
 export interface IERC20

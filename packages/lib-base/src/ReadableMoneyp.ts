@@ -70,7 +70,9 @@ export interface ReadableMoneyp {
    * The current state of a Vault can be fetched using
    * {@link @moneyprotocol/lib-base#ReadableMoneyp.getVault | getVault()}.
    */
-  getVaultBeforeRedistribution(address?: string): Promise<VaultWithPendingRedistribution>;
+  getVaultBeforeRedistribution(
+    address?: string
+  ): Promise<VaultWithPendingRedistribution>;
 
   /**
    * Get the current state of a Vault.
@@ -124,44 +126,6 @@ export interface ReadableMoneyp {
    * @param address - Address whose balance should be retrieved.
    */
   getMPBalance(address?: string): Promise<Decimal>;
-
-  /**
-   * Get the amount of Uniswap RBTC/BPD LP tokens held by an address.
-   *
-   * @param address - Address whose balance should be retrieved.
-   */
-  getRskSwapTokenBalance(address?: string): Promise<Decimal>;
-
-  /**
-   * Get the liquidity mining contract's allowance of a holder's Uniswap RBTC/BPD LP tokens.
-   *
-   * @param address - Address holding the Uniswap RBTC/BPD LP tokens.
-   */
-  getRskSwapTokenAllowance(address?: string): Promise<Decimal>;
-
-  /**
-   * Get the remaining MP that will be collectively rewarded to liquidity miners.
-   */
-  getRemainingLiquidityMiningMPReward(): Promise<Decimal>;
-
-  /**
-   * Get the amount of Uniswap RBTC/BPD LP tokens currently staked by an address in liquidity mining.
-   *
-   * @param address - Address whose LP stake should be retrieved.
-   */
-  getLiquidityMiningStake(address?: string): Promise<Decimal>;
-
-  /**
-   * Get the total amount of Uniswap RBTC/BPD LP tokens currently staked in liquidity mining.
-   */
-  getTotalStakedRskSwapTokens(): Promise<Decimal>;
-
-  /**
-   * Get the amount of MP earned by an address through mining liquidity.
-   *
-   * @param address - Address whose MP reward should be retrieved.
-   */
-  getLiquidityMiningMPReward(address?: string): Promise<Decimal>;
 
   /**
    * Get the amount of leftover collateral available for withdrawal by an address.

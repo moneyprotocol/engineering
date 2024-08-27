@@ -5,9 +5,7 @@ import { Decimal, Decimalish } from "./Decimal";
  *
  * @public
  */
-export type StabilityDepositChange<T> =
-  | { depositBPD: T; withdrawBPD?: undefined }
-  | { depositBPD?: undefined; withdrawBPD: T; withdrawAllBPD: boolean };
+export type StabilityDepositChange<T> = any;
 
 /**
  * A Stability Deposit and its accrued gains.
@@ -93,11 +91,16 @@ export class StabilityDeposit {
    *
    * @returns An object representing the change, or `undefined` if the deposited amounts are equal.
    */
-  whatChanged(thatBPD: Decimalish): StabilityDepositChange<Decimal> | undefined {
+  whatChanged(
+    thatBPD: Decimalish
+  ): StabilityDepositChange<Decimal> | undefined {
     thatBPD = Decimal.from(thatBPD);
 
     if (thatBPD.lt(this.currentBPD)) {
-      return { withdrawBPD: this.currentBPD.sub(thatBPD), withdrawAllBPD: thatBPD.isZero };
+      return {
+        withdrawBPD: this.currentBPD.sub(thatBPD),
+        withdrawAllBPD: thatBPD.isZero,
+      };
     }
 
     if (thatBPD.gt(this.currentBPD)) {

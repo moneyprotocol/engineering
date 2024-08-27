@@ -11,8 +11,17 @@
   ],
   "devDependencies": {
     "ethers": "5.4.3",
-    "ts-node": "^9.1.1",
-    "typescript": "~4.1.0"
+    "ts-node": "^10.9.2",
+    "typescript": "~4.1.0",
+    "@ethersproject/address": "5.4.0",
+    "@ethersproject/bignumber": "5.4.1",
+    "@ethersproject/abstract-provider": "5.4.0",
+    "@ethersproject/transactions": "5.4.0",
+    "@ethersproject/contracts": "5.4.1",
+    "@ethersproject/bytes": "5.4.0",
+    "@ethersproject/providers": "^5.4.0",
+    "@ethersproject/properties": "5.4.0",
+    "@ethersproject/networks": "5.4.1"
   },
   "peerDependencies": {
     "ethers": "5.4.3"

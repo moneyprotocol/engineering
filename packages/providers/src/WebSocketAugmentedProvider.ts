@@ -5,7 +5,7 @@ import {
   EventType,
   Listener,
   Provider,
-  Block
+  Block,
 } from "@ethersproject/abstract-provider";
 import { BaseProvider, Web3Provider } from "@ethersproject/providers";
 import { Networkish } from "@ethersproject/networks";
@@ -24,7 +24,8 @@ export const isWebSocketAugmentedProvider = (
   provider: Provider
 ): provider is WebSocketAugmentedProvider =>
   webSocketAugmentedProviders.some(
-    webSocketAugmentedProvider => provider instanceof webSocketAugmentedProvider
+    (webSocketAugmentedProvider) =>
+      provider instanceof webSocketAugmentedProvider
   );
 
 const isHeaderNotFoundError = (error: any) =>
@@ -33,10 +34,17 @@ const isHeaderNotFoundError = (error: any) =>
   error.message.includes("header not found");
 
 const loadBalancingGlitchRetryIntervalMs = 200;
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const WebSocketAugmented = <T extends new (...args: any[]) => BaseProvider>(Base: T) => {
-  let webSocketAugmentedProvider = class extends Base implements WebSocketAugmentedProvider {
+export const WebSocketAugmented: any = <
+  T extends new (...args: any[]) => BaseProvider
+>(
+  Base: T
+) => {
+  let webSocketAugmentedProvider = class
+    extends Base
+    implements WebSocketAugmentedProvider
+  {
     _wsProvider?: WebSocketProvider;
     _wsParams?: [string, Networkish];
     _reconnectTimerId: any;
@@ -57,7 +65,10 @@ export const WebSocketAugmented = <T extends new (...args: any[]) => BaseProvide
     _onWebSocketClose() {
       this.closeWebSocket();
       console.warn("WebSocketProvider disconnected. Retrying in 10 seconds.");
-      this._reconnectTimerId = setTimeout(() => this.openWebSocket(...this._wsParams!), 10000);
+      this._reconnectTimerId = setTimeout(
+        () => this.openWebSocket(...this._wsParams!),
+        10000
+      );
     }
 
     closeWebSocket() {
@@ -91,7 +102,9 @@ export const WebSocketAugmented = <T extends new (...args: any[]) => BaseProvide
 
         setTimeout(() => {
           this._blockListenerScheduled = false;
-          [...this._blockListeners].forEach(listener => listener(this._seenBlock));
+          [...this._blockListeners].forEach((listener) =>
+            listener(this._seenBlock)
+          );
         }, 50);
       }
     }
@@ -105,7 +118,10 @@ export const WebSocketAugmented = <T extends new (...args: any[]) => BaseProvide
           }
           return ret;
         } catch (error) {
-          if (this._seenBlock !== startingBlock || !isHeaderNotFoundError(error)) {
+          if (
+            this._seenBlock !== startingBlock ||
+            !isHeaderNotFoundError(error)
+          ) {
             throw error;
           }
         }
@@ -226,19 +242,28 @@ export const WebSocketAugmented = <T extends new (...args: any[]) => BaseProvide
         await delay(loadBalancingGlitchRetryIntervalMs);
       }
 
-      return block.transactions.some(txHashInBlock => txHashInBlock === txHash);
+      return block.transactions.some(
+        (txHashInBlock) => txHashInBlock === txHash
+      );
     }
 
-    async _getTransactionReceiptFromLatest(txHash: string | Promise<string>, latestBlock?: number) {
+    async _getTransactionReceiptFromLatest(
+      txHash: string | Promise<string>,
+      latestBlock?: number
+    ) {
       txHash = await txHash;
 
       for (let retries = 0; ; ++retries) {
-        const receipt = (await this.getTransactionReceipt(txHash)) as TransactionReceipt | null;
+        const receipt = (await this.getTransactionReceipt(
+          txHash
+        )) as TransactionReceipt | null;
 
         if (
           latestBlock === undefined ||
-          (receipt === null && !(await this._blockContainsTx(latestBlock, txHash))) ||
-          (receipt !== null && receipt.blockNumber + receipt.confirmations - 1 >= latestBlock)
+          (receipt === null &&
+            !(await this._blockContainsTx(latestBlock, txHash))) ||
+          (receipt !== null &&
+            receipt.blockNumber + receipt.confirmations - 1 >= latestBlock)
         ) {
           if (retries) {
             // console.log(`Glitch resolved after ${retries} ${retries === 1 ? "retry" : "retries"}.`);
@@ -251,7 +276,11 @@ export const WebSocketAugmented = <T extends new (...args: any[]) => BaseProvide
       }
     }
 
-    async waitForTransaction(txHash: string, confirmations?: number, timeout?: number) {
+    async waitForTransaction(
+      txHash: string,
+      confirmations?: number,
+      timeout?: number
+    ) {
       if (timeout !== undefined) {
         // We don't use timeout, don't implement it
         return super.waitForTransaction(txHash, confirmations, timeout);
@@ -259,16 +288,22 @@ export const WebSocketAugmented = <T extends new (...args: any[]) => BaseProvide
 
       let latestBlock: number | undefined = undefined;
       for (;;) {
-        const receipt = await this._getTransactionReceiptFromLatest(txHash, latestBlock);
+        const receipt = await this._getTransactionReceiptFromLatest(
+          txHash,
+          latestBlock
+        );
 
         if (
           receipt !== null &&
-          (confirmations === undefined || receipt.confirmations >= confirmations)
+          (confirmations === undefined ||
+            receipt.confirmations >= confirmations)
         ) {
           return receipt;
         }
 
-        latestBlock = await new Promise<number>(resolve => this.once("block", resolve));
+        latestBlock = await new Promise<number>((resolve) =>
+          this.once("block", resolve)
+        );
       }
     }
   };
@@ -278,4 +313,5 @@ export const WebSocketAugmented = <T extends new (...args: any[]) => BaseProvide
   return webSocketAugmentedProvider;
 };
 
-export const WebSocketAugmentedWeb3Provider = WebSocketAugmented(Web3Provider);
+export const WebSocketAugmentedWeb3Provider: any =
+  WebSocketAugmented(Web3Provider);

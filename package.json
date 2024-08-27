@@ -14,83 +14,58 @@
       "**/react-scripts"
     ]
   },
-  "release": {
-    "extends": "semantic-release-monorepo",
-    "branches": [
-      "master"
-    ],
-    "plugins": [
-      "@semantic-release/commit-analyzer",
-      [
-        "@semantic-release/release-notes-generator",
-        {
-          "preset": "angular",
-          "parserOpts": {
-            "headerPattern": "^(\\w*)(?:\\((.*)\\))?!?: (.*)$"
-          }
-        }
-      ],
-      "@semantic-release/npm",
-      "@semantic-release/github"
-    ]
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
   "scripts": {
-    "build": "run-s build:*",
-    "build:dev-frontend": "yarn workspace @moneyprotocol/dev-frontend build",
-    "build:subgraph": "yarn workspace @moneyprotocol/subgraph build",
-    "deploy": "yarn workspace @moneyprotocol/lib-ethers hardhat deploy",
-    "deploy:testnet": "yarn deploy --network testnet",
+    "build": "pnpm -r build",
+    "build:dev-frontend": "pnpm --filter @moneyprotocol/dev-frontend build",
+    "build:subgraph": "pnpm --filter @moneyprotocol/subgraph build",
+    "deploy": "pnpm --filter @moneyprotocol/lib-ethers run hardhat deploy",
+    "deploy:testnet": "pnpm deploy --network testnet",
     "docs": "run-s docs:*",
     "docs:collect-sdk-apis": "node scripts/collect-sdk-apis.js",
     "docs:api-documenter": "api-documenter generate -i temp/sdk-apis -o docs/sdk",
-    "fuzzer": "yarn workspace @moneyprotocol/fuzzer fuzzer",
+    "fuzzer": "pnpm --filter @moneyprotocol/fuzzer fuzzer",
     "prepare": "run-s prepare:*",
-    "prepare:contracts": "yarn workspace @moneyprotocol/contracts prepare",
-    "prepare:lib-base": "yarn workspace @moneyprotocol/lib-base prepare",
-    "prepare:lib-ethers": "yarn workspace @moneyprotocol/lib-ethers prepare",
-    "prepare:lib-react": "yarn workspace @moneyprotocol/lib-react prepare",
-    "prepare:lib-subgraph": "yarn workspace @moneyprotocol/lib-subgraph prepare",
-    "prepare:providers": "yarn workspace @moneyprotocol/providers prepare",
-    "prepare:subgraph": "yarn workspace @moneyprotocol/subgraph prepare",
+    "prepare:contracts": "pnpm --filter @moneyprotocol/contracts run prepare",
+    "prepare:lib-base": "pnpm --filter @moneyprotocol/lib-base prepare",
+    "prepare:lib-ethers": "pnpm --filter @moneyprotocol/lib-ethers prepare",
+    "prepare:lib-react": "pnpm --filter @moneyprotocol/lib-react prepare",
+    "prepare:lib-subgraph": "pnpm --filter @moneyprotocol/lib-subgraph prepare",
+    "prepare:providers": "pnpm --filter @moneyprotocol/providers prepare",
+    "prepare:subgraph": "pnpm --filter @moneyprotocol/subgraph prepare",
     "prepare:docs": "run-s docs",
     "rebuild": "run-s prepare build",
     "release": "run-s release:*",
-    "release:lib-base": "yarn workspace @moneyprotocol/lib-base semantic-release",
-    "release:lib-ethers": "yarn workspace @moneyprotocol/lib-ethers semantic-release",
-    "save-live-version": "yarn workspace @moneyprotocol/lib-ethers save-live-version",
+    "release:lib-base": "pnpm --filter @moneyprotocol/lib-base semantic-release",
+    "release:lib-ethers": "pnpm --filter @moneyprotocol/lib-ethers semantic-release",
+    "save-live-version": "pnpm --filter @moneyprotocol/lib-ethers save-live-version",
     "start-rsk": "run-s start-rsk:*",
     "start-rsk:regtest": "node dev-chain/start-rsk.js",
-    "start-rsk:prepare-providers": "yarn prepare:providers",
-    "start-rsk:deploy-contracts": "yarn deploy --network regtest",
+    "start-rsk:prepare-providers": "pnpm run prepare:providers",
+    "start-rsk:deploy-contracts": "pnpm run deploy --network regtest",
     "stop-rsk": "docker kill regtest-node-01",
     "start-dev-chain": "run-s start-dev-chain:*",
     "start-dev-chain:openethereum": "node dev-chain/start.js",
-    "start-dev-chain:prepare-providers": "yarn prepare:providers",
-    "start-dev-chain:deploy-contracts": "yarn deploy --network dev",
-    "start-dev-chain:prepare-lib-ethers": "yarn prepare:lib-ethers",
+    "start-dev-chain:prepare-providers": "pnpm run prepare:providers",
+    "start-dev-chain:deploy-contracts": "pnpm run deploy --network dev",
+    "start-dev-chain:prepare-lib-ethers": "pnpm run prepare:lib-ethers",
     "stop-dev-chain": "docker kill openethereum",
-    "start-dev-frontend": "yarn workspace @moneyprotocol/dev-frontend start",
+    "start-dev-frontend": "pnpm --filter @moneyprotocol/dev-frontend start",
     "start-demo": "run-s start-demo:*",
-    "start-demo:dev-chain": "yarn start-dev-chain",
-    "start-demo:dev-frontend": "yarn workspace @moneyprotocol/dev-frontend start-demo",
-    "stop-demo": "yarn stop-dev-chain",
+    "start-demo:dev-chain": "pnpm start-dev-chain",
+    "start-demo:dev-frontend": "pnpm --filter @moneyprotocol/dev-frontend start-demo",
+    "stop-demo": "pnpm run stop-dev-chain",
     "test": "run-s test:*",
-    "test:lib-base": "yarn workspace @moneyprotocol/lib-base test",
-    "test:lib-ethers": "yarn workspace @moneyprotocol/lib-ethers test",
+    "test:lib-base": "pnpm --filter @moneyprotocol/lib-base test",
+    "test:lib-ethers": "pnpm --filter @moneyprotocol/lib-ethers test",
     "test:dev-frontend": "run-s --continue-on-error test:dev-frontend:*",
-    "test:dev-frontend:start-dev-chain": "yarn start-dev-chain",
-    "test:dev-frontend:run": "yarn workspace @moneyprotocol/dev-frontend test --watchAll=false --forceExit --detectOpenHandles",
-    "test:dev-frontend:stop-dev-chain": "yarn stop-dev-chain",
-    "test-contracts": "yarn workspace @moneyprotocol/contracts test",
+    "test:dev-frontend:start-dev-chain": "pnpm run start-dev-chain",
+    "test:dev-frontend:run": "pnpm --filter @moneyprotocol/dev-frontend test --watchAll=false --forceExit --detectOpenHandles",
+    "test:dev-frontend:stop-dev-chain": "pnpm run stop-dev-chain",
+    "test-contracts": "pnpm --filter @moneyprotocol/contracts test",
     "test-live": "run-s test-live:*",
-    "test-live:lib-ethers": "yarn workspace @moneyprotocol/lib-ethers test-live",
+    "test-live:lib-ethers": "pnpm --filter @moneyprotocol/lib-ethers test-live",
     "coverage": "run-s coverage:*",
-    "coverage:contracts": "yarn workspace @moneyprotocol/contracts coverage"
+    "coverage:contracts": "pnpm --filter @moneyprotocol/contracts coverage"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.0.1",

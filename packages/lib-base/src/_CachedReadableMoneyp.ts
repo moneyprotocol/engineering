@@ -3,18 +3,26 @@ import { Fees } from "./Fees";
 import { MPStake } from "./MPStake";
 import { StabilityDeposit } from "./StabilityDeposit";
 import { Vault, VaultWithPendingRedistribution, UserVault } from "./Vault";
-import { FrontendStatus, ReadableMoneyp, VaultListingParams } from "./ReadableMoneyp";
+import {
+  FrontendStatus,
+  ReadableMoneyp,
+  VaultListingParams,
+} from "./ReadableMoneyp";
 
 /** @internal */
 export type _ReadableMoneypWithExtraParamsBase<T extends unknown[]> = {
-  [P in keyof ReadableMoneyp]: ReadableMoneyp[P] extends (...params: infer A) => infer R
+  [P in keyof ReadableMoneyp]: ReadableMoneyp[P] extends (
+    ...params: infer A
+  ) => infer R
     ? (...params: [...originalParams: A, ...extraParams: T]) => R
     : never;
 };
 
 /** @internal */
 export type _MoneypReadCacheBase<T extends unknown[]> = {
-  [P in keyof ReadableMoneyp]: ReadableMoneyp[P] extends (...args: infer A) => Promise<infer R>
+  [P in keyof ReadableMoneyp]: ReadableMoneyp[P] extends (
+    ...args: infer A
+  ) => Promise<infer R>
     ? (...params: [...originalParams: A, ...extraParams: T]) => R | undefined
     : never;
 };
@@ -29,26 +37,37 @@ export interface _ReadableMoneypWithExtraParams<T extends unknown[]>
     ...extraParams: T
   ): Promise<VaultWithPendingRedistribution[]>;
 
-  getVaults(params: VaultListingParams, ...extraParams: T): Promise<UserVault[]>;
+  getVaults(
+    params: VaultListingParams,
+    ...extraParams: T
+  ): Promise<UserVault[]>;
 }
 
 /** @internal */
-export interface _MoneypReadCache<T extends unknown[]> extends _MoneypReadCacheBase<T> {
+export interface _MoneypReadCache<T extends unknown[]>
+  extends _MoneypReadCacheBase<T> {
   getVaults(
     params: VaultListingParams & { beforeRedistribution: true },
     ...extraParams: T
   ): VaultWithPendingRedistribution[] | undefined;
 
-  getVaults(params: VaultListingParams, ...extraParams: T): UserVault[] | undefined;
+  getVaults(
+    params: VaultListingParams,
+    ...extraParams: T
+  ): UserVault[] | undefined;
 }
 
 /** @internal */
 export class _CachedReadableMoneyp<T extends unknown[]>
-  implements _ReadableMoneypWithExtraParams<T> {
+  implements _ReadableMoneypWithExtraParams<T>
+{
   private _readable: _ReadableMoneypWithExtraParams<T>;
   private _cache: _MoneypReadCache<T>;
 
-  constructor(readable: _ReadableMoneypWithExtraParams<T>, cache: _MoneypReadCache<T>) {
+  constructor(
+    readable: _ReadableMoneypWithExtraParams<T>,
+    cache: _MoneypReadCache<T>
+  ) {
     this._readable = readable;
     this._cache = cache;
   }
@@ -73,7 +92,7 @@ export class _CachedReadableMoneyp<T extends unknown[]>
   async getVault(address?: string, ...extraParams: T): Promise<UserVault> {
     const [vaultBeforeRedistribution, totalRedistributed] = await Promise.all([
       this.getVaultBeforeRedistribution(address, ...extraParams),
-      this.getTotalRedistributed(...extraParams)
+      this.getTotalRedistributed(...extraParams),
     ]);
 
     return vaultBeforeRedistribution.applyRedistribution(totalRedistributed);
@@ -87,14 +106,23 @@ export class _CachedReadableMoneyp<T extends unknown[]>
   }
 
   async getPrice(...extraParams: T): Promise<Decimal> {
-    return this._cache.getPrice(...extraParams) ?? this._readable.getPrice(...extraParams);
+    return (
+      this._cache.getPrice(...extraParams) ??
+      this._readable.getPrice(...extraParams)
+    );
   }
 
   async getTotal(...extraParams: T): Promise<Vault> {
-    return this._cache.getTotal(...extraParams) ?? this._readable.getTotal(...extraParams);
+    return (
+      this._cache.getTotal(...extraParams) ??
+      this._readable.getTotal(...extraParams)
+    );
   }
 
-  async getStabilityDeposit(address?: string, ...extraParams: T): Promise<StabilityDeposit> {
+  async getStabilityDeposit(
+    address?: string,
+    ...extraParams: T
+  ): Promise<StabilityDeposit> {
     return (
       this._cache.getStabilityDeposit(address, ...extraParams) ??
       this._readable.getStabilityDeposit(address, ...extraParams)
@@ -129,49 +157,52 @@ export class _CachedReadableMoneyp<T extends unknown[]>
     );
   }
 
-  async getRskSwapTokenBalance(address?: string, ...extraParams: T): Promise<Decimal> {
-    return (
-      this._cache.getRskSwapTokenBalance(address, ...extraParams) ??
-      this._readable.getRskSwapTokenBalance(address, ...extraParams)
-    );
-  }
+  // async getRskSwapTokenBalance(address?: string, ...extraParams: T): Promise<Decimal> {
+  //   return (
+  //     this._cache.getRskSwapTokenBalance(address, ...extraParams) ??
+  //     this._readable.getRskSwapTokenBalance(address, ...extraParams)
+  //   );
+  // }
 
-  async getRskSwapTokenAllowance(address?: string, ...extraParams: T): Promise<Decimal> {
-    return (
-      this._cache.getRskSwapTokenAllowance(address, ...extraParams) ??
-      this._readable.getRskSwapTokenAllowance(address, ...extraParams)
-    );
-  }
+  // async getRskSwapTokenAllowance(address?: string, ...extraParams: T): Promise<Decimal> {
+  //   return (
+  //     this._cache.getRskSwapTokenAllowance(address, ...extraParams) ??
+  //     this._readable.getRskSwapTokenAllowance(address, ...extraParams)
+  //   );
+  // }
 
-  async getRemainingLiquidityMiningMPReward(...extraParams: T): Promise<Decimal> {
-    return (
-      this._cache.getRemainingLiquidityMiningMPReward(...extraParams) ??
-      this._readable.getRemainingLiquidityMiningMPReward(...extraParams)
-    );
-  }
+  // async getRemainingLiquidityMiningMPReward(...extraParams: T): Promise<Decimal> {
+  //   return (
+  //     this._cache.getRemainingLiquidityMiningMPReward(...extraParams) ??
+  //     this._readable.getRemainingLiquidityMiningMPReward(...extraParams)
+  //   );
+  // }
 
-  async getLiquidityMiningStake(address?: string, ...extraParams: T): Promise<Decimal> {
-    return (
-      this._cache.getLiquidityMiningStake(address, ...extraParams) ??
-      this._readable.getLiquidityMiningStake(address, ...extraParams)
-    );
-  }
+  // async getLiquidityMiningStake(address?: string, ...extraParams: T): Promise<Decimal> {
+  //   return (
+  //     this._cache.getLiquidityMiningStake(address, ...extraParams) ??
+  //     this._readable.getLiquidityMiningStake(address, ...extraParams)
+  //   );
+  // }
 
-  async getTotalStakedRskSwapTokens(...extraParams: T): Promise<Decimal> {
-    return (
-      this._cache.getTotalStakedRskSwapTokens(...extraParams) ??
-      this._readable.getTotalStakedRskSwapTokens(...extraParams)
-    );
-  }
+  // async getTotalStakedRskSwapTokens(...extraParams: T): Promise<Decimal> {
+  //   return (
+  //     this._cache.getTotalStakedRskSwapTokens(...extraParams) ??
+  //     this._readable.getTotalStakedRskSwapTokens(...extraParams)
+  //   );
+  // }
 
-  async getLiquidityMiningMPReward(address?: string, ...extraParams: T): Promise<Decimal> {
-    return (
-      this._cache.getLiquidityMiningMPReward(address, ...extraParams) ??
-      this._readable.getLiquidityMiningMPReward(address, ...extraParams)
-    );
-  }
+  // async getLiquidityMiningMPReward(address?: string, ...extraParams: T): Promise<Decimal> {
+  //   return (
+  //     this._cache.getLiquidityMiningMPReward(address, ...extraParams) ??
+  //     this._readable.getLiquidityMiningMPReward(address, ...extraParams)
+  //   );
+  // }
 
-  async getCollateralSurplusBalance(address?: string, ...extraParams: T): Promise<Decimal> {
+  async getCollateralSurplusBalance(
+    address?: string,
+    ...extraParams: T
+  ): Promise<Decimal> {
     return (
       this._cache.getCollateralSurplusBalance(address, ...extraParams) ??
       this._readable.getCollateralSurplusBalance(address, ...extraParams)
@@ -183,26 +214,45 @@ export class _CachedReadableMoneyp<T extends unknown[]>
     ...extraParams: T
   ): Promise<VaultWithPendingRedistribution[]>;
 
-  getVaults(params: VaultListingParams, ...extraParams: T): Promise<UserVault[]>;
+  getVaults(
+    params: VaultListingParams,
+    ...extraParams: T
+  ): Promise<UserVault[]>;
 
-  async getVaults(params: VaultListingParams, ...extraParams: T): Promise<UserVault[]> {
+  async getVaults(
+    params: VaultListingParams,
+    ...extraParams: T
+  ): Promise<UserVault[]> {
     const { beforeRedistribution, ...restOfParams } = params;
 
     const [totalRedistributed, vaults] = await Promise.all([
-      beforeRedistribution ? undefined : this.getTotalRedistributed(...extraParams),
-      this._cache.getVaults({ beforeRedistribution: true, ...restOfParams }, ...extraParams) ??
-        this._readable.getVaults({ beforeRedistribution: true, ...restOfParams }, ...extraParams)
+      beforeRedistribution
+        ? undefined
+        : this.getTotalRedistributed(...extraParams),
+      this._cache.getVaults(
+        { beforeRedistribution: true, ...restOfParams },
+        ...extraParams
+      ) ??
+        this._readable.getVaults(
+          { beforeRedistribution: true, ...restOfParams },
+          ...extraParams
+        ),
     ]);
 
     if (totalRedistributed) {
-      return vaults.map(vault => vault.applyRedistribution(totalRedistributed));
+      return vaults.map((vault) =>
+        vault.applyRedistribution(totalRedistributed)
+      );
     } else {
       return vaults;
     }
   }
 
   async getFees(...extraParams: T): Promise<Fees> {
-    return this._cache.getFees(...extraParams) ?? this._readable.getFees(...extraParams);
+    return (
+      this._cache.getFees(...extraParams) ??
+      this._readable.getFees(...extraParams)
+    );
   }
 
   async getMPStake(address?: string, ...extraParams: T): Promise<MPStake> {
@@ -219,7 +269,10 @@ export class _CachedReadableMoneyp<T extends unknown[]>
     );
   }
 
-  async getFrontendStatus(address?: string, ...extraParams: T): Promise<FrontendStatus> {
+  async getFrontendStatus(
+    address?: string,
+    ...extraParams: T
+  ): Promise<FrontendStatus> {
     return (
       this._cache.getFrontendStatus(address, ...extraParams) ??
       this._readable.getFrontendStatus(address, ...extraParams)

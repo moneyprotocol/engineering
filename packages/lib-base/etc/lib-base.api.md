@@ -37,10 +37,6 @@ export class _CachedReadableMoneyp<T extends unknown[]> implements _ReadableMone
     // (undocumented)
     getFrontendStatus(address?: string, ...extraParams: T): Promise<FrontendStatus>;
     // (undocumented)
-    getLiquidityMiningMPReward(address?: string, ...extraParams: T): Promise<Decimal>;
-    // (undocumented)
-    getLiquidityMiningStake(address?: string, ...extraParams: T): Promise<Decimal>;
-    // (undocumented)
     getMPBalance(address?: string, ...extraParams: T): Promise<Decimal>;
     // (undocumented)
     getMPStake(address?: string, ...extraParams: T): Promise<MPStake>;
@@ -49,13 +45,7 @@ export class _CachedReadableMoneyp<T extends unknown[]> implements _ReadableMone
     // (undocumented)
     getPrice(...extraParams: T): Promise<Decimal>;
     // (undocumented)
-    getRemainingLiquidityMiningMPReward(...extraParams: T): Promise<Decimal>;
-    // (undocumented)
     getRemainingStabilityPoolMPReward(...extraParams: T): Promise<Decimal>;
-    // (undocumented)
-    getRskSwapTokenAllowance(address?: string, ...extraParams: T): Promise<Decimal>;
-    // (undocumented)
-    getRskSwapTokenBalance(address?: string, ...extraParams: T): Promise<Decimal>;
     // (undocumented)
     getStabilityDeposit(address?: string, ...extraParams: T): Promise<StabilityDeposit>;
     // (undocumented)
@@ -64,8 +54,6 @@ export class _CachedReadableMoneyp<T extends unknown[]> implements _ReadableMone
     getTotalRedistributed(...extraParams: T): Promise<Vault>;
     // (undocumented)
     getTotalStakedMP(...extraParams: T): Promise<Decimal>;
-    // (undocumented)
-    getTotalStakedRskSwapTokens(...extraParams: T): Promise<Decimal>;
     // (undocumented)
     getVault(address?: string, ...extraParams: T): Promise<UserVault>;
     // (undocumented)
@@ -76,7 +64,7 @@ export class _CachedReadableMoneyp<T extends unknown[]> implements _ReadableMone
     }, ...extraParams: T): Promise<VaultWithPendingRedistribution[]>;
     // (undocumented)
     getVaults(params: VaultListingParams, ...extraParams: T): Promise<UserVault[]>;
-    }
+}
 
 // @internal (undocumented)
 export type _CollateralChange<T> = (_CollateralDeposit<T> & _NoCollateralWithdrawal) | (_CollateralWithdrawal<T> & _NoCollateralDeposit);
@@ -288,7 +276,7 @@ export abstract class MoneypStore<T = unknown> {
     subscribe(listener: (params: MoneypStoreListenerParams<T>) => void): () => void;
     // @internal (undocumented)
     protected _update(baseStateUpdate?: Partial<MoneypStoreBaseState>, extraStateUpdate?: Partial<T>): void;
-    }
+}
 
 // @public
 export interface MoneypStoreBaseState {
@@ -299,24 +287,18 @@ export interface MoneypStoreBaseState {
     // @internal (undocumented)
     _feesInNormalMode: Fees;
     frontend: FrontendStatus;
-    liquidityMiningMPReward: Decimal;
-    liquidityMiningStake: Decimal;
     mpBalance: Decimal;
     mpStake: MPStake;
     numberOfVaults: number;
     ownFrontend: FrontendStatus;
     price: Decimal;
-    remainingLiquidityMiningMPReward: Decimal;
     remainingStabilityPoolMPReward: Decimal;
     // @internal (undocumented)
     _riskiestVaultBeforeRedistribution: VaultWithPendingRedistribution;
-    rskSwapTokenAllowance: Decimal;
-    rskSwapTokenBalance: Decimal;
     stabilityDeposit: StabilityDeposit;
     total: Vault;
     totalRedistributed: Vault;
     totalStakedMP: Decimal;
-    totalStakedRskSwapTokens: Decimal;
     vaultBeforeRedistribution: VaultWithPendingRedistribution;
 }
 
@@ -356,14 +338,7 @@ export class MPStake {
 }
 
 // @public
-export type MPStakeChange<T> = {
-    stakeMP: T;
-    unstakeMP?: undefined;
-} | {
-    stakeMP?: undefined;
-    unstakeMP: T;
-    unstakeAllMP: boolean;
-};
+export type MPStakeChange<T> = any;
 
 // @internal (undocumented)
 export type _NoBPDBorrowing = Partial<_BPDBorrowing<undefined>>;
@@ -495,21 +470,15 @@ export interface ReadableMoneyp {
     getCollateralSurplusBalance(address?: string): Promise<Decimal>;
     getFees(): Promise<Fees>;
     getFrontendStatus(address?: string): Promise<FrontendStatus>;
-    getLiquidityMiningMPReward(address?: string): Promise<Decimal>;
-    getLiquidityMiningStake(address?: string): Promise<Decimal>;
     getMPBalance(address?: string): Promise<Decimal>;
     getMPStake(address?: string): Promise<MPStake>;
     getNumberOfVaults(): Promise<number>;
     getPrice(): Promise<Decimal>;
-    getRemainingLiquidityMiningMPReward(): Promise<Decimal>;
     getRemainingStabilityPoolMPReward(): Promise<Decimal>;
-    getRskSwapTokenAllowance(address?: string): Promise<Decimal>;
-    getRskSwapTokenBalance(address?: string): Promise<Decimal>;
     getStabilityDeposit(address?: string): Promise<StabilityDeposit>;
     getTotal(): Promise<Vault>;
     getTotalRedistributed(): Promise<Vault>;
     getTotalStakedMP(): Promise<Decimal>;
-    getTotalStakedRskSwapTokens(): Promise<Decimal>;
     getVault(address?: string): Promise<UserVault>;
     getVaultBeforeRedistribution(address?: string): Promise<VaultWithPendingRedistribution>;
     // @internal (undocumented)
@@ -607,14 +576,7 @@ export class StabilityDeposit {
 }
 
 // @public
-export type StabilityDepositChange<T> = {
-    depositBPD: T;
-    withdrawBPD?: undefined;
-} | {
-    depositBPD?: undefined;
-    withdrawBPD: T;
-    withdrawAllBPD: boolean;
-};
+export type StabilityDepositChange<T> = any;
 
 // @public
 export interface StabilityDepositChangeDetails extends StabilityPoolGainsWithdrawalDetails {
@@ -637,7 +599,7 @@ export type SuccessfulReceipt<R = unknown, D = unknown> = {
 };
 
 // @internal (undocumented)
-export const _successfulReceipt: <R, D>(rawReceipt: R, details: D, toString?: (() => string) | undefined) => SuccessfulReceipt<R, D>;
+export const _successfulReceipt: <R, D>(rawReceipt: R, details: D, toString?: () => string) => SuccessfulReceipt<R, D>;
 
 // @public
 export interface TransactableMoneyp {
@@ -768,7 +730,7 @@ export type VaultChange<T> = {
 } | {
     type: "adjustment";
     params: VaultAdjustmentParams<T>;
-    setToZero?: "collateral" | "debt";
+    setToZero?: "collateral" | "debt" | "";
 };
 
 // @public
@@ -818,8 +780,7 @@ export class VaultWithPendingRedistribution extends UserVault {
     applyRedistribution(totalRedistributed: Vault): UserVault;
     // (undocumented)
     equals(that: VaultWithPendingRedistribution): boolean;
-    }
-
+}
 
 // (No @packageDocumentation comment for this package)
 

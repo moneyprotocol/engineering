@@ -1,6 +1,6 @@
 require("@nomiclabs/hardhat-truffle5");
 require("@nomiclabs/hardhat-ethers");
-require("@nomiclabs/hardhat-etherscan");
+require("@nomicfoundation/hardhat-verify");
 require("solidity-coverage");
 require("hardhat-gas-reporter");
 
@@ -61,6 +61,15 @@ module.exports = {
                     }
                 }
             },
+            {
+                version: "0.8.20",
+                settings: {
+                    optimizer: {
+                        enabled: true,
+                        runs: 100
+                    }
+                }
+            }
         ]
     },
     networks: {

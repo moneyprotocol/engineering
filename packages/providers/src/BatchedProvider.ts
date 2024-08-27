@@ -1,6 +1,10 @@
 import { isAddress } from "@ethersproject/address";
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
-import { Provider, TransactionRequest, BlockTag } from "@ethersproject/abstract-provider";
+import {
+  Provider,
+  TransactionRequest,
+  BlockTag,
+} from "@ethersproject/abstract-provider";
 import { BaseProvider } from "@ethersproject/providers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Contract } from "@ethersproject/contracts";
@@ -13,11 +17,12 @@ const multicallAddress = {
   3: "0x53C43764255c17BD724F74c4eF150724AC50a3ed",
   4: "0x42Ad527de7d4e9d9d011aC45B31D8551f8Fe9821",
   5: "0x77dCa2C955b15e9dE4dbBCf1246B4B85b651e50e",
-  42: "0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A"
+  42: "0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A",
 };
 
-const hasMulticall = (chainId: number): chainId is keyof typeof multicallAddress =>
-  chainId in multicallAddress;
+const hasMulticall = (
+  chainId: number
+): chainId is keyof typeof multicallAddress => chainId in multicallAddress;
 
 const multicallAbi = [
   {
@@ -32,28 +37,28 @@ const multicallAbi = [
         components: [
           {
             name: "target",
-            type: "address"
+            type: "address",
           },
           {
             name: "callData",
-            type: "bytes"
-          }
+            type: "bytes",
+          },
         ],
         name: "calls",
-        type: "tuple[]"
-      }
+        type: "tuple[]",
+      },
     ],
 
     outputs: [
       {
         name: "blockNumber",
-        type: "uint256"
+        type: "uint256",
       },
       {
         name: "returnData",
-        type: "bytes[]"
-      }
-    ]
+        type: "bytes[]",
+      },
+    ],
   },
 
   {
@@ -66,17 +71,17 @@ const multicallAbi = [
     inputs: [
       {
         name: "addr",
-        type: "address"
-      }
+        type: "address",
+      },
     ],
 
     outputs: [
       {
         name: "balance",
-        type: "uint256"
-      }
-    ]
-  }
+        type: "uint256",
+      },
+    ],
+  },
 ];
 
 type CallRequest = {
@@ -95,7 +100,10 @@ interface Multicall extends Contract {
   };
 
   readonly functions: {
-    getEthBalance(addr: string, overrides?: BatchableOverrides): Promise<[BigNumber]>;
+    getEthBalance(
+      addr: string,
+      overrides?: BatchableOverrides
+    ): Promise<[BigNumber]>;
   };
 }
 
@@ -128,9 +136,14 @@ const emptyBatch = (): BatchedCalls => ({ calls: [], callbacks: [] });
 //
 // Then we'll be able to properly exclude calls that have `from` addresses from batching.
 const batchableCall = (request: ResolvedTransactionRequest) =>
-  request.gasLimit === undefined && request.gasPrice === undefined && request.value === undefined;
+  request.gasLimit === undefined &&
+  request.gasPrice === undefined &&
+  request.value === undefined;
 
-const batchedCall = (request: ResolvedTransactionRequest, multicallAddress: string) =>
+const batchedCall = (
+  request: ResolvedTransactionRequest,
+  multicallAddress: string
+) =>
   request.to === multicallAddress &&
   typeof request.data === "string" &&
   request.data.startsWith("0x252dba42"); // signature of `aggregate((address,bytes)[])`
@@ -142,10 +155,16 @@ export interface BatchedProvider extends BaseProvider {
 
 const batchedProviders: any[] = [];
 
-export const isBatchedProvider = (provider: Provider): provider is BatchedProvider =>
-  batchedProviders.some(batchedProvider => provider instanceof batchedProvider);
+export const isBatchedProvider = (
+  provider: Provider
+): provider is BatchedProvider =>
+  batchedProviders.some(
+    (batchedProvider) => provider instanceof batchedProvider
+  );
 
-export const Batched = <T extends new (...args: any[]) => BaseProvider>(Base: T) => {
+export const Batched: any = <T extends new (...args: any[]) => BaseProvider>(
+  Base: T
+) => {
   const batchedProvider = class extends Base implements BatchedProvider {
     batchingDelayMs = 10;
 
@@ -168,7 +187,11 @@ export const Batched = <T extends new (...args: any[]) => BaseProvider>(Base: T)
       }
 
       if (hasMulticall(chainId)) {
-        this._multicall = new Contract(multicallAddress[chainId], multicallAbi, this) as Multicall;
+        this._multicall = new Contract(
+          multicallAddress[chainId],
+          multicallAbi,
+          this
+        ) as Multicall;
       }
 
       this._chainId = chainId;
@@ -181,10 +204,15 @@ export const Batched = <T extends new (...args: any[]) => BaseProvider>(Base: T)
       try {
         const results =
           calls.length > 1
-            ? await this._multicall!.callStatic.aggregate(calls, { blockTag }).then(
-                x => x.returnData
-              )
-            : [await super.call({ to: calls[0].target, data: calls[0].callData }, blockTag)];
+            ? await this._multicall!.callStatic.aggregate(calls, {
+                blockTag,
+              }).then((x) => x.returnData)
+            : [
+                await super.call(
+                  { to: calls[0].target, data: calls[0].callData },
+                  blockTag
+                ),
+              ];
 
         callbacks.forEach(([resolve], i) => resolve(results[i]));
       } catch (error) {
@@ -198,9 +226,14 @@ export const Batched = <T extends new (...args: any[]) => BaseProvider>(Base: T)
       }
 
       this._batched.calls.push(call);
-      this._timeoutId = setTimeout(() => this._dispatchCalls(), this.batchingDelayMs);
+      this._timeoutId = setTimeout(
+        () => this._dispatchCalls(),
+        this.batchingDelayMs
+      );
 
-      return new Promise((resolve, reject) => this._batched.callbacks.push([resolve, reject]));
+      return new Promise((resolve, reject) =>
+        this._batched.callbacks.push([resolve, reject])
+      );
     }
 
     _alreadyBatchedCallsConflictWith(blockTag?: BlockTag) {
@@ -240,7 +273,7 @@ export const Batched = <T extends new (...args: any[]) => BaseProvider>(Base: T)
 
       const [resolvedRequest, resolvedBlockTag] = await Promise.all([
         resolveProperties(request),
-        blockTag
+        blockTag,
       ]);
 
       if (
@@ -258,7 +291,10 @@ export const Batched = <T extends new (...args: any[]) => BaseProvider>(Base: T)
           this._batched.blockTag = resolvedBlockTag;
         }
 
-        return this._enqueueCall({ target: resolvedRequest.to!, callData: resolvedRequest.data! });
+        return this._enqueueCall({
+          target: resolvedRequest.to!,
+          callData: resolvedRequest.data!,
+        });
       }
     }
 
@@ -266,15 +302,21 @@ export const Batched = <T extends new (...args: any[]) => BaseProvider>(Base: T)
       addressOrName: string | Promise<string>,
       blockTag?: BlockTag | Promise<BlockTag>
     ): Promise<BigNumber> {
-      const [resolvedAddressOrName, resolvedBlockTag] = await Promise.all([addressOrName, blockTag]);
+      const [resolvedAddressOrName, resolvedBlockTag] = await Promise.all([
+        addressOrName,
+        blockTag,
+      ]);
 
       if (!isAddress(resolvedAddressOrName) || !this._multicall) {
         return super.getBalance(resolvedAddressOrName, blockTag);
       }
 
-      const [balance] = await this._multicall.functions.getEthBalance(resolvedAddressOrName, {
-        blockTag: resolvedBlockTag
-      });
+      const [balance] = await this._multicall.functions.getEthBalance(
+        resolvedAddressOrName,
+        {
+          blockTag: resolvedBlockTag,
+        }
+      );
 
       return balance;
     }
@@ -285,4 +327,6 @@ export const Batched = <T extends new (...args: any[]) => BaseProvider>(Base: T)
   return batchedProvider;
 };
 
-export const BatchedWebSocketAugmentedWeb3Provider = Batched(WebSocketAugmentedWeb3Provider);
+export const BatchedWebSocketAugmentedWeb3Provider: any = Batched(
+  WebSocketAugmentedWeb3Provider
+);

@@ -6,18 +6,28 @@ import {
   MINIMUM_COLLATERAL_RATIO,
   CRITICAL_COLLATERAL_RATIO,
   BPD_LIQUIDATION_RESERVE,
-  MINIMUM_BORROWING_RATE
+  MINIMUM_BORROWING_RATE,
 } from "./constants";
 
 /** @internal */ export type _CollateralDeposit<T> = { depositCollateral: T };
-/** @internal */ export type _CollateralWithdrawal<T> = { withdrawCollateral: T };
+/** @internal */ export type _CollateralWithdrawal<T> = {
+  withdrawCollateral: T;
+};
 /** @internal */ export type _BPDBorrowing<T> = { borrowBPD: T };
 /** @internal */ export type _BPDRepayment<T> = { repayBPD: T };
 
-/** @internal */ export type _NoCollateralDeposit = Partial<_CollateralDeposit<undefined>>;
-/** @internal */ export type _NoCollateralWithdrawal = Partial<_CollateralWithdrawal<undefined>>;
-/** @internal */ export type _NoBPDBorrowing = Partial<_BPDBorrowing<undefined>>;
-/** @internal */ export type _NoBPDRepayment = Partial<_BPDRepayment<undefined>>;
+/** @internal */ export type _NoCollateralDeposit = Partial<
+  _CollateralDeposit<undefined>
+>;
+/** @internal */ export type _NoCollateralWithdrawal = Partial<
+  _CollateralWithdrawal<undefined>
+>;
+/** @internal */ export type _NoBPDBorrowing = Partial<
+  _BPDBorrowing<undefined>
+>;
+/** @internal */ export type _NoBPDRepayment = Partial<
+  _BPDRepayment<undefined>
+>;
 
 /** @internal */
 export type _CollateralChange<T> =
@@ -25,7 +35,8 @@ export type _CollateralChange<T> =
   | (_CollateralWithdrawal<T> & _NoCollateralDeposit);
 
 /** @internal */
-export type _NoCollateralChange = _NoCollateralDeposit & _NoCollateralWithdrawal;
+export type _NoCollateralChange = _NoCollateralDeposit &
+  _NoCollateralWithdrawal;
 
 /** @internal */
 export type _DebtChange<T> =
@@ -209,10 +220,17 @@ export type VaultChange<T> =
   | { type: "invalidCreation"; invalidVault: Vault; error: VaultCreationError }
   | { type: "creation"; params: VaultCreationParams<T> }
   | { type: "closure"; params: VaultClosureParams<T> }
-  | { type: "adjustment"; params: VaultAdjustmentParams<T>; setToZero?: "collateral" | "debt" };
+  | {
+      type: "adjustment";
+      params: VaultAdjustmentParams<T>;
+      setToZero?: "collateral" | "debt" | "";
+    };
 
 // This might seem backwards, but this way we avoid spamming the .d.ts and generated docs
-type InvalidVaultCreation = Extract<VaultChange<never>, { type: "invalidCreation" }>;
+type InvalidVaultCreation = Extract<
+  VaultChange<never>,
+  { type: "invalidCreation" }
+>;
 type VaultCreation<T> = Extract<VaultChange<T>, { type: "creation" }>;
 type VaultClosure<T> = Extract<VaultChange<T>, { type: "closure" }>;
 type VaultAdjustment<T> = Extract<VaultChange<T>, { type: "adjustment" }>;
@@ -223,30 +241,33 @@ const invalidVaultCreation = (
 ): InvalidVaultCreation => ({
   type: "invalidCreation",
   invalidVault,
-  error
+  error,
 });
 
-const vaultCreation = <T>(params: VaultCreationParams<T>): VaultCreation<T> => ({
+const vaultCreation = <T>(
+  params: VaultCreationParams<T>
+): VaultCreation<T> => ({
   type: "creation",
-  params
+  params,
 });
 
 const vaultClosure = <T>(params: VaultClosureParams<T>): VaultClosure<T> => ({
   type: "closure",
-  params
+  params,
 });
 
 const vaultAdjustment = <T>(
   params: VaultAdjustmentParams<T>,
-  setToZero?: "collateral" | "debt"
+  setToZero?: "collateral" | "debt" | ""
 ): VaultAdjustment<T> => ({
   type: "adjustment",
   params,
-  setToZero
+  setToZero,
 });
 
-const valueIsDefined = <T>(entry: [string, T | undefined]): entry is [string, T] =>
-  entry[1] !== undefined;
+const valueIsDefined = <T>(
+  entry: [string, T | undefined]
+): entry is [string, T] => entry[1] !== undefined;
 
 type AllowedKey<T> = Exclude<
   {
@@ -257,7 +278,7 @@ type AllowedKey<T> = Exclude<
 
 const allowedVaultCreationKeys: AllowedKey<VaultCreationParams>[] = [
   "depositCollateral",
-  "borrowBPD"
+  "borrowBPD",
 ];
 
 function checkAllowedVaultCreationKeys<T>(
@@ -268,24 +289,36 @@ function checkAllowedVaultCreationKeys<T>(
     .map(([k]) => `'${k}'`);
 
   if (badKeys.length > 0) {
-    throw new Error(`VaultCreationParams: property ${badKeys.join(", ")} not allowed`);
+    throw new Error(
+      `VaultCreationParams: property ${badKeys.join(", ")} not allowed`
+    );
   }
 }
 
 const vaultCreationParamsFromEntries = <T>(
   entries: [AllowedKey<VaultCreationParams>, T][]
 ): VaultCreationParams<T> => {
-  const params = Object.fromEntries(entries) as Record<AllowedKey<VaultCreationParams>, T>;
-  const missingKeys = allowedVaultCreationKeys.filter(k => !(k in params)).map(k => `'${k}'`);
+  const params = Object.fromEntries(entries) as Record<
+    AllowedKey<VaultCreationParams>,
+    T
+  >;
+  const missingKeys = allowedVaultCreationKeys
+    .filter((k) => !(k in params))
+    .map((k) => `'${k}'`);
 
   if (missingKeys.length > 0) {
-    throw new Error(`VaultCreationParams: property ${missingKeys.join(", ")} missing`);
+    throw new Error(
+      `VaultCreationParams: property ${missingKeys.join(", ")} missing`
+    );
   }
 
   return params;
 };
 
-const decimalize = <T>([k, v]: [T, Decimalish]): [T, Decimal] => [k, Decimal.from(v)];
+const decimalize = <T>([k, v]: [T, Decimalish]): [T, Decimal] => [
+  k,
+  Decimal.from(v),
+];
 const nonZero = <T>([, v]: [T, Decimal]): boolean => !v.isZero;
 
 /** @internal */
@@ -303,7 +336,7 @@ const allowedVaultAdjustmentKeys: AllowedKey<VaultAdjustmentParams>[] = [
   "depositCollateral",
   "withdrawCollateral",
   "borrowBPD",
-  "repayBPD"
+  "repayBPD",
 ];
 
 function checkAllowedVaultAdjustmentKeys<T>(
@@ -314,14 +347,18 @@ function checkAllowedVaultAdjustmentKeys<T>(
     .map(([k]) => `'${k}'`);
 
   if (badKeys.length > 0) {
-    throw new Error(`VaultAdjustmentParams: property ${badKeys.join(", ")} not allowed`);
+    throw new Error(
+      `VaultAdjustmentParams: property ${badKeys.join(", ")} not allowed`
+    );
   }
 }
 
 const collateralChangeFrom = <T>({
   depositCollateral,
-  withdrawCollateral
-}: Partial<Record<AllowedKey<VaultAdjustmentParams>, T>>): _CollateralChange<T> | undefined => {
+  withdrawCollateral,
+}: Partial<Record<AllowedKey<VaultAdjustmentParams>, T>>):
+  | _CollateralChange<T>
+  | undefined => {
   if (depositCollateral !== undefined && withdrawCollateral !== undefined) {
     throw new Error(
       "VaultAdjustmentParams: 'depositCollateral' and 'withdrawCollateral' " +
@@ -340,8 +377,10 @@ const collateralChangeFrom = <T>({
 
 const debtChangeFrom = <T>({
   borrowBPD,
-  repayBPD
-}: Partial<Record<AllowedKey<VaultAdjustmentParams>, T>>): _DebtChange<T> | undefined => {
+  repayBPD,
+}: Partial<Record<AllowedKey<VaultAdjustmentParams>, T>>):
+  | _DebtChange<T>
+  | undefined => {
   if (borrowBPD !== undefined && repayBPD !== undefined) {
     throw new Error(
       "VaultAdjustmentParams: 'borrowBPD' and 'repayBPD' can't be present at the same time"
@@ -379,7 +418,9 @@ const vaultAdjustmentParamsFromEntries = <T>(
     return debtChange;
   }
 
-  throw new Error("VaultAdjustmentParams: must include at least one non-zero parameter");
+  throw new Error(
+    "VaultAdjustmentParams: must include at least one non-zero parameter"
+  );
 };
 
 /** @internal */
@@ -431,7 +472,9 @@ export class Vault {
    */
   get netDebt(): Decimal {
     if (this.debt.lt(BPD_LIQUIDATION_RESERVE)) {
-      throw new Error(`netDebt should not be used when debt < ${BPD_LIQUIDATION_RESERVE}`);
+      throw new Error(
+        `netDebt should not be used when debt < ${BPD_LIQUIDATION_RESERVE}`
+      );
     }
 
     return this.debt.sub(BPD_LIQUIDATION_RESERVE);
@@ -439,7 +482,10 @@ export class Vault {
 
   /** @internal */
   get _nominalCollateralRatio(): Decimal {
-    return this.collateral.mulDiv(NOMINAL_COLLATERAL_RATIO_PRECISION, this.debt);
+    return this.collateral.mulDiv(
+      NOMINAL_COLLATERAL_RATIO_PRECISION,
+      this.debt
+    );
   }
 
   /** Calculate the Vault's collateralization ratio at a given price. */
@@ -494,7 +540,10 @@ export class Vault {
   }
 
   add(that: Vault): Vault {
-    return new Vault(this.collateral.add(that.collateral), this.debt.add(that.debt));
+    return new Vault(
+      this.collateral.add(that.collateral),
+      this.debt.add(that.debt)
+    );
   }
 
   addCollateral(collateral: Decimalish): Vault {
@@ -509,24 +558,34 @@ export class Vault {
     const { collateral, debt } = that;
 
     return new Vault(
-      this.collateral.gt(collateral) ? this.collateral.sub(collateral) : Decimal.ZERO,
+      this.collateral.gt(collateral)
+        ? this.collateral.sub(collateral)
+        : Decimal.ZERO,
       this.debt.gt(debt) ? this.debt.sub(debt) : Decimal.ZERO
     );
   }
 
   subtractCollateral(collateral: Decimalish): Vault {
     return new Vault(
-      this.collateral.gt(collateral) ? this.collateral.sub(collateral) : Decimal.ZERO,
+      this.collateral.gt(collateral)
+        ? this.collateral.sub(collateral)
+        : Decimal.ZERO,
       this.debt
     );
   }
 
   subtractDebt(debt: Decimalish): Vault {
-    return new Vault(this.collateral, this.debt.gt(debt) ? this.debt.sub(debt) : Decimal.ZERO);
+    return new Vault(
+      this.collateral,
+      this.debt.gt(debt) ? this.debt.sub(debt) : Decimal.ZERO
+    );
   }
 
   multiply(multiplier: Decimalish): Vault {
-    return new Vault(this.collateral.mul(multiplier), this.debt.mul(multiplier));
+    return new Vault(
+      this.collateral.mul(multiplier),
+      this.debt.mul(multiplier)
+    );
   }
 
   setCollateral(collateral: Decimalish): Vault {
@@ -537,7 +596,10 @@ export class Vault {
     return new Vault(this.collateral, Decimal.from(debt));
   }
 
-  private _debtChange({ debt }: Vault, borrowingRate: Decimalish): _DebtChange<Decimal> {
+  private _debtChange(
+    { debt }: Vault,
+    borrowingRate: Decimalish
+  ): _DebtChange<Decimal> {
     return debt.gt(this.debt)
       ? { borrowBPD: unapplyFee(borrowingRate, debt.sub(this.debt)) }
       : { repayBPD: this.debt.sub(debt) };
@@ -573,7 +635,7 @@ export class Vault {
 
       return vaultCreation({
         depositCollateral: that.collateral,
-        borrowBPD: unapplyFee(borrowingRate, that.netDebt)
+        borrowBPD: unapplyFee(borrowingRate, that.netDebt),
       });
     }
 
@@ -586,13 +648,19 @@ export class Vault {
     }
 
     return this.collateral.eq(that.collateral)
-      ? vaultAdjustment<Decimal>(this._debtChange(that, borrowingRate), that.debt.zero && "debt")
+      ? vaultAdjustment<Decimal>(
+          this._debtChange(that, borrowingRate),
+          that.debt.zero && "debt"
+        )
       : this.debt.eq(that.debt)
-      ? vaultAdjustment<Decimal>(this._collateralChange(that), that.collateral.zero && "collateral")
+      ? vaultAdjustment<Decimal>(
+          this._collateralChange(that),
+          that.collateral.zero && "collateral"
+        )
       : vaultAdjustment<Decimal>(
           {
             ...this._debtChange(that, borrowingRate),
-            ...this._collateralChange(that)
+            ...this._collateralChange(that),
           },
           (that.debt.zero && "debt") ?? (that.collateral.zero && "collateral")
         );
@@ -643,16 +711,25 @@ export class Vault {
       case "adjustment": {
         const {
           setToZero,
-          params: { depositCollateral, withdrawCollateral, borrowBPD, repayBPD }
+          params: {
+            depositCollateral,
+            withdrawCollateral,
+            borrowBPD,
+            repayBPD,
+          },
         } = change;
 
         const collateralDecrease = withdrawCollateral ?? Decimal.ZERO;
         const collateralIncrease = depositCollateral ?? Decimal.ZERO;
         const debtDecrease = repayBPD ?? Decimal.ZERO;
-        const debtIncrease = borrowBPD ? applyFee(borrowingRate, borrowBPD) : Decimal.ZERO;
+        const debtIncrease = borrowBPD
+          ? applyFee(borrowingRate, borrowBPD)
+          : Decimal.ZERO;
 
         return setToZero === "collateral"
-          ? this.setCollateral(Decimal.ZERO).addDebt(debtIncrease).subtractDebt(debtDecrease)
+          ? this.setCollateral(Decimal.ZERO)
+              .addDebt(debtIncrease)
+              .subtractDebt(debtDecrease)
           : setToZero === "debt"
           ? this.setDebt(Decimal.ZERO)
               .addCollateral(collateralIncrease)
@@ -670,8 +747,14 @@ export class Vault {
    * @param params - Parameters of the transaction.
    * @param borrowingRate - Borrowing rate to use when calculating the Vault's debt.
    */
-  static create(params: VaultCreationParams<Decimalish>, borrowingRate?: Decimalish): Vault {
-    return _emptyVault.apply(vaultCreation(_normalizeVaultCreation(params)), borrowingRate);
+  static create(
+    params: VaultCreationParams<Decimalish>,
+    borrowingRate?: Decimalish
+  ): Vault {
+    return _emptyVault.apply(
+      vaultCreation(_normalizeVaultCreation(params)),
+      borrowingRate
+    );
   }
 
   /**
@@ -681,7 +764,10 @@ export class Vault {
    * @param that - The Vault to recreate.
    * @param borrowingRate - Current borrowing rate.
    */
-  static recreate(that: Vault, borrowingRate?: Decimalish): VaultCreationParams<Decimal> {
+  static recreate(
+    that: Vault,
+    borrowingRate?: Decimalish
+  ): VaultCreationParams<Decimal> {
     const change = _emptyVault.whatChanged(that, borrowingRate);
     assert(change?.type === "creation");
     return change.params;
@@ -694,8 +780,14 @@ export class Vault {
    * @param params - Parameters of the transaction.
    * @param borrowingRate - Borrowing rate to use when adding to the Vault's debt.
    */
-  adjust(params: VaultAdjustmentParams<Decimalish>, borrowingRate?: Decimalish): Vault {
-    return this.apply(vaultAdjustment(_normalizeVaultAdjustment(params)), borrowingRate);
+  adjust(
+    params: VaultAdjustmentParams<Decimalish>,
+    borrowingRate?: Decimalish
+  ): Vault {
+    return this.apply(
+      vaultAdjustment(_normalizeVaultAdjustment(params)),
+      borrowingRate
+    );
   }
 
   /**
@@ -705,7 +797,10 @@ export class Vault {
    * @param that - The desired result of the transaction.
    * @param borrowingRate - Current borrowing rate.
    */
-  adjustTo(that: Vault, borrowingRate?: Decimalish): VaultAdjustmentParams<Decimal> {
+  adjustTo(
+    that: Vault,
+    borrowingRate?: Decimalish
+  ): VaultAdjustmentParams<Decimal> {
     const change = this.whatChanged(that, borrowingRate);
     assert(change?.type === "adjustment");
     return change.params;
@@ -748,7 +843,12 @@ export class UserVault extends Vault {
   readonly status: UserVaultStatus;
 
   /** @internal */
-  constructor(ownerAddress: string, status: UserVaultStatus, collateral?: Decimal, debt?: Decimal) {
+  constructor(
+    ownerAddress: string,
+    status: UserVaultStatus,
+    collateral?: Decimal,
+    debt?: Decimal
+  ) {
     super(collateral, debt);
 
     this.ownerAddress = ownerAddress;
@@ -757,7 +857,9 @@ export class UserVault extends Vault {
 
   equals(that: UserVault): boolean {
     return (
-      super.equals(that) && this.ownerAddress === that.ownerAddress && this.status === that.status
+      super.equals(that) &&
+      this.ownerAddress === that.ownerAddress &&
+      this.status === that.status
     );
   }
 
@@ -803,7 +905,9 @@ export class VaultWithPendingRedistribution extends UserVault {
 
   applyRedistribution(totalRedistributed: Vault): UserVault {
     const afterRedistribution = this.add(
-      totalRedistributed.subtract(this.snapshotOfTotalRedistributed).multiply(this.stake)
+      totalRedistributed
+        .subtract(this.snapshotOfTotalRedistributed)
+        .multiply(this.stake)
     );
 
     return new UserVault(
@@ -818,7 +922,9 @@ export class VaultWithPendingRedistribution extends UserVault {
     return (
       super.equals(that) &&
       this.stake.eq(that.stake) &&
-      this.snapshotOfTotalRedistributed.equals(that.snapshotOfTotalRedistributed)
+      this.snapshotOfTotalRedistributed.equals(
+        that.snapshotOfTotalRedistributed
+      )
     );
   }
 }
