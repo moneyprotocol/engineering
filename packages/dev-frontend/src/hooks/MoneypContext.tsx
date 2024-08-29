@@ -3,7 +3,7 @@ import { Provider } from "@ethersproject/abstract-provider"
 import { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 
-import { isBatchedProvider } from "@moneyprotocol/providers"
+import { isBatchedProvider } from "@money-protocol/providers"
 import {
   BlockPolledMoneypStore,
   BitcoinsMoneyp,

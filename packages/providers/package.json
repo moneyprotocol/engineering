@@ -1,6 +1,6 @@
 {
-  "name": "@moneyprotocol/providers",
-  "version": "5.4.3-stable-testnet",
+  "name": "@money-protocol/providers",
+  "version": "1.0.0-testnet",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -25,5 +25,8 @@
   },
   "peerDependencies": {
     "ethers": "5.4.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

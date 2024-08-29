@@ -36,7 +36,7 @@ These are the Liquity components that have been made visible in this repo. They 
 | @money-protocol/lib-ethers  | [Ethers](https://github.com/ethers-io/ethers.js/)-based middleware that can read Liquity state and send transactions                        |
 | @moneyprotocol/lib-react    | Components and hooks that React-based apps can use to view Liquity contract state                                                           |
 | @moneyprotocol/lib-subgraph | [Apollo Client](https://github.com/apollographql/apollo-client)-based middleware backed by the Liquity subgraph that can read Liquity state |
-| @moneyprotocol/providers    | Customized ethers.js Providers used by dev-frontend                                                                                         |
+| @money-protocol/providers   | Customized ethers.js Providers used by dev-frontend                                                                                         |
 | @moneyprotocol/subgraph     | [Subgraph](https://thegraph.com) for querying Liquity state as well as historical data like transaction history                             |
 
 ## Running Dev UI with Docker

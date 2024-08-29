@@ -30,7 +30,7 @@
     "prepare:lib-ethers": "pnpm --filter @money-protocol/lib-ethers prepare",
     "prepare:lib-react": "pnpm --filter @moneyprotocol/lib-react prepare",
     "prepare:lib-subgraph": "pnpm --filter @moneyprotocol/lib-subgraph prepare",
-    "prepare:providers": "pnpm --filter @moneyprotocol/providers prepare",
+    "prepare:providers": "pnpm --filter @money-protocol/providers prepare",
     "prepare:subgraph": "pnpm --filter @moneyprotocol/subgraph prepare",
     "prepare:docs": "run-s docs",
     "rebuild": "run-s prepare build",

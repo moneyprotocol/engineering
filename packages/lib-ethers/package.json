@@ -74,7 +74,7 @@
     "typescript": "~4.1.0"
   },
   "overrides": {
-    "@ethersproject/contracts": "5.4.0"
+    "@ethersproject/contracts": "5.4.1"
   },
   "publishConfig": {
     "access": "public"
