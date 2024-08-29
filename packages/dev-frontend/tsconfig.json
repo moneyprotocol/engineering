@@ -18,6 +18,9 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
+      "@money-protocol/lib-base": ["../../packages/lib-base"],
+      "@money-protocol/lib-ethers": ["../../packages/lib-ethers"],
+      "@money-protocol/providers": ["../../packages/providers"],
       "@moneyprotocol/*": ["../../packages/*"]
     }
   },
