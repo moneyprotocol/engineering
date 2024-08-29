@@ -1,44 +1,44 @@
-import { useEffect, useState } from "react";
-import { AddressZero } from "@ethersproject/constants";
+import { useEffect, useState } from "react"
+import { AddressZero } from "@ethersproject/constants"
 
-import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
+import { MoneypStoreState } from "@money-protocol/lib-base"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
-import { useMoneyp } from "../hooks/MoneypContext";
+import { useMoneyp } from "../hooks/MoneypContext"
 
-import { Dashboard } from "./Dashboard";
-import { UnregisteredFrontend } from "./UnregisteredFrontend";
-import { FrontendRegistration } from "./FrontendRegistration";
-import { FrontendRegistrationSuccess } from "./FrontendRegistrationSuccess";
+import { Dashboard } from "./Dashboard"
+import { UnregisteredFrontend } from "./UnregisteredFrontend"
+import { FrontendRegistration } from "./FrontendRegistration"
+import { FrontendRegistrationSuccess } from "./FrontendRegistrationSuccess"
 
-const selectFrontend = ({ frontend }: MoneypStoreState) => frontend;
+const selectFrontend = ({ frontend }: MoneypStoreState) => frontend
 
 export const PageSwitcher: React.FC = () => {
   const {
     account,
-    config: { frontendTag }
-  } = useMoneyp();
+    config: { frontendTag },
+  } = useMoneyp()
 
-  const frontend = useMoneypSelector(selectFrontend);
-  const unregistered = frontendTag !== AddressZero && frontend.status === "unregistered";
+  const frontend = useMoneypSelector(selectFrontend)
+  const unregistered = frontendTag !== AddressZero && frontend.status === "unregistered"
 
-  const [registering, setRegistering] = useState(false);
+  const [registering, setRegistering] = useState(false)
 
   useEffect(() => {
     if (unregistered) {
-      setRegistering(true);
+      setRegistering(true)
     }
-  }, [unregistered]);
+  }, [unregistered])
 
   if (registering || unregistered) {
     if (frontend.status === "registered") {
-      return <FrontendRegistrationSuccess onDismiss={() => setRegistering(false)} />;
+      return <FrontendRegistrationSuccess onDismiss={() => setRegistering(false)} />
     } else if (account === frontendTag) {
-      return <FrontendRegistration />;
+      return <FrontendRegistration />
     } else {
-      return <UnregisteredFrontend />;
+      return <UnregisteredFrontend />
     }
   } else {
-    return <Dashboard />;
+    return <Dashboard />
   }
-};
+}

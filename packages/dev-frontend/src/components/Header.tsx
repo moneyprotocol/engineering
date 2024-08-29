@@ -1,5 +1,5 @@
 import React from "react"
-import { MoneypStoreState } from "@moneyprotocol/lib-base"
+import { MoneypStoreState } from "@money-protocol/lib-base"
 import { useMoneypSelector } from "@moneyprotocol/lib-react"
 import { Container, Flex, Box } from "theme-ui"
 import { AddressZero } from "@ethersproject/constants"

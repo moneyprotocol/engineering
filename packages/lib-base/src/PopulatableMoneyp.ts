@@ -1,6 +1,10 @@
 import { Decimal, Decimalish } from "./Decimal";
 import { VaultAdjustmentParams, VaultCreationParams } from "./Vault";
-import { MoneypReceipt, SendableMoneyp, SentMoneypTransaction } from "./SendableMoneyp";
+import {
+  MoneypReceipt,
+  SendableMoneyp,
+  SentMoneypTransaction,
+} from "./SendableMoneyp";
 
 import {
   CollateralGainTransferDetails,
@@ -10,14 +14,14 @@ import {
   StabilityPoolGainsWithdrawalDetails,
   VaultAdjustmentDetails,
   VaultClosureDetails,
-  VaultCreationDetails
+  VaultCreationDetails,
 } from "./TransactableMoneyp";
 
 /**
  * A transaction that has been prepared for sending.
  *
  * @remarks
- * Implemented by {@link @moneyprotocol/lib-ethers#PopulatedBitcoinsMoneypTransaction}.
+ * Implemented by {@link @money-protocol/lib-ethers#PopulatedBitcoinsMoneypTransaction}.
  *
  * @public
  */
@@ -31,7 +35,7 @@ export interface PopulatedMoneypTransaction<
   /**
    * Send the transaction.
    *
-   * @returns An object that implements {@link @moneyprotocol/lib-base#SentMoneypTransaction}.
+   * @returns An object that implements {@link @money-protocol/lib-base#SentMoneypTransaction}.
    */
   send(): Promise<T>;
 }
@@ -42,16 +46,16 @@ export interface PopulatedMoneypTransaction<
  * @remarks
  * The Moneyp protocol fulfills redemptions by repaying the debt of Vaults in ascending order of
  * their collateralization ratio, and taking a portion of their collateral in exchange. Due to the
- * {@link @moneyprotocol/lib-base#BPD_MINIMUM_DEBT | minimum debt} requirement that Vaults must fulfill,
+ * {@link @money-protocol/lib-base#BPD_MINIMUM_DEBT | minimum debt} requirement that Vaults must fulfill,
  * some BPD amounts are not possible to redeem exactly.
  *
- * When {@link @moneyprotocol/lib-base#PopulatableMoneyp.redeemBPD | redeemBPD()} is called with an
+ * When {@link @money-protocol/lib-base#PopulatableMoneyp.redeemBPD | redeemBPD()} is called with an
  * amount that can't be fully redeemed, the amount will be truncated (see the `redeemableBPDAmount`
  * property). When this happens, the redeemer can either redeem the truncated amount by sending the
  * transaction unchanged, or prepare a new transaction by
- * {@link @moneyprotocol/lib-base#PopulatedRedemption.increaseAmountByMinimumNetDebt | increasing the amount}
+ * {@link @money-protocol/lib-base#PopulatedRedemption.increaseAmountByMinimumNetDebt | increasing the amount}
  * to the next lowest possible value, which is the sum of the truncated amount and
- * {@link @moneyprotocol/lib-base#BPD_MINIMUM_NET_DEBT}.
+ * {@link @money-protocol/lib-base#BPD_MINIMUM_NET_DEBT}.
  *
  * @public
  */
@@ -74,7 +78,7 @@ export interface PopulatedRedemption<P = unknown, S = unknown, R = unknown>
    * value.
    *
    * @param maxRedemptionRate - Maximum acceptable
-   *                            {@link @moneyprotocol/lib-base#Fees.redemptionRate | redemption rate} to
+   *                            {@link @money-protocol/lib-base#Fees.redemptionRate | redemption rate} to
    *                            use in the new transaction.
    *
    * @remarks
@@ -103,7 +107,7 @@ export type _PopulatableFrom<T, P> = {
  * The functions return an object implementing {@link PopulatedMoneypTransaction}, which can be
  * used to send the transaction and get a {@link SentMoneypTransaction}.
  *
- * Implemented by {@link @moneyprotocol/lib-ethers#PopulatableBitcoinsMoneyp}.
+ * Implemented by {@link @money-protocol/lib-ethers#PopulatableBitcoinsMoneyp}.
  *
  * @public
  */
@@ -124,7 +128,10 @@ export interface PopulatableMoneyp<R = unknown, S = unknown, P = unknown>
 
   /** {@inheritDoc TransactableMoneyp.closeVault} */
   closeVault(): Promise<
-    PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, VaultClosureDetails>>>
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, VaultClosureDetails>>
+    >
   >;
 
   /** {@inheritDoc TransactableMoneyp.adjustVault} */
@@ -182,20 +189,31 @@ export interface PopulatableMoneyp<R = unknown, S = unknown, P = unknown>
   /** @internal */
   setPrice(
     price: Decimalish
-  ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
+  ): Promise<
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
+  >;
 
   /** {@inheritDoc TransactableMoneyp.liquidate} */
   liquidate(
     address: string | string[]
   ): Promise<
-    PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, LiquidationDetails>>>
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, LiquidationDetails>>
+    >
   >;
 
   /** {@inheritDoc TransactableMoneyp.liquidateUpTo} */
   liquidateUpTo(
     maximumNumberOfVaultsToLiquidate: number
   ): Promise<
-    PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, LiquidationDetails>>>
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, LiquidationDetails>>
+    >
   >;
 
   /** {@inheritDoc TransactableMoneyp.depositBPDInStabilityPool} */
@@ -223,7 +241,10 @@ export interface PopulatableMoneyp<R = unknown, S = unknown, P = unknown>
   withdrawGainsFromStabilityPool(): Promise<
     PopulatedMoneypTransaction<
       P,
-      SentMoneypTransaction<S, MoneypReceipt<R, StabilityPoolGainsWithdrawalDetails>>
+      SentMoneypTransaction<
+        S,
+        MoneypReceipt<R, StabilityPoolGainsWithdrawalDetails>
+      >
     >
   >;
 
@@ -239,13 +260,23 @@ export interface PopulatableMoneyp<R = unknown, S = unknown, P = unknown>
   sendBPD(
     toAddress: string,
     amount: Decimalish
-  ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
+  ): Promise<
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
+  >;
 
   /** {@inheritDoc TransactableMoneyp.sendMP} */
   sendMP(
     toAddress: string,
     amount: Decimalish
-  ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
+  ): Promise<
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
+  >;
 
   /** {@inheritDoc TransactableMoneyp.redeemBPD} */
   redeemBPD(
@@ -255,51 +286,93 @@ export interface PopulatableMoneyp<R = unknown, S = unknown, P = unknown>
 
   /** {@inheritDoc TransactableMoneyp.claimCollateralSurplus} */
   claimCollateralSurplus(): Promise<
-    PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
   >;
 
   /** {@inheritDoc TransactableMoneyp.stakeMP} */
   stakeMP(
     amount: Decimalish
-  ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
+  ): Promise<
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
+  >;
 
   /** {@inheritDoc TransactableMoneyp.unstakeMP} */
   unstakeMP(
     amount: Decimalish
-  ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
+  ): Promise<
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
+  >;
 
   /** {@inheritDoc TransactableMoneyp.withdrawGainsFromStaking} */
   withdrawGainsFromStaking(): Promise<
-    PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
   >;
 
   /** {@inheritDoc TransactableMoneyp.approveRskSwapTokens} */
   approveRskSwapTokens(
     allowance?: Decimalish
-  ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
+  ): Promise<
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
+  >;
 
   /** {@inheritDoc TransactableMoneyp.stakeRskSwapTokens} */
   stakeRskSwapTokens(
     amount: Decimalish
-  ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
+  ): Promise<
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
+  >;
 
   /** {@inheritDoc TransactableMoneyp.unstakeRskSwapTokens} */
   unstakeRskSwapTokens(
     amount: Decimalish
-  ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
+  ): Promise<
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
+  >;
 
   /** {@inheritDoc TransactableMoneyp.withdrawMPRewardFromLiquidityMining} */
   withdrawMPRewardFromLiquidityMining(): Promise<
-    PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
   >;
 
   /** {@inheritDoc TransactableMoneyp.exitLiquidityMining} */
   exitLiquidityMining(): Promise<
-    PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
   >;
 
   /** {@inheritDoc TransactableMoneyp.registerFrontend} */
   registerFrontend(
     kickbackRate: Decimalish
-  ): Promise<PopulatedMoneypTransaction<P, SentMoneypTransaction<S, MoneypReceipt<R, void>>>>;
+  ): Promise<
+    PopulatedMoneypTransaction<
+      P,
+      SentMoneypTransaction<S, MoneypReceipt<R, void>>
+    >
+  >;
 }

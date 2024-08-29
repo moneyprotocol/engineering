@@ -1,4 +1,4 @@
-# @moneyprotocol/lib-ethers
+# @money-protocol/lib-ethers
 
 [Bitcoins](https://www.npmjs.com/package/ethers)-based library for reading Moneyp protocol state and sending transactions.
 
@@ -7,14 +7,14 @@
 Install in your project:
 
 ```
-npm install --save @moneyprotocol/lib-base @moneyprotocol/lib-ethers ethers@^5.0.0
+npm install --save @money-protocol/lib-base @money-protocol/lib-ethers ethers@^5.0.0
 ```
 
 Connecting to an Ethereum node and sending a transaction:
 
 ```javascript
 const { Wallet, providers } = require("ethers");
-const { BitcoinsMoneyp } = require("@moneyprotocol/lib-ethers");
+const { BitcoinsMoneyp } = require("@money-protocol/lib-ethers");
 
 async function example() {
   const provider = new providers.JsonRpcProvider("http://localhost:8545");
@@ -23,7 +23,7 @@ async function example() {
 
   const { newVault } = await moneyp.openVault({
     depositCollateral: 5, // RBTC
-    borrowBPD: 2000
+    borrowBPD: 2000,
   });
 
   console.log(`Successfully opened a Moneyp Vault (${newVault})!`);
@@ -34,7 +34,7 @@ async function example() {
 
 See [packages/examples](https://github.com/moneyp/moneyp/tree/master/packages/examples) in the repo.
 
-Moneyp's [Dev UI](https://github.com/moneyp/moneyp/tree/master/packages/dev-frontend) itself contains many examples of `@moneyprotocol/lib-ethers` use.
+Moneyp's [Dev UI](https://github.com/moneyp/moneyp/tree/master/packages/dev-frontend) itself contains many examples of `@money-protocol/lib-ethers` use.
 
 ## API Reference
 

@@ -10,18 +10,21 @@ import {
   TransactableMoneyp,
   VaultAdjustmentDetails,
   VaultClosureDetails,
-  VaultCreationDetails
+  VaultCreationDetails,
 } from "./TransactableMoneyp";
 
 /**
  * A transaction that has already been sent.
  *
  * @remarks
- * Implemented by {@link @moneyprotocol/lib-ethers#SentBitcoinsMoneypTransaction}.
+ * Implemented by {@link @money-protocol/lib-ethers#SentBitcoinsMoneypTransaction}.
  *
  * @public
  */
-export interface SentMoneypTransaction<S = unknown, T extends MoneypReceipt = MoneypReceipt> {
+export interface SentMoneypTransaction<
+  S = unknown,
+  T extends MoneypReceipt = MoneypReceipt
+> {
   /** Implementation-specific sent transaction object. */
   readonly rawSentTransaction: S;
 
@@ -29,7 +32,7 @@ export interface SentMoneypTransaction<S = unknown, T extends MoneypReceipt = Mo
    * Check whether the transaction has been mined, and whether it was successful.
    *
    * @remarks
-   * Unlike {@link @moneyprotocol/lib-base#SentMoneypTransaction.waitForReceipt | waitForReceipt()},
+   * Unlike {@link @money-protocol/lib-base#SentMoneypTransaction.waitForReceipt | waitForReceipt()},
    * this function doesn't wait for the transaction to be mined.
    */
   getReceipt(): Promise<T>;
@@ -37,8 +40,8 @@ export interface SentMoneypTransaction<S = unknown, T extends MoneypReceipt = Mo
   /**
    * Wait for the transaction to be mined, and check whether it was successful.
    *
-   * @returns Either a {@link @moneyprotocol/lib-base#FailedReceipt} or a
-   *          {@link @moneyprotocol/lib-base#SuccessfulReceipt}.
+   * @returns Either a {@link @money-protocol/lib-base#FailedReceipt} or a
+   *          {@link @money-protocol/lib-base#SuccessfulReceipt}.
    */
   waitForReceipt(): Promise<Extract<T, MinedReceipt>>;
 }
@@ -72,7 +75,7 @@ export type FailedReceipt<R = unknown> = { status: "failed"; rawReceipt: R };
 /** @internal */
 export const _failedReceipt = <R>(rawReceipt: R): FailedReceipt<R> => ({
   status: "failed",
-  rawReceipt
+  rawReceipt,
 });
 
 /**
@@ -105,7 +108,7 @@ export const _successfulReceipt = <R, D>(
   status: "succeeded",
   rawReceipt,
   details,
-  ...(toString ? { toString } : {})
+  ...(toString ? { toString } : {}),
 });
 
 /**
@@ -113,14 +116,18 @@ export const _successfulReceipt = <R, D>(
  *
  * @public
  */
-export type MinedReceipt<R = unknown, D = unknown> = FailedReceipt<R> | SuccessfulReceipt<R, D>;
+export type MinedReceipt<R = unknown, D = unknown> =
+  | FailedReceipt<R>
+  | SuccessfulReceipt<R, D>;
 
 /**
  * One of either a {@link PendingReceipt}, a {@link FailedReceipt} or a {@link SuccessfulReceipt}.
  *
  * @public
  */
-export type MoneypReceipt<R = unknown, D = unknown> = PendingReceipt | MinedReceipt<R, D>;
+export type MoneypReceipt<R = unknown, D = unknown> =
+  | PendingReceipt
+  | MinedReceipt<R, D>;
 
 /** @internal */
 export type _SendableFrom<T, R, S> = {
@@ -136,7 +143,7 @@ export type _SendableFrom<T, R, S> = {
  * The functions return an object implementing {@link SentMoneypTransaction}, which can be used
  * to monitor the transaction and get its details when it succeeds.
  *
- * Implemented by {@link @moneyprotocol/lib-ethers#SendableBitcoinsMoneyp}.
+ * Implemented by {@link @money-protocol/lib-ethers#SendableBitcoinsMoneyp}.
  *
  * @public
  */
@@ -151,37 +158,51 @@ export interface SendableMoneyp<R = unknown, S = unknown>
   ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, VaultCreationDetails>>>;
 
   /** {@inheritDoc TransactableMoneyp.closeVault} */
-  closeVault(): Promise<SentMoneypTransaction<S, MoneypReceipt<R, VaultClosureDetails>>>;
+  closeVault(): Promise<
+    SentMoneypTransaction<S, MoneypReceipt<R, VaultClosureDetails>>
+  >;
 
   /** {@inheritDoc TransactableMoneyp.adjustVault} */
   adjustVault(
     params: VaultAdjustmentParams<Decimalish>,
     maxBorrowingRate?: Decimalish
-  ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, VaultAdjustmentDetails>>>;
+  ): Promise<
+    SentMoneypTransaction<S, MoneypReceipt<R, VaultAdjustmentDetails>>
+  >;
 
   /** {@inheritDoc TransactableMoneyp.depositCollateral} */
   depositCollateral(
     amount: Decimalish
-  ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, VaultAdjustmentDetails>>>;
+  ): Promise<
+    SentMoneypTransaction<S, MoneypReceipt<R, VaultAdjustmentDetails>>
+  >;
 
   /** {@inheritDoc TransactableMoneyp.withdrawCollateral} */
   withdrawCollateral(
     amount: Decimalish
-  ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, VaultAdjustmentDetails>>>;
+  ): Promise<
+    SentMoneypTransaction<S, MoneypReceipt<R, VaultAdjustmentDetails>>
+  >;
 
   /** {@inheritDoc TransactableMoneyp.borrowBPD} */
   borrowBPD(
     amount: Decimalish,
     maxBorrowingRate?: Decimalish
-  ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, VaultAdjustmentDetails>>>;
+  ): Promise<
+    SentMoneypTransaction<S, MoneypReceipt<R, VaultAdjustmentDetails>>
+  >;
 
   /** {@inheritDoc TransactableMoneyp.repayBPD} */
   repayBPD(
     amount: Decimalish
-  ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, VaultAdjustmentDetails>>>;
+  ): Promise<
+    SentMoneypTransaction<S, MoneypReceipt<R, VaultAdjustmentDetails>>
+  >;
 
   /** @internal */
-  setPrice(price: Decimalish): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
+  setPrice(
+    price: Decimalish
+  ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
 
   /** {@inheritDoc TransactableMoneyp.liquidate} */
   liquidate(
@@ -197,16 +218,23 @@ export interface SendableMoneyp<R = unknown, S = unknown>
   depositBPDInStabilityPool(
     amount: Decimalish,
     frontendTag?: string
-  ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, StabilityDepositChangeDetails>>>;
+  ): Promise<
+    SentMoneypTransaction<S, MoneypReceipt<R, StabilityDepositChangeDetails>>
+  >;
 
   /** {@inheritDoc TransactableMoneyp.withdrawBPDFromStabilityPool} */
   withdrawBPDFromStabilityPool(
     amount: Decimalish
-  ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, StabilityDepositChangeDetails>>>;
+  ): Promise<
+    SentMoneypTransaction<S, MoneypReceipt<R, StabilityDepositChangeDetails>>
+  >;
 
   /** {@inheritDoc TransactableMoneyp.withdrawGainsFromStabilityPool} */
   withdrawGainsFromStabilityPool(): Promise<
-    SentMoneypTransaction<S, MoneypReceipt<R, StabilityPoolGainsWithdrawalDetails>>
+    SentMoneypTransaction<
+      S,
+      MoneypReceipt<R, StabilityPoolGainsWithdrawalDetails>
+    >
   >;
 
   /** {@inheritDoc TransactableMoneyp.transferCollateralGainToVault} */
@@ -233,16 +261,24 @@ export interface SendableMoneyp<R = unknown, S = unknown>
   ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, RedemptionDetails>>>;
 
   /** {@inheritDoc TransactableMoneyp.claimCollateralSurplus} */
-  claimCollateralSurplus(): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
+  claimCollateralSurplus(): Promise<
+    SentMoneypTransaction<S, MoneypReceipt<R, void>>
+  >;
 
   /** {@inheritDoc TransactableMoneyp.stakeMP} */
-  stakeMP(amount: Decimalish): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
+  stakeMP(
+    amount: Decimalish
+  ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
 
   /** {@inheritDoc TransactableMoneyp.unstakeMP} */
-  unstakeMP(amount: Decimalish): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
+  unstakeMP(
+    amount: Decimalish
+  ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
 
   /** {@inheritDoc TransactableMoneyp.withdrawGainsFromStaking} */
-  withdrawGainsFromStaking(): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
+  withdrawGainsFromStaking(): Promise<
+    SentMoneypTransaction<S, MoneypReceipt<R, void>>
+  >;
 
   /** {@inheritDoc TransactableMoneyp.approveRskSwapTokens} */
   approveRskSwapTokens(
@@ -250,10 +286,14 @@ export interface SendableMoneyp<R = unknown, S = unknown>
   ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
 
   /** {@inheritDoc TransactableMoneyp.stakeRskSwapTokens} */
-  stakeRskSwapTokens(amount: Decimalish): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
+  stakeRskSwapTokens(
+    amount: Decimalish
+  ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
 
   /** {@inheritDoc TransactableMoneyp.unstakeRskSwapTokens} */
-  unstakeRskSwapTokens(amount: Decimalish): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
+  unstakeRskSwapTokens(
+    amount: Decimalish
+  ): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
 
   /** {@inheritDoc TransactableMoneyp.withdrawMPRewardFromLiquidityMining} */
   withdrawMPRewardFromLiquidityMining(): Promise<
@@ -261,7 +301,9 @@ export interface SendableMoneyp<R = unknown, S = unknown>
   >;
 
   /** {@inheritDoc TransactableMoneyp.exitLiquidityMining} */
-  exitLiquidityMining(): Promise<SentMoneypTransaction<S, MoneypReceipt<R, void>>>;
+  exitLiquidityMining(): Promise<
+    SentMoneypTransaction<S, MoneypReceipt<R, void>>
+  >;
 
   /** {@inheritDoc TransactableMoneyp.registerFrontend} */
   registerFrontend(

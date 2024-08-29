@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef } from "react";
 
-import { MoneypStoreState } from "@moneyprotocol/lib-base";
+import { MoneypStoreState } from "@money-protocol/lib-base";
 
 import { equals } from "../utils/equals";
 import { useMoneypStore } from "./useMoneypStore";

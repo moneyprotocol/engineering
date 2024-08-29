@@ -15,7 +15,7 @@ import {
   UserVaultStatus,
   _CachedReadableMoneyp,
   _MoneypReadCache,
-} from "@moneyprotocol/lib-base";
+} from "@money-protocol/lib-base";
 
 import { MultiVaultGetter } from "../types";
 
@@ -97,7 +97,7 @@ const expectPositiveInt = <K extends string>(
 };
 
 /**
- * Bitcoins-based implementation of {@link @moneyprotocol/lib-base#ReadableMoneyp}.
+ * Bitcoins-based implementation of {@link @money-protocol/lib-base#ReadableMoneyp}.
  *
  * @public
  */
@@ -171,7 +171,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     return false;
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getTotalRedistributed} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getTotalRedistributed} */
   async getTotalRedistributed(
     overrides?: BitcoinsCallOverrides
   ): Promise<Vault> {
@@ -185,7 +185,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     return new Vault(collateral, debt);
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getVaultBeforeRedistribution} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getVaultBeforeRedistribution} */
   async getVaultBeforeRedistribution(
     address?: string,
     overrides?: BitcoinsCallOverrides
@@ -215,7 +215,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     }
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getVault} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getVault} */
   async getVault(
     address?: string,
     overrides?: BitcoinsCallOverrides
@@ -228,7 +228,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     return vault.applyRedistribution(totalRedistributed);
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getNumberOfVaults} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getNumberOfVaults} */
   async getNumberOfVaults(overrides?: BitcoinsCallOverrides): Promise<number> {
     const { vaultManager } = _getContracts(this.connection);
 
@@ -237,7 +237,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     ).toNumber();
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getPrice} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getPrice} */
   getPrice(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     const { priceFeed } = _getContracts(this.connection);
 
@@ -272,7 +272,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     return new Vault(liquidatedCollateral, closedDebt);
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getTotal} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getTotal} */
   async getTotal(overrides?: BitcoinsCallOverrides): Promise<Vault> {
     const [activePool, defaultPool] = await Promise.all([
       this._getActivePool(overrides),
@@ -282,7 +282,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     return activePool.add(defaultPool);
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getStabilityDeposit} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getStabilityDeposit} */
   async getStabilityDeposit(
     address?: string,
     overrides?: BitcoinsCallOverrides
@@ -311,7 +311,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     );
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getRemainingStabilityPoolMPReward} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getRemainingStabilityPoolMPReward} */
   async getRemainingStabilityPoolMPReward(
     overrides?: BitcoinsCallOverrides
   ): Promise<Decimal> {
@@ -326,14 +326,14 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     return issuanceCap.sub(totalMPIssued);
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getBPDInStabilityPool} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getBPDInStabilityPool} */
   getBPDInStabilityPool(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     const { stabilityPool } = _getContracts(this.connection);
 
     return stabilityPool.getTotalBPDDeposits({ ...overrides }).then(decimalify);
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getBPDBalance} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getBPDBalance} */
   getBPDBalance(
     address?: string,
     overrides?: BitcoinsCallOverrides
@@ -344,7 +344,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     return bpdToken.balanceOf(address, { ...overrides }).then(decimalify);
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getMPBalance} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getMPBalance} */
   getMPBalance(
     address?: string,
     overrides?: BitcoinsCallOverrides
@@ -355,7 +355,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     return mpToken.balanceOf(address, { ...overrides }).then(decimalify);
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getCollateralSurplusBalance} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getCollateralSurplusBalance} */
   getCollateralSurplusBalance(
     address?: string,
     overrides?: BitcoinsCallOverrides
@@ -374,7 +374,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     overrides?: BitcoinsCallOverrides
   ): Promise<VaultWithPendingRedistribution[]>;
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.(getVaults:2)} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.(getVaults:2)} */
   getVaults(
     params: VaultListingParams,
     overrides?: BitcoinsCallOverrides
@@ -443,7 +443,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
       );
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getFees} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getFees} */
   async getFees(overrides?: BitcoinsCallOverrides): Promise<Fees> {
     const [createFees, total, price, blockTimestamp] = await Promise.all([
       this._getFeesFactory(overrides),
@@ -458,7 +458,7 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     );
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getMPStake} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getMPStake} */
   async getMPStake(
     address?: string,
     overrides?: BitcoinsCallOverrides
@@ -477,14 +477,14 @@ export class ReadableBitcoinsMoneyp implements ReadableMoneyp {
     return new MPStake(stakedMP, collateralGain, bpdGain);
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getTotalStakedMP} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getTotalStakedMP} */
   async getTotalStakedMP(overrides?: BitcoinsCallOverrides): Promise<Decimal> {
     const { mpStaking } = _getContracts(this.connection);
 
     return mpStaking.totalMPStaked({ ...overrides }).then(decimalify);
   }
 
-  /** {@inheritDoc @moneyprotocol/lib-base#ReadableMoneyp.getFrontendStatus} */
+  /** {@inheritDoc @money-protocol/lib-base#ReadableMoneyp.getFrontendStatus} */
   async getFrontendStatus(
     address?: string,
     overrides?: BitcoinsCallOverrides
@@ -527,7 +527,7 @@ const mapBackendVaults = (
   );
 
 /**
- * Variant of {@link ReadableBitcoinsMoneyp} that exposes a {@link @moneyprotocol/lib-base#MoneypStore}.
+ * Variant of {@link ReadableBitcoinsMoneyp} that exposes a {@link @money-protocol/lib-base#MoneypStore}.
  *
  * @public
  */

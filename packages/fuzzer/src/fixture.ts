@@ -7,10 +7,10 @@ import {
   StabilityDeposit,
   TransactableLiquity,
   Trove,
-  TroveAdjustmentParams
-} from "@moneyprotocol/lib-base";
+  TroveAdjustmentParams,
+} from "@money-protocol/lib-base";
 
-import { EthersLiquity as Liquity } from "@moneyprotocol/lib-ethers";
+import { EthersLiquity as Liquity } from "@money-protocol/lib-ethers";
 
 import {
   createRandomTrove,
@@ -21,13 +21,15 @@ import {
   getListOfTroves,
   randomCollateralChange,
   randomDebtChange,
-  objToString
+  objToString,
 } from "./utils";
 
 import { GasHistogram } from "./GasHistogram";
 
 type _GasHistogramsFrom<T> = {
-  [P in keyof T]: T[P] extends (...args: never[]) => Promise<infer R> ? GasHistogram<R> : never;
+  [P in keyof T]: T[P] extends (...args: never[]) => Promise<infer R>
+    ? GasHistogram<R>
+    : never;
 };
 
 type GasHistograms = Pick<
@@ -77,7 +79,7 @@ export class Fixture {
       depositLUSDInStabilityPool: new GasHistogram(),
       withdrawLUSDFromStabilityPool: new GasHistogram(),
       stakeLQTY: new GasHistogram(),
-      unstakeLQTY: new GasHistogram()
+      unstakeLQTY: new GasHistogram(),
     };
   }
 
@@ -118,9 +120,15 @@ export class Fixture {
           ? 1.51
           : Decimal.max(trove.collateralRatio(this.price).add(0.00001), 1.11);
 
-      let newTrove = trove.isEmpty ? Trove.create({ depositCollateral: 1 }) : trove;
-      newTrove = newTrove.adjust({ borrowLUSD: amount.sub(lusdBalance).mul(2) });
-      newTrove = newTrove.setCollateral(newTrove.debt.mulDiv(targetCollateralRatio, this.price));
+      let newTrove = trove.isEmpty
+        ? Trove.create({ depositCollateral: 1 })
+        : trove;
+      newTrove = newTrove.adjust({
+        borrowLUSD: amount.sub(lusdBalance).mul(2),
+      });
+      newTrove = newTrove.setCollateral(
+        newTrove.debt.mulDiv(targetCollateralRatio, this.price)
+      );
 
       if (trove.isEmpty) {
         const params = Trove.recreate(newTrove, fees.borrowingRate());
@@ -133,7 +141,9 @@ export class Fixture {
           !total.collateralRatioIsBelowCritical(this.price) &&
           newTotal.collateralRatioIsBelowCritical(this.price)
         ) {
-          newTotal = newTotal.setCollateral(newTotal.debt.mulDiv(1.51, this.price));
+          newTotal = newTotal.setCollateral(
+            newTotal.debt.mulDiv(1.51, this.price)
+          );
           newTrove = trove.add(newTotal).subtract(total);
         }
 
@@ -155,7 +165,8 @@ export class Fixture {
   }
 
   async liquidateRandomNumberOfTroves(price: Decimal) {
-    const lusdInStabilityPoolBefore = await this.deployerLiquity.getLUSDInStabilityPool();
+    const lusdInStabilityPoolBefore =
+      await this.deployerLiquity.getLUSDInStabilityPool();
     console.log(`// Stability Pool balance: ${lusdInStabilityPoolBefore}`);
 
     const trovesBefore = await getListOfTroves(this.deployerLiquity);
@@ -174,11 +185,16 @@ export class Fixture {
     }
 
     const maximumNumberOfTrovesToLiquidate = Math.floor(50 * Math.random()) + 1;
-    console.log(`[deployer] liquidateUpTo(${maximumNumberOfTrovesToLiquidate})`);
+    console.log(
+      `[deployer] liquidateUpTo(${maximumNumberOfTrovesToLiquidate})`
+    );
     await this.deployerLiquity.liquidateUpTo(maximumNumberOfTrovesToLiquidate);
 
     const troveOwnersAfter = await getListOfTroveOwners(this.deployerLiquity);
-    const liquidatedTroves = listDifference(troveOwnersBefore, troveOwnersAfter);
+    const liquidatedTroves = listDifference(
+      troveOwnersBefore,
+      troveOwnersAfter
+    );
 
     if (liquidatedTroves.length > 0) {
       for (const liquidatedTrove of liquidatedTroves) {
@@ -188,7 +204,8 @@ export class Fixture {
 
     this.totalNumberOfLiquidations += liquidatedTroves.length;
 
-    const lusdInStabilityPoolAfter = await this.deployerLiquity.getLUSDInStabilityPool();
+    const lusdInStabilityPoolAfter =
+      await this.deployerLiquity.getLUSDInStabilityPool();
     console.log(`// Stability Pool balance: ${lusdInStabilityPoolAfter}`);
   }
 
@@ -210,21 +227,25 @@ export class Fixture {
 
     await this.funder.sendTransaction({
       to: userAddress,
-      value: newTrove.collateral.hex
+      value: newTrove.collateral.hex,
     });
 
     const params = Trove.recreate(newTrove, fees.borrowingRate());
 
     if (cannotOpen(newTrove)) {
       console.log(
-        `// [${shortenAddress(userAddress)}] openTrove(${objToString(params)}) expected to fail`
+        `// [${shortenAddress(userAddress)}] openTrove(${objToString(
+          params
+        )}) expected to fail`
       );
 
       await this.gasHistograms.openTrove.expectFailure(() =>
         liquity.openTrove(params, { gasPrice: 0 })
       );
     } else {
-      console.log(`[${shortenAddress(userAddress)}] openTrove(${objToString(params)})`);
+      console.log(
+        `[${shortenAddress(userAddress)}] openTrove(${objToString(params)})`
+      );
 
       await this.gasHistograms.openTrove.expectSuccess(() =>
         liquity.send.openTrove(params, { gasPrice: 0 })
@@ -232,7 +253,11 @@ export class Fixture {
     }
   }
 
-  async randomlyAdjustTrove(userAddress: string, liquity: Liquity, trove: Trove) {
+  async randomlyAdjustTrove(
+    userAddress: string,
+    liquity: Liquity,
+    trove: Trove
+  ) {
     const total = await liquity.getTotal();
     const fees = await liquity.getFees();
     const x = Math.random();
@@ -244,8 +269,14 @@ export class Fixture {
         ? randomDebtChange(trove)
         : { ...randomCollateralChange(trove), ...randomDebtChange(trove) };
 
-    const cannotAdjust = (trove: Trove, params: TroveAdjustmentParams<Decimal>) => {
-      if (params.withdrawCollateral?.gte(trove.collateral) || params.repayLUSD?.gt(trove.netDebt)) {
+    const cannotAdjust = (
+      trove: Trove,
+      params: TroveAdjustmentParams<Decimal>
+    ) => {
+      if (
+        params.withdrawCollateral?.gte(trove.collateral) ||
+        params.repayLUSD?.gt(trove.netDebt)
+      ) {
         return true;
       }
 
@@ -256,14 +287,17 @@ export class Fixture {
         (adjusted.collateralRatioIsBelowMinimum(this.price) ||
           (total.collateralRatioIsBelowCritical(this.price)
             ? adjusted._nominalCollateralRatio.lt(trove._nominalCollateralRatio)
-            : total.add(adjusted).subtract(trove).collateralRatioIsBelowCritical(this.price)))
+            : total
+                .add(adjusted)
+                .subtract(trove)
+                .collateralRatioIsBelowCritical(this.price)))
       );
     };
 
     if (params.depositCollateral) {
       await this.funder.sendTransaction({
         to: userAddress,
-        value: params.depositCollateral.hex
+        value: params.depositCollateral.hex,
       });
     }
 
@@ -273,14 +307,18 @@ export class Fixture {
 
     if (cannotAdjust(trove, params)) {
       console.log(
-        `// [${shortenAddress(userAddress)}] adjustTrove(${objToString(params)}) expected to fail`
+        `// [${shortenAddress(userAddress)}] adjustTrove(${objToString(
+          params
+        )}) expected to fail`
       );
 
       await this.gasHistograms.adjustTrove.expectFailure(() =>
         liquity.adjustTrove(params, { gasPrice: 0 })
       );
     } else {
-      console.log(`[${shortenAddress(userAddress)}] adjustTrove(${objToString(params)})`);
+      console.log(
+        `[${shortenAddress(userAddress)}] adjustTrove(${objToString(params)})`
+      );
 
       await this.gasHistograms.adjustTrove.expectSuccess(() =>
         liquity.send.adjustTrove(params, { gasPrice: 0 })
@@ -324,16 +362,21 @@ export class Fixture {
     );
   }
 
-  async depositRandomAmountInStabilityPool(userAddress: string, liquity: Liquity) {
+  async depositRandomAmountInStabilityPool(
+    userAddress: string,
+    liquity: Liquity
+  ) {
     const amount = benford(20000);
 
     await this.sendLUSDFromFunder(userAddress, amount);
 
-    console.log(`[${shortenAddress(userAddress)}] depositLUSDInStabilityPool(${amount})`);
+    console.log(
+      `[${shortenAddress(userAddress)}] depositLUSDInStabilityPool(${amount})`
+    );
 
     await this.gasHistograms.depositLUSDInStabilityPool.expectSuccess(() =>
       liquity.send.depositLUSDInStabilityPool(amount, this.frontendAddress, {
-        gasPrice: 0
+        gasPrice: 0,
       })
     );
   }
@@ -345,10 +388,12 @@ export class Fixture {
   ) {
     const [[, lastTrove]] = await liquity.getTroves({
       first: 1,
-      sortedBy: "ascendingCollateralRatio"
+      sortedBy: "ascendingCollateralRatio",
     });
 
-    const amount = deposit.currentLUSD.mul(1.1 * Math.random()).add(10 * Math.random());
+    const amount = deposit.currentLUSD
+      .mul(1.1 * Math.random())
+      .add(10 * Math.random());
 
     const cannotWithdraw = (amount: Decimal) =>
       amount.nonZero && lastTrove.collateralRatioIsBelowMinimum(this.price);
@@ -363,7 +408,11 @@ export class Fixture {
         liquity.withdrawLUSDFromStabilityPool(amount, { gasPrice: 0 })
       );
     } else {
-      console.log(`[${shortenAddress(userAddress)}] withdrawLUSDFromStabilityPool(${amount})`);
+      console.log(
+        `[${shortenAddress(
+          userAddress
+        )}] withdrawLUSDFromStabilityPool(${amount})`
+      );
 
       await this.gasHistograms.withdrawLUSDFromStabilityPool.expectSuccess(() =>
         liquity.send.withdrawLUSDFromStabilityPool(amount, { gasPrice: 0 })
@@ -384,8 +433,14 @@ export class Fixture {
     );
   }
 
-  async unstakeRandomAmount(userAddress: string, liquity: Liquity, stake: LQTYStake) {
-    const amount = stake.stakedLQTY.mul(1.1 * Math.random()).add(10 * Math.random());
+  async unstakeRandomAmount(
+    userAddress: string,
+    liquity: Liquity,
+    stake: LQTYStake
+  ) {
+    const amount = stake.stakedLQTY
+      .mul(1.1 * Math.random())
+      .add(10 * Math.random());
 
     console.log(`[${shortenAddress(userAddress)}] unstakeLQTY(${amount})`);
 
@@ -419,7 +474,10 @@ export class Fixture {
           `${name},outOfGas,${histo.outOfGasFailures}\n` +
           `${name},failure,${histo.expectedFailures}\n` +
           results
-            .map(([intervalMin, frequency]) => `${name},success,${frequency},${intervalMin}\n`)
+            .map(
+              ([intervalMin, frequency]) =>
+                `${name},success,${frequency},${intervalMin}\n`
+            )
             .join("")
         );
       })

@@ -1,19 +1,19 @@
-import React, { useState, useRef } from "react";
-import { Container, Flex, Button } from "theme-ui";
+import React, { useState, useRef } from "react"
+import { Container, Flex, Button } from "theme-ui"
 
-import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
+import { MoneypStoreState } from "@money-protocol/lib-base"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
-import { Icon } from "./Icon";
-import { SystemStats } from "./SystemStats";
+import { Icon } from "./Icon"
+import { SystemStats } from "./SystemStats"
 
-const select = ({ total, price }: MoneypStoreState) => ({ total, price });
+const select = ({ total, price }: MoneypStoreState) => ({ total, price })
 
 export const SystemStatsPopup: React.FC = () => {
-  const { price, total } = useMoneypSelector(select);
+  const { price, total } = useMoneypSelector(select)
 
-  const [systemStatsOpen, setSystemStatsOpen] = useState(false);
-  const systemStatsOverlayRef = useRef<HTMLDivElement>(null);
+  const [systemStatsOpen, setSystemStatsOpen] = useState(false)
+  const systemStatsOverlayRef = useRef<HTMLDivElement>(null)
 
   return (
     <>
@@ -22,7 +22,7 @@ export const SystemStatsPopup: React.FC = () => {
         variant="icon"
         sx={{
           position: "relative",
-          display: ["block", "none"]
+          display: ["block", "none"],
         }}
       >
         <Icon name="info-circle" size="2x" />
@@ -40,7 +40,7 @@ export const SystemStatsPopup: React.FC = () => {
               justifyContent: "flex-end",
               pt: "2px",
 
-              color: "danger"
+              color: "danger",
             }}
           >
             <Icon name="exclamation-circle" size="xs" />
@@ -54,7 +54,7 @@ export const SystemStatsPopup: React.FC = () => {
           ref={systemStatsOverlayRef}
           onClick={e => {
             if (e.target === systemStatsOverlayRef.current) {
-              setSystemStatsOpen(false);
+              setSystemStatsOpen(false)
             }
           }}
         >
@@ -62,5 +62,5 @@ export const SystemStatsPopup: React.FC = () => {
         </Container>
       )}
     </>
-  );
-};
+  )
+}

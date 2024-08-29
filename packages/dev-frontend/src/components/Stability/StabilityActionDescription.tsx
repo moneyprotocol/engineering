@@ -1,21 +1,21 @@
-import React from "react";
+import React from "react"
 
-import { Decimal, StabilityDeposit, StabilityDepositChange } from "@moneyprotocol/lib-base";
+import { Decimal, StabilityDeposit, StabilityDepositChange } from "@money-protocol/lib-base"
 
-import { COIN, GT } from "../../strings";
-import { ActionDescription, Amount } from "../ActionDescription";
+import { COIN, GT } from "../../strings"
+import { ActionDescription, Amount } from "../ActionDescription"
 
 type StabilityActionDescriptionProps = {
-  originalDeposit: StabilityDeposit;
-  change: StabilityDepositChange<Decimal>;
-};
+  originalDeposit: StabilityDeposit
+  change: StabilityDepositChange<Decimal>
+}
 
 export const StabilityActionDescription: React.FC<StabilityActionDescriptionProps> = ({
   originalDeposit,
-  change
+  change,
 }) => {
-  const collateralGain = originalDeposit.collateralGain.nonZero?.prettify(4).concat(" RBTC");
-  const mpReward = originalDeposit.mpReward.nonZero?.prettify().concat(" ", GT);
+  const collateralGain = originalDeposit.collateralGain.nonZero?.prettify(4).concat(" RBTC")
+  const mpReward = originalDeposit.mpReward.nonZero?.prettify().concat(" ", GT)
 
   return (
     <ActionDescription>
@@ -51,5 +51,5 @@ export const StabilityActionDescription: React.FC<StabilityActionDescriptionProp
       )}
       .
     </ActionDescription>
-  );
-};
+  )
+}

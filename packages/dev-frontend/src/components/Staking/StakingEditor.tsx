@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Heading, Box, Card, Button } from "theme-ui"
 
-import { Decimal, Decimalish, MoneypStoreState, MPStake } from "@moneyprotocol/lib-base"
+import { Decimal, Decimalish, MoneypStoreState, MPStake } from "@money-protocol/lib-base"
 import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
 import { COIN, GT } from "../../strings"

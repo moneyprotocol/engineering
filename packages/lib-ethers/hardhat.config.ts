@@ -18,7 +18,7 @@ import {
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import "@nomiclabs/hardhat-ethers";
 
-import { Decimal } from "@moneyprotocol/lib-base";
+import { Decimal } from "@money-protocol/lib-base";
 
 import { deployAndSetupContracts, setSilent } from "./utils/deploy";
 import {

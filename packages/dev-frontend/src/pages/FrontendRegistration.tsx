@@ -1,24 +1,26 @@
-import { useState } from "react";
-import { Card, Heading, Box, Flex, Input, Label, Paragraph, Button, Spinner } from "theme-ui";
+import { useState } from "react"
+import { Card, Heading, Box, Flex, Input, Label, Paragraph, Button, Spinner } from "theme-ui"
 
-import { Decimal } from "@moneyprotocol/lib-base";
+import { Decimal } from "@money-protocol/lib-base"
 
-import { shortenAddress } from "../utils/shortenAddress";
-import { useMoneyp } from "../hooks/MoneypContext";
-import { Transaction, useMyTransactionState } from "../components/Transaction";
-import { Icon } from "../components/Icon";
+import { shortenAddress } from "../utils/shortenAddress"
+import { useMoneyp } from "../hooks/MoneypContext"
+import { Transaction, useMyTransactionState } from "../components/Transaction"
+import { Icon } from "../components/Icon"
 
 type FrontendRegistrationActionProps = {
-  kickbackRate: Decimal;
-};
+  kickbackRate: Decimal
+}
 
-const FrontendRegistrationAction: React.FC<FrontendRegistrationActionProps> = ({ kickbackRate }) => {
+const FrontendRegistrationAction: React.FC<FrontendRegistrationActionProps> = ({
+  kickbackRate,
+}) => {
   const {
-    moneyp: { send: moneyp }
-  } = useMoneyp();
+    moneyp: { send: moneyp },
+  } = useMoneyp()
 
-  const myTransactionId = "register-frontend";
-  const myTransactionState = useMyTransactionState(myTransactionId);
+  const myTransactionId = "register-frontend"
+  const myTransactionState = useMyTransactionState(myTransactionId)
 
   return myTransactionState.type === "waitingForApproval" ? (
     <Button disabled>
@@ -30,22 +32,22 @@ const FrontendRegistrationAction: React.FC<FrontendRegistrationActionProps> = ({
     <Transaction id={myTransactionId} send={moneyp.registerFrontend.bind(moneyp, kickbackRate)}>
       <Button>Register</Button>
     </Transaction>
-  ) : null;
-};
+  ) : null
+}
 
 export const FrontendRegistration: React.FC = () => {
-  const { account } = useMoneyp();
+  const { account } = useMoneyp()
 
-  const [kickbackRate, setKickbackRate] = useState(Decimal.from(0.8));
-  const [cut, setCut] = useState(Decimal.from(0.2));
-  const [kickbackRateString, setKickbackRateString] = useState("80");
+  const [kickbackRate, setKickbackRate] = useState(Decimal.from(0.8))
+  const [cut, setCut] = useState(Decimal.from(0.2))
+  const [kickbackRateString, setKickbackRateString] = useState("80")
 
   return (
     <>
       <Card>
         <Heading>Choose a kickback rate</Heading>
 
-        <Box sx={{ pt: '20px' }}>
+        <Box sx={{ pt: "20px" }}>
           <Flex>
             <Label>Kickback rate</Label>
             <Label variant="unit">%</Label>
@@ -56,17 +58,17 @@ export const FrontendRegistration: React.FC = () => {
               step="any"
               value={kickbackRateString}
               onChange={e => {
-                setKickbackRateString(e.target.value);
+                setKickbackRateString(e.target.value)
                 try {
-                  const newKickbackRate = Decimal.from(e.target.value || 0).div(100);
-                  const newCut = Decimal.ONE.sub(newKickbackRate);
+                  const newKickbackRate = Decimal.from(e.target.value || 0).div(100)
+                  const newCut = Decimal.ONE.sub(newKickbackRate)
 
-                  setKickbackRate(newKickbackRate);
-                  setCut(newCut);
+                  setKickbackRate(newKickbackRate)
+                  setCut(newCut)
                 } catch {}
               }}
               onBlur={() => {
-                setKickbackRateString(kickbackRate.mul(100).toString());
+                setKickbackRateString(kickbackRate.mul(100).toString())
               }}
             />
           </Flex>
@@ -88,7 +90,7 @@ export const FrontendRegistration: React.FC = () => {
           border: 1,
           borderRadius: "8px",
           borderColor: "danger",
-          boxShadow: 2
+          boxShadow: 2,
         }}
       >
         <Flex sx={{ alignItems: "center", mx: 3, fontSize: 4 }}>
@@ -113,5 +115,5 @@ export const FrontendRegistration: React.FC = () => {
 
       <FrontendRegistrationAction {...{ kickbackRate }} />
     </>
-  );
-};
+  )
+}

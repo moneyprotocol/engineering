@@ -2,7 +2,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { Block, BlockTag } from "@ethersproject/abstract-provider";
 import { Signer } from "@ethersproject/abstract-signer";
 
-import { Decimal } from "@moneyprotocol/lib-base";
+import { Decimal } from "@money-protocol/lib-base";
 
 import devOrNull from "../deployments/dev.json";
 import testnet from "../deployments/default/testnet.json";
@@ -275,7 +275,7 @@ export interface BitcoinsMoneypConnectionOptionalParams {
   readonly frontendTag?: string;
 
   /**
-   * Create a {@link @moneyprotocol/lib-base#MoneypStore} and expose it as the `store` property.
+   * Create a {@link @money-protocol/lib-base#MoneypStore} and expose it as the `store` property.
    *
    * @remarks
    * When set to one of the available {@link BitcoinsMoneypStoreOption | options},
@@ -285,7 +285,7 @@ export interface BitcoinsMoneypConnectionOptionalParams {
    * {@link BitcoinsMoneypWithStore}.
    *
    * Note that the store won't start monitoring the blockchain until its
-   * {@link @moneyprotocol/lib-base#MoneypStore.start | start()} function is called.
+   * {@link @money-protocol/lib-base#MoneypStore.start | start()} function is called.
    */
   readonly useStore?: BitcoinsMoneypStoreOption;
 }

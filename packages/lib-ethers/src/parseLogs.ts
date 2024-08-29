@@ -3,7 +3,7 @@ import { AddressZero } from "@ethersproject/constants";
 import { Log, TransactionReceipt } from "@ethersproject/abstract-provider";
 import { LogDescription, Interface } from "@ethersproject/abi";
 
-import { Decimal } from "@moneyprotocol/lib-base";
+import { Decimal } from "@money-protocol/lib-base";
 
 import { _MoneypContracts, _TypedMoneypContract } from "./contracts";
 
@@ -19,15 +19,23 @@ type NameLookup = {
   [address: string]: string;
 };
 
-const interfaceLookupFrom = (contractLookup: ContractLookup): InterfaceLookup => {
+const interfaceLookupFrom = (
+  contractLookup: ContractLookup
+): InterfaceLookup => {
   return Object.fromEntries(
-    Object.entries(contractLookup).map(([, contract]) => [contract.address, contract.interface])
+    Object.entries(contractLookup).map(([, contract]) => [
+      contract.address,
+      contract.interface,
+    ])
   );
 };
 
 const nameLookupFrom = (contractLookup: ContractLookup): NameLookup => {
   return Object.fromEntries(
-    Object.entries(contractLookup).map(([name, contract]) => [contract.address, name])
+    Object.entries(contractLookup).map(([name, contract]) => [
+      contract.address,
+      name,
+    ])
   );
 };
 
@@ -36,12 +44,18 @@ type ParsedLog = {
   logDescription: LogDescription;
 };
 
-const tryToParseLog = (log: Log, interfaceLookup: InterfaceLookup): ParsedLog | undefined => {
+const tryToParseLog = (
+  log: Log,
+  interfaceLookup: InterfaceLookup
+): ParsedLog | undefined => {
   const { address } = log;
 
   if (address in interfaceLookup) {
     try {
-      return { address, logDescription: interfaceLookup[address].parseLog(log) };
+      return {
+        address,
+        logDescription: interfaceLookup[address].parseLog(log),
+      };
     } catch (err) {
       console.warn("Failed to parse log:");
       console.warn(log);
@@ -58,7 +72,7 @@ const parseLogs = (
   const parsedLogs: ParsedLog[] = [];
   const unparsedLogs: Log[] = [];
 
-  logs.forEach(log => {
+  logs.forEach((log) => {
     const parsedLog = tryToParseLog(log, interfaceLookup);
 
     if (parsedLog) {
@@ -91,7 +105,10 @@ const prettify = (arg: unknown, nameLookup: NameLookup) => {
   }
 };
 
-const logDescriptionToString = (logDescription: LogDescription, nameLookup: NameLookup) => {
+const logDescriptionToString = (
+  logDescription: LogDescription,
+  nameLookup: NameLookup
+) => {
   const prettyEntries = Object.entries(logDescription.args)
     .filter(([key]) => !key.match(/^[0-9]/))
     .map(([key, value]) => `${key}: ${prettify(value, nameLookup)}`);
@@ -99,14 +116,17 @@ const logDescriptionToString = (logDescription: LogDescription, nameLookup: Name
   return `${logDescription.name}({ ${prettyEntries.join(", ")} })`;
 };
 
-export const logsToString = (receipt: TransactionReceipt, contracts: _MoneypContracts): string => {
-  const contractLookup = (contracts as unknown) as ContractLookup;
+export const logsToString = (
+  receipt: TransactionReceipt,
+  contracts: _MoneypContracts
+): string => {
+  const contractLookup = contracts as unknown as ContractLookup;
   const interfaceLookup = interfaceLookupFrom(contractLookup);
   const contractNameLookup = nameLookupFrom(contractLookup);
 
   const nameLookup = {
     [receipt.from]: "user",
-    ...contractNameLookup
+    ...contractNameLookup,
   };
 
   const [parsedLogs, unparsedLogs] = parseLogs(receipt.logs, interfaceLookup);
@@ -122,7 +142,10 @@ export const logsToString = (receipt: TransactionReceipt, contracts: _MoneypCont
       parsedLogs
         .map(
           ({ address, logDescription }) =>
-            `  ${contractNameLookup[address]}.${logDescriptionToString(logDescription, nameLookup)}`
+            `  ${contractNameLookup[address]}.${logDescriptionToString(
+              logDescription,
+              nameLookup
+            )}`
         )
         .join("\n")
     );

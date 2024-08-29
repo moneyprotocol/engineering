@@ -1,23 +1,23 @@
-import { Button } from "theme-ui";
+import { Button } from "theme-ui"
 
-import { Decimal, MPStakeChange } from "@moneyprotocol/lib-base";
+import { Decimal, MPStakeChange } from "@money-protocol/lib-base"
 
-import { useMoneyp } from "../../hooks/MoneypContext";
-import { useTransactionFunction } from "../Transaction";
+import { useMoneyp } from "../../hooks/MoneypContext"
+import { useTransactionFunction } from "../Transaction"
 
 type StakingActionProps = {
-  change: MPStakeChange<Decimal>;
-};
+  change: MPStakeChange<Decimal>
+}
 
 export const StakingManagerAction: React.FC<StakingActionProps> = ({ change, children }) => {
-  const { moneyp } = useMoneyp();
+  const { moneyp } = useMoneyp()
 
   const [sendTransaction] = useTransactionFunction(
     "stake",
     change.stakeMP
       ? moneyp.send.stakeMP.bind(moneyp.send, change.stakeMP)
       : moneyp.send.unstakeMP.bind(moneyp.send, change.unstakeMP)
-  );
+  )
 
-  return <Button onClick={sendTransaction}>{children}</Button>;
-};
+  return <Button onClick={sendTransaction}>{children}</Button>
+}

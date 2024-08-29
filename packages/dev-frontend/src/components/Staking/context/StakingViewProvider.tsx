@@ -1,28 +1,28 @@
-import { useEffect } from "react";
+import { useEffect } from "react"
 
-import { MoneypStoreState, MPStake } from "@moneyprotocol/lib-base";
-import { MoneypStoreUpdate, useMoneypReducer } from "@moneyprotocol/lib-react";
+import { MoneypStoreState, MPStake } from "@money-protocol/lib-base"
+import { MoneypStoreUpdate, useMoneypReducer } from "@moneyprotocol/lib-react"
 
-import { useMyTransactionState } from "../../Transaction";
+import { useMyTransactionState } from "../../Transaction"
 
-import { StakingViewAction, StakingViewContext } from "./StakingViewContext";
+import { StakingViewAction, StakingViewContext } from "./StakingViewContext"
 
 type StakingViewProviderAction =
   | MoneypStoreUpdate
   | StakingViewAction
-  | { type: "startChange" | "abortChange" };
+  | { type: "startChange" | "abortChange" }
 
 type StakingViewProviderState = {
-  mpStake: MPStake;
-  changePending: boolean;
-  adjusting: boolean;
-};
+  mpStake: MPStake
+  changePending: boolean
+  adjusting: boolean
+}
 
 const init = ({ mpStake }: MoneypStoreState): StakingViewProviderState => ({
   mpStake,
   changePending: false,
-  adjusting: false
-});
+  adjusting: false,
+})
 
 const reduce = (
   state: StakingViewProviderState,
@@ -33,66 +33,66 @@ const reduce = (
 
   switch (action.type) {
     case "startAdjusting":
-      return { ...state, adjusting: true };
+      return { ...state, adjusting: true }
 
     case "cancelAdjusting":
-      return { ...state, adjusting: false };
+      return { ...state, adjusting: false }
 
     case "startChange":
-      return { ...state, changePending: true };
+      return { ...state, changePending: true }
 
     case "abortChange":
-      return { ...state, changePending: false };
+      return { ...state, changePending: false }
 
     case "updateStore": {
       const {
         oldState: { mpStake: oldStake },
-        stateChange: { mpStake: updatedStake }
-      } = action;
+        stateChange: { mpStake: updatedStake },
+      } = action
 
       if (updatedStake) {
         const changeCommitted =
           !updatedStake.stakedMP.eq(oldStake.stakedMP) ||
           updatedStake.collateralGain.lt(oldStake.collateralGain) ||
-          updatedStake.bpdGain.lt(oldStake.bpdGain);
+          updatedStake.bpdGain.lt(oldStake.bpdGain)
 
         return {
           ...state,
           mpStake: updatedStake,
           adjusting: false,
-          changePending: changeCommitted ? false : state.changePending
-        };
+          changePending: changeCommitted ? false : state.changePending,
+        }
       }
     }
   }
 
-  return state;
-};
+  return state
+}
 
 export const StakingViewProvider: React.FC = ({ children }) => {
-  const stakingTransactionState = useMyTransactionState("stake");
-  const [{ adjusting, changePending, mpStake }, dispatch] = useMoneypReducer(reduce, init);
+  const stakingTransactionState = useMyTransactionState("stake")
+  const [{ adjusting, changePending, mpStake }, dispatch] = useMoneypReducer(reduce, init)
 
   useEffect(() => {
     if (stakingTransactionState.type === "waitingForApproval") {
-      dispatch({ type: "startChange" });
+      dispatch({ type: "startChange" })
     } else if (
       stakingTransactionState.type === "failed" ||
       stakingTransactionState.type === "cancelled"
     ) {
-      dispatch({ type: "abortChange" });
+      dispatch({ type: "abortChange" })
     }
-  }, [stakingTransactionState.type, dispatch]);
+  }, [stakingTransactionState.type, dispatch])
 
   return (
     <StakingViewContext.Provider
       value={{
         view: adjusting ? "ADJUSTING" : mpStake.isEmpty ? "NONE" : "ACTIVE",
         changePending,
-        dispatch
+        dispatch,
       }}
     >
       {children}
     </StakingViewContext.Provider>
-  );
-};
+  )
+}

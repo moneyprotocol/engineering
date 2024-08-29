@@ -6,7 +6,7 @@ import {
   Percent,
   MoneypStoreState,
   MINIMUM_COLLATERAL_RATIO,
-} from "@moneyprotocol/lib-base"
+} from "@money-protocol/lib-base"
 import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
 import { COIN } from "../../strings"

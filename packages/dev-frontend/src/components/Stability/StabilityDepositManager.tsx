@@ -1,40 +1,41 @@
-import React, { useCallback, useEffect } from "react";
-import { Button, Flex } from "theme-ui";
+import React, { useCallback, useEffect } from "react"
+import { Button, Flex } from "theme-ui"
 
-import { Decimal, Decimalish, MoneypStoreState } from "@moneyprotocol/lib-base";
-import { MoneypStoreUpdate, useMoneypReducer, useMoneypSelector } from "@moneyprotocol/lib-react";
+import { Decimal, Decimalish, MoneypStoreState } from "@money-protocol/lib-base"
+import { MoneypStoreUpdate, useMoneypReducer, useMoneypSelector } from "@moneyprotocol/lib-react"
 
-import { COIN } from "../../strings";
+import { COIN } from "../../strings"
 
-import { ActionDescription } from "../ActionDescription";
-import { useMyTransactionState } from "../Transaction";
+import { ActionDescription } from "../ActionDescription"
+import { useMyTransactionState } from "../Transaction"
 
-import { StabilityDepositEditor } from "./StabilityDepositEditor";
-import { StabilityDepositAction } from "./StabilityDepositAction";
-import { useStabilityView } from "./context/StabilityViewContext";
+import { StabilityDepositEditor } from "./StabilityDepositEditor"
+import { StabilityDepositAction } from "./StabilityDepositAction"
+import { useStabilityView } from "./context/StabilityViewContext"
 import {
   selectForStabilityDepositChangeValidation,
-  validateStabilityDepositChange
-} from "./validation/validateStabilityDepositChange";
+  validateStabilityDepositChange,
+} from "./validation/validateStabilityDepositChange"
 
 const init = ({ stabilityDeposit }: MoneypStoreState) => ({
   originalDeposit: stabilityDeposit,
   editedBPD: stabilityDeposit.currentBPD,
-  changePending: false
-});
+  changePending: false,
+})
 
-type StabilityDepositManagerState = ReturnType<typeof init>;
+type StabilityDepositManagerState = ReturnType<typeof init>
 type StabilityDepositManagerAction =
   | MoneypStoreUpdate
   | { type: "startChange" | "finishChange" | "revert" }
-  | { type: "setDeposit"; newValue: Decimalish };
+  | { type: "setDeposit"; newValue: Decimalish }
 
-const reduceWith = (action: StabilityDepositManagerAction) => (
-  state: StabilityDepositManagerState
-): StabilityDepositManagerState => reduce(state, action);
+const reduceWith =
+  (action: StabilityDepositManagerAction) =>
+  (state: StabilityDepositManagerState): StabilityDepositManagerState =>
+    reduce(state, action)
 
-const finishChange = reduceWith({ type: "finishChange" });
-const revert = reduceWith({ type: "revert" });
+const finishChange = reduceWith({ type: "finishChange" })
+const revert = reduceWith({ type: "revert" })
 
 const reduce = (
   state: StabilityDepositManagerState,
@@ -43,82 +44,82 @@ const reduce = (
   // console.log(state);
   // console.log(action);
 
-  const { originalDeposit, editedBPD, changePending } = state;
+  const { originalDeposit, editedBPD, changePending } = state
 
   switch (action.type) {
     case "startChange": {
-      console.log("changeStarted");
-      return { ...state, changePending: true };
+      console.log("changeStarted")
+      return { ...state, changePending: true }
     }
 
     case "finishChange":
-      return { ...state, changePending: false };
+      return { ...state, changePending: false }
 
     case "setDeposit":
-      return { ...state, editedBPD: Decimal.from(action.newValue) };
+      return { ...state, editedBPD: Decimal.from(action.newValue) }
 
     case "revert":
-      return { ...state, editedBPD: originalDeposit.currentBPD };
+      return { ...state, editedBPD: originalDeposit.currentBPD }
 
     case "updateStore": {
       const {
-        stateChange: { stabilityDeposit: updatedDeposit }
-      } = action;
+        stateChange: { stabilityDeposit: updatedDeposit },
+      } = action
 
       if (!updatedDeposit) {
-        return state;
+        return state
       }
 
-      const newState = { ...state, originalDeposit: updatedDeposit };
+      const newState = { ...state, originalDeposit: updatedDeposit }
 
       const changeCommitted =
         !updatedDeposit.initialBPD.eq(originalDeposit.initialBPD) ||
         updatedDeposit.currentBPD.gt(originalDeposit.currentBPD) ||
         updatedDeposit.collateralGain.lt(originalDeposit.collateralGain) ||
-        updatedDeposit.mpReward.lt(originalDeposit.mpReward);
+        updatedDeposit.mpReward.lt(originalDeposit.mpReward)
 
       if (changePending && changeCommitted) {
-        return finishChange(revert(newState));
+        return finishChange(revert(newState))
       }
 
       return {
         ...newState,
-        editedBPD: updatedDeposit.apply(originalDeposit.whatChanged(editedBPD))
-      };
+        editedBPD: updatedDeposit.apply(originalDeposit.whatChanged(editedBPD)),
+      }
     }
   }
-};
+}
 
-const transactionId = "stability-deposit";
+const transactionId = "stability-deposit"
 
 export const StabilityDepositManager: React.FC = () => {
-  const [{ originalDeposit, editedBPD, changePending }, dispatch] = useMoneypReducer(reduce, init);
-  const validationContext = useMoneypSelector(selectForStabilityDepositChangeValidation);
-  const { dispatchEvent } = useStabilityView();
+  const [{ originalDeposit, editedBPD, changePending }, dispatch] = useMoneypReducer(reduce, init)
+  const validationContext = useMoneypSelector(selectForStabilityDepositChangeValidation)
+  const { dispatchEvent } = useStabilityView()
 
   const handleCancel = useCallback(() => {
-    dispatchEvent("CANCEL_PRESSED");
-  }, [dispatchEvent]);
+    dispatchEvent("CANCEL_PRESSED")
+  }, [dispatchEvent])
 
   const [validChange, description] = validateStabilityDepositChange(
     originalDeposit,
     editedBPD,
     validationContext
-  );
+  )
 
-  const makingNewDeposit = originalDeposit.isEmpty;
+  const makingNewDeposit = originalDeposit.isEmpty
 
-  const myTransactionState = useMyTransactionState(transactionId);
+  const myTransactionState = useMyTransactionState(transactionId)
 
   useEffect(() => {
     if (myTransactionState.type === "waitingForApproval") {
-      dispatch({ type: "startChange" });
+      dispatch({ type: "startChange" })
     } else if (myTransactionState.type === "failed" || myTransactionState.type === "cancelled") {
-      dispatch({ type: "finishChange" });
+      dispatch({ type: "finishChange" })
     } else if (myTransactionState.type === "confirmedOneShot") {
-      dispatchEvent("DEPOSIT_CONFIRMED");
+      dispatchEvent("DEPOSIT_CONFIRMED")
     }
-  }, [myTransactionState.type, dispatch, dispatchEvent]);
+  }, [myTransactionState.type, dispatch, dispatchEvent])
 
   return (
     <StabilityDepositEditor
@@ -148,5 +149,5 @@ export const StabilityDepositManager: React.FC = () => {
         )}
       </Flex>
     </StabilityDepositEditor>
-  );
-};
+  )
+}

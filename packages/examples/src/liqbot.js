@@ -1,22 +1,31 @@
 const { red, blue, green, yellow, dim, bold } = require("chalk");
 const { Wallet, providers } = require("ethers");
-const { Decimal, UserTrove, LUSD_LIQUIDATION_RESERVE } = require("@moneyprotocol/lib-base");
-const { EthersLiquity, EthersLiquityWithStore } = require("@moneyprotocol/lib-ethers");
+const {
+  Decimal,
+  UserTrove,
+  LUSD_LIQUIDATION_RESERVE,
+} = require("@money-protocol/lib-base");
+const {
+  EthersLiquity,
+  EthersLiquityWithStore,
+} = require("@money-protocol/lib-ethers");
 
 function log(message) {
   console.log(`${dim(`[${new Date().toLocaleTimeString()}]`)} ${message}`);
 }
 
-const info = message => log(`${blue("ℹ")} ${message}`);
-const warn = message => log(`${yellow("‼")} ${message}`);
-const error = message => log(`${red("✖")} ${message}`);
-const success = message => log(`${green("✔")} ${message}`);
+const info = (message) => log(`${blue("ℹ")} ${message}`);
+const warn = (message) => log(`${yellow("‼")} ${message}`);
+const error = (message) => log(`${red("✖")} ${message}`);
+const success = (message) => log(`${green("✔")} ${message}`);
 
 async function main() {
   // Replace URL if not using a local node
   const provider = new providers.JsonRpcProvider("http://localhost:8545");
   const wallet = new Wallet(process.env.PRIVATE_KEY).connect(provider);
-  const liquity = await EthersLiquity.connect(wallet, { useStore: "blockPolled" });
+  const liquity = await EthersLiquity.connect(wallet, {
+    useStore: "blockPolled",
+  });
 
   liquity.store.onLoaded = () => {
     info("Waiting for price drops...");
@@ -37,7 +46,8 @@ async function main() {
  * @param {Decimal} [price]
  * @returns {(trove: UserTrove) => boolean}
  */
-const underCollateralized = price => trove => trove.collateralRatioIsBelowMinimum(price);
+const underCollateralized = (price) => (trove) =>
+  trove.collateralRatioIsBelowMinimum(price);
 
 /**
  * @param {UserTrove}
@@ -55,12 +65,12 @@ async function tryToLiquidate(liquity) {
   const [gasPrice, riskiestTroves] = await Promise.all([
     liquity.connection.provider
       .getGasPrice()
-      .then(bn => Decimal.fromBigNumberString(bn.toHexString())),
+      .then((bn) => Decimal.fromBigNumberString(bn.toHexString())),
 
     liquity.getTroves({
       first: 1000,
-      sortedBy: "ascendingCollateralRatio"
-    })
+      sortedBy: "ascendingCollateralRatio",
+    }),
   ]);
 
   const troves = riskiestTroves
@@ -73,10 +83,12 @@ async function tryToLiquidate(liquity) {
     return;
   }
 
-  const addresses = troves.map(trove => trove.ownerAddress);
+  const addresses = troves.map((trove) => trove.ownerAddress);
 
   try {
-    const liquidation = await liquity.populate.liquidate(addresses, { gasPrice: gasPrice.hex });
+    const liquidation = await liquity.populate.liquidate(addresses, {
+      gasPrice: gasPrice.hex,
+    });
     const gasLimit = liquidation.rawPopulatedTransaction.gasLimit.toNumber();
     const expectedCost = gasPrice.mul(gasLimit).mul(store.state.price);
 
@@ -91,7 +103,9 @@ async function tryToLiquidate(liquity) {
       // on the safe side.
       warn(
         "Skipping liquidation due to high TX cost " +
-          `($${expectedCost.toString(2)} > $${expectedCompensation.toString(2)}).`
+          `($${expectedCost.toString(2)} > $${expectedCompensation.toString(
+            2
+          )}).`
       );
       return;
     }
@@ -106,8 +120,14 @@ async function tryToLiquidate(liquity) {
       return;
     }
 
-    const { collateralGasCompensation, lusdGasCompensation, liquidatedAddresses } = receipt.details;
-    const gasCost = gasPrice.mul(receipt.rawReceipt.gasUsed.toNumber()).mul(store.state.price);
+    const {
+      collateralGasCompensation,
+      lusdGasCompensation,
+      liquidatedAddresses,
+    } = receipt.details;
+    const gasCost = gasPrice
+      .mul(receipt.rawReceipt.gasUsed.toNumber())
+      .mul(store.state.price);
     const totalCompensation = collateralGasCompensation
       .mul(store.state.price)
       .add(lusdGasCompensation);
@@ -126,7 +146,7 @@ async function tryToLiquidate(liquity) {
   }
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error(err);
   process.exit(1);
 });

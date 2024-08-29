@@ -1,7 +1,7 @@
 import React from "react"
 import { Card, Heading, Link, Box, Text, Container } from "theme-ui"
 import { AddressZero } from "@ethersproject/constants"
-import { Decimal, Percent, MoneypStoreState } from "@moneyprotocol/lib-base"
+import { Decimal, Percent, MoneypStoreState } from "@money-protocol/lib-base"
 import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
 import { useMoneyp } from "../hooks/MoneypContext"

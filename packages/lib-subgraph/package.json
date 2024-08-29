@@ -13,7 +13,7 @@
     "prepare": "tsc --project tsconfig.dist.json"
   },
   "peerDependencies": {
-    "@moneyprotocol/lib-base": "5.4.3-stable-testnet"
+    "@money-protocol/lib-base": "1.0.0-testnet"
   },
   "devDependencies": {
     "@apollo/rover": "^0.23.0",

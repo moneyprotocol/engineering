@@ -1,27 +1,27 @@
-import React, { useCallback } from "react";
-import { Card, Heading, Box, Button, Flex } from "theme-ui";
-import { CollateralSurplusAction } from "../CollateralSurplusAction";
-import { MoneypStoreState } from "@moneyprotocol/lib-base";
-import { useMoneypSelector } from "@moneyprotocol/lib-react";
-import { useVaultView } from "./context/VaultViewContext";
-import { InfoMessage } from "../InfoMessage";
+import React, { useCallback } from "react"
+import { Card, Heading, Box, Button, Flex } from "theme-ui"
+import { CollateralSurplusAction } from "../CollateralSurplusAction"
+import { MoneypStoreState } from "@money-protocol/lib-base"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
+import { useVaultView } from "./context/VaultViewContext"
+import { InfoMessage } from "../InfoMessage"
 
 const select = ({ collateralSurplusBalance }: MoneypStoreState) => ({
-  hasSurplusCollateral: !collateralSurplusBalance.isZero
-});
+  hasSurplusCollateral: !collateralSurplusBalance.isZero,
+})
 
 export const LiquidatedVault: React.FC = () => {
-  const { hasSurplusCollateral } = useMoneypSelector(select);
-  const { dispatchEvent } = useVaultView();
+  const { hasSurplusCollateral } = useMoneypSelector(select)
+  const { dispatchEvent } = useVaultView()
 
   const handleOpenVault = useCallback(() => {
-    dispatchEvent("OPEN_TROVE_PRESSED");
-  }, [dispatchEvent]);
+    dispatchEvent("OPEN_TROVE_PRESSED")
+  }, [dispatchEvent])
 
   return (
     <Card>
       <Heading>Your Vault</Heading>
-      <Box sx={{ pt: '20px' }}>
+      <Box sx={{ pt: "20px" }}>
         <InfoMessage title="Your Vault has been liquidated.">
           {hasSurplusCollateral
             ? "Please reclaim your remaining collateral before opening a new Vault."
@@ -34,5 +34,5 @@ export const LiquidatedVault: React.FC = () => {
         </Flex>
       </Box>
     </Card>
-  );
-};
+  )
+}

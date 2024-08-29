@@ -24,6 +24,11 @@ node_modules
 /packages/lib-ethers/version
 /packages/lib-ethers/live/version
 
+# npmrc files
+/packages/lib-base/.npmrc
+/packages/lib-ethers/.npmrc
+/packages/providers/.npmrc
+
 # vscode files
 /.vscode/settings.json
 

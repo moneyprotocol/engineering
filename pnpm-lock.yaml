@@ -281,6 +281,9 @@ importers:
       '@microsoft/api-extractor':
         specifier: ^7.13.0
         version: 7.47.0(@types/node@14.18.63)
+      '@types/chai':
+        specifier: ^4.2.9
+        version: 4.3.16
       '@types/mocha':
         specifier: ^8.0.4
         version: 8.2.3
@@ -293,6 +296,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^4.18.0
         version: 4.33.0(eslint@7.32.0)(typescript@4.1.6)
+      chai:
+        specifier: ^4.2.0
+        version: 4.4.1
       eslint:
         specifier: ^7.11.0
         version: 7.32.0
@@ -317,9 +323,9 @@ importers:
 
   packages/lib-ethers:
     dependencies:
-      '@moneyprotocol/lib-base':
-        specifier: 5.4.3-stable-testnet
-        version: 5.4.3-stable-testnet
+      '@money-protocol/lib-base':
+        specifier: 1.0.0-testnet
+        version: 1.0.0-testnet
     devDependencies:
       '@ethersproject/abi':
         specifier: 5.4.0
@@ -420,9 +426,9 @@ importers:
 
   packages/lib-react:
     dependencies:
-      '@moneyprotocol/lib-base':
-        specifier: 5.4.3-stable-testnet
-        version: 5.4.3-stable-testnet
+      '@money-protocol/lib-base':
+        specifier: 1.0.0-testnet
+        version: 1.0.0-testnet
     devDependencies:
       '@ethersproject/bignumber':
         specifier: ^5.4.0
@@ -463,9 +469,9 @@ importers:
       '@ethersproject/address':
         specifier: ^5.4.0
         version: 5.4.0
-      '@moneyprotocol/lib-base':
-        specifier: 5.4.3-stable-testnet
-        version: 5.4.3-stable-testnet
+      '@money-protocol/lib-base':
+        specifier: 1.0.0-testnet
+        version: 1.0.0-testnet
       cross-fetch:
         specifier: ~3.0.6
         version: 3.0.6
@@ -1978,8 +1984,8 @@ packages:
   '@microsoft/tsdoc@0.15.0':
     resolution: {integrity: sha512-HZpPoABogPvjeJOdzCOSJsXeL/SMCBgBZMVC3X3d7YYp2gf31MfxhUoYUNwf1ERPJOnQc0wkFn9trqI6ZEdZuA==}
 
-  '@moneyprotocol/lib-base@5.4.3-stable-testnet':
-    resolution: {integrity: sha512-XMoKuB49JITIlTpqZS8IEWfSModVnnCQHvnN+5aKZ9TXQ6CRysbmGr5P3UoEuNzpfpR2S4V3SxZ7aq9mGN4wPQ==}
+  '@money-protocol/lib-base@1.0.0-testnet':
+    resolution: {integrity: sha512-pGpMwHToTKA0a1eW9LGQK5fwt1IBCYlDEKz1cZ0dKaK7nj8kWWtaKHsVNszngDSNKNcQ7blZqj/xkADCCqwx9g==}
 
   '@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1':
     resolution: {integrity: sha512-54/JRvkLIzzDWshCWfuhadfrfZVPiElY8Fcgmg1HroEly/EDSszzhBAsarCux+D/kOslTRquNzuyGSmUSTTHGg==}
@@ -5083,6 +5089,7 @@ packages:
 
   ethereum-bloom-filters@1.1.0:
     resolution: {integrity: sha512-J1gDRkLpuGNvWYzWslBQR9cDV4nd4kfvVTE/Wy4Kkm4yb3EYRSlyi0eB/inTsSTTVyA0+HyzHgbr95Fn/Z1fSw==}
+    deprecated: do not use this package use package versions above as this can miss some topics
 
   ethereum-cryptography@0.1.3:
     resolution: {integrity: sha512-w8/4x1SGGzc+tO97TASLja6SLd3fRIK2tLVcV2Gx4IB21hE19atll5Cq9o3d0ZmAYC/8aw0ipieTSiekAea4SQ==}
@@ -12772,7 +12779,7 @@ snapshots:
 
   '@microsoft/tsdoc@0.15.0': {}
 
-  '@moneyprotocol/lib-base@5.4.3-stable-testnet':
+  '@money-protocol/lib-base@1.0.0-testnet':
     dependencies:
       '@ethersproject/bignumber': 5.4.1
 

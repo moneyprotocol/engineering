@@ -29,14 +29,14 @@ This repository hosts an early preview of the Liquity codebase until we get read
 
 These are the Liquity components that have been made visible in this repo. They can be found under the `packages` directory.
 
-| Package               | Description                                                                                                                                 |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Package                     | Description                                                                                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | @moneyprotocol/dev-frontend | [Dev UI](https://devui.liquity.org): a bare-bones but functional React app used for interfacing with the smart contracts during development |
-| @moneyprotocol/lib-base     | Common interfaces and classes shared by the other `lib-` packages                                                                           |
-| @moneyprotocol/lib-ethers   | [Ethers](https://github.com/ethers-io/ethers.js/)-based middleware that can read Liquity state and send transactions                        |
+| @money-protocol/lib-base    | Common interfaces and classes shared by the other `lib-` packages                                                                           |
+| @money-protocol/lib-ethers  | [Ethers](https://github.com/ethers-io/ethers.js/)-based middleware that can read Liquity state and send transactions                        |
 | @moneyprotocol/lib-react    | Components and hooks that React-based apps can use to view Liquity contract state                                                           |
 | @moneyprotocol/lib-subgraph | [Apollo Client](https://github.com/apollographql/apollo-client)-based middleware backed by the Liquity subgraph that can read Liquity state |
-| @moneyprotocol/providers    | Customized ethers.js Providers used by dev-frontend                                                                                         |
+| @money-protocol/providers   | Customized ethers.js Providers used by dev-frontend                                                                                         |
 | @moneyprotocol/subgraph     | [Subgraph](https://thegraph.com) for querying Liquity state as well as historical data like transaction history                             |
 
 ## Running Dev UI with Docker
@@ -149,7 +149,7 @@ A hint is the address of a Trove with a position in the sorted list close to the
 
 All Trove operations take two ‘hint’ arguments: a `_lowerHint` referring to the `nextId` and an `_upperHint` referring to the `prevId` of the two adjacent nodes in the linked list that are (or would become) the neighbors of the given Trove. Taking both direct neighbors as hints has the advantage of being much more resilient to situations where a neighbor gets moved or removed before the caller's transaction is processed: the transaction would only fail if both neighboring Troves are affected during the pendency of the transaction.
 
-The better the ‘hint’ is, the shorter the list traversal, and the cheaper the gas cost of the function call. `SortedList::findInsertPosition(uint256 _NICR, address _prevId, address _nextId)` that is called by the Trove operation firsts check if `prevId` is still existant and valid (larger NICR than the provided `_NICR`) and then descends the list starting from `prevId`. If the check fails, the function further checks if `nextId` is still existant and valid (smaller NICR than the provided `_NICR`) and then ascends list starting from `nextId`. 
+The better the ‘hint’ is, the shorter the list traversal, and the cheaper the gas cost of the function call. `SortedList::findInsertPosition(uint256 _NICR, address _prevId, address _nextId)` that is called by the Trove operation firsts check if `prevId` is still existant and valid (larger NICR than the provided `_NICR`) and then descends the list starting from `prevId`. If the check fails, the function further checks if `nextId` is still existant and valid (smaller NICR than the provided `_NICR`) and then ascends list starting from `nextId`.
 
 The `HintHelpers::getApproxHint(...)` function can be used to generate a useful hint pointing to a Trove relatively close to the target position, which can then be passed as an argument to the desired Trove operation or to `SortedTroves::findInsertPosition(...)` to get its two direct neighbors as ‘exact‘ hints (based on the current state of the system).
 
@@ -167,7 +167,7 @@ Gas cost will be worst case `O(n)`, where n is the size of the `SortedTroves` li
 1. User performs Trove operation in their browser
 2. The front end computes a new collateralization ratio locally, based on the change in collateral and/or debt.
 3. Call `HintHelpers::getApproxHint(...)`, passing it the computed nominal collateralization ratio. Returns an address close to the correct insert position
-4. Call `SortedTroves::findInsertPosition(uint256 _NICR, address _prevId, address _nextId)`, passing it the same approximate hint via both `_prevId` and `_nextId` and the new nominal collateralization ratio via `_NICR`. 
+4. Call `SortedTroves::findInsertPosition(uint256 _NICR, address _prevId, address _nextId)`, passing it the same approximate hint via both `_prevId` and `_nextId` and the new nominal collateralization ratio via `_NICR`.
 5. Pass the ‘exact‘ hint in the form of the two direct neighbors, i.e. `_nextId` as `_lowerHint` and `_prevId` as `_upperHint`, to the Trove operation function call. (Note that the hint may become slightly inexact due to pending transactions that are processed first, though this is gracefully handled by the system that can ascend or descend the list as needed to find the right position.)
 
 Gas cost of steps 2-4 will be free, and step 5 will be `O(1)`.
@@ -177,10 +177,11 @@ Hints allow cheaper Trove operations for the user, at the expense of a slightly 
 ### Hints for `redeemCollateral`
 
 `TroveManager::redeemCollateral` as a special case requires additional hints:
+
 - `_firstRedemptionHint` hints at the position of the first Trove that will be redeemed from,
 - `_lowerPartialRedemptionHint` hints at the `nextId` neighbor of the last redeemed Trove upon reinsertion, if it's partially redeemed,
 - `_upperPartialRedemptionHint` hints at the `prevId` neighbor of the last redeemed Trove upon reinsertion, if it's partially redeemed,
-- `_partialRedemptionHintNICR` ensures that the transaction won't run out of gas if neither `_lowerPartialRedemptionHint` nor `_upperPartialRedemptionHint` are  valid anymore.
+- `_partialRedemptionHintNICR` ensures that the transaction won't run out of gas if neither `_lowerPartialRedemptionHint` nor `_upperPartialRedemptionHint` are valid anymore.
 
 `redeemCollateral` will only redeem from Troves that have an ICR >= MCR. In other words, if there are Troves at the bottom of the SortedTroves list that are below the minimum collateralization ratio (which can happen after an ETH:USD price drop), they will be skipped. To make this more gas-efficient, the position of the first redeemable Trove should be passed as `_firstRedemptionHint`.
 
@@ -188,7 +189,7 @@ Hints allow cheaper Trove operations for the user, at the expense of a slightly 
 
 The first redemption hint is the address of the trove from which to start the redemption sequence - i.e the address of the first trove in the system with ICR >= 110%.
 
-If when the transaction is confirmed the address is in fact not valid - the system will start from the lowest ICR trove in the system, and step upwards until it finds the first trove with ICR >= 110% to redeem from. In this case, since the number of troves below 110% will be limited due to ongoing liquidations, there's a good chance that the redemption transaction still succeed. 
+If when the transaction is confirmed the address is in fact not valid - the system will start from the lowest ICR trove in the system, and step upwards until it finds the first trove with ICR >= 110% to redeem from. In this case, since the number of troves below 110% will be limited due to ongoing liquidations, there's a good chance that the redemption transaction still succeed.
 
 #### Partial redemption hints
 

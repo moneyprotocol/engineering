@@ -7,20 +7,20 @@ import {
   Percent,
   MINIMUM_COLLATERAL_RATIO,
   CRITICAL_COLLATERAL_RATIO,
-  MoneypStoreState
-} from "@moneyprotocol/lib-base";
+  MoneypStoreState,
+} from "@money-protocol/lib-base"
 
-import { COIN } from "../../../strings";
+import { COIN } from "../../../strings"
 
-import { ActionDescription, Amount } from "../../ActionDescription";
-import { ErrorDescription } from "../../ErrorDescription";
+import { ActionDescription, Amount } from "../../ActionDescription"
+import { ErrorDescription } from "../../ErrorDescription"
 
-const mcrPercent = new Percent(MINIMUM_COLLATERAL_RATIO).toString(0);
-const ccrPercent = new Percent(CRITICAL_COLLATERAL_RATIO).toString(0);
+const mcrPercent = new Percent(MINIMUM_COLLATERAL_RATIO).toString(0)
+const ccrPercent = new Percent(CRITICAL_COLLATERAL_RATIO).toString(0)
 
 type VaultAdjustmentDescriptionParams = {
-  params: VaultAdjustmentParams<Decimal>;
-};
+  params: VaultAdjustmentParams<Decimal>
+}
 
 const VaultAdjustmentDescription: React.FC<VaultAdjustmentDescriptionParams> = ({ params }) => (
   <ActionDescription>
@@ -78,16 +78,16 @@ const VaultAdjustmentDescription: React.FC<VaultAdjustmentDescriptionParams> = (
     )}
     .
   </ActionDescription>
-);
+)
 
 export const selectForVaultChangeValidation = ({
   price,
   total,
   bpdBalance,
-  numberOfVaults
-}: MoneypStoreState) => ({ price, total, bpdBalance, numberOfVaults });
+  numberOfVaults,
+}: MoneypStoreState) => ({ price, total, bpdBalance, numberOfVaults })
 
-type VaultChangeValidationContext = ReturnType<typeof selectForVaultChangeValidation>;
+type VaultChangeValidationContext = ReturnType<typeof selectForVaultChangeValidation>
 
 export const validateVaultChange = (
   original: Vault,
@@ -98,13 +98,13 @@ export const validateVaultChange = (
   validChange: Exclude<VaultChange<Decimal>, { type: "invalidCreation" }> | undefined,
   description: JSX.Element | undefined
 ] => {
-  const change = original.whatChanged(edited, borrowingRate);
+  const change = original.whatChanged(edited, borrowingRate)
   // Reapply change to get the exact state the Vault will end up in (which could be slightly
   // different from `edited` due to imprecision).
-  const afterFee = original.apply(change, borrowingRate);
+  const afterFee = original.apply(change, borrowingRate)
 
   if (!change) {
-    return [undefined, undefined];
+    return [undefined, undefined]
   }
 
   if (
@@ -119,8 +119,8 @@ export const validateVaultChange = (
           {BPD_MINIMUM_DEBT.toString()} {COIN}
         </Amount>
         .
-      </ErrorDescription>
-    ];
+      </ErrorDescription>,
+    ]
   }
 
   if (
@@ -133,8 +133,8 @@ export const validateVaultChange = (
       undefined,
       <ErrorDescription>
         Collateral ratio must be at least <Amount>{mcrPercent}</Amount>.
-      </ErrorDescription>
-    ];
+      </ErrorDescription>,
+    ]
   }
 
   if (
@@ -154,8 +154,8 @@ export const validateVaultChange = (
           The adjustment you're trying to make would cause the total collateral ratio to fall below{" "}
           <Amount>{ccrPercent}</Amount>. Please increase your collateral ratio.
         </ErrorDescription>
-      )
-    ];
+      ),
+    ]
   }
 
   if (change.params.repayBPD?.gt(bpdBalance)) {
@@ -177,8 +177,8 @@ export const validateVaultChange = (
           </Amount>
           .
         </ErrorDescription>
-      )
-    ];
+      ),
+    ]
   }
 
   if (
@@ -191,8 +191,8 @@ export const validateVaultChange = (
       <ErrorDescription>
         You're not allowed to open a Vault with less than <Amount>{ccrPercent}</Amount> collateral
         ratio during recovery mode. Please increase your collateral ratio.
-      </ErrorDescription>
-    ];
+      </ErrorDescription>,
+    ]
   }
 
   if (change.type === "closure" && total.collateralRatioIsBelowCritical(price)) {
@@ -200,8 +200,8 @@ export const validateVaultChange = (
       undefined,
       <ErrorDescription>
         You're not allowed to close your Vault during recovery mode.
-      </ErrorDescription>
-    ];
+      </ErrorDescription>,
+    ]
   }
 
   if (change.type === "closure" && numberOfVaults === 1) {
@@ -209,8 +209,8 @@ export const validateVaultChange = (
       undefined,
       <ErrorDescription>
         You're not allowed to close your Vault when there are no other Vaults in the system.
-      </ErrorDescription>
-    ];
+      </ErrorDescription>,
+    ]
   }
 
   if (
@@ -222,9 +222,9 @@ export const validateVaultChange = (
       undefined,
       <ErrorDescription>
         You're not allowed to decrease your collateral ratio during recovery mode.
-      </ErrorDescription>
-    ];
+      </ErrorDescription>,
+    ]
   }
 
-  return [change, <VaultAdjustmentDescription params={change.params} />];
-};
+  return [change, <VaultAdjustmentDescription params={change.params} />]
+}

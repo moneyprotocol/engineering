@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Card, Box, Heading, Flex, Button, Input } from "theme-ui"
 
-import { Decimal, MoneypStoreState } from "@moneyprotocol/lib-base"
+import { Decimal, MoneypStoreState } from "@money-protocol/lib-base"
 import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
 import { useMoneyp } from "../hooks/MoneypContext"

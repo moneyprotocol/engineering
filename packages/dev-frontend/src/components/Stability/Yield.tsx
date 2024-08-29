@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { Card, Paragraph, Text } from 'theme-ui'
-import { useWeb3React } from '@web3-react/core'
-import { Web3Provider } from '@ethersproject/providers'
-import { Decimal, MoneypStoreState } from '@moneyprotocol/lib-base'
-import { useMoneypSelector } from '@moneyprotocol/lib-react'
-import { InfoIcon } from '../InfoIcon'
-import { useMoneyp } from '../../hooks/MoneypContext'
-import { Badge } from '../Badge'
-import { fetchLqtyPrice } from './context/fetchLqtyPrice'
+import React, { useEffect, useState } from "react"
+import { Card, Paragraph, Text } from "theme-ui"
+import { useWeb3React } from "@web3-react/core"
+import { Web3Provider } from "@ethersproject/providers"
+import { Decimal, MoneypStoreState } from "@money-protocol/lib-base"
+import { useMoneypSelector } from "@moneyprotocol/lib-react"
+import { InfoIcon } from "../InfoIcon"
+import { useMoneyp } from "../../hooks/MoneypContext"
+import { Badge } from "../Badge"
+import { fetchLqtyPrice } from "./context/fetchLqtyPrice"
 
 const selector = ({ bpdInStabilityPool, remainingStabilityPoolMPReward }: MoneypStoreState) => ({
   bpdInStabilityPool,
@@ -26,11 +26,11 @@ export const Yield: React.FC = () => {
 
   const [mpPrice, setLqtyPrice] = useState<Decimal | undefined>(undefined)
   const hasZeroValue = remainingStabilityPoolMPReward.isZero || bpdInStabilityPool.isZero
-  let mpTokenAddress = addresses['mpToken']
+  let mpTokenAddress = addresses["mpToken"]
 
   // TODO: remove after Team has reviewed on /next
   if (!isMainnet) {
-    mpTokenAddress = '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2'
+    mpTokenAddress = "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2"
   }
 
   useEffect(() => {
@@ -58,19 +58,19 @@ export const Yield: React.FC = () => {
       <InfoIcon
         size="xs"
         tooltip={
-          <Card variant="tooltip" sx={{ width: ['220px', '506px'] }}>
+          <Card variant="tooltip" sx={{ width: ["220px", "506px"] }}>
             <Paragraph>
-              MP APY is an <Text sx={{ fontWeight: 'bold' }}>estimate</Text> of the MP return on
+              MP APY is an <Text sx={{ fontWeight: "bold" }}>estimate</Text> of the MP return on
               deposited BPD over the next year. This doesn't include the RBTC gains.
             </Paragraph>
-            <Paragraph sx={{ fontSize: '12px', fontFamily: 'monospace', mt: 2 }}>
-              ($MP_REWARDS * YEARLY_DISTRIBUTION% / STABILITY_BPD) * 100 ={' '}
-              <Text sx={{ fontWeight: 'bold' }}> APY</Text>
+            <Paragraph sx={{ fontSize: "12px", fontFamily: "monospace", mt: 2 }}>
+              ($MP_REWARDS * YEARLY_DISTRIBUTION% / STABILITY_BPD) * 100 ={" "}
+              <Text sx={{ fontWeight: "bold" }}> APY</Text>
             </Paragraph>
-            <Paragraph sx={{ fontSize: '12px', fontFamily: 'monospace' }}>
+            <Paragraph sx={{ fontSize: "12px", fontFamily: "monospace" }}>
               ($
               {remainingLqtyInUSD.shorten()} * 50% / ${bpdInStabilityPool.shorten()}) * 100 =
-              <Text sx={{ fontWeight: 'bold' }}> {apyPercentage.toString(2)}%</Text>
+              <Text sx={{ fontWeight: "bold" }}> {apyPercentage.toString(2)}%</Text>
             </Paragraph>
           </Card>
         }

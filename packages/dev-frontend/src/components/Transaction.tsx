@@ -7,8 +7,8 @@ import { defaultAbiCoder } from "@ethersproject/abi"
 import { buildStyles, CircularProgressbarWithChildren } from "react-circular-progressbar"
 import "react-circular-progressbar/dist/styles.css"
 
-import { BitcoinsTransactionOverrides } from "@moneyprotocol/lib-ethers"
-import { SentMoneypTransaction, MoneypReceipt } from "@moneyprotocol/lib-base"
+import { BitcoinsTransactionOverrides } from "@money-protocol/lib-ethers"
+import { SentMoneypTransaction, MoneypReceipt } from "@money-protocol/lib-base"
 
 import { useMoneyp } from "../hooks/MoneypContext"
 
@@ -447,7 +447,7 @@ export const TransactionMonitor: React.FC = () => {
               alignItems: "center",
             }}
           >
-            {(transactionState.type === "waitingForConfirmation" || 
+            {(transactionState.type === "waitingForConfirmation" ||
               transactionState.type === "confirmed") && (
               <Box sx={{ mr: 3, width: "40px", height: "40px" }}>
                 <TransactionProgressDonut state={transactionState.type} />
