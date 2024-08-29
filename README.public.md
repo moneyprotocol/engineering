@@ -33,7 +33,7 @@ These are the Liquity components that have been made visible in this repo. They 
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | @moneyprotocol/dev-frontend | [Dev UI](https://devui.liquity.org): a bare-bones but functional React app used for interfacing with the smart contracts during development |
 | @money-protocol/lib-base    | Common interfaces and classes shared by the other `lib-` packages                                                                           |
-| @moneyprotocol/lib-ethers   | [Ethers](https://github.com/ethers-io/ethers.js/)-based middleware that can read Liquity state and send transactions                        |
+| @money-protocol/lib-ethers  | [Ethers](https://github.com/ethers-io/ethers.js/)-based middleware that can read Liquity state and send transactions                        |
 | @moneyprotocol/lib-react    | Components and hooks that React-based apps can use to view Liquity contract state                                                           |
 | @moneyprotocol/lib-subgraph | [Apollo Client](https://github.com/apollographql/apollo-client)-based middleware backed by the Liquity subgraph that can read Liquity state |
 | @moneyprotocol/providers    | Customized ethers.js Providers used by dev-frontend                                                                                         |

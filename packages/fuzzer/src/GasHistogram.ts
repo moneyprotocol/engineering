@@ -6,7 +6,7 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import {
   EthersTransactionFailedError,
   SentEthersLiquityTransaction,
-} from "@moneyprotocol/lib-ethers";
+} from "@money-protocol/lib-ethers";
 import { MinedReceipt } from "@money-protocol/lib-base";
 
 // Supports a max of 8 million gas

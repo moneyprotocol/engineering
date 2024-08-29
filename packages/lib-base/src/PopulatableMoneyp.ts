@@ -21,7 +21,7 @@ import {
  * A transaction that has been prepared for sending.
  *
  * @remarks
- * Implemented by {@link @moneyprotocol/lib-ethers#PopulatedBitcoinsMoneypTransaction}.
+ * Implemented by {@link @money-protocol/lib-ethers#PopulatedBitcoinsMoneypTransaction}.
  *
  * @public
  */
@@ -107,7 +107,7 @@ export type _PopulatableFrom<T, P> = {
  * The functions return an object implementing {@link PopulatedMoneypTransaction}, which can be
  * used to send the transaction and get a {@link SentMoneypTransaction}.
  *
- * Implemented by {@link @moneyprotocol/lib-ethers#PopulatableBitcoinsMoneyp}.
+ * Implemented by {@link @money-protocol/lib-ethers#PopulatableBitcoinsMoneyp}.
  *
  * @public
  */

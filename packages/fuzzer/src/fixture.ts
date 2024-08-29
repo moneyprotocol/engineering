@@ -10,7 +10,7 @@ import {
   TroveAdjustmentParams,
 } from "@money-protocol/lib-base";
 
-import { EthersLiquity as Liquity } from "@moneyprotocol/lib-ethers";
+import { EthersLiquity as Liquity } from "@money-protocol/lib-ethers";
 
 import {
   createRandomTrove,

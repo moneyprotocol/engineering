@@ -15,7 +15,7 @@ import {
 import {
   EthersLiquity,
   ReadableEthersLiquity,
-} from "@moneyprotocol/lib-ethers";
+} from "@money-protocol/lib-ethers";
 import { SubgraphLiquity } from "@moneyprotocol/lib-subgraph";
 
 export const objToString = (o: Record<string, unknown>) =>

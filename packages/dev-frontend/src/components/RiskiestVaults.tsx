@@ -9,7 +9,7 @@ import {
   UserVault,
   Decimal,
 } from "@money-protocol/lib-base"
-import { BlockPolledMoneypStoreState } from "@moneyprotocol/lib-ethers"
+import { BlockPolledMoneypStoreState } from "@money-protocol/lib-ethers"
 import { useMoneypSelector } from "@moneyprotocol/lib-react"
 
 import { shortenAddress } from "../utils/shortenAddress"

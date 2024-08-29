@@ -17,7 +17,7 @@ import {
  * A transaction that has already been sent.
  *
  * @remarks
- * Implemented by {@link @moneyprotocol/lib-ethers#SentBitcoinsMoneypTransaction}.
+ * Implemented by {@link @money-protocol/lib-ethers#SentBitcoinsMoneypTransaction}.
  *
  * @public
  */
@@ -143,7 +143,7 @@ export type _SendableFrom<T, R, S> = {
  * The functions return an object implementing {@link SentMoneypTransaction}, which can be used
  * to monitor the transaction and get its details when it succeeds.
  *
- * Implemented by {@link @moneyprotocol/lib-ethers#SendableBitcoinsMoneyp}.
+ * Implemented by {@link @money-protocol/lib-ethers#SendableBitcoinsMoneyp}.
  *
  * @public
  */

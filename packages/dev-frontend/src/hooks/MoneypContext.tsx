@@ -1,78 +1,77 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { Provider } from "@ethersproject/abstract-provider";
-import { Web3Provider } from "@ethersproject/providers";
-import { useWeb3React } from "@web3-react/core";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react"
+import { Provider } from "@ethersproject/abstract-provider"
+import { Web3Provider } from "@ethersproject/providers"
+import { useWeb3React } from "@web3-react/core"
 
-import { isBatchedProvider } from "@moneyprotocol/providers";
+import { isBatchedProvider } from "@moneyprotocol/providers"
 import {
   BlockPolledMoneypStore,
   BitcoinsMoneyp,
   BitcoinsMoneypWithStore,
-  _connectByChainId
-} from "@moneyprotocol/lib-ethers";
+  _connectByChainId,
+} from "@money-protocol/lib-ethers"
 
-import { MoneypFrontendConfig, getConfig } from "../config";
+import { MoneypFrontendConfig, getConfig } from "../config"
 
 type MoneypContextValue = {
-  config: MoneypFrontendConfig;
-  account: string;
-  provider: Provider;
-  moneyp: BitcoinsMoneypWithStore<BlockPolledMoneypStore>;
-};
+  config: MoneypFrontendConfig
+  account: string
+  provider: Provider
+  moneyp: BitcoinsMoneypWithStore<BlockPolledMoneypStore>
+}
 
-const MoneypContext = createContext<MoneypContextValue | undefined>(undefined);
+const MoneypContext = createContext<MoneypContextValue | undefined>(undefined)
 
 type MoneypProviderProps = {
-  loader?: React.ReactNode;
-  unsupportedNetworkFallback?: (chainId: number) => React.ReactNode;
-};
+  loader?: React.ReactNode
+  unsupportedNetworkFallback?: (chainId: number) => React.ReactNode
+}
 
 export const MoneypProvider: React.FC<MoneypProviderProps> = ({
   children,
   loader,
-  unsupportedNetworkFallback
+  unsupportedNetworkFallback,
 }) => {
-  const { library: provider, account, chainId } = useWeb3React<Web3Provider>();
-  const [config, setConfig] = useState<MoneypFrontendConfig>();
+  const { library: provider, account, chainId } = useWeb3React<Web3Provider>()
+  const [config, setConfig] = useState<MoneypFrontendConfig>()
 
   const connection = useMemo(() => {
-    
-    console.group();
-    console.log('[MoneypProvider] Creating connection...');
-    console.log('config:', config);
-    console.log('provider:', provider);
-    console.log('account:', account);
-    console.log('chainId:', chainId);
+    console.group()
+    console.log("[MoneypProvider] Creating connection...")
+    console.log("config:", config)
+    console.log("provider:", provider)
+    console.log("account:", account)
+    console.log("chainId:", chainId)
 
     if (config && provider && account && chainId) {
       try {
         const _connection = _connectByChainId(provider, provider.getSigner(account), chainId, {
           userAddress: account,
           frontendTag: config.frontendTag,
-          useStore: "blockPolled"
-        });
+          useStore: "blockPolled",
+        })
 
-        console.log('connection:', _connection);
-        console.groupEnd();
-        return _connection;
+        console.log("connection:", _connection)
+        console.groupEnd()
+        return _connection
       } catch (exception) {
-        console.log('exception:', exception);
-        console.groupEnd();
+        console.log("exception:", exception)
+        console.groupEnd()
       }
     }
-  }, [config, provider, account, chainId]);
+  }, [config, provider, account, chainId])
 
   useEffect(() => {
-    getConfig().then(setConfig);
-  }, []);
+    getConfig().then(setConfig)
+  }, [])
 
   useEffect(() => {
     if (config && connection) {
-      const { provider, chainId } = connection;
+      const { provider, chainId } = connection
 
       if (isBatchedProvider(provider) && provider.chainId !== chainId) {
-        console.log('[MoneypProvider] isBatchedProvider: true');
-        provider.chainId = chainId;
+        console.log("[MoneypProvider] isBatchedProvider: true")
+        provider.chainId = chainId
       }
 
       // if (isWebSocketAugmentedProvider(provider)) {
@@ -90,36 +89,36 @@ export const MoneypProvider: React.FC<MoneypProviderProps> = ({
       //   };
       // }
     }
-  }, [config, connection]);
+  }, [config, connection])
 
   if (!config || !provider || !account || !chainId) {
-    console.log('[MoneypProvider] loading...');
-    return <>{loader}</>;
+    console.log("[MoneypProvider] loading...")
+    return <>{loader}</>
   }
 
   if (!connection) {
-    console.log('[MoneypProvider] No connection!');
-    return unsupportedNetworkFallback ? <>{unsupportedNetworkFallback(chainId)}</> : null;
+    console.log("[MoneypProvider] No connection!")
+    return unsupportedNetworkFallback ? <>{unsupportedNetworkFallback(chainId)}</> : null
   }
 
-  const moneyp = BitcoinsMoneyp._from(connection);
-  moneyp.store.logging = true;
+  const moneyp = BitcoinsMoneyp._from(connection)
+  moneyp.store.logging = true
 
-  console.log('[MoneypProvider] moneyp:', moneyp);
+  console.log("[MoneypProvider] moneyp:", moneyp)
 
   return (
     <MoneypContext.Provider value={{ config, account, provider, moneyp }}>
       {children}
     </MoneypContext.Provider>
-  );
-};
+  )
+}
 
 export const useMoneyp = () => {
-  const moneypContext = useContext(MoneypContext);
+  const moneypContext = useContext(MoneypContext)
 
   if (!moneypContext) {
-    throw new Error("You must provide a MoneypContext via MoneypProvider");
+    throw new Error("You must provide a MoneypContext via MoneypProvider")
   }
 
-  return moneypContext;
-};
+  return moneypContext
+}

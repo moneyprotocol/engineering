@@ -8,7 +8,7 @@ const {
 const {
   EthersLiquity,
   EthersLiquityWithStore,
-} = require("@moneyprotocol/lib-ethers");
+} = require("@money-protocol/lib-ethers");
 
 function log(message) {
   console.log(`${dim(`[${new Date().toLocaleTimeString()}]`)} ${message}`);
