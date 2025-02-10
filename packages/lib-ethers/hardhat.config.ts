@@ -191,7 +191,6 @@ task("deploy", "Deploys the contracts to the network")
       if (useRealPriceFeed && !hasOracles(env.network.name)) {
         throw new Error(`PriceFeed not supported on ${env.network.name}`);
       }
-      console.log(env);
       let wrbtcAddress: string | undefined = undefined;
       if (!hasWRBTC(env.network.name)) {
         throw new Error(`WRBTC not deployed on ${env.network.name}`);
