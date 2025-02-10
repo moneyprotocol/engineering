@@ -108,7 +108,7 @@ contract MPToken is CheckContract, IMPToken {
         address _communityIssuanceAddress, 
         address _mpStakingAddress,
         address _lockupFactoryAddress,
-        address _bountyAddress,
+        address _lpRewardsBountyAddress,
         address _lpRewardsAddress,
         address _multisigAddress
     ) 
@@ -135,21 +135,21 @@ contract MPToken is CheckContract, IMPToken {
         
         // --- Initial MP allocations ---
      
-        uint bountyEntitlement = 10481586000000000000000000; // Allocate 10,481,586 for bounties/hackathons
+        uint bountyEntitlement = 177800000000000000000000000; // Allocate 177,800,000 for bounties/hackathons
         uint depositorsAndFrontEndsEntitlement = 167705382000000000000000000; // Allocate 167,705,382 to the algorithmic issuance schedule
         uint _lpRewardsEntitlement = 6987723000000000000000000;  // Allocate 6,987,723 for LP rewards
         lpRewardsEntitlement = 0;
 
-        uint _totalBountyEntitlement = bountyEntitlement
+        uint _totalLpRewardsBountyEntitlement = bountyEntitlement
           .add(_lpRewardsEntitlement);
 
-        _mint(_bountyAddress, _totalBountyEntitlement);
+        _mint(_lpRewardsBountyAddress, _totalLpRewardsBountyEntitlement);
         _mint(_communityIssuanceAddress, depositorsAndFrontEndsEntitlement);
         _mint(_lpRewardsAddress, 0);
         
         // Allocate the remainder to the MP Multisig: 500,000,000 - 10,481,586 - 167,705,382 - 6,987,723 = 314,825,309
         uint multisigEntitlement = _1_MILLION.mul(500)
-            .sub(_totalBountyEntitlement)
+            .sub(_totalLpRewardsBountyEntitlement)
             .sub(depositorsAndFrontEndsEntitlement);
 
         _mint(_multisigAddress, multisigEntitlement);
