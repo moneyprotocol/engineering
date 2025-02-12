@@ -116,7 +116,7 @@ const deployContracts = async (
       addresses.lockupContractFactory,
       '0x47a7dD4682B72fE4Ac47A090E92c120C120cA45E', // _bountyAddress (TODO: parameterize this)
       '0x47a7dD4682B72fE4Ac47A090E92c120C120cA45E', // _lpRewardsAddress
-      '0x63cE446a6c4BBC792F1D74039981C731eE928B8d', // _multisigAddress (TODO: parameterize this)
+      '0xBB6a102a81b130660e32681465bd2CD189F3899F', // _multisigAddress (TODO: parameterize this)
       { ...overrides }
     ),
 
