@@ -7,6 +7,7 @@ import { useMoneypSelector } from "@moneyprotocol/lib-react"
 import { useMoneyp } from "../hooks/MoneypContext"
 import { COIN, GT } from "../strings"
 import { Statistic } from "./Statistic"
+import { PoweredByLogo } from "./shared/PoweredByLogo"
 
 const selectBalances = ({ accountBalance, bpdBalance, mpBalance }: MoneypStoreState) => ({
   accountBalance,
@@ -94,7 +95,9 @@ export const SystemStats: React.FC<SystemStatsProps> = ({ variant = "info", show
     <Card>
       {showBalances && <Balances />}
 
-      <Heading>Moneyp Statistics</Heading>
+      <Heading>
+        <PoweredByLogo></PoweredByLogo>
+      </Heading>
 
       <Container sx={{ mt: 3, fontWeight: "400", fontSize: "16px", my: "10px" }}>
         Protocol
