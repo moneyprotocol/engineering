@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": ["src", "test"],
-  "types": ["node"],
+  "types": ["node", "mocha", "chai"],
   "compilerOptions": {
     "noErrorTruncation": true,
     "typeRoots": ["./node_modules/@types"]

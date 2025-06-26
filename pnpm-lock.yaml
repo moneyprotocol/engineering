@@ -281,6 +281,9 @@ importers:
       '@microsoft/api-extractor':
         specifier: ^7.13.0
         version: 7.47.0(@types/node@14.18.63)
+      '@types/chai':
+        specifier: ^4.3.4
+        version: 4.3.16
       '@types/mocha':
         specifier: ^8.0.4
         version: 8.2.3
@@ -293,6 +296,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^4.18.0
         version: 4.33.0(eslint@7.32.0)(typescript@4.1.6)
+      chai:
+        specifier: ^4.3.7
+        version: 4.4.1
       eslint:
         specifier: ^7.11.0
         version: 7.32.0
