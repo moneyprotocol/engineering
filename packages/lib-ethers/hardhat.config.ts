@@ -126,11 +126,11 @@ const getLiveArtifact = (
 const getContractFactory: (
   env: HardhatRuntimeEnvironment
 ) => (name: string, signer: Signer) => Promise<ContractFactory> = useLiveVersion
-  ? (env) => (name, signer) => {
+    ? (env) => (name, signer) => {
       const { abi, bytecode } = getLiveArtifact(name);
       return env.ethers.getContractFactory(abi, bytecode, signer);
     }
-  : (env) => env.ethers.getContractFactory;
+    : (env) => env.ethers.getContractFactory;
 
 extendEnvironment((env) => {
   env.deployMoneyp = async (
@@ -223,8 +223,7 @@ task("deploy", "Deploys the contracts to the network")
           );
 
           console.log(
-            `Setting pricefeed address: moc[${
-              oracleAddresses[env.network.name].moc
+            `Setting pricefeed address: moc[${oracleAddresses[env.network.name].moc
             }], rsk[${oracleAddresses[env.network.name].rsk}]`
           );
 

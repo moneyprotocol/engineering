@@ -260,7 +260,7 @@ const connectContracts = async (
       }),
   ];
 
-  for (let i=0; i<connections.length; i++) {
+  for (let i = 0; i < connections.length; i++) {
     const connect = connections[i];
     const tx = await connect(txCount + i);
 
@@ -282,7 +282,6 @@ export const deployAndSetupContracts = async (
   if (!deployer.provider) {
     throw new Error("Signer must have a provider.");
   }
-
   log("Deploying contracts...");
   log();
   log(`wrbtcAddress: ${wrbtcAddress}`);
@@ -312,9 +311,9 @@ export const deployAndSetupContracts = async (
   const totalStabilityPoolMPReward = await contracts.communityIssuance.MPSupplyCap();
 
   log("Connecting contracts...");
-
+  console.log("Contracts connected check.");
   await connectContracts(contracts, deployer, overrides);
-
+  console.log("Contracts connected successfully.");
   return {
     ...deployment,
     deploymentDate: mpTokenDeploymentTime.toNumber() * 1000,
