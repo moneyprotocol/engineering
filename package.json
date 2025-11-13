@@ -18,7 +18,7 @@
     "build": "pnpm -r build",
     "build:dev-frontend": "pnpm --filter @moneyprotocol/dev-frontend build",
     "build:subgraph": "pnpm --filter @moneyprotocol/subgraph build",
-    "deploy": "pnpm --filter @moneyprotocol/lib-ethers run hardhat deploy",
+    "deploy": "pnpm --filter @moneyprotocol/lib-ethers run hardhat deploy --network mainnet",
     "deploy:testnet": "pnpm --filter @moneyprotocol/lib-ethers run hardhat deploy --network testnet",
     "docs": "run-s docs:*",
     "docs:collect-sdk-apis": "node scripts/collect-sdk-apis.js",

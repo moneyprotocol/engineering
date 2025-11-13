@@ -52,13 +52,12 @@ const deployerAccount =
 
 const oracleAddresses = {
   mainnet: {
-    moc: "0xb9C42EFc8ec54490a37cA91c423F7285Fa01e257",
-    // [MP] TODO: change this to mainnet oracle address
-    rsk: "0x97a9100de6fcabebe75fa5c8ef88c55b232f73f1",
+    moc: "0x79ab7018987952764a844C46aC92E09631B4E7F8",
+    redstone: "0x316F08c60e0233478f9c84ead0acF94E0aDBA15a",
   },
   testnet: {
     moc: "0x97a9100de6fcabebe75fa5c8ef88c55b232f73f1",
-    rsk: "0x97a9100de6fcabebe75fa5c8ef88c55b232f73f1",
+    redstone: "0x97a9100de6fcabebe75fa5c8ef88c55b232f73f1",
   },
 };
 
@@ -92,6 +91,12 @@ const config: HardhatUserConfig = {
 
     regtest: {
       url: "http://localhost:4444/",
+      accounts: [deployerAccount],
+    },
+
+    mainnet: {
+      chainId: 30,
+      url: "https://public-node.rsk.co/",
       accounts: [deployerAccount],
     },
 
@@ -217,14 +222,14 @@ task("deploy", "Deploys the contracts to the network")
           const tx = await contracts.priceFeed.setAddresses(
             [
               oracleAddresses[env.network.name].moc,
-              oracleAddresses[env.network.name].rsk,
+              oracleAddresses[env.network.name].redstone,
             ],
             overrides
           );
 
           console.log(
             `Setting pricefeed address: moc[${oracleAddresses[env.network.name].moc
-            }], rsk[${oracleAddresses[env.network.name].rsk}]`
+            }], redstone[${oracleAddresses[env.network.name].redstone}]`
           );
 
           await tx.wait();
