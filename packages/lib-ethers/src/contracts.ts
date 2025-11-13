@@ -245,6 +245,10 @@ export interface _MoneypDeploymentJSON {
   readonly totalStabilityPoolMPReward: string;
   readonly _priceFeedIsTestnet: boolean;
   readonly _isDev: boolean;
+  readonly lockupContractAddressBeneficiary1?: string;
+  readonly lockupContractAddressBeneficiary2?: string;
+  readonly lockupContractAddressBeneficiary3?: string;
+  readonly lockupContractAddressBeneficiary4?: string;
 }
 
 /** @internal */

@@ -3,6 +3,8 @@ import { ContractTransaction, ContractFactory, Overrides } from "@ethersproject/
 
 import { Decimal } from "@moneyprotocol/lib-base";
 
+import { BigNumber } from "ethers";
+
 import {
   _MoneypContractAddresses,
   _MoneypContracts,
@@ -271,6 +273,40 @@ const connectContracts = async (
   }
 };
 
+/**
+ * Deploys a single LockupContract instance via the factory for a beneficiary
+ */
+const deployLockupContractForBeneficiary = async ({
+  mpTokenDeploymentTime,
+  contracts,
+  overrides,
+  beneficiaryAddress,
+}: {
+  mpTokenDeploymentTime: BigNumber;
+  contracts: _MoneypContracts;
+  overrides?: Overrides;
+  beneficiaryAddress: string;
+}) => {
+  console.log(`Deploying LockupContract for ${beneficiaryAddress}...`);
+  const SECONDS_IN_ONE_YEAR = 31536000;
+  const unlockTime = mpTokenDeploymentTime.toNumber() + SECONDS_IN_ONE_YEAR;
+  
+  const deployLockupTx = await contracts.lockupContractFactory.deployLockupContract(
+    beneficiaryAddress,
+    unlockTime,
+    { ...overrides }
+  );
+  
+  log(`Waiting for LockupContract deployment transaction ${deployLockupTx.hash} ...`);
+  const deployLockupReceipt = await deployLockupTx.wait();
+  
+  // Extract the lockup contract address from the first log (LockupContractCreated event)
+  const lockupContractAddress = deployLockupReceipt.logs[0].address;
+  console.log(`Deployed LockupContract at: ${lockupContractAddress}`);
+  log(`LockupContract deployed at: ${lockupContractAddress}`);
+  return lockupContractAddress;
+};
+
 export const deployAndSetupContracts = async (
   deployer: Signer,
   getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
@@ -314,12 +350,45 @@ export const deployAndSetupContracts = async (
   console.log("Contracts connected check.");
   await connectContracts(contracts, deployer, overrides);
   console.log("Contracts connected successfully.");
+
+  const lockupContractAddressBeneficiary1 = await deployLockupContractForBeneficiary({
+    mpTokenDeploymentTime,
+    contracts,
+    overrides,
+    beneficiaryAddress: "0x0000000000000000000000000000000000000000",
+  });
+
+  const lockupContractAddressBeneficiary2 = await deployLockupContractForBeneficiary({
+    mpTokenDeploymentTime,
+    contracts,
+    overrides,
+    beneficiaryAddress: "0x0000000000000000000000000000000000000000",
+  });
+
+  const lockupContractAddressBeneficiary3 = await deployLockupContractForBeneficiary({
+    mpTokenDeploymentTime,
+    contracts,
+    overrides,
+    beneficiaryAddress: "0x0000000000000000000000000000000000000000",
+  });
+
+  const lockupContractAddressBeneficiary4 = await deployLockupContractForBeneficiary({
+    mpTokenDeploymentTime,
+    contracts,
+    overrides,
+    beneficiaryAddress: "0x0000000000000000000000000000000000000000",
+  });
+
   return {
     ...deployment,
     deploymentDate: mpTokenDeploymentTime.toNumber() * 1000,
     bootstrapPeriod: bootstrapPeriod.toNumber(),
     totalStabilityPoolMPReward: `${Decimal.fromBigNumberString(
       totalStabilityPoolMPReward.toHexString()
-    )}`
+    )}`,
+    lockupContractAddressBeneficiary1,
+    lockupContractAddressBeneficiary2,
+    lockupContractAddressBeneficiary3,
+    lockupContractAddressBeneficiary4,
   };
 };
