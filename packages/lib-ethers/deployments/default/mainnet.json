@@ -1,0 +1,33 @@
+{
+  "chainId": 30,
+  "version": "f3fbd712112269c96c71a2cc03f163666aa926eb",
+  "deploymentDate": 1765431934000,
+  "bootstrapPeriod": 20736000,
+  "totalStabilityPoolMPReward": "167705382",
+  "_priceFeedIsTestnet": false,
+  "_isDev": false,
+  "addresses": {
+    "activePool": "0xa781E22Baa1625C81239E740A174b26414494640",
+    "borrowerOperations": "0xCF920f704dDFB068E86d3F8635644B5BCf8A30bd",
+    "vaultManager": "0xb6a3e678219d9119ae3B65AC501638b986B5038b",
+    "collSurplusPool": "0xd7E49aDa97d52F77D38E9A711e776074Ea924399",
+    "communityIssuance": "0x7252cF1C0A8386e77f80E13B991733Ad07A8Ebc8",
+    "defaultPool": "0xd9Ad665c6aaAE803ef31FC7941Dd6cB0C1bD2E4e",
+    "hintHelpers": "0xD6fEfcAafAa4E7585065db0151938bce35C4Fd4B",
+    "lockupContractFactory": "0x8a40C2512BD91125F8F16defa975FBb546D8dbc8",
+    "mpStaking": "0x4Cf2a7a9BF4991034D1Bc4C1eCD54Bf4f314d7D9",
+    "priceFeed": "0x2D4E701fB9Ad7cE1FBdf6817Ea92BE5B4C1c612F",
+    "sortedVaults": "0x2053938Fe224E6fC38906df139b345AA4b496F7C",
+    "stabilityPool": "0x361268Db24d2B253A38C0e158bd6b13a85174B96",
+    "gasPool": "0xce68bcC92CcA079040B416b5EFE0A7de1667D88b",
+    "bpdToken": "0x1fe2F558E2120C4BdF4217248d2940043a8E1208",
+    "mpToken": "0xB41e9fc16D23c554C390636e43D5Eaa69f99fF43",
+    "multiVaultGetter": "0xe8b86aE83438953b3e543cEb80bD5b2c33B19F76"
+  },
+  "lockupContractAddressBeneficiary1": "0x5C1B735dfA8D2DE14aF7a7e77447c12Bb8bD5A37",
+  "lockupContractAddressBeneficiary2": "0x180FCCcFAB977D5F43aB72286E991817f1462aD6",
+  "lockupContractAddressBeneficiary3": "0x5f9325d6aB31AaB014D708B374764894E25EC301",
+  "lockupContractAddressBeneficiary4": "0xF076C2D9F2f7c39d3F5a7108D1b24994d1322F78",
+  "lockupContractAddressBeneficiary5": "0x5920eD4Fa6C26EBe145b8A4E8879092dADE75C6e",
+  "lockupContractAddressBeneficiary6": "0x581218A27a2028de91d39006Fa5d584749Ac22FE"
+}

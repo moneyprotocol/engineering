@@ -3,6 +3,8 @@ import { ContractTransaction, ContractFactory, Overrides } from "@ethersproject/
 
 import { Decimal } from "@moneyprotocol/lib-base";
 
+import { BigNumber } from "ethers";
+
 import {
   _MoneypContractAddresses,
   _MoneypContracts,
@@ -81,7 +83,7 @@ const deployContracts = async (
     priceFeed: await deployContract(
       deployer,
       getContractFactory,
-      priceFeedIsTestnet ? "PriceFeedTestnet" : "PriceFeed",
+      "PriceFeed",
       { ...overrides }
     ),
     sortedVaults: await deployContract(deployer, getContractFactory, "SortedVaults", {
@@ -114,9 +116,9 @@ const deployContracts = async (
       addresses.communityIssuance,
       addresses.mpStaking,
       addresses.lockupContractFactory,
-      '0x47a7dD4682B72fE4Ac47A090E92c120C120cA45E', // _bountyAddress (TODO: parameterize this)
-      '0x47a7dD4682B72fE4Ac47A090E92c120C120cA45E', // _lpRewardsAddress
-      '0xBB6a102a81b130660e32681465bd2CD189F3899F', // _multisigAddress (TODO: parameterize this)
+      '0x0eC7C7D382D2c9dE84fFAb5eFdE95c4630590b01', // _bountyAddress
+      '0xC85eeb47e00136DD9B680715401dBbeCb4862965', // _lpRewardsAddress
+      '0xc64feC538d2eFEE2687929e2026586C0F3C000b2', // _multisigAddress
       { ...overrides }
     ),
 
@@ -271,11 +273,45 @@ const connectContracts = async (
   }
 };
 
+/**
+ * Deploys a single LockupContract instance via the factory for a beneficiary
+ */
+const deployLockupContractForBeneficiary = async ({
+  mpTokenDeploymentTime,
+  contracts,
+  overrides,
+  beneficiaryAddress,
+}: {
+  mpTokenDeploymentTime: BigNumber;
+  contracts: _MoneypContracts;
+  overrides?: Overrides;
+  beneficiaryAddress: string;
+}) => {
+  console.log(`Deploying LockupContract for ${beneficiaryAddress}...`);
+  const SECONDS_IN_ONE_YEAR = 31536000;
+  const unlockTime = mpTokenDeploymentTime.toNumber() + SECONDS_IN_ONE_YEAR;
+  
+  const deployLockupTx = await contracts.lockupContractFactory.deployLockupContract(
+    beneficiaryAddress,
+    unlockTime,
+    { ...overrides }
+  );
+  
+  log(`Waiting for LockupContract deployment transaction ${deployLockupTx.hash} ...`);
+  const deployLockupReceipt = await deployLockupTx.wait();
+  
+  // Extract the lockup contract address from the first log (LockupContractCreated event)
+  const lockupContractAddress = deployLockupReceipt.logs[0].address;
+  console.log(`Deployed LockupContract at: ${lockupContractAddress}`);
+  log(`LockupContract deployed at: ${lockupContractAddress}`);
+  return lockupContractAddress;
+};
+
 export const deployAndSetupContracts = async (
   deployer: Signer,
   getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
-  _priceFeedIsTestnet = true,
-  _isDev = true,
+  _priceFeedIsTestnet = false,
+  _isDev = false,
   wrbtcAddress?: string,
   overrides?: Overrides
 ): Promise<_MoneypDeploymentJSON> => {
@@ -314,12 +350,61 @@ export const deployAndSetupContracts = async (
   console.log("Contracts connected check.");
   await connectContracts(contracts, deployer, overrides);
   console.log("Contracts connected successfully.");
+
+  const lockupContractAddressBeneficiary1 = await deployLockupContractForBeneficiary({
+    mpTokenDeploymentTime,
+    contracts,
+    overrides,
+    beneficiaryAddress: "0x473CC74725d21aebD92fE922C5df2dc5c0aA5312",
+  });
+
+  const lockupContractAddressBeneficiary2 = await deployLockupContractForBeneficiary({
+    mpTokenDeploymentTime,
+    contracts,
+    overrides,
+    beneficiaryAddress: "0xF5A59f850C38cA5Fd8e1F629141792af8925F4d5",
+  });
+
+  const lockupContractAddressBeneficiary3 = await deployLockupContractForBeneficiary({
+    mpTokenDeploymentTime,
+    contracts,
+    overrides,
+    beneficiaryAddress: "0xce10f012c2A643683365f7C08d339c21C6A81E45",
+  });
+
+  const lockupContractAddressBeneficiary4 = await deployLockupContractForBeneficiary({
+    mpTokenDeploymentTime,
+    contracts,
+    overrides,
+    beneficiaryAddress: "0x22763382718956c9ac43cf9e77a521ddd2e82a30",
+  });
+
+  const lockupContractAddressBeneficiary5 = await deployLockupContractForBeneficiary({
+    mpTokenDeploymentTime,
+    contracts,
+    overrides,
+    beneficiaryAddress: "0x24b90403621f0a821e1623240fc41066113d1e0b",
+  });
+
+  const lockupContractAddressBeneficiary6 = await deployLockupContractForBeneficiary({
+    mpTokenDeploymentTime,
+    contracts,
+    overrides,
+    beneficiaryAddress: "0x63bd9184457e86180fd13b70d69a03c739d21ec9",
+  });
+
   return {
     ...deployment,
     deploymentDate: mpTokenDeploymentTime.toNumber() * 1000,
     bootstrapPeriod: bootstrapPeriod.toNumber(),
     totalStabilityPoolMPReward: `${Decimal.fromBigNumberString(
       totalStabilityPoolMPReward.toHexString()
-    )}`
+    )}`,
+    lockupContractAddressBeneficiary1,
+    lockupContractAddressBeneficiary2,
+    lockupContractAddressBeneficiary3,
+    lockupContractAddressBeneficiary4,
+    lockupContractAddressBeneficiary5,
+    lockupContractAddressBeneficiary6,
   };
 };
