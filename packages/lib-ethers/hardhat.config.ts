@@ -65,7 +65,7 @@ const hasOracles = (network: string): network is keyof typeof oracleAddresses =>
   network in oracleAddresses;
 
 const wrbtcAddresses = {
-  mainnet: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  mainnet: "0x542FDA317318eBf1d3DeAF76E0B632741a7e677d",
   testnet: "0x09b6ca5e4496238a1f176aea6bb607db96c2286e",
 };
 
@@ -140,7 +140,7 @@ const getContractFactory: (
 extendEnvironment((env) => {
   env.deployMoneyp = async (
     deployer,
-    useRealPriceFeed = false,
+    useRealPriceFeed = true,
     wrbtcAddress = undefined,
     overrides?: Overrides
   ) => {
@@ -181,7 +181,7 @@ task("deploy", "Deploys the contracts to the network")
   .addOptionalParam(
     "useRealPriceFeed",
     "Deploy the production version of PriceFeed and connect it to Chainlink",
-    false,
+    true,
     types.boolean
   )
   .setAction(
@@ -191,7 +191,7 @@ task("deploy", "Deploys the contracts to the network")
       };
       const [deployer] = await env.ethers.getSigners();
 
-      useRealPriceFeed = false;
+      useRealPriceFeed = true;
 
       if (useRealPriceFeed && !hasOracles(env.network.name)) {
         throw new Error(`PriceFeed not supported on ${env.network.name}`);

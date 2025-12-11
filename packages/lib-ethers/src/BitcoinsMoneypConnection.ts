@@ -6,6 +6,7 @@ import { Decimal } from "@moneyprotocol/lib-base";
 
 import devOrNull from "../deployments/dev.json";
 import testnet from "../deployments/default/testnet.json";
+import mainnet from "../deployments/default/mainnet.json";
 
 import { BitcoinsProvider, BitcoinsSigner } from "./types";
 
@@ -22,8 +23,7 @@ const dev = devOrNull as _MoneypDeploymentJSON | null;
 
 const deployments: any = {
   [testnet.chainId]: testnet,
-
-  ...(dev !== null ? { [dev.chainId]: dev } : {}),
+  [mainnet.chainId]: mainnet,
 };
 
 declare const brand: unique symbol;

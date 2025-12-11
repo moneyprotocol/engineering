@@ -83,7 +83,7 @@ const deployContracts = async (
     priceFeed: await deployContract(
       deployer,
       getContractFactory,
-      priceFeedIsTestnet ? "PriceFeedTestnet" : "PriceFeed",
+      "PriceFeed",
       { ...overrides }
     ),
     sortedVaults: await deployContract(deployer, getContractFactory, "SortedVaults", {
@@ -116,9 +116,9 @@ const deployContracts = async (
       addresses.communityIssuance,
       addresses.mpStaking,
       addresses.lockupContractFactory,
-      '', // _bountyAddress (TODO: parameterize this)
-      '', // _lpRewardsAddress
-      '', // _multisigAddress (TODO: parameterize this)
+      '0x0eC7C7D382D2c9dE84fFAb5eFdE95c4630590b01', // _bountyAddress
+      '0xC85eeb47e00136DD9B680715401dBbeCb4862965', // _lpRewardsAddress
+      '0xc64feC538d2eFEE2687929e2026586C0F3C000b2', // _multisigAddress
       { ...overrides }
     ),
 
@@ -310,8 +310,8 @@ const deployLockupContractForBeneficiary = async ({
 export const deployAndSetupContracts = async (
   deployer: Signer,
   getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
-  _priceFeedIsTestnet = true,
-  _isDev = true,
+  _priceFeedIsTestnet = false,
+  _isDev = false,
   wrbtcAddress?: string,
   overrides?: Overrides
 ): Promise<_MoneypDeploymentJSON> => {
@@ -355,28 +355,42 @@ export const deployAndSetupContracts = async (
     mpTokenDeploymentTime,
     contracts,
     overrides,
-    beneficiaryAddress: "0x0000000000000000000000000000000000000000",
+    beneficiaryAddress: "0x473CC74725d21aebD92fE922C5df2dc5c0aA5312",
   });
 
   const lockupContractAddressBeneficiary2 = await deployLockupContractForBeneficiary({
     mpTokenDeploymentTime,
     contracts,
     overrides,
-    beneficiaryAddress: "0x0000000000000000000000000000000000000000",
+    beneficiaryAddress: "0xF5A59f850C38cA5Fd8e1F629141792af8925F4d5",
   });
 
   const lockupContractAddressBeneficiary3 = await deployLockupContractForBeneficiary({
     mpTokenDeploymentTime,
     contracts,
     overrides,
-    beneficiaryAddress: "0x0000000000000000000000000000000000000000",
+    beneficiaryAddress: "0xce10f012c2A643683365f7C08d339c21C6A81E45",
   });
 
   const lockupContractAddressBeneficiary4 = await deployLockupContractForBeneficiary({
     mpTokenDeploymentTime,
     contracts,
     overrides,
-    beneficiaryAddress: "0x0000000000000000000000000000000000000000",
+    beneficiaryAddress: "0x22763382718956c9ac43cf9e77a521ddd2e82a30",
+  });
+
+  const lockupContractAddressBeneficiary5 = await deployLockupContractForBeneficiary({
+    mpTokenDeploymentTime,
+    contracts,
+    overrides,
+    beneficiaryAddress: "0x24b90403621f0a821e1623240fc41066113d1e0b",
+  });
+
+  const lockupContractAddressBeneficiary6 = await deployLockupContractForBeneficiary({
+    mpTokenDeploymentTime,
+    contracts,
+    overrides,
+    beneficiaryAddress: "0x63bd9184457e86180fd13b70d69a03c739d21ec9",
   });
 
   return {
@@ -390,5 +404,7 @@ export const deployAndSetupContracts = async (
     lockupContractAddressBeneficiary2,
     lockupContractAddressBeneficiary3,
     lockupContractAddressBeneficiary4,
+    lockupContractAddressBeneficiary5,
+    lockupContractAddressBeneficiary6,
   };
 };
