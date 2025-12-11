@@ -6,7 +6,7 @@ import { InfoMessage } from "../components/InfoMessage"
 import { useMoneyp } from "../hooks/MoneypContext"
 import { Icon } from "../components/Icon"
 
-const intLink = (bpdAddress: string) => `www.intrinsic.finance`
+const intLink = (bpdAddress: string) => `https://www.intrinsic.finance`
 
 export const RedemptionPage: React.FC = () => {
   const {
